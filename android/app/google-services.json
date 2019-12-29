@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "494091289902",
+    "firebase_url": "https://fundtracker-6b6b0.firebaseio.com",
+    "project_id": "fundtracker-6b6b0",
+    "storage_bucket": "fundtracker-6b6b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494091289902:android:b991e8b39f4886c87726bf",
+        "android_client_info": {
+          "package_name": "com.ys27.fund_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494091289902-8ua3rmf1gsgbcv2gc8akhfhopqas5ful.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiZ-gfUEvsF8FZMa6vsk3xtOJFD3q2Pyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494091289902-8ua3rmf1gsgbcv2gc8akhfhopqas5ful.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
