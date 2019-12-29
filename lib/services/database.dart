@@ -13,6 +13,7 @@ class DatabaseService {
   List<Transaction> _transactionsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((tx) {
       return Transaction(
+        tid: tx.documentID,
         date:
             new DateTime.fromMillisecondsSinceEpoch(tx['date'].seconds * 1000),
         isExpense: tx['isExpense'],
@@ -44,6 +45,22 @@ class DatabaseService {
     return ref;
   }
 
+  Future updateTransaction(Transaction tx) async {
+    print(tx.tid);
+    return await usersCollection.document(uid).collection('transactions').document(tx.tid).updateData({
+      'date': tx.date,
+      'isExpense': tx.isExpense,
+      'payee': tx.payee,
+      'amount': tx.amount,
+      'category': tx.category
+    });
+  }
+
+  Future deleteTransaction(Transaction tx) async {
+    print(tx.tid);
+    return await usersCollection.document(uid).collection('transactions').document(tx.tid).delete();
+  }
+
   List<Category> _categoriesListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((category) {
       return Category(
@@ -59,14 +76,4 @@ class DatabaseService {
         .snapshots()
         .map(_categoriesListFromSnapshot);
   }
-
-  // Future updateBudgetPeriod(String pid, DateTime startDate, DateTime endDate,
-  //     double periodAmount, double carryOverAmount) async {
-  //   return await budgetPeriodsCollection.document(pid).setData({
-  //     'startDate': startDate,
-  //     'endDate': endDate,
-  //     'periodAmount': periodAmount,
-  //     'carryOverAmount': carryOverAmount,
-  //   });
-  // }
 }

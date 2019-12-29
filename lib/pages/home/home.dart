@@ -14,15 +14,6 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    void _showAddTransactionsPage() {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AddTransaction();
-        },
-      );
-    }
-
     return StreamProvider<List<Transaction>>.value(
       value: DatabaseService(uid: user.uid).transactions,
       child: Scaffold(
@@ -40,7 +31,12 @@ class Home extends StatelessWidget {
         ),
         body: TransactionsList(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _showAddTransactionsPage(),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) {
+              return AddTransaction();
+            },
+          ),
           child: Icon(Icons.add),
         ),
       ),

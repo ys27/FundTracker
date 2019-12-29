@@ -6,43 +6,60 @@ import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
-class AddTransaction extends StatefulWidget {
+class ViewTransaction extends StatefulWidget {
+  final String tid;
+  final DateTime date;
+  final bool isExpense;
+  final String payee;
+  final double amount;
+  final String category;
+
+  ViewTransaction(
+      {this.tid,
+      this.date,
+      this.isExpense,
+      this.payee,
+      this.amount,
+      this.category});
+
   @override
-  _AddTransactionState createState() => _AddTransactionState();
+  _ViewTransactionState createState() => _ViewTransactionState();
 }
 
-class _AddTransactionState extends State<AddTransaction> {
+class _ViewTransactionState extends State<ViewTransaction> {
   final _formKey = GlobalKey<FormState>();
 
-  DateTime _date = DateTime.now();
-  bool _isExpense = true;
-  String _payee = '';
+  DateTime _date;
+  bool _isExpense;
+  String _payee;
   double _amount;
   String _category;
+
   String noCategories = 'NA';
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Transaction'),
+        title: Text('View Transaction'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            child: Text('Add'),
+            child: Text('Save'),
             onPressed: () async {
               if (_formKey.currentState.validate()) {
                 Transaction tx = Transaction(
-                    date: _date,
-                    isExpense: _isExpense,
-                    payee: _payee,
-                    amount: _amount,
-                    category: _category);
+                    tid: widget.tid,
+                    date: _date ?? widget.date,
+                    isExpense: _isExpense ?? widget.isExpense,
+                    payee: _payee ?? widget.payee,
+                    amount: _amount ?? widget.amount,
+                    category: _category ?? widget.category);
                 setState(() => isLoading = true);
-                await DatabaseService(uid: user.uid).addTransaction(tx);
+                await DatabaseService(uid: user.uid).updateTransaction(tx);
                 Navigator.pop(context);
               }
             },
@@ -70,13 +87,13 @@ class _AddTransactionState extends State<AddTransaction> {
                         Expanded(
                           child: FlatButton(
                             padding: EdgeInsets.all(15.0),
-                            color: _isExpense
+                            color: (_isExpense ?? widget.isExpense)
                                 ? Colors.grey[100]
                                 : Theme.of(context).primaryColor,
                             child: Text(
                               'Income',
                               style: TextStyle(
-                                  fontWeight: _isExpense
+                                  fontWeight: (_isExpense ?? widget.isExpense)
                                       ? FontWeight.normal
                                       : FontWeight.bold),
                             ),
@@ -86,13 +103,13 @@ class _AddTransactionState extends State<AddTransaction> {
                         Expanded(
                           child: FlatButton(
                             padding: EdgeInsets.all(15.0),
-                            color: _isExpense
+                            color: (_isExpense ?? widget.isExpense)
                                 ? Theme.of(context).primaryColor
                                 : Colors.grey[100],
                             child: Text(
                               'Expense',
                               style: TextStyle(
-                                  fontWeight: _isExpense
+                                  fontWeight: (_isExpense ?? widget.isExpense)
                                       ? FontWeight.bold
                                       : FontWeight.normal),
                             ),
@@ -107,7 +124,7 @@ class _AddTransactionState extends State<AddTransaction> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                              '${_date.year.toString()}.${_date.month.toString()}.${_date.day.toString()}'),
+                              '${(_date ?? widget.date).year.toString()}.${(_date ?? widget.date).month.toString()}.${(_date ?? widget.date).day.toString()}'),
                           Icon(Icons.date_range),
                         ],
                       ),
@@ -126,25 +143,21 @@ class _AddTransactionState extends State<AddTransaction> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
+                      initialValue: widget.payee,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter a payee or a note.';
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Payee',
-                      ),
                       textCapitalization: TextCapitalization.words,
                       onChanged: (val) {
-                        setState(() {
-                          _payee = val;
-                          _category = categories[0].name ?? noCategories;
-                        });
+                        setState(() => _payee = val);
                       },
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
+                      initialValue: widget.amount.toString(),
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Please enter an amount.';
@@ -155,9 +168,6 @@ class _AddTransactionState extends State<AddTransaction> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Amount',
-                      ),
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
                         setState(() => _amount = double.parse(val));
@@ -171,7 +181,7 @@ class _AddTransactionState extends State<AddTransaction> {
                         }
                         return null;
                       },
-                      value: _category ??
+                      value: (_category ?? widget.category) ??
                           (categories.length > 0
                               ? categories[0].name
                               : noCategories),
