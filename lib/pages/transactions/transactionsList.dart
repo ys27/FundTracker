@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/shared/transactionTile.dart';
+import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsList extends StatefulWidget {

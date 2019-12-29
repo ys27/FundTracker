@@ -32,9 +32,9 @@ class DatabaseService {
         .map(_transactionsListFromSnapshot);
   }
 
-  Future addTransaction(Transaction tx) async {
-    return await usersCollection.document(uid).collection('transactions').
-  }
+  // Future addTransaction(Transaction tx) async {
+  //   return await usersCollection.document(uid).collection('transactions')
+  // }
 
   List<Category> _categoriesListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((category) {
