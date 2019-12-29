@@ -15,7 +15,7 @@ class App extends StatelessWidget {
         home: Wrapper(),
         theme: ThemeData(
           primaryColor: Colors.red[900],
-          accentColor: Colors.redAccent[700],
+          accentColor: Colors.blueGrey,
           fontFamily: 'Andika',
         ),
       ),

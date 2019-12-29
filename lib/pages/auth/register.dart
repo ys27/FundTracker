@@ -29,7 +29,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Fund Tracker: Register'),
+        title: Text('Register'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -40,113 +40,116 @@ class _RegisterState extends State<Register> {
           )
         ],
       ),
-      body: loading ? Loader() : Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 50.0,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20.0),
-              TextFormField(
-                initialValue: email,
-                // autofocus: true,
-                validator: (val) {
-                  if (val.isEmpty) {
-                    return 'An email is required.';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: 'Email',
-                ),
-                onChanged: (val) {
-                  setState(() => email = val);
-                },
+      body: loading
+          ? Loader()
+          : Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 20.0,
+                horizontal: 50.0,
               ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                initialValue: password,
-                validator: (val) {
-                  if (val.length < 6) {
-                    return 'The password must be 6 or more characters.';
-                  }
-                  return null;
-                },
-                obscureText: obscurePassword,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  suffix: FlatButton(
-                    child: Text('Show'),
-                    onPressed: () =>
-                        setState(() => obscurePassword = !obscurePassword),
-                  ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue: email,
+                      // autofocus: true,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'An email is required.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Email',
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (val) {
+                        setState(() => email = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue: password,
+                      validator: (val) {
+                        if (val.length < 6) {
+                          return 'The password must be 6 or more characters.';
+                        }
+                        return null;
+                      },
+                      obscureText: obscurePassword,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        suffix: FlatButton(
+                          child: Text('Show'),
+                          onPressed: () => setState(
+                              () => obscurePassword = !obscurePassword),
+                        ),
+                      ),
+                      onChanged: (val) {
+                        setState(() => password = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue: passwordConfirm,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'This is a required field.';
+                        }
+                        if (val != password) {
+                          return 'The passwords do not match.';
+                        }
+                        return null;
+                      },
+                      obscureText: obscurePasswordConfirm,
+                      decoration: InputDecoration(
+                        hintText: 'Confirm Password',
+                        suffix: FlatButton(
+                          child: Text('Show'),
+                          onPressed: () => setState(() =>
+                              obscurePasswordConfirm = !obscurePasswordConfirm),
+                        ),
+                      ),
+                      onChanged: (val) {
+                        setState(() => passwordConfirm = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () async {
+                        setState(() => error = '');
+                        if (_formKey.currentState.validate()) {
+                          setState(() => loading = true);
+                          dynamic registration =
+                              await _auth.register(email, password);
+                          setState(() => loading = false);
+                          if (registration is String) {
+                            setState(() => error = registration);
+                          }
+                        }
+                      },
+                    ),
+                    SizedBox(height: 12.0),
+                    Text(
+                      error,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
                 ),
-                onChanged: (val) {
-                  setState(() => password = val);
-                },
               ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                initialValue: passwordConfirm,
-                validator: (val) {
-                  if (val.isEmpty) {
-                    return 'This is a required field.';
-                  }
-                  if (val != password) {
-                    return 'The passwords do not match.';
-                  }
-                  return null;
-                },
-                obscureText: obscurePasswordConfirm,
-                decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  suffix: FlatButton(
-                    child: Text('Show'),
-                    onPressed: () => setState(
-                        () => obscurePasswordConfirm = !obscurePasswordConfirm),
-                  ),
-                ),
-                onChanged: (val) {
-                  setState(() => passwordConfirm = val);
-                },
-              ),
-              SizedBox(height: 20.0),
-              RaisedButton(
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                  'Register',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                onPressed: () async {
-                  setState(() => error = '');
-                  if (_formKey.currentState.validate()) {
-                    setState(() => loading = true);
-                    dynamic registration =
-                        await _auth.register(email, password);
-                    setState(() => loading = false);
-                    if (registration is String) {
-                      setState(() => error = registration);
-                    }
-                  }
-                },
-              ),
-              SizedBox(height: 12.0),
-              Text(
-                error,
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

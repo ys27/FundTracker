@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Fund Tracker: Login'),
+        title: Text('Login'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -61,6 +61,7 @@ class _LoginState extends State<Login> {
                       decoration: InputDecoration(
                         hintText: 'Email',
                       ),
+                      keyboardType: TextInputType.emailAddress,
                       onChanged: (val) {
                         setState(() => email = val);
                       },
