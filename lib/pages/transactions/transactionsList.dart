@@ -11,9 +11,9 @@ class TransactionsList extends StatefulWidget {
 class _TransactionsListState extends State<TransactionsList> {
   @override
   Widget build(BuildContext context) {
-    final transactions = Provider.of<List<Transaction>>(context);
+    final transactions = Provider.of<List<Transaction>>(context) ?? [];
 
-    if (transactions == null) {
+    if (transactions.length == 0) {
       return Center(
         child:
             Text('No transactions available. Add one using the button below.'),

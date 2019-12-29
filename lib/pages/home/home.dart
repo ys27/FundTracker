@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/transactions/addTransaction.dart';
@@ -19,10 +18,7 @@ class Home extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) {
-          return StreamProvider<List<Category>>.value(
-            value: DatabaseService(uid: user.uid).categories,
-            child: AddTransaction(),
-          );
+          return AddTransaction();
         },
       );
     }

@@ -32,9 +32,17 @@ class DatabaseService {
         .map(_transactionsListFromSnapshot);
   }
 
-  // Future addTransaction(Transaction tx) async {
-  //   return await usersCollection.document(uid).collection('transactions')
-  // }
+  Future addTransaction(Transaction tx) async {
+    DocumentReference ref =
+        await usersCollection.document(uid).collection('transactions').add({
+      'date': tx.date,
+      'isExpense': tx.isExpense,
+      'payee': tx.payee,
+      'amount': tx.amount,
+      'category': tx.category
+    });
+    return ref;
+  }
 
   List<Category> _categoriesListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((category) {

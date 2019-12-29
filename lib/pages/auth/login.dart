@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
   String email = '';
   String password = '';
   String error = '';
-  bool loading = false;
+  bool isLoading = false;
   bool obscurePassword = true;
 
   @override
@@ -37,7 +37,7 @@ class _LoginState extends State<Login> {
           )
         ],
       ),
-      body: loading
+      body: isLoading
           ? Loader()
           : Container(
               padding: EdgeInsets.symmetric(
@@ -100,9 +100,9 @@ class _LoginState extends State<Login> {
                       onPressed: () async {
                         setState(() => error = '');
                         if (_formKey.currentState.validate()) {
-                          setState(() => loading = true);
+                          setState(() => isLoading = true);
                           dynamic login = await _auth.logIn(email, password);
-                          setState(() => loading = false);
+                          setState(() => isLoading = false);
                           if (login is String) {
                             setState(() => error = login);
                           }

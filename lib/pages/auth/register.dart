@@ -20,7 +20,7 @@ class _RegisterState extends State<Register> {
   String password = '';
   String passwordConfirm = '';
   String error = '';
-  bool loading = false;
+  bool isLoading = false;
   bool obscurePassword = true;
   bool obscurePasswordConfirm = true;
 
@@ -40,7 +40,7 @@ class _RegisterState extends State<Register> {
           )
         ],
       ),
-      body: loading
+      body: isLoading
           ? Loader()
           : Container(
               padding: EdgeInsets.symmetric(
@@ -128,10 +128,10 @@ class _RegisterState extends State<Register> {
                       onPressed: () async {
                         setState(() => error = '');
                         if (_formKey.currentState.validate()) {
-                          setState(() => loading = true);
+                          setState(() => isLoading = true);
                           dynamic registration =
                               await _auth.register(email, password);
-                          setState(() => loading = false);
+                          setState(() => isLoading = false);
                           if (registration is String) {
                             setState(() => error = registration);
                           }
