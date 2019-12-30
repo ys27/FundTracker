@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/pages/auth/login.dart';
 import 'package:fund_tracker/pages/auth/register.dart';
 
-class Auth extends StatefulWidget {
+class AuthWrapper extends StatefulWidget {
   @override
-  _AuthState createState() => _AuthState();
+  _AuthWrapperState createState() => _AuthWrapperState();
 }
 
-class _AuthState extends State<Auth> {
+class _AuthWrapperState extends State<AuthWrapper> {
 
   bool showLogin = true;
 

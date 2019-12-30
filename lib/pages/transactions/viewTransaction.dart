@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +40,8 @@ class _ViewTransactionState extends State<ViewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-    
+    final user = Provider.of<FirebaseUser>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('View Transaction'),
@@ -78,7 +78,7 @@ class _ViewTransactionState extends State<ViewTransaction> {
               List<Category> categories = snapshot.data;
               return Form(
                 key: _formKey,
-                child: Column(
+                child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     Row(

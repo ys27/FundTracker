@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
+import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 
 class Register extends StatefulWidget {
@@ -49,12 +49,11 @@ class _RegisterState extends State<Register> {
               ),
               child: Form(
                 key: _formKey,
-                child: Column(
+                child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: email,
-                      // autofocus: true,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'An email is required.';
@@ -134,6 +133,8 @@ class _RegisterState extends State<Register> {
                           setState(() => isLoading = false);
                           if (registration is String) {
                             setState(() => error = registration);
+                          } else {
+                            DatabaseService(uid: registration.uid).addDefaultCategories();
                           }
                         }
                       },

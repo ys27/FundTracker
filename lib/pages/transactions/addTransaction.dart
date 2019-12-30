@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +24,7 @@ class _AddTransactionState extends State<AddTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<FirebaseUser>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +61,7 @@ class _AddTransactionState extends State<AddTransaction> {
               List<Category> categories = snapshot.data;
               return Form(
                 key: _formKey,
-                child: Column(
+                child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     Row(
@@ -76,9 +76,11 @@ class _AddTransactionState extends State<AddTransaction> {
                             child: Text(
                               'Income',
                               style: TextStyle(
-                                  fontWeight: _isExpense
-                                      ? FontWeight.normal
-                                      : FontWeight.bold),
+                                fontWeight: _isExpense
+                                    ? FontWeight.normal
+                                    : FontWeight.bold,
+                                color: _isExpense ? Colors.black : Colors.white,
+                              ),
                             ),
                             onPressed: () => setState(() => _isExpense = false),
                           ),
@@ -92,9 +94,11 @@ class _AddTransactionState extends State<AddTransaction> {
                             child: Text(
                               'Expense',
                               style: TextStyle(
-                                  fontWeight: _isExpense
-                                      ? FontWeight.bold
-                                      : FontWeight.normal),
+                                fontWeight: _isExpense
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: _isExpense ? Colors.white : Colors.black,
+                              ),
                             ),
                             onPressed: () => setState(() => _isExpense = true),
                           ),

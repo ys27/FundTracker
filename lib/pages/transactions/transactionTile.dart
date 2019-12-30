@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/transactions/viewTransaction.dart';
 import 'package:fund_tracker/services/database.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +13,7 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<FirebaseUser>(context);
 
     return Padding(
       padding: EdgeInsets.only(top: 5.0),
@@ -47,16 +47,24 @@ class TransactionTile extends StatelessWidget {
                   '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}'),
               PopupMenuButton(
                 child: Icon(Icons.more_vert),
-                onSelected: (val) {
+                onSelected: (val) async {
                   if (val == MenuItems.Edit) {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return ViewTransaction();
+                        return ViewTransaction(
+                          tid: transaction.tid,
+                          date: transaction.date,
+                          isExpense: transaction.isExpense,
+                          payee: transaction.payee,
+                          amount: transaction.amount,
+                          category: transaction.category,
+                        );
                       },
                     );
                   } else if (val == MenuItems.Delete) {
-                    DatabaseService(uid: user.uid).deleteTransaction(transaction);
+                    await DatabaseService(uid: user.uid)
+                        .deleteTransaction(transaction);
                   }
                 },
                 itemBuilder: (context) {

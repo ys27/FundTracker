@@ -1,23 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:fund_tracker/models/user.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User _convertToUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
-  }
-
-  Stream<User> get user {
-    return _auth.onAuthStateChanged.map(_convertToUser);
+  Stream<FirebaseUser> get user {
+    return _auth.onAuthStateChanged;
   }
 
   Future register(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return _convertToUser(result.user);
+      return result.user;
     } catch (e) {
       print(e.toString());
       return e.message;
@@ -28,7 +22,7 @@ class AuthService {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      return _convertToUser(result.user);
+      return result.user;
     } catch (e) {
       print(e.toString());
       return e.message;

@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
               ),
               child: Form(
                 key: _formKey,
-                child: Column(
+                child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     TextFormField(
