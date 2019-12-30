@@ -25,25 +25,37 @@ class _CategoriesState extends State<Categories> {
             if (snapshot.hasData) {
               List<Category> categories = snapshot.data;
               return Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20.0,
-                    horizontal: 10.0,
-                  ),
-                  child: ListView(
-                    children: categories.map((category) {
-                      return CheckboxListTile(
-                        title: Text(category.name),
-                        value: category.enabled,
-                        secondary: Icon(IconData(category.icon,
-                            fontFamily: 'MaterialIcons')),
-                        onChanged: (val) {
-                          setState(() => category.enabled = val);
-                          print(category.enabled);
-                          // DatabaseService(uid: user.uid).updateCategory
-                        },
-                      );
-                    }).toList(),
-                  ));
+                padding: EdgeInsets.symmetric(
+                  vertical: 20.0,
+                  horizontal: 10.0,
+                ),
+                child: ListView(
+                  children: <Widget>[
+                        Center(
+                          child: Text(
+                            'Categories are also available in preferences.',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20.0),
+                      ] +
+                      categories.map((category) {
+                        return CheckboxListTile(
+                          title: Text(category.name),
+                          value: category.enabled,
+                          secondary: Icon(IconData(category.icon,
+                              fontFamily: 'MaterialIcons')),
+                          onChanged: (val) {
+                            setState(() => category.enabled = val);
+                            print(category.enabled);
+                            // DatabaseService(uid: user.uid).updateCategory
+                          },
+                        );
+                      }).toList(),
+                ),
+              );
             } else {
               return Loader();
             }

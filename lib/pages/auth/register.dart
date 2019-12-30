@@ -130,11 +130,14 @@ class _RegisterState extends State<Register> {
                           setState(() => isLoading = true);
                           dynamic registration =
                               await _auth.register(email, password);
-                          setState(() => isLoading = false);
                           if (registration is String) {
-                            setState(() => error = registration);
+                            setState(() {
+                              isLoading = false;
+                              error = registration;
+                            });
                           } else {
-                            DatabaseService(uid: registration.uid).addDefaultCategories();
+                            DatabaseService(uid: registration.uid)
+                                .addDefaultCategories();
                           }
                         }
                       },
