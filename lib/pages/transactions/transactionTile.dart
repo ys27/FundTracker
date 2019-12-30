@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/transactions/viewTransaction.dart';
+import 'package:fund_tracker/pages/transactions/editTransaction.dart';
 import 'package:fund_tracker/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +23,7 @@ class TransactionTile extends StatelessWidget {
           onTap: () => showDialog(
             context: context,
             builder: (context) {
-              return ViewTransaction(
+              return EditTransaction(
                 tid: transaction.tid,
                 date: transaction.date,
                 isExpense: transaction.isExpense,
@@ -52,7 +52,7 @@ class TransactionTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return ViewTransaction(
+                        return EditTransaction(
                           tid: transaction.tid,
                           date: transaction.date,
                           isExpense: transaction.isExpense,

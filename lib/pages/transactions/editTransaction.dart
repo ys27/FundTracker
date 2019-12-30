@@ -6,7 +6,7 @@ import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
-class ViewTransaction extends StatefulWidget {
+class EditTransaction extends StatefulWidget {
   final String tid;
   final DateTime date;
   final bool isExpense;
@@ -14,7 +14,7 @@ class ViewTransaction extends StatefulWidget {
   final double amount;
   final String category;
 
-  ViewTransaction(
+  EditTransaction(
       {this.tid,
       this.date,
       this.isExpense,
@@ -23,10 +23,10 @@ class ViewTransaction extends StatefulWidget {
       this.category});
 
   @override
-  _ViewTransactionState createState() => _ViewTransactionState();
+  _EditTransactionState createState() => _EditTransactionState();
 }
 
-class _ViewTransactionState extends State<ViewTransaction> {
+class _EditTransactionState extends State<EditTransaction> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime _date;
@@ -44,7 +44,7 @@ class _ViewTransactionState extends State<ViewTransaction> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('View Transaction'),
+        title: Text('Edit Transaction'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
