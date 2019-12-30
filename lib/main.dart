@@ -17,6 +17,7 @@ class App extends StatelessWidget {
           primaryColor: Colors.red[900],
           accentColor: Colors.blueGrey,
           fontFamily: 'Andika',
+          backgroundColor: Colors.white,
         ),
       ),
     );

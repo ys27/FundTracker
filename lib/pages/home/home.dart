@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/transactions/addTransaction.dart';
+import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/drawer.dart';
@@ -24,7 +24,14 @@ class Home extends StatelessWidget {
           onPressed: () => showDialog(
             context: context,
             builder: (context) {
-              return AddTransaction();
+              return TransactionForm(
+                tid: null,
+                date: DateTime.now(),
+                isExpense: true,
+                payee: '',
+                amount: null,
+                category: null,
+              );
             },
           ),
           child: Icon(Icons.add),

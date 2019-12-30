@@ -45,8 +45,12 @@ class _CategoriesState extends State<Categories> {
                         return CheckboxListTile(
                           title: Text(category.name),
                           value: category.enabled,
-                          secondary: Icon(IconData(category.icon,
-                              fontFamily: 'MaterialIcons')),
+                          secondary: Icon(
+                            IconData(
+                              category.icon,
+                              fontFamily: 'MaterialIcons',
+                            ),
+                          ),
                           onChanged: (val) {
                             setState(() => category.enabled = val);
                             print(category.enabled);

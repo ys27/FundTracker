@@ -60,11 +60,11 @@ class DatabaseService {
     });
   }
 
-  Future deleteTransaction(Transaction tx) async {
+  Future deleteTransaction(String tid) async {
     return await usersCollection
         .document(uid)
         .collection('transactions')
-        .document(tx.tid)
+        .document(tid)
         .delete();
   }
 
@@ -84,6 +84,15 @@ class DatabaseService {
     return usersCollection
         .document(uid)
         .collection('categories')
+        .snapshots()
+        .map(_categoriesListFromSnapshot);
+  }
+
+  Stream<List<Category>> findCategory(categoryName) {
+    return usersCollection
+        .document(uid)
+        .collection('categories')
+        .where('name', isEqualTo: categoryName)
         .snapshots()
         .map(_categoriesListFromSnapshot);
   }
@@ -116,7 +125,11 @@ class DatabaseService {
   }
 
   Future addUserInfo(UserInfo userInfo) async {
-    return await usersCollection.document(uid).collection('userInfo').document(uid).setData({
+    return await usersCollection
+        .document(uid)
+        .collection('userInfo')
+        .document(uid)
+        .setData({
       'email': userInfo.email,
       'fullname': userInfo.fullname,
     });

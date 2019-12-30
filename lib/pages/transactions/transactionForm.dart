@@ -6,7 +6,7 @@ import 'package:fund_tracker/services/database.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
-class EditTransaction extends StatefulWidget {
+class TransactionForm extends StatefulWidget {
   final String tid;
   final DateTime date;
   final bool isExpense;
@@ -14,19 +14,20 @@ class EditTransaction extends StatefulWidget {
   final double amount;
   final String category;
 
-  EditTransaction(
-      {this.tid,
-      this.date,
-      this.isExpense,
-      this.payee,
-      this.amount,
-      this.category});
+  TransactionForm({
+    this.tid,
+    this.date,
+    this.isExpense,
+    this.payee,
+    this.amount,
+    this.category,
+  });
 
   @override
-  _EditTransactionState createState() => _EditTransactionState();
+  _TransactionFormState createState() => _TransactionFormState();
 }
 
-class _EditTransactionState extends State<EditTransaction> {
+class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime _date;
@@ -41,30 +42,25 @@ class _EditTransactionState extends State<EditTransaction> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
+    final isEditMode = widget.tid != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Transaction'),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            child: Text('Save'),
-            onPressed: () async {
-              if (_formKey.currentState.validate()) {
-                Transaction tx = Transaction(
-                    tid: widget.tid,
-                    date: _date ?? widget.date,
-                    isExpense: _isExpense ?? widget.isExpense,
-                    payee: _payee ?? widget.payee,
-                    amount: _amount ?? widget.amount,
-                    category: _category ?? widget.category);
-                setState(() => isLoading = true);
-                await DatabaseService(uid: user.uid).updateTransaction(tx);
-                Navigator.pop(context);
-              }
-            },
-          )
-        ],
+        title: Text(isEditMode ? 'Edit Transaction' : 'Add Transaction'),
+        actions: isEditMode
+            ? <Widget>[
+                FlatButton(
+                  textColor: Colors.white,
+                  child: Icon(Icons.delete),
+                  onPressed: () async {
+                    setState(() => isLoading = true);
+                    await DatabaseService(uid: user.uid)
+                        .deleteTransaction(widget.tid);
+                    Navigator.pop(context);
+                  },
+                )
+              ]
+            : null,
       ),
       body: Container(
         padding: EdgeInsets.symmetric(
@@ -95,7 +91,10 @@ class _EditTransactionState extends State<EditTransaction> {
                               style: TextStyle(
                                   fontWeight: (_isExpense ?? widget.isExpense)
                                       ? FontWeight.normal
-                                      : FontWeight.bold),
+                                      : FontWeight.bold,
+                                  color: (_isExpense ?? widget.isExpense)
+                                      ? Colors.black
+                                      : Colors.white),
                             ),
                             onPressed: () => setState(() => _isExpense = false),
                           ),
@@ -109,9 +108,13 @@ class _EditTransactionState extends State<EditTransaction> {
                             child: Text(
                               'Expense',
                               style: TextStyle(
-                                  fontWeight: (_isExpense ?? widget.isExpense)
-                                      ? FontWeight.bold
-                                      : FontWeight.normal),
+                                fontWeight: (_isExpense ?? widget.isExpense)
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: (_isExpense ?? widget.isExpense)
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                             ),
                             onPressed: () => setState(() => _isExpense = true),
                           ),
@@ -150,6 +153,9 @@ class _EditTransactionState extends State<EditTransaction> {
                         }
                         return null;
                       },
+                      decoration: InputDecoration(
+                        hintText: 'Payee',
+                      ),
                       textCapitalization: TextCapitalization.words,
                       onChanged: (val) {
                         setState(() => _payee = val);
@@ -157,7 +163,9 @@ class _EditTransactionState extends State<EditTransaction> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: widget.amount.toString(),
+                      initialValue: widget.amount != null
+                          ? widget.amount.toStringAsFixed(2)
+                          : null,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Please enter an amount.';
@@ -168,6 +176,9 @@ class _EditTransactionState extends State<EditTransaction> {
                         }
                         return null;
                       },
+                      decoration: InputDecoration(
+                        hintText: 'Amount',
+                      ),
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
                         setState(() => _amount = double.parse(val));
@@ -183,13 +194,34 @@ class _EditTransactionState extends State<EditTransaction> {
                       },
                       value: (_category ?? widget.category) ??
                           (categories.length > 0
-                              ? categories[0].name
+                              ?
+                              // ListTile(
+                              //     leading: CircleAvatar(
+                              //       child: Icon(IconData(
+                              //         categories[0].icon,
+                              //         fontFamily: 'MaterialIcons',
+                              //       )),
+                              //       radius: 25.0,
+                              //     ),
+                              //     title: Text(categories[0].name),
+                              //   )
+                              categories[0].name
                               : noCategories),
                       items: categories.length > 0
                           ? categories.map((category) {
                               return DropdownMenuItem(
                                 value: category.name,
-                                child: Text('${category.name}'),
+                                child: Text(category.name),
+                                // child: ListTile(
+                                //   leading: CircleAvatar(
+                                //     child: Icon(IconData(
+                                //       category.icon,
+                                //       fontFamily: 'MaterialIcons',
+                                //     )),
+                                //     radius: 25.0,
+                                //   ),
+                                //   title: Text(category.name),
+                                // ),
                               );
                             }).toList()
                           : [
@@ -202,6 +234,32 @@ class _EditTransactionState extends State<EditTransaction> {
                         setState(() => _category = val);
                       },
                     ),
+                    SizedBox(height: 20.0),
+                    RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        isEditMode ? 'Save' : 'Add',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          Transaction tx = Transaction(
+                              tid: widget.tid,
+                              date: _date ?? widget.date,
+                              isExpense: _isExpense ?? widget.isExpense,
+                              payee: _payee ?? widget.payee,
+                              amount: _amount ?? widget.amount,
+                              category: _category ?? widget.category);
+                          setState(() => isLoading = true);
+                          isEditMode
+                              ? await DatabaseService(uid: user.uid)
+                                  .updateTransaction(tx)
+                              : await DatabaseService(uid: user.uid)
+                                  .addTransaction(tx);
+                          Navigator.pop(context);
+                        }
+                      },
+                    )
                   ],
                 ),
               );

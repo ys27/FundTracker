@@ -1,4 +1,4 @@
-final List<Map<String, dynamic>> CATEGORIES = [
+const List<Map<String, dynamic>> CATEGORIES = [
   {'name': 'Food & Restaurants', 'icon': 58732, 'enabled': true},
   {'name': 'Cafe & Bars', 'icon': 58688, 'enabled': true},
   {'name': 'Hobbies', 'icon': 58378, 'enabled': true},
