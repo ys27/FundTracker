@@ -166,7 +166,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       initialValue: widget.amount != null
                           ? widget.amount.toStringAsFixed(2)
                           : null,
-                      autovalidate: _amount.toString().isNotEmpty,
+                      autovalidate: _amount != null,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Please enter an amount.';
