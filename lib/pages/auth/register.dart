@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/services/auth.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/loader.dart';
 
 class Register extends StatefulWidget {
@@ -61,7 +61,7 @@ class _RegisterState extends State<Register> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Email',
+                        labelText: 'Email',
                       ),
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (val) {
@@ -79,7 +79,7 @@ class _RegisterState extends State<Register> {
                       },
                       obscureText: obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        labelText: 'Password',
                         suffix: FlatButton(
                           child: Text('Show'),
                           onPressed: () => setState(
@@ -104,7 +104,7 @@ class _RegisterState extends State<Register> {
                       },
                       obscureText: obscurePasswordConfirm,
                       decoration: InputDecoration(
-                        hintText: 'Confirm Password',
+                        labelText: 'Confirm Password',
                         suffix: FlatButton(
                           child: Text('Show'),
                           onPressed: () => setState(() =>
@@ -136,7 +136,7 @@ class _RegisterState extends State<Register> {
                               error = registration;
                             });
                           } else {
-                            DatabaseService(uid: registration.uid)
+                            FireDBService(uid: registration.uid)
                                 .addDefaultCategories();
                           }
                         }

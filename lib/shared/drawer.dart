@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/userInfo.dart';
 import 'package:fund_tracker/services/auth.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:provider/provider.dart';
 
 import 'loader.dart';
@@ -18,7 +18,7 @@ class MainDrawer extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           StreamBuilder<UserInfo>(
-              stream: DatabaseService(uid: user.uid).userInfo,
+              stream: FireDBService(uid: user.uid).userInfo,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   UserInfo userInfo = snapshot.data;

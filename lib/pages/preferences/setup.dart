@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/userInfo.dart';
 import 'package:fund_tracker/pages/preferences/categories.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +31,9 @@ class _SetupState extends State<Setup> {
             onPressed: () async {
               if (_formKey.currentState.validate()) {
                 UserInfo userInfo =
-                    UserInfo(fullname: _fullname, email: user.email);
+                    UserInfo(uid: user.uid, fullname: _fullname, email: user.email);
                 setState(() => isLoading = true);
-                await DatabaseService(uid: user.uid).addUserInfo(userInfo);
+                await FireDBService(uid: user.uid).addUserInfo(userInfo);
               }
             },
           )
@@ -67,7 +67,7 @@ class _SetupState extends State<Setup> {
                             return null;
                           },
                           decoration: InputDecoration(
-                            hintText: 'Full Name',
+                            labelText: 'Full Name',
                           ),
                           textCapitalization: TextCapitalization.words,
                           onChanged: (val) {

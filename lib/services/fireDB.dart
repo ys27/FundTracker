@@ -4,10 +4,10 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/userInfo.dart';
 import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 
-class DatabaseService {
+class FireDBService {
   final String uid;
 
-  DatabaseService({this.uid});
+  FireDBService({this.uid});
 
   final CollectionReference usersCollection =
       Firestore.instance.collection('users');
@@ -110,6 +110,7 @@ class DatabaseService {
   //User Info
   UserInfo _userInfoFromSnapshot(DocumentSnapshot snapshot) {
     return UserInfo(
+      uid: uid,
       email: snapshot.data['email'],
       fullname: snapshot.data['fullname'],
     );

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
@@ -54,7 +54,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    await DatabaseService(uid: user.uid)
+                    await FireDBService(uid: user.uid)
                         .deleteTransaction(widget.tid);
                     Navigator.pop(context);
                   },
@@ -68,7 +68,7 @@ class _TransactionFormState extends State<TransactionForm> {
           horizontal: 50.0,
         ),
         child: StreamBuilder<List<Category>>(
-          stream: DatabaseService(uid: user.uid).categories,
+          stream: FireDBService(uid: user.uid).categories,
           builder: (context, snapshot) {
             if (snapshot.hasData && !isLoading) {
               List<Category> categories = snapshot.data;
@@ -154,7 +154,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Payee',
+                        labelText: 'Payee',
                       ),
                       textCapitalization: TextCapitalization.words,
                       onChanged: (val) {
@@ -177,7 +177,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Amount',
+                        labelText: 'Amount',
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
@@ -252,9 +252,9 @@ class _TransactionFormState extends State<TransactionForm> {
                               category: _category ?? widget.category);
                           setState(() => isLoading = true);
                           isEditMode
-                              ? await DatabaseService(uid: user.uid)
+                              ? await FireDBService(uid: user.uid)
                                   .updateTransaction(tx)
-                              : await DatabaseService(uid: user.uid)
+                              : await FireDBService(uid: user.uid)
                                   .addTransaction(tx);
                           Navigator.pop(context);
                         }

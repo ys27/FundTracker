@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Email',
+                        labelText: 'Email'
                       ),
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (val) {
@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
                       },
                       obscureText: obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        labelText: 'Password',
                         suffix: FlatButton(
                           child: Text('Show'),
                           onPressed: () => setState(

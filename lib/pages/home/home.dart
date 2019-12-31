@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +13,7 @@ class Home extends StatelessWidget {
     final user = Provider.of<FirebaseUser>(context);
 
     return StreamProvider<List<Transaction>>.value(
-      value: DatabaseService(uid: user.uid).transactions,
+      value: FireDBService(uid: user.uid).transactions,
       child: Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(

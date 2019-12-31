@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:provider/provider.dart';
 
 enum MenuItems { Edit, Delete }
@@ -35,7 +35,7 @@ class TransactionTile extends StatelessWidget {
             },
           ),
           leading: StreamBuilder<List<Category>>(
-              stream: DatabaseService(uid: user.uid)
+              stream: FireDBService(uid: user.uid)
                   .findCategory(transaction.category),
               builder: (context, snapshot) {
                 return CircleAvatar(
@@ -75,7 +75,7 @@ class TransactionTile extends StatelessWidget {
                       },
                     );
                   } else if (val == MenuItems.Delete) {
-                    await DatabaseService(uid: user.uid)
+                    await FireDBService(uid: user.uid)
                         .deleteTransaction(transaction.tid);
                   }
                 },

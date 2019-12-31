@@ -4,7 +4,7 @@ import 'package:fund_tracker/models/userInfo.dart';
 import 'package:fund_tracker/pages/auth/authWrapper.dart';
 import 'package:fund_tracker/pages/home/home.dart';
 import 'package:fund_tracker/pages/preferences/setup.dart';
-import 'package:fund_tracker/services/database.dart';
+import 'package:fund_tracker/services/fireDB.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
@@ -16,7 +16,7 @@ class Wrapper extends StatelessWidget {
       return AuthWrapper();
     } else {
       return StreamBuilder<UserInfo>(
-        stream: DatabaseService(uid: user.uid).userInfo,
+        stream: FireDBService(uid: user.uid).userInfo,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Home();
