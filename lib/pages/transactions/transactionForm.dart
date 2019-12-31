@@ -36,8 +36,8 @@ class _TransactionFormState extends State<TransactionForm> {
   double _amount;
   String _category;
 
-  String noCategories = 'NA';
-  bool isLoading = false;
+  String _noCategories = 'NA';
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   textColor: Colors.white,
                   child: Icon(Icons.delete),
                   onPressed: () async {
-                    setState(() => isLoading = true);
+                    setState(() => _isLoading = true);
                     await FireDBService(uid: user.uid)
                         .deleteTransaction(widget.tid);
                     Navigator.pop(context);
@@ -70,7 +70,7 @@ class _TransactionFormState extends State<TransactionForm> {
         child: StreamBuilder<List<Category>>(
           stream: FireDBService(uid: user.uid).categories,
           builder: (context, snapshot) {
-            if (snapshot.hasData && !isLoading) {
+            if (snapshot.hasData && !_isLoading) {
               List<Category> categories = snapshot.data;
               return Form(
                 key: _formKey,
@@ -166,6 +166,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       initialValue: widget.amount != null
                           ? widget.amount.toStringAsFixed(2)
                           : null,
+                      autovalidate: _amount.toString().isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Please enter an amount.';
@@ -187,7 +188,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     SizedBox(height: 20.0),
                     DropdownButtonFormField(
                       validator: (val) {
-                        if (val == noCategories) {
+                        if (val == _noCategories) {
                           return 'Add categories in preferences.';
                         }
                         return null;
@@ -206,7 +207,7 @@ class _TransactionFormState extends State<TransactionForm> {
                               //     title: Text(categories[0].name),
                               //   )
                               categories[0].name
-                              : noCategories),
+                              : _noCategories),
                       items: categories.length > 0
                           ? categories.map((category) {
                               return DropdownMenuItem(
@@ -226,8 +227,8 @@ class _TransactionFormState extends State<TransactionForm> {
                             }).toList()
                           : [
                               DropdownMenuItem(
-                                value: noCategories,
-                                child: Text(noCategories),
+                                value: _noCategories,
+                                child: Text(_noCategories),
                               )
                             ],
                       onChanged: (val) {
@@ -250,7 +251,7 @@ class _TransactionFormState extends State<TransactionForm> {
                               payee: _payee ?? widget.payee,
                               amount: _amount ?? widget.amount,
                               category: _category ?? widget.category);
-                          setState(() => isLoading = true);
+                          setState(() => _isLoading = true);
                           isEditMode
                               ? await FireDBService(uid: user.uid)
                                   .updateTransaction(tx)

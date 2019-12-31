@@ -18,13 +18,13 @@ class _AuthFormState extends State<AuthForm> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String email = '';
-  String password = '';
-  String passwordConfirm = '';
-  String error = '';
-  bool isLoading = false;
-  bool obscurePassword = true;
-  bool obscurePasswordConfirm = true;
+  String _email = '';
+  String _password = '';
+  String _passwordConfirm = '';
+  String _error = '';
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscurePasswordConfirm = true;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _AuthFormState extends State<AuthForm> {
           )
         ],
       ),
-      body: isLoading
+      body: _isLoading
           ? Loader()
           : Container(
               padding: EdgeInsets.symmetric(
@@ -57,8 +57,8 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: email,
-                      autovalidate: email.isNotEmpty,
+                      initialValue: _email,
+                      autovalidate: _email.isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'An email is required.';
@@ -75,20 +75,20 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (val) {
-                        setState(() => email = val);
+                        setState(() => _email = val);
                       },
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: password,
-                      autovalidate: password.isNotEmpty,
+                      initialValue: _password,
+                      autovalidate: _password.isNotEmpty,
                       validator: (val) {
                         if (val.length < 6) {
                           return 'The password must be 6 or more characters.';
                         }
                         return null;
                       },
-                      obscureText: obscurePassword,
+                      obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         suffix: ButtonTheme(
@@ -96,30 +96,30 @@ class _AuthFormState extends State<AuthForm> {
                           child: FlatButton(
                             child: Text('Show'),
                             onPressed: () => setState(
-                                () => obscurePassword = !obscurePassword),
+                                () => _obscurePassword = !_obscurePassword),
                           ),
                         ),
                       ),
                       onChanged: (val) {
-                        setState(() => password = val);
+                        setState(() => _password = val);
                       },
                     ),
                     isLogin ? Container() : SizedBox(height: 20.0),
                     isLogin
                         ? Container()
                         : TextFormField(
-                            initialValue: passwordConfirm,
-                            autovalidate: passwordConfirm.isNotEmpty,
+                            initialValue: _passwordConfirm,
+                            autovalidate: _passwordConfirm.isNotEmpty,
                             validator: (val) {
                               if (val.isEmpty) {
                                 return 'This is a required field.';
                               }
-                              if (val != password) {
+                              if (val != _password) {
                                 return 'The passwords do not match.';
                               }
                               return null;
                             },
-                            obscureText: obscurePasswordConfirm,
+                            obscureText: _obscurePasswordConfirm,
                             decoration: InputDecoration(
                               labelText: 'Confirm Password',
                               suffix: ButtonTheme(
@@ -127,13 +127,13 @@ class _AuthFormState extends State<AuthForm> {
                                 child: FlatButton(
                                   child: Text('Show'),
                                   onPressed: () => setState(() =>
-                                      obscurePasswordConfirm =
-                                          !obscurePasswordConfirm),
+                                      _obscurePasswordConfirm =
+                                          !_obscurePasswordConfirm),
                                 ),
                               ),
                             ),
                             onChanged: (val) {
-                              setState(() => passwordConfirm = val);
+                              setState(() => _passwordConfirm = val);
                             },
                           ),
                     SizedBox(height: 20.0),
@@ -146,16 +146,16 @@ class _AuthFormState extends State<AuthForm> {
                         ),
                       ),
                       onPressed: () async {
-                        setState(() => error = '');
+                        setState(() => _error = '');
                         if (_formKey.currentState.validate()) {
-                          setState(() => isLoading = true);
+                          setState(() => _isLoading = true);
                           dynamic result = isLogin
-                              ? await _auth.logIn(email, password)
-                              : await _auth.register(email, password);
+                              ? await _auth.logIn(_email, _password)
+                              : await _auth.register(_email, _password);
                           if (result is String) {
                             setState(() {
-                              isLoading = false;
-                              error = result;
+                              _isLoading = false;
+                              _error = result;
                             });
                           } else if (!isLogin) {
                             FireDBService(uid: result.uid)
@@ -166,7 +166,7 @@ class _AuthFormState extends State<AuthForm> {
                     ),
                     SizedBox(height: 12.0),
                     Text(
-                      error,
+                      _error,
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 14.0,
