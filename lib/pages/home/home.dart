@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
         ),
         body: tabItems[_selectedIndex],
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
           onPressed: () => showDialog(
             context: context,
             builder: (context) {
