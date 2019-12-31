@@ -58,7 +58,7 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: email,
-                      autovalidate: true,
+                      autovalidate: email.isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'An email is required.';
@@ -81,7 +81,7 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: password,
-                      autovalidate: true,
+                      autovalidate: password.isNotEmpty,
                       validator: (val) {
                         if (val.length < 6) {
                           return 'The password must be 6 or more characters.';
@@ -109,7 +109,7 @@ class _AuthFormState extends State<AuthForm> {
                         ? Container()
                         : TextFormField(
                             initialValue: passwordConfirm,
-                            autovalidate: true,
+                            autovalidate: passwordConfirm.isNotEmpty,
                             validator: (val) {
                               if (val.isEmpty) {
                                 return 'This is a required field.';
