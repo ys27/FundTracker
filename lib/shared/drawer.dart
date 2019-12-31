@@ -38,8 +38,8 @@ class MainDrawer extends StatelessWidget {
                 }
               }),
           ListTile(
-            title: Text('Records'),
-            leading: Icon(Icons.receipt),
+            title: Text('Home'),
+            leading: Icon(Icons.home),
           ),
           ListTile(
             title: Text('Preferences'),
