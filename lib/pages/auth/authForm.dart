@@ -94,7 +94,7 @@ class _AuthFormState extends State<AuthForm> {
                         suffix: ButtonTheme(
                           minWidth: 10.0,
                           child: FlatButton(
-                            child: Text('Show'),
+                            child: _obscurePassword ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
                             onPressed: () => setState(
                                 () => _obscurePassword = !_obscurePassword),
                           ),
@@ -125,7 +125,7 @@ class _AuthFormState extends State<AuthForm> {
                               suffix: ButtonTheme(
                                 minWidth: 10.0,
                                 child: FlatButton(
-                                  child: Text('Show'),
+                                  child: _obscurePasswordConfirm ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
                                   onPressed: () => setState(() =>
                                       _obscurePasswordConfirm =
                                           !_obscurePasswordConfirm),
