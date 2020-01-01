@@ -1,4 +1,4 @@
-package com.example.fund_tracker
+package com.ys27.fundTracker
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

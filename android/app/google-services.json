@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:494091289902:android:b991e8b39f4886c87726bf",
+        "mobilesdk_app_id": "1:494091289902:android:6f140d97d367553e7726bf",
         "android_client_info": {
-          "package_name": "com.ys27.fund_tracker"
+          "package_name": "com.ys27.fundTracker"
         }
       },
       "oauth_client": [
@@ -30,6 +30,13 @@
             {
               "client_id": "494091289902-8ua3rmf1gsgbcv2gc8akhfhopqas5ful.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "494091289902-8jdoeufg06m3e0aufn3sifnkt2lqsm96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ys27.fundTracker"
+              }
             }
           ]
         }
