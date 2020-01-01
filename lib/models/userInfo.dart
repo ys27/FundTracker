@@ -1,7 +1,7 @@
 class UserInfo {
-  final String uid;
-  final String email;
-  final String fullname;
+  String uid;
+  String email;
+  String fullname;
 
   UserInfo({ this.uid, this.email, this.fullname });
 }

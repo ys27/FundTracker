@@ -25,12 +25,14 @@ class TransactionTile extends StatelessWidget {
             context: context,
             builder: (context) {
               return TransactionForm(
-                tid: transaction.tid,
-                date: transaction.date,
-                isExpense: transaction.isExpense,
-                payee: transaction.payee,
-                amount: transaction.amount,
-                category: transaction.category,
+                Transaction(
+                  tid: transaction.tid,
+                  date: transaction.date,
+                  isExpense: transaction.isExpense,
+                  payee: transaction.payee,
+                  amount: transaction.amount,
+                  category: transaction.category,
+                ),
               );
             },
           ),
@@ -65,12 +67,14 @@ class TransactionTile extends StatelessWidget {
                       context: context,
                       builder: (context) {
                         return TransactionForm(
-                          tid: transaction.tid,
-                          date: transaction.date,
-                          isExpense: transaction.isExpense,
-                          payee: transaction.payee,
-                          amount: transaction.amount,
-                          category: transaction.category,
+                          Transaction(
+                            tid: transaction.tid,
+                            date: transaction.date,
+                            isExpense: transaction.isExpense,
+                            payee: transaction.payee,
+                            amount: transaction.amount,
+                            category: transaction.category,
+                          ),
                         );
                       },
                     );

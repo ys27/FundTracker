@@ -7,21 +7,9 @@ import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 
 class TransactionForm extends StatefulWidget {
-  final String tid;
-  final DateTime date;
-  final bool isExpense;
-  final String payee;
-  final double amount;
-  final String category;
+  final Transaction tx;
 
-  TransactionForm({
-    this.tid,
-    this.date,
-    this.isExpense,
-    this.payee,
-    this.amount,
-    this.category,
-  });
+  TransactionForm(this.tx);
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -42,7 +30,7 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
-    final isEditMode = widget.tid != null;
+    final isEditMode = widget.tx.tid != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +43,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   onPressed: () async {
                     setState(() => _isLoading = true);
                     await FireDBService(uid: user.uid)
-                        .deleteTransaction(widget.tid);
+                        .deleteTransaction(widget.tx.tid);
                     Navigator.pop(context);
                   },
                 )
@@ -83,16 +71,16 @@ class _TransactionFormState extends State<TransactionForm> {
                         Expanded(
                           child: FlatButton(
                             padding: EdgeInsets.all(15.0),
-                            color: (_isExpense ?? widget.isExpense)
+                            color: (_isExpense ?? widget.tx.isExpense)
                                 ? Colors.grey[100]
                                 : Theme.of(context).primaryColor,
                             child: Text(
                               'Income',
                               style: TextStyle(
-                                  fontWeight: (_isExpense ?? widget.isExpense)
+                                  fontWeight: (_isExpense ?? widget.tx.isExpense)
                                       ? FontWeight.normal
                                       : FontWeight.bold,
-                                  color: (_isExpense ?? widget.isExpense)
+                                  color: (_isExpense ?? widget.tx.isExpense)
                                       ? Colors.black
                                       : Colors.white),
                             ),
@@ -102,16 +90,16 @@ class _TransactionFormState extends State<TransactionForm> {
                         Expanded(
                           child: FlatButton(
                             padding: EdgeInsets.all(15.0),
-                            color: (_isExpense ?? widget.isExpense)
+                            color: (_isExpense ?? widget.tx.isExpense)
                                 ? Theme.of(context).primaryColor
                                 : Colors.grey[100],
                             child: Text(
                               'Expense',
                               style: TextStyle(
-                                fontWeight: (_isExpense ?? widget.isExpense)
+                                fontWeight: (_isExpense ?? widget.tx.isExpense)
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                color: (_isExpense ?? widget.isExpense)
+                                color: (_isExpense ?? widget.tx.isExpense)
                                     ? Colors.white
                                     : Colors.black,
                               ),
@@ -127,7 +115,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                              '${(_date ?? widget.date).year.toString()}.${(_date ?? widget.date).month.toString()}.${(_date ?? widget.date).day.toString()}'),
+                              '${(_date ?? widget.tx.date).year.toString()}.${(_date ?? widget.tx.date).month.toString()}.${(_date ?? widget.tx.date).day.toString()}'),
                           Icon(Icons.date_range),
                         ],
                       ),
@@ -146,7 +134,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: widget.payee,
+                      initialValue: widget.tx.payee,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter a payee or a note.';
@@ -163,8 +151,8 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: widget.amount != null
-                          ? widget.amount.toStringAsFixed(2)
+                      initialValue: widget.tx.amount != null
+                          ? widget.tx.amount.toStringAsFixed(2)
                           : null,
                       autovalidate: _amount != null,
                       validator: (val) {
@@ -193,7 +181,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         }
                         return null;
                       },
-                      value: (_category ?? widget.category) ??
+                      value: (_category ?? widget.tx.category) ??
                           (categories.length > 0
                               ?
                               // ListTile(
@@ -206,24 +194,28 @@ class _TransactionFormState extends State<TransactionForm> {
                               //     ),
                               //     title: Text(categories[0].name),
                               //   )
-                              categories.firstWhere((category) => category.enabled).name
+                              categories
+                                  .firstWhere((category) => category.enabled)
+                                  .name
                               : _noCategories),
                       items: categories.length > 0
-                          ? categories.where((category) => category.enabled).map((category) {
+                          ? categories
+                              .where((category) => category.enabled)
+                              .map((category) {
                               return DropdownMenuItem(
-                                  value: category.name,
-                                  child: Text(category.name),
-                                  // child: ListTile(
-                                  //   leading: CircleAvatar(
-                                  //     child: Icon(IconData(
-                                  //       category.icon,
-                                  //       fontFamily: 'MaterialIcons',
-                                  //     )),
-                                  //     radius: 25.0,
-                                  //   ),
-                                  //   title: Text(category.name),
-                                  // ),
-                                );
+                                value: category.name,
+                                child: Text(category.name),
+                                // child: ListTile(
+                                //   leading: CircleAvatar(
+                                //     child: Icon(IconData(
+                                //       category.icon,
+                                //       fontFamily: 'MaterialIcons',
+                                //     )),
+                                //     radius: 25.0,
+                                //   ),
+                                //   title: Text(category.name),
+                                // ),
+                              );
                             }).toList()
                           : [
                               DropdownMenuItem(
@@ -245,12 +237,12 @@ class _TransactionFormState extends State<TransactionForm> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Transaction tx = Transaction(
-                              tid: widget.tid,
-                              date: _date ?? widget.date,
-                              isExpense: _isExpense ?? widget.isExpense,
-                              payee: _payee ?? widget.payee,
-                              amount: _amount ?? widget.amount,
-                              category: _category ?? widget.category);
+                              tid: widget.tx.tid,
+                              date: _date ?? widget.tx.date,
+                              isExpense: _isExpense ?? widget.tx.isExpense,
+                              payee: _payee ?? widget.tx.payee,
+                              amount: _amount ?? widget.tx.amount,
+                              category: _category ?? widget.tx.category);
                           setState(() => _isLoading = true);
                           isEditMode
                               ? await FireDBService(uid: user.uid)

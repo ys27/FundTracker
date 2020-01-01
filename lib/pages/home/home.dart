@@ -34,14 +34,7 @@ class _HomeState extends State<Home> {
           onPressed: () => showDialog(
             context: context,
             builder: (context) {
-              return TransactionForm(
-                tid: null,
-                date: DateTime.now(),
-                isExpense: true,
-                payee: '',
-                amount: null,
-                category: null,
-              );
+              return TransactionForm(Transaction.empty());
             },
           ),
           child: Icon(Icons.add),
