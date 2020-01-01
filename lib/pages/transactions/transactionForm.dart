@@ -60,6 +60,8 @@ class _TransactionFormState extends State<TransactionForm> {
           builder: (context, snapshot) {
             if (snapshot.hasData && !_isLoading) {
               List<Category> categories = snapshot.data;
+              List<Category> enabledCategories =
+                  categories.where((category) => category.enabled).toList();
               return Form(
                 key: _formKey,
                 child: ListView(
@@ -77,9 +79,10 @@ class _TransactionFormState extends State<TransactionForm> {
                             child: Text(
                               'Income',
                               style: TextStyle(
-                                  fontWeight: (_isExpense ?? widget.tx.isExpense)
-                                      ? FontWeight.normal
-                                      : FontWeight.bold,
+                                  fontWeight:
+                                      (_isExpense ?? widget.tx.isExpense)
+                                          ? FontWeight.normal
+                                          : FontWeight.bold,
                                   color: (_isExpense ?? widget.tx.isExpense)
                                       ? Colors.black
                                       : Colors.white),
@@ -182,26 +185,22 @@ class _TransactionFormState extends State<TransactionForm> {
                         return null;
                       },
                       value: (_category ?? widget.tx.category) ??
-                          (categories.length > 0
+                          (enabledCategories.length > 0
                               ?
                               // ListTile(
                               //     leading: CircleAvatar(
                               //       child: Icon(IconData(
-                              //         categories[0].icon,
+                              //         enabledCategories[0].icon,
                               //         fontFamily: 'MaterialIcons',
                               //       )),
                               //       radius: 25.0,
                               //     ),
                               //     title: Text(categories[0].name),
                               //   )
-                              categories
-                                  .firstWhere((category) => category.enabled)
-                                  .name
+                              enabledCategories.first.name
                               : _noCategories),
-                      items: categories.length > 0
-                          ? categories
-                              .where((category) => category.enabled)
-                              .map((category) {
+                      items: enabledCategories.length > 0
+                          ? enabledCategories.map((category) {
                               return DropdownMenuItem(
                                 value: category.name,
                                 child: Text(category.name),
@@ -237,12 +236,15 @@ class _TransactionFormState extends State<TransactionForm> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Transaction tx = Transaction(
-                              tid: widget.tx.tid,
-                              date: _date ?? widget.tx.date,
-                              isExpense: _isExpense ?? widget.tx.isExpense,
-                              payee: _payee ?? widget.tx.payee,
-                              amount: _amount ?? widget.tx.amount,
-                              category: _category ?? widget.tx.category);
+                            tid: widget.tx.tid,
+                            date: _date ?? widget.tx.date,
+                            isExpense: _isExpense ?? widget.tx.isExpense,
+                            payee: _payee ?? widget.tx.payee,
+                            amount: _amount ?? widget.tx.amount,
+                            category: _category ??
+                                widget.tx.category ??
+                                enabledCategories.first.name,
+                          );
                           setState(() => _isLoading = true);
                           isEditMode
                               ? await FireDBService(uid: user.uid)
