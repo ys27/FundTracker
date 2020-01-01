@@ -1,1 +1,1 @@
-enum AuthMethod { Login, Register }
+enum AuthMethod { SignIn, Register }

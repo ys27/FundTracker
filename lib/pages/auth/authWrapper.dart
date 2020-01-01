@@ -8,19 +8,19 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  AuthMethod method = AuthMethod.Login;
+  AuthMethod method = AuthMethod.SignIn;
 
   void toggleView() {
     setState(() => method =
-        (method == AuthMethod.Login ? AuthMethod.Register : AuthMethod.Login));
+        (method == AuthMethod.SignIn ? AuthMethod.Register : AuthMethod.SignIn));
   }
 
   @override
   Widget build(BuildContext context) {
     switch (method) {
-      case AuthMethod.Login:
+      case AuthMethod.SignIn:
       {
-        return AuthForm(toggleView: toggleView, method: AuthMethod.Login);
+        return AuthForm(toggleView: toggleView, method: AuthMethod.SignIn);
       }
       case AuthMethod.Register:
       {

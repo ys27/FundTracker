@@ -30,16 +30,16 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLogin = widget.method == AuthMethod.Login;
+    bool isRegister = widget.method == AuthMethod.Register;
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(isLogin ? 'Login' : 'Register'),
+        title: Text(isRegister ? 'Register' : 'Login'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            child: Text(isLogin ? 'Register' : 'Back'),
+            child: Text(isRegister ? 'Back' : 'Register'),
             onPressed: () {
               widget.toggleView();
             },
@@ -108,10 +108,9 @@ class _AuthFormState extends State<AuthForm> {
                         setState(() => _password = val);
                       },
                     ),
-                    isLogin ? Container() : SizedBox(height: 20.0),
-                    isLogin
-                        ? Container()
-                        : TextFormField(
+                    isRegister ? SizedBox(height: 20.0) : Container(),
+                    isRegister
+                        ? TextFormField(
                             autovalidate: _passwordConfirm.isNotEmpty,
                             validator: (val) {
                               if (val.isEmpty) {
@@ -140,11 +139,11 @@ class _AuthFormState extends State<AuthForm> {
                             onChanged: (val) {
                               setState(() => _passwordConfirm = val);
                             },
-                          ),
+                          )
+                        : Container(),
                     SizedBox(height: 20.0),
-                    isLogin
-                        ? Container()
-                        : TextFormField(
+                    isRegister
+                        ? TextFormField(
                             autovalidate: _fullname.isNotEmpty,
                             validator: (val) {
                               if (val.isEmpty) {
@@ -158,12 +157,13 @@ class _AuthFormState extends State<AuthForm> {
                             onChanged: (val) {
                               setState(() => _fullname = val);
                             },
-                          ),
+                          )
+                        : Container(),
                     SizedBox(height: 20.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(
-                        isLogin ? 'Log In' : 'Register',
+                        isRegister ? 'Register' : 'Log In',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -172,10 +172,10 @@ class _AuthFormState extends State<AuthForm> {
                         setState(() => _error = '');
                         if (_formKey.currentState.validate()) {
                           setState(() => _isLoading = true);
-                          dynamic result = isLogin
-                              ? await _auth.logIn(_email, _password)
-                              : await _auth.register(_email, _password);
-                          if (!isLogin) {
+                          dynamic result = isRegister
+                              ? await _auth.register(_email, _password)
+                              : await _auth.logIn(_email, _password);
+                          if (isRegister) {
                             FireDBService(uid: result.uid).addUser(
                               User(
                                   uid: result.uid,
@@ -188,7 +188,7 @@ class _AuthFormState extends State<AuthForm> {
                               _isLoading = false;
                               _error = result;
                             });
-                          } else if (!isLogin) {
+                          } else if (isRegister) {
                             FireDBService(uid: result.uid)
                                 .addDefaultCategories();
                           }

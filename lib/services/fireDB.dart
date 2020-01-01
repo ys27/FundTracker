@@ -102,7 +102,7 @@ class FireDBService {
       return await usersCollection.document(uid).collection('categories').add({
         'name': category['name'],
         'icon': category['icon'],
-        'enabled': category['enabled'],
+        'enabled': true,
       });
     });
   }
