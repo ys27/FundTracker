@@ -126,9 +126,12 @@ class _TransactionFormState extends State<TransactionForm> {
                         DateTime date = await showDatePicker(
                           context: context,
                           initialDate: new DateTime.now(),
-                          firstDate:
-                              DateTime.now().subtract(Duration(days: 365)),
-                          lastDate: DateTime.now().add(Duration(days: 365)),
+                          firstDate: DateTime.now().subtract(
+                            Duration(days: 365),
+                          ),
+                          lastDate: DateTime.now().add(
+                            Duration(days: 365),
+                          ),
                         );
                         if (date != null) {
                           setState(() => _date = date);

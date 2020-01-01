@@ -4,6 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/fireDB.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 enum MenuItems { Edit, Delete }
@@ -21,20 +22,18 @@ class TransactionTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
         child: ListTile(
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) {
-              return TransactionForm(
-                Transaction(
-                  tid: transaction.tid,
-                  date: transaction.date,
-                  isExpense: transaction.isExpense,
-                  payee: transaction.payee,
-                  amount: transaction.amount,
-                  category: transaction.category,
-                ),
-              );
-            },
+          onTap: () => openPage(
+            context,
+            TransactionForm(
+              Transaction(
+                tid: transaction.tid,
+                date: transaction.date,
+                isExpense: transaction.isExpense,
+                payee: transaction.payee,
+                amount: transaction.amount,
+                category: transaction.category,
+              ),
+            ),
           ),
           leading: StreamBuilder<List<Category>>(
               stream: FireDBService(uid: _user.uid)
@@ -45,8 +44,10 @@ class TransactionTile extends StatelessWidget {
                   backgroundColor: Theme.of(context).backgroundColor,
                   foregroundColor: Colors.black,
                   child: snapshot.hasData
-                      ? Icon(IconData(snapshot.data[0].icon,
-                          fontFamily: 'MaterialIcons'))
+                      ? Icon(
+                          IconData(snapshot.data[0].icon,
+                              fontFamily: 'MaterialIcons'),
+                        )
                       : null,
                 );
               }),
@@ -63,20 +64,18 @@ class TransactionTile extends StatelessWidget {
                 child: Icon(Icons.more_vert),
                 onSelected: (val) async {
                   if (val == MenuItems.Edit) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return TransactionForm(
-                          Transaction(
-                            tid: transaction.tid,
-                            date: transaction.date,
-                            isExpense: transaction.isExpense,
-                            payee: transaction.payee,
-                            amount: transaction.amount,
-                            category: transaction.category,
-                          ),
-                        );
-                      },
+                    openPage(
+                      context,
+                      TransactionForm(
+                        Transaction(
+                          tid: transaction.tid,
+                          date: transaction.date,
+                          isExpense: transaction.isExpense,
+                          payee: transaction.payee,
+                          amount: transaction.amount,
+                          category: transaction.category,
+                        ),
+                      ),
                     );
                   } else if (val == MenuItems.Delete) {
                     await FireDBService(uid: _user.uid)

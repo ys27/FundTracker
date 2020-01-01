@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/constants.dart';
@@ -21,6 +22,7 @@ class _AuthFormState extends State<AuthForm> {
   String _email = '';
   String _password = '';
   String _passwordConfirm = '';
+  String _fullname = '';
   String _error = '';
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -94,7 +96,9 @@ class _AuthFormState extends State<AuthForm> {
                         suffix: ButtonTheme(
                           minWidth: 10.0,
                           child: FlatButton(
-                            child: _obscurePassword ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+                            child: _obscurePassword
+                                ? Icon(Icons.visibility_off)
+                                : Icon(Icons.visibility),
                             onPressed: () => setState(
                                 () => _obscurePassword = !_obscurePassword),
                           ),
@@ -108,7 +112,6 @@ class _AuthFormState extends State<AuthForm> {
                     isLogin
                         ? Container()
                         : TextFormField(
-                            initialValue: _passwordConfirm,
                             autovalidate: _passwordConfirm.isNotEmpty,
                             validator: (val) {
                               if (val.isEmpty) {
@@ -125,7 +128,9 @@ class _AuthFormState extends State<AuthForm> {
                               suffix: ButtonTheme(
                                 minWidth: 10.0,
                                 child: FlatButton(
-                                  child: _obscurePasswordConfirm ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+                                  child: _obscurePasswordConfirm
+                                      ? Icon(Icons.visibility_off)
+                                      : Icon(Icons.visibility),
                                   onPressed: () => setState(() =>
                                       _obscurePasswordConfirm =
                                           !_obscurePasswordConfirm),
@@ -134,6 +139,24 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                             onChanged: (val) {
                               setState(() => _passwordConfirm = val);
+                            },
+                          ),
+                    SizedBox(height: 20.0),
+                    isLogin
+                        ? Container()
+                        : TextFormField(
+                            autovalidate: _fullname.isNotEmpty,
+                            validator: (val) {
+                              if (val.isEmpty) {
+                                return 'This is a required field.';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              labelText: 'Full Name',
+                            ),
+                            onChanged: (val) {
+                              setState(() => _fullname = val);
                             },
                           ),
                     SizedBox(height: 20.0),
@@ -152,6 +175,14 @@ class _AuthFormState extends State<AuthForm> {
                           dynamic result = isLogin
                               ? await _auth.logIn(_email, _password)
                               : await _auth.register(_email, _password);
+                          if (!isLogin) {
+                            FireDBService(uid: result.uid).addUser(
+                              User(
+                                  uid: result.uid,
+                                  email: _email,
+                                  fullname: _fullname),
+                            );
+                          }
                           if (result is String) {
                             setState(() {
                               _isLoading = false;

@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
+import 'package:fund_tracker/pages/preferences/categories.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:provider/provider.dart';
 
+import 'library.dart';
 import 'loader.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -27,10 +29,12 @@ class MainDrawer extends StatelessWidget {
                     accountEmail: Text(user.email),
                     currentAccountPicture: CircleAvatar(
                       backgroundColor: Colors.white,
-                      child: Text(user.fullname[0],
-                          style: TextStyle(
-                              fontSize: 40.0,
-                              color: Theme.of(context).primaryColor)),
+                      child: Text(
+                        user.fullname[0],
+                        style: TextStyle(
+                            fontSize: 40.0,
+                            color: Theme.of(context).primaryColor),
+                      ),
                     ),
                   );
                 } else {
@@ -40,6 +44,11 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             title: Text('Home'),
             leading: Icon(Icons.home),
+          ),
+          ListTile(
+            title: Text('Categories'),
+            leading: Icon(Icons.category),
+            onTap: () => openPage(context, Categories()),
           ),
           ListTile(
             title: Text('Preferences'),

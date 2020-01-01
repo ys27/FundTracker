@@ -6,6 +6,7 @@ import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/drawer.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -31,12 +32,7 @@ class _HomeState extends State<Home> {
         body: tabItems[_selectedIndex],
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) {
-              return TransactionForm(Transaction.empty());
-            },
-          ),
+          onPressed: () => openPage(context, TransactionForm(Transaction.empty())),
           child: Icon(Icons.add),
         ),
         bottomNavigationBar: BottomNavigationBar(
