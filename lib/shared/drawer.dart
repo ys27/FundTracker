@@ -55,11 +55,11 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.tune),
           ),
           ListTile(
-            title: Text('Log out'),
+            title: Text('Sign Out'),
             leading: Icon(Icons.person),
             onTap: () async {
               Navigator.pop(context);
-              await _auth.logOut();
+              await _auth.signOut();
             },
           ),
         ],

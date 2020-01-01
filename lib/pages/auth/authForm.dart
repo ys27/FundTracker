@@ -35,7 +35,7 @@ class _AuthFormState extends State<AuthForm> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(isRegister ? 'Register' : 'Login'),
+        title: Text(isRegister ? 'Register' : 'Sign In'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -163,7 +163,7 @@ class _AuthFormState extends State<AuthForm> {
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(
-                        isRegister ? 'Register' : 'Log In',
+                        isRegister ? 'Register' : 'Sign In',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -174,7 +174,7 @@ class _AuthFormState extends State<AuthForm> {
                           setState(() => _isLoading = true);
                           dynamic result = isRegister
                               ? await _auth.register(_email, _password)
-                              : await _auth.logIn(_email, _password);
+                              : await _auth.signIn(_email, _password);
                           if (isRegister) {
                             FireDBService(uid: result.uid).addUser(
                               User(
