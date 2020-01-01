@@ -107,6 +107,12 @@ class FireDBService {
     });
   }
 
+  void setCategory(String cid, bool enabled) async {
+    return await usersCollection.document(uid).collection('categories').document(cid).updateData({
+      'enabled': enabled
+    });
+  }
+
   //User Info
   UserInfo _userInfoFromSnapshot(DocumentSnapshot snapshot) {
     return UserInfo(

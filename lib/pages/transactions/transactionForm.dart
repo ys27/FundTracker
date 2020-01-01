@@ -206,24 +206,24 @@ class _TransactionFormState extends State<TransactionForm> {
                               //     ),
                               //     title: Text(categories[0].name),
                               //   )
-                              categories[0].name
+                              categories.firstWhere((category) => category.enabled).name
                               : _noCategories),
                       items: categories.length > 0
-                          ? categories.map((category) {
+                          ? categories.where((category) => category.enabled).map((category) {
                               return DropdownMenuItem(
-                                value: category.name,
-                                child: Text(category.name),
-                                // child: ListTile(
-                                //   leading: CircleAvatar(
-                                //     child: Icon(IconData(
-                                //       category.icon,
-                                //       fontFamily: 'MaterialIcons',
-                                //     )),
-                                //     radius: 25.0,
-                                //   ),
-                                //   title: Text(category.name),
-                                // ),
-                              );
+                                  value: category.name,
+                                  child: Text(category.name),
+                                  // child: ListTile(
+                                  //   leading: CircleAvatar(
+                                  //     child: Icon(IconData(
+                                  //       category.icon,
+                                  //       fontFamily: 'MaterialIcons',
+                                  //     )),
+                                  //     radius: 25.0,
+                                  //   ),
+                                  //   title: Text(category.name),
+                                  // ),
+                                );
                             }).toList()
                           : [
                               DropdownMenuItem(

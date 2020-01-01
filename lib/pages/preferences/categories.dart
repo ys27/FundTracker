@@ -52,9 +52,7 @@ class _CategoriesState extends State<Categories> {
                             ),
                           ),
                           onChanged: (val) {
-                            setState(() => category.enabled = val);
-                            print(category.enabled);
-                            // FireDBService(uid: user.uid).
+                            FireDBService(uid: user.uid).setCategory(category.cid, val);
                           },
                         );
                       }).toList(),
