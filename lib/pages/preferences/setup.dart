@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/userInfo.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categories.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/shared/loader.dart';
@@ -19,7 +19,7 @@ class _SetupState extends State<Setup> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,10 +30,10 @@ class _SetupState extends State<Setup> {
             child: Text('Continue'),
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                UserInfo userInfo =
-                    UserInfo(uid: user.uid, fullname: _fullname, email: user.email);
+                User user =
+                    User(uid: _user.uid, fullname: _fullname, email: _user.email);
                 setState(() => isLoading = true);
-                await FireDBService(uid: user.uid).addUserInfo(userInfo);
+                await FireDBService(uid: _user.uid).addUser(user);
               }
             },
           )

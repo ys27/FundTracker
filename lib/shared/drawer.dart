@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/userInfo.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:provider/provider.dart';
@@ -12,22 +12,22 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
     return Drawer(
       child: ListView(
         children: <Widget>[
-          StreamBuilder<UserInfo>(
-              stream: FireDBService(uid: user.uid).userInfo,
+          StreamBuilder<User>(
+              stream: FireDBService(uid: _user.uid).user,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  UserInfo userInfo = snapshot.data;
+                  User user = snapshot.data;
                   return UserAccountsDrawerHeader(
-                    accountName: Text(userInfo.fullname),
-                    accountEmail: Text(userInfo.email),
+                    accountName: Text(user.fullname),
+                    accountEmail: Text(user.email),
                     currentAccountPicture: CircleAvatar(
                       backgroundColor: Colors.white,
-                      child: Text(userInfo.fullname[0],
+                      child: Text(user.fullname[0],
                           style: TextStyle(
                               fontSize: 40.0,
                               color: Theme.of(context).primaryColor)),

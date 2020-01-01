@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/userInfo.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/auth/authWrapper.dart';
 import 'package:fund_tracker/pages/home/home.dart';
 import 'package:fund_tracker/pages/preferences/setup.dart';
@@ -10,13 +10,13 @@ import 'package:provider/provider.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
-    if (user == null) {
+    if (_user == null) {
       return AuthWrapper();
     } else {
-      return StreamBuilder<UserInfo>(
-        stream: FireDBService(uid: user.uid).userInfo,
+      return StreamBuilder<User>(
+        stream: FireDBService(uid: _user.uid).user,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Home();

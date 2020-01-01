@@ -14,7 +14,7 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
     return Padding(
       padding: EdgeInsets.only(top: 5.0),
@@ -37,7 +37,7 @@ class TransactionTile extends StatelessWidget {
             },
           ),
           leading: StreamBuilder<List<Category>>(
-              stream: FireDBService(uid: user.uid)
+              stream: FireDBService(uid: _user.uid)
                   .findCategory(transaction.category),
               builder: (context, snapshot) {
                 return CircleAvatar(
@@ -79,7 +79,7 @@ class TransactionTile extends StatelessWidget {
                       },
                     );
                   } else if (val == MenuItems.Delete) {
-                    await FireDBService(uid: user.uid)
+                    await FireDBService(uid: _user.uid)
                         .deleteTransaction(transaction.tid);
                   }
                 },

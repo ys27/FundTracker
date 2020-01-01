@@ -19,10 +19,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
     return StreamProvider<List<Transaction>>.value(
-      value: FireDBService(uid: user.uid).transactions,
+      value: FireDBService(uid: _user.uid).transactions,
       child: Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(

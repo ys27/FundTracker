@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/userInfo.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 
 class FireDBService {
@@ -114,31 +114,31 @@ class FireDBService {
   }
 
   //User Info
-  UserInfo _userInfoFromSnapshot(DocumentSnapshot snapshot) {
-    return UserInfo(
+  User _userFromSnapshot(DocumentSnapshot snapshot) {
+    return User(
       uid: uid,
       email: snapshot.data['email'],
       fullname: snapshot.data['fullname'],
     );
   }
 
-  Stream<UserInfo> get userInfo {
+  Stream<User> get user {
     return usersCollection
         .document(uid)
-        .collection('userInfo')
+        .collection('user')
         .document(uid)
         .snapshots()
-        .map(_userInfoFromSnapshot);
+        .map(_userFromSnapshot);
   }
 
-  Future addUserInfo(UserInfo userInfo) async {
+  Future addUser(User user) async {
     return await usersCollection
         .document(uid)
-        .collection('userInfo')
+        .collection('user')
         .document(uid)
         .setData({
-      'email': userInfo.email,
-      'fullname': userInfo.fullname,
+      'email': user.email,
+      'fullname': user.fullname,
     });
   }
 }

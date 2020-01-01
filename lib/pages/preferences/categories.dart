@@ -13,14 +13,14 @@ class Categories extends StatefulWidget {
 class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Categories'),
       ),
       body: StreamBuilder<List<Category>>(
-          stream: FireDBService(uid: user.uid).categories,
+          stream: FireDBService(uid: _user.uid).categories,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<Category> categories = snapshot.data;
@@ -52,7 +52,7 @@ class _CategoriesState extends State<Categories> {
                             ),
                           ),
                           onChanged: (val) {
-                            FireDBService(uid: user.uid).setCategory(category.cid, val);
+                            FireDBService(uid: _user.uid).setCategory(category.cid, val);
                           },
                         );
                       }).toList(),

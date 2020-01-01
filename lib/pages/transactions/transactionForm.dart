@@ -29,7 +29,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
 
     return Scaffold(
@@ -42,7 +42,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => _isLoading = true);
-                    await FireDBService(uid: user.uid)
+                    await FireDBService(uid: _user.uid)
                         .deleteTransaction(widget.tx.tid);
                     Navigator.pop(context);
                   },
@@ -56,7 +56,7 @@ class _TransactionFormState extends State<TransactionForm> {
           horizontal: 50.0,
         ),
         child: StreamBuilder<List<Category>>(
-          stream: FireDBService(uid: user.uid).categories,
+          stream: FireDBService(uid: _user.uid).categories,
           builder: (context, snapshot) {
             if (snapshot.hasData && !_isLoading) {
               List<Category> categories = snapshot.data;
@@ -247,9 +247,9 @@ class _TransactionFormState extends State<TransactionForm> {
                           );
                           setState(() => _isLoading = true);
                           isEditMode
-                              ? await FireDBService(uid: user.uid)
+                              ? await FireDBService(uid: _user.uid)
                                   .updateTransaction(tx)
-                              : await FireDBService(uid: user.uid)
+                              : await FireDBService(uid: _user.uid)
                                   .addTransaction(tx);
                           Navigator.pop(context);
                         }

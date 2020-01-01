@@ -23,4 +23,15 @@ class Transaction {
     amount = null;
     category = null;
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'tid': tid,
+      'date': date,
+      'isExpense': isExpense,
+      'payee': payee,
+      'amount': amount,
+      'category': category,
+    };
+  }
 }
