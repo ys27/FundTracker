@@ -24,6 +24,15 @@ class Transaction {
     category = null;
   }
 
+  Transaction.fromMap(Map<String, dynamic> map) {
+    this.tid = map['tid'];
+    this.date = map['date'];
+    this.isExpense = map['isExpense'];
+    this.payee = map['payee'];
+    this.amount = map['amount'];
+    this.category = map['category'];
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'tid': tid,
