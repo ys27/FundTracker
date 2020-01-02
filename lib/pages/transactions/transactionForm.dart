@@ -49,8 +49,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    await LocalDBService()
-                        .deleteTransaction(widget.tx);
+                    await LocalDBService().deleteTransaction(widget.tx);
                     goHome(context);
                   },
                 )
@@ -199,21 +198,30 @@ class _TransactionFormState extends State<TransactionForm> {
                           //   )
                           enabledCategories.first.name,
                       items: enabledCategories.map((category) {
-                        return DropdownMenuItem(
-                          value: category.name,
-                          child: Text(category.name),
-                          // child: ListTile(
-                          //   leading: CircleAvatar(
-                          //     child: Icon(IconData(
-                          //       category.icon,
-                          //       fontFamily: 'MaterialIcons',
-                          //     )),
-                          //     radius: 25.0,
-                          //   ),
-                          //   title: Text(category.name),
-                          // ),
-                        );
-                      }).toList(),
+                            return DropdownMenuItem(
+                              value: category.name,
+                              child: Text(category.name),
+                              // child: ListTile(
+                              //   leading: CircleAvatar(
+                              //     child: Icon(IconData(
+                              //       category.icon,
+                              //       fontFamily: 'MaterialIcons',
+                              //     )),
+                              //     radius: 25.0,
+                              //   ),
+                              //   title: Text(category.name),
+                              // ),
+                            );
+                          }).toList() +
+                          (enabledCategories.any((category) =>
+                                  category.name == widget.tx.category)
+                              ? []
+                              : [
+                                  DropdownMenuItem(
+                                    value: widget.tx.category,
+                                    child: Text(widget.tx.category),
+                                  )
+                                ]),
                       onChanged: (val) {
                         setState(() => _category = val);
                       },
@@ -241,10 +249,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
                           setState(() => isLoading = true);
                           isEditMode
-                              ? await LocalDBService()
-                                  .updateTransaction(tx)
-                              : await LocalDBService()
-                                  .addTransaction(tx);
+                              ? await LocalDBService().updateTransaction(tx)
+                              : await LocalDBService().addTransaction(tx);
                           goHome(context);
                         }
                       },
