@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
-import 'package:fund_tracker/services/fireDB.dart';
+import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +11,7 @@ enum MenuItems { Edit, Delete }
 
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
+
   TransactionTile({this.transaction});
 
   @override
@@ -32,25 +33,23 @@ class TransactionTile extends StatelessWidget {
                 payee: transaction.payee,
                 amount: transaction.amount,
                 category: transaction.category,
+                uid: _user.uid,
               ),
             ),
           ),
-          leading: StreamBuilder<List<Category>>(
-              stream: FireDBService(uid: _user.uid)
-                  .findCategory(transaction.category),
-              builder: (context, snapshot) {
-                return CircleAvatar(
-                  radius: 25.0,
-                  backgroundColor: Theme.of(context).backgroundColor,
-                  foregroundColor: Colors.black,
-                  child: snapshot.hasData
-                      ? Icon(
-                          IconData(snapshot.data[0].icon,
-                              fontFamily: 'MaterialIcons'),
-                        )
-                      : null,
-                );
-              }),
+          leading: CircleAvatar(
+            radius: 25.0,
+            backgroundColor: Theme.of(context).backgroundColor,
+            foregroundColor: Colors.black,
+            child: Icon(IconData(
+                CATEGORIES
+                    .where((category) {
+                      return category['name'] == transaction.category;
+                    })
+                    .toList()
+                    .first['icon'],
+                fontFamily: 'MaterialIcons')),
+          ),
           title: Text(transaction.payee),
           subtitle: Text(
               '${transaction.date.year.toString()}.${transaction.date.month.toString()}.${transaction.date.day.toString()}'),
@@ -63,23 +62,19 @@ class TransactionTile extends StatelessWidget {
               PopupMenuButton(
                 child: Icon(Icons.more_vert),
                 onSelected: (val) async {
+                  Transaction tx = Transaction(
+                    tid: transaction.tid,
+                    date: transaction.date,
+                    isExpense: transaction.isExpense,
+                    payee: transaction.payee,
+                    amount: transaction.amount,
+                    category: transaction.category,
+                    uid: _user.uid,
+                  );
                   if (val == MenuItems.Edit) {
-                    openPage(
-                      context,
-                      TransactionForm(
-                        Transaction(
-                          tid: transaction.tid,
-                          date: transaction.date,
-                          isExpense: transaction.isExpense,
-                          payee: transaction.payee,
-                          amount: transaction.amount,
-                          category: transaction.category,
-                        ),
-                      ),
-                    );
+                    openPage(context, TransactionForm(tx));
                   } else if (val == MenuItems.Delete) {
-                    await FireDBService(uid: _user.uid)
-                        .deleteTransaction(transaction.tid);
+                    await LocalDBService().deleteTransaction(tx);
                   }
                 },
                 itemBuilder: (context) {

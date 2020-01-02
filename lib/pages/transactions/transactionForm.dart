@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/services/fireDB.dart';
+import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart' hide Transaction;
+import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
   final Transaction tx;
@@ -17,6 +19,8 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
+  final LocalDBService _localDBService = LocalDBService();
+  List<Category> enabledCategories;
 
   DateTime _date;
   bool _isExpense;
@@ -24,14 +28,16 @@ class _TransactionFormState extends State<TransactionForm> {
   double _amount;
   String _category;
 
-  String _noCategories = 'NA';
-  bool _isLoading = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
 
+    if (enabledCategories == null) {
+      getCategories(_user.uid);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditMode ? 'Edit Transaction' : 'Add Transaction'),
@@ -41,28 +47,22 @@ class _TransactionFormState extends State<TransactionForm> {
                   textColor: Colors.white,
                   child: Icon(Icons.delete),
                   onPressed: () async {
-                    setState(() => _isLoading = true);
-                    await FireDBService(uid: _user.uid)
-                        .deleteTransaction(widget.tx.tid);
+                    setState(() => isLoading = true);
+                    await LocalDBService()
+                        .deleteTransaction(widget.tx);
                     Navigator.pop(context);
                   },
                 )
               ]
             : null,
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 50.0,
-        ),
-        child: StreamBuilder<List<Category>>(
-          stream: FireDBService(uid: _user.uid).categories,
-          builder: (context, snapshot) {
-            if (snapshot.hasData && !_isLoading) {
-              List<Category> categories = snapshot.data;
-              List<Category> enabledCategories =
-                  categories.where((category) => category.enabled).toList();
-              return Form(
+      body: (enabledCategories != null)
+          ? Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 20.0,
+                horizontal: 50.0,
+              ),
+              child: Form(
                 key: _formKey,
                 child: ListView(
                   children: <Widget>[
@@ -182,49 +182,37 @@ class _TransactionFormState extends State<TransactionForm> {
                     SizedBox(height: 20.0),
                     DropdownButtonFormField(
                       validator: (val) {
-                        if (val == _noCategories) {
-                          return 'Add categories in preferences.';
-                        }
                         return null;
                       },
-                      value: (_category ?? widget.tx.category) ??
-                          (enabledCategories.length > 0
-                              ?
-                              // ListTile(
-                              //     leading: CircleAvatar(
-                              //       child: Icon(IconData(
-                              //         enabledCategories[0].icon,
-                              //         fontFamily: 'MaterialIcons',
-                              //       )),
-                              //       radius: 25.0,
-                              //     ),
-                              //     title: Text(categories[0].name),
-                              //   )
-                              enabledCategories.first.name
-                              : _noCategories),
-                      items: enabledCategories.length > 0
-                          ? enabledCategories.map((category) {
-                              return DropdownMenuItem(
-                                value: category.name,
-                                child: Text(category.name),
-                                // child: ListTile(
-                                //   leading: CircleAvatar(
-                                //     child: Icon(IconData(
-                                //       category.icon,
-                                //       fontFamily: 'MaterialIcons',
-                                //     )),
-                                //     radius: 25.0,
-                                //   ),
-                                //   title: Text(category.name),
-                                // ),
-                              );
-                            }).toList()
-                          : [
-                              DropdownMenuItem(
-                                value: _noCategories,
-                                child: Text(_noCategories),
-                              )
-                            ],
+                      value: _category ??
+                          widget.tx.category ??
+                          // ListTile(
+                          //     leading: CircleAvatar(
+                          //       child: Icon(IconData(
+                          //         enabledCategories.first.icon,
+                          //         fontFamily: 'MaterialIcons',
+                          //       )),
+                          //       radius: 25.0,
+                          //     ),
+                          //     title: Text(categories[0].name),
+                          //   )
+                          enabledCategories.first.name,
+                      items: enabledCategories.map((category) {
+                        return DropdownMenuItem(
+                          value: category.name,
+                          child: Text(category.name),
+                          // child: ListTile(
+                          //   leading: CircleAvatar(
+                          //     child: Icon(IconData(
+                          //       category.icon,
+                          //       fontFamily: 'MaterialIcons',
+                          //     )),
+                          //     radius: 25.0,
+                          //   ),
+                          //   title: Text(category.name),
+                          // ),
+                        );
+                      }).toList(),
                       onChanged: (val) {
                         setState(() => _category = val);
                       },
@@ -239,7 +227,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Transaction tx = Transaction(
-                            tid: widget.tx.tid,
+                            tid: widget.tx.tid ?? new Uuid().v1(),
                             date: _date ?? widget.tx.date,
                             isExpense: _isExpense ?? widget.tx.isExpense,
                             payee: _payee ?? widget.tx.payee,
@@ -247,12 +235,14 @@ class _TransactionFormState extends State<TransactionForm> {
                             category: _category ??
                                 widget.tx.category ??
                                 enabledCategories.first.name,
+                            uid: _user.uid,
                           );
-                          setState(() => _isLoading = true);
+
+                          setState(() => isLoading = true);
                           isEditMode
-                              ? await FireDBService(uid: _user.uid)
+                              ? await LocalDBService()
                                   .updateTransaction(tx)
-                              : await FireDBService(uid: _user.uid)
+                              : await LocalDBService()
                                   .addTransaction(tx);
                           Navigator.pop(context);
                         }
@@ -260,13 +250,20 @@ class _TransactionFormState extends State<TransactionForm> {
                     )
                   ],
                 ),
-              );
-            } else {
-              return Loader();
-            }
-          },
-        ),
-      ),
+              ),
+            )
+          : Loader(),
     );
+  }
+
+  void getCategories(String uid) {
+    final Future<Database> dbFuture = _localDBService.initializeDBs();
+    dbFuture.then((db) {
+      Future<List<Category>> usersFuture = _localDBService.getCategories(uid);
+      usersFuture.then((categories) {
+        setState(() => enabledCategories =
+            categories.where((category) => category.enabled).toList());
+      });
+    });
   }
 }

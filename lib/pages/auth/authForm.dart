@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
-import 'package:fund_tracker/services/fireDB.dart';
+import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/loader.dart';
 
@@ -41,6 +41,7 @@ class _AuthFormState extends State<AuthForm> {
             textColor: Colors.white,
             child: Text(isRegister ? 'Back' : 'Register'),
             onPressed: () {
+              LocalDBService().initializeDBs();
               widget.toggleView();
             },
           )
@@ -151,6 +152,7 @@ class _AuthFormState extends State<AuthForm> {
                               }
                               return null;
                             },
+                            textCapitalization: TextCapitalization.words,
                             decoration: InputDecoration(
                               labelText: 'Full Name',
                             ),
@@ -176,7 +178,7 @@ class _AuthFormState extends State<AuthForm> {
                               ? await _auth.register(_email, _password)
                               : await _auth.signIn(_email, _password);
                           if (isRegister) {
-                            FireDBService(uid: result.uid).addUser(
+                            LocalDBService().addUser(
                               User(
                                   uid: result.uid,
                                   email: _email,
@@ -189,8 +191,8 @@ class _AuthFormState extends State<AuthForm> {
                               _error = result;
                             });
                           } else if (isRegister) {
-                            FireDBService(uid: result.uid)
-                                .addDefaultCategories();
+                            LocalDBService()
+                                .addDefaultCategories(result.uid);
                           }
                         }
                       },

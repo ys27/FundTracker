@@ -1,84 +1,99 @@
-import 'dart:io';
-
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
+import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
-import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class LocalDBService {
-  static LocalDBService _localDBService;
+  static final LocalDBService _localDBService = new LocalDBService.internal();
+
+  factory LocalDBService() => _localDBService;
   static Database _localDB;
 
-  LocalDBService._createInstance();
-
-  factory LocalDBService() {
-    if (_localDBService == null) {
-      _localDBService = LocalDBService._createInstance();
+  Future<Database> get db async {
+    if (_localDB != null) {
+      return _localDB;
     }
-
-    return _localDBService;
-  }
-
-  Future<Database> get database async {
-    if (_localDB == null) {
-      _localDB = await initializeDBs();
-    }
-
+    _localDB = await initializeDBs();
     return _localDB;
   }
 
-  Future<List<Map<String, dynamic>>> getTable(String tableName) async {
-    Database db = await this.database;
-    String orderBy = '';
-    switch (tableName) {
-      case 'categories':
-        orderBy = 'orderIndex ASC';
-        break;
-      case 'transactions':
-        orderBy = 'datetime(date) DESC';
-        break;
-      default:
-        orderBy = '';
-        break;
-    }
-    return await db.query(tableName, orderBy: orderBy);
+  LocalDBService.internal();
+
+  Future<List<Transaction>> getTransactions(String uid) async {
+    Database db = await this.db;
+    List<Map<String, dynamic>> resultsMap = await db.query('transactions',
+        where: 'uid = ?', whereArgs: [uid], orderBy: 'datetime(date) DESC');
+    return resultsMap.map((map) => Transaction.fromMap(map)).toList();
   }
 
-  Future<int> insert(String tableName, dynamic item) async {
-    Database db = await this.database;
-    return await db.insert(tableName, item.toMap());
+  Future<List<Category>> getCategories(String uid) async {
+    Database db = await this.db;
+    List<Map<String, dynamic>> resultsMap = await db.query('categories',
+        where: 'uid = ?', whereArgs: [uid], orderBy: 'orderIndex ASC');
+    return resultsMap.map((map) => Category.fromMap(map)).toList();
   }
 
-  Future<int> update(String tableName, dynamic item, String whereColumn,
-      dynamic whereArg) async {
-    Database db = await this.database;
-    return await db.update(tableName, item.toMap(),
-        where: '$whereColumn = ?', whereArgs: [whereArg]);
+  Future<List<User>> findUser(String uid) async {
+    Database db = await this.db;
+    List<Map<String, dynamic>> resultsMap =
+        await db.query('users', where: 'uid = ?', whereArgs: [uid]);
+    return resultsMap.map((map) => User.fromMap(map)).toList();
   }
 
-  Future<int> delete(
-      String tableName, String whereColumn, dynamic whereArg) async {
-    Database db = await this.database;
+  void addDefaultCategories(String uid) async {
+    Database db = await this.db;
+    CATEGORIES.asMap().forEach((index, category) async {
+      await db.insert('categories', {
+        'cid': new Uuid().v1(),
+        'name': category['name'],
+        'icon': category['icon'],
+        'enabled': true,
+        'orderIndex': index,
+        'uid': uid,
+      });
+    });
+  }
+
+  Future<int> addTransaction(Transaction tx) async {
+    Database db = await this.db;
+    return await db.insert('transactions', tx.toMap());
+  }
+
+  Future<int> addUser(User user) async {
+    Database db = await this.db;
+    return await db.insert('users', user.toMap());
+  }
+
+  void setCategory(Category category) async {
+    Database db = await this.db;
+    await db.update('categories', category.toMap(),
+        where: 'cid = ?', whereArgs: [category.cid]);
+  }
+
+  Future<int> updateTransaction(Transaction tx) async {
+    Database db = await this.db;
+    return await db.update('transactions', tx.toMap(),
+        where: 'tid = ?', whereArgs: [tx.tid]);
+  }
+
+  Future<int> deleteTransaction(Transaction tx) async {
+    Database db = await this.db;
     return await db
-        .delete(tableName, where: '$whereColumn = ?', whereArgs: [whereArg]);
+        .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   String getTypeInDB(dynamic column) {
     if (column is String) {
-      print('String');
       return 'TEXT';
     } else if (column is int) {
-      print('int');
       return 'INTEGER';
     } else if (column is bool) {
-      print('bool');
       return 'INTEGER'; // 1 - true, 0 - false
     } else if (column is DateTime) {
-      print('DateTime');
       return 'TEXT';
     } else if (column is double) {
-      print('double');
       return 'REAL';
     } else {
       return 'TEXT';
@@ -86,29 +101,29 @@ class LocalDBService {
   }
 
   Future<Database> initializeDBs() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'local.db';
+    String directory = await getDatabasesPath();
 
-    return await openDatabase(path, version: 1, onCreate: _createDBs);
+    return await openDatabase('$directory/local.db',
+        version: 1, onCreate: _createDBs);
   }
 
   void _createDBs(Database db, int version) {
     Map<String, dynamic> tables = {
-      'categories': Category.empty(),
-      'transactions': Transaction.empty(),
-      'users': User.empty(),
+      'categories': Category.example(),
+      'transactions': Transaction.example(),
+      'users': User.example(),
     };
     tables.forEach((tableName, model) async {
       String columnsQuery = '';
       for (MapEntry<String, dynamic> column in model.toMap().entries) {
         columnsQuery += '${column.key} ${getTypeInDB(column.value)}';
-        if (column.key.endsWith('id')) {
+        if (column.key == '${tableName[0].toLowerCase()}id') {
           columnsQuery += ' PRIMARY KEY';
         }
         columnsQuery += ', ';
       }
-      print(columnsQuery);
-      await db.execute('CREATE TABLE $tableName(${columnsQuery}uid TEXT)');
+      columnsQuery = columnsQuery.substring(0, columnsQuery.length - 2);
+      await db.execute('CREATE TABLE $tableName($columnsQuery)');
     });
   }
 }

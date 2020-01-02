@@ -3,9 +3,13 @@ class User {
   String email;
   String fullname;
 
-  User.empty();
-
   User({this.uid, this.email, this.fullname});
+
+  User.example() {
+    uid = '';
+    email = '';
+    fullname = '';
+  }
 
   User.fromMap(Map<String, dynamic> map) {
     this.uid = map['uid'];
