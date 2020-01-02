@@ -75,6 +75,7 @@ class TransactionTile extends StatelessWidget {
                     openPage(context, TransactionForm(tx));
                   } else if (val == MenuItems.Delete) {
                     await LocalDBService().deleteTransaction(tx);
+                    goHome(context);
                   }
                 },
                 itemBuilder: (context) {

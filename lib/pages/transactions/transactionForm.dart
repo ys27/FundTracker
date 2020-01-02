@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
@@ -35,6 +36,7 @@ class _TransactionFormState extends State<TransactionForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
 
+    print(_user.uid);
     if (enabledCategories == null) {
       getCategories(_user.uid);
     }
@@ -50,7 +52,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     setState(() => isLoading = true);
                     await LocalDBService()
                         .deleteTransaction(widget.tx);
-                    Navigator.pop(context);
+                    goHome(context);
                   },
                 )
               ]
@@ -244,7 +246,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                   .updateTransaction(tx)
                               : await LocalDBService()
                                   .addTransaction(tx);
-                          Navigator.pop(context);
+                          goHome(context);
                         }
                       },
                     )

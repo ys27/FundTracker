@@ -50,7 +50,9 @@ class _CategoriesState extends State<Categories> {
                       return CheckboxListTile(
                         title: Text(category.name),
                         value: category.enabled,
-                        activeColor: category.name == 'Others' ? Colors.grey : Theme.of(context).primaryColor,
+                        activeColor: category.name == 'Others'
+                            ? Colors.grey
+                            : Theme.of(context).primaryColor,
                         secondary: Icon(
                           IconData(
                             category.icon,
@@ -61,7 +63,7 @@ class _CategoriesState extends State<Categories> {
                           if (category.name != 'Others') {
                             LocalDBService()
                                 .setCategory(category.setEnabled(val));
-                            setState((){});
+                            setState(() {});
                           }
                         },
                       );

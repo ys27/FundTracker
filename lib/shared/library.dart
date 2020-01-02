@@ -12,4 +12,5 @@ void openPage(BuildContext context, Widget page) {
 
 void goHome(BuildContext context) {
   Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+  Navigator.popAndPushNamed(context, Navigator.defaultRouteName);
 }
