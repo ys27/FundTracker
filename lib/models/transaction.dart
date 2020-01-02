@@ -6,15 +6,6 @@ class Transaction {
   double amount;
   String category;
 
-  Transaction({
-    this.tid,
-    this.date,
-    this.isExpense,
-    this.payee,
-    this.amount,
-    this.category,
-  });
-
   Transaction.empty() {
     tid = null;
     date = DateTime.now();
@@ -23,6 +14,15 @@ class Transaction {
     amount = null;
     category = null;
   }
+
+  Transaction({
+    this.tid,
+    this.date,
+    this.isExpense,
+    this.payee,
+    this.amount,
+    this.category,
+  });
 
   Transaction.fromMap(Map<String, dynamic> map) {
     this.tid = map['tid'];

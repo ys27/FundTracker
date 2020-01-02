@@ -3,14 +3,18 @@ class Category {
   String name;
   int icon;
   bool enabled;
+  int orderIndex;
 
-  Category({this.cid, this.name, this.icon, this.enabled});
+  Category.empty();
+
+  Category({this.cid, this.name, this.icon, this.enabled, this.orderIndex});
 
   Category.fromMap(Map<String, dynamic> map) {
     this.cid = map['cid'];
     this.name = map['name'];
     this.icon = map['icon'];
     this.enabled = map['enabled'];
+    this.orderIndex = map['orderIndex'];
   }
 
   Map<String, dynamic> toMap() {
@@ -19,6 +23,7 @@ class Category {
       'name': name,
       'icon': icon,
       'enabled': enabled,
+      'orderIndex': orderIndex,
     };
   }
 }

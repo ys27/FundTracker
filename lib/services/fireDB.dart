@@ -76,6 +76,7 @@ class FireDBService {
         name: category['name'],
         icon: category['icon'],
         enabled: category['enabled'],
+        orderIndex: category['orderIndex'],
       );
     }).toList();
   }
@@ -98,11 +99,12 @@ class FireDBService {
   }
 
   void addDefaultCategories() {
-    CATEGORIES.forEach((category) async {
+    CATEGORIES.asMap().forEach((index, category) async {
       return await usersCollection.document(uid).collection('categories').add({
         'name': category['name'],
         'icon': category['icon'],
         'enabled': true,
+        'orderIndex': index
       });
     });
   }
