@@ -36,7 +36,6 @@ class _TransactionFormState extends State<TransactionForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
 
-    print(_user.uid);
     if (enabledCategories == null) {
       getCategories(_user.uid);
     }
