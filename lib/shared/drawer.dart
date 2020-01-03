@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categories.dart';
+import 'package:fund_tracker/pages/preferences/preferences.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Preferences'),
             leading: Icon(Icons.tune),
+            onTap: () => openPage(context, Preferences()),
           ),
           ListTile(
             title: Text('Sign Out'),

@@ -84,6 +84,12 @@ class LocalDBService {
         .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
+  Future<int> removeAllCategories(String uid) async {
+    Database db = await this.db;
+    return await db
+        .delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+  }
+
   String getTypeInDB(dynamic column) {
     if (column is String) {
       return 'TEXT';

@@ -21,7 +21,8 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
   final LocalDBService _localDBService = LocalDBService();
-  List<Category> enabledCategories;
+  List<Category> _categories;
+  List<Category> _enabledCategories;
 
   DateTime _date;
   bool _isExpense;
@@ -36,9 +37,13 @@ class _TransactionFormState extends State<TransactionForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
 
-    if (enabledCategories == null) {
+    if (_categories == null) {
       getCategories(_user.uid);
+    } else {
+      _enabledCategories =
+          _categories.where((category) => category.enabled).toList();
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditMode ? 'Edit Transaction' : 'Add Transaction'),
@@ -49,14 +54,14 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    await LocalDBService().deleteTransaction(widget.tx);
+                    LocalDBService().deleteTransaction(widget.tx);
                     goHome(context);
                   },
                 )
               ]
             : null,
       ),
-      body: (enabledCategories != null)
+      body: (_enabledCategories != null && _enabledCategories.isNotEmpty)
           ? Container(
               padding: EdgeInsets.symmetric(
                 vertical: 20.0,
@@ -181,26 +186,22 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     SizedBox(height: 20.0),
                     DropdownButtonFormField(
-                      validator: (val) {
-                        return null;
-                      },
                       value: _category ??
                           widget.tx.category ??
                           // ListTile(
-                          //     leading: CircleAvatar(
-                          //       child: Icon(IconData(
-                          //         enabledCategories.first.icon,
-                          //         fontFamily: 'MaterialIcons',
-                          //       )),
-                          //       radius: 25.0,
-                          //     ),
-                          //     title: Text(categories[0].name),
-                          //   )
-                          enabledCategories.first.name,
-                      items: enabledCategories.map((category) {
+                          //   leading: CircleAvatar(
+                          //     child: Icon(IconData(
+                          //       _enabledCategories.first.icon,
+                          //       fontFamily: 'MaterialIcons',
+                          //     )),
+                          //     radius: 25.0,
+                          //   ),
+                          //   title: Text(_enabledCategories.first.name),
+                          // ),
+                          _enabledCategories.first.name,
+                      items: _enabledCategories.map((category) {
                             return DropdownMenuItem(
                               value: category.name,
-                              child: Text(category.name),
                               // child: ListTile(
                               //   leading: CircleAvatar(
                               //     child: Icon(IconData(
@@ -211,14 +212,33 @@ class _TransactionFormState extends State<TransactionForm> {
                               //   ),
                               //   title: Text(category.name),
                               // ),
+                              child: Text(category.name),
                             );
                           }).toList() +
-                          (enabledCategories.any((category) =>
+                          (_enabledCategories.any((category) =>
+                                  widget.tx.category == null ||
                                   category.name == widget.tx.category)
                               ? []
                               : [
                                   DropdownMenuItem(
                                     value: widget.tx.category,
+                                    // child: ListTile(
+                                    //   leading: CircleAvatar(
+                                    //     child: Icon(
+                                    //       IconData(
+                                    //         _categories
+                                    //             .where((cat) =>
+                                    //                 cat.name ==
+                                    //                 widget.tx.category)
+                                    //             .first
+                                    //             .icon,
+                                    //         fontFamily: 'MaterialIcons',
+                                    //       ),
+                                    //     ),
+                                    //     radius: 25.0,
+                                    //   ),
+                                    //   title: Text(widget.tx.category),
+                                    // ),
                                     child: Text(widget.tx.category),
                                   )
                                 ]),
@@ -243,14 +263,14 @@ class _TransactionFormState extends State<TransactionForm> {
                             amount: _amount ?? widget.tx.amount,
                             category: _category ??
                                 widget.tx.category ??
-                                enabledCategories.first.name,
+                                _enabledCategories.first.name,
                             uid: _user.uid,
                           );
 
                           setState(() => isLoading = true);
                           isEditMode
-                              ? await LocalDBService().updateTransaction(tx)
-                              : await LocalDBService().addTransaction(tx);
+                              ? LocalDBService().updateTransaction(tx)
+                              : LocalDBService().addTransaction(tx);
                           goHome(context);
                         }
                       },
@@ -268,8 +288,7 @@ class _TransactionFormState extends State<TransactionForm> {
     dbFuture.then((db) {
       Future<List<Category>> usersFuture = _localDBService.getCategories(uid);
       usersFuture.then((categories) {
-        setState(() => enabledCategories =
-            categories.where((category) => category.enabled).toList());
+        setState(() => _categories = categories);
       });
     });
   }
