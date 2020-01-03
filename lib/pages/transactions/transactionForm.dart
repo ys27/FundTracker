@@ -185,66 +185,57 @@ class _TransactionFormState extends State<TransactionForm> {
                       },
                     ),
                     SizedBox(height: 20.0),
-                    DropdownButtonFormField(
-                      value: _category ??
-                          widget.tx.category ??
-                          // ListTile(
-                          //   leading: CircleAvatar(
-                          //     child: Icon(IconData(
-                          //       _enabledCategories.first.icon,
-                          //       fontFamily: 'MaterialIcons',
-                          //     )),
-                          //     radius: 25.0,
-                          //   ),
-                          //   title: Text(_enabledCategories.first.name),
-                          // ),
-                          _enabledCategories.first.name,
-                      items: _enabledCategories.map((category) {
-                            return DropdownMenuItem(
-                              value: category.name,
-                              // child: ListTile(
-                              //   leading: CircleAvatar(
-                              //     child: Icon(IconData(
-                              //       category.icon,
-                              //       fontFamily: 'MaterialIcons',
-                              //     )),
-                              //     radius: 25.0,
-                              //   ),
-                              //   title: Text(category.name),
-                              // ),
-                              child: Text(category.name),
-                            );
-                          }).toList() +
-                          (_enabledCategories.any((category) =>
-                                  widget.tx.category == null ||
-                                  category.name == widget.tx.category)
-                              ? []
-                              : [
-                                  DropdownMenuItem(
-                                    value: widget.tx.category,
-                                    // child: ListTile(
-                                    //   leading: CircleAvatar(
-                                    //     child: Icon(
-                                    //       IconData(
-                                    //         _categories
-                                    //             .where((cat) =>
-                                    //                 cat.name ==
-                                    //                 widget.tx.category)
-                                    //             .first
-                                    //             .icon,
-                                    //         fontFamily: 'MaterialIcons',
-                                    //       ),
-                                    //     ),
-                                    //     radius: 25.0,
-                                    //   ),
-                                    //   title: Text(widget.tx.category),
-                                    // ),
-                                    child: Text(widget.tx.category),
-                                  )
-                                ]),
-                      onChanged: (val) {
-                        setState(() => _category = val);
-                      },
+                    Center(
+                      child: DropdownButton<String>(
+                        items: _enabledCategories.map((category) {
+                              return DropdownMenuItem(
+                                value: category.name,
+                                child: Row(
+                                    children: <Widget>[
+                                      Icon(IconData(
+                                        category.icon,
+                                        fontFamily: 'MaterialIcons',
+                                      )),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        category.name,
+                                      ),
+                                    ]),
+                              );
+                            }).toList() +
+                            (_enabledCategories.any((category) =>
+                                    widget.tx.category == null ||
+                                    category.name == widget.tx.category)
+                                ? []
+                                : [
+                                    DropdownMenuItem(
+                                      value: widget.tx.category,
+                                      child: Row(
+                                          children: <Widget>[
+                                            Icon(IconData(
+                                              _categories
+                                                  .where((cat) =>
+                                                      cat.name ==
+                                                      widget.tx.category)
+                                                  .first
+                                                  .icon,
+                                              fontFamily: 'MaterialIcons',
+                                            )),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              widget.tx.category,
+                                            ),
+                                          ]),
+                                    )
+                                  ]),
+                        onChanged: (val) {
+                          setState(() => _category = val);
+                        },
+                        value: _category ??
+                            widget.tx.category ??
+                            _enabledCategories.first.name,
+                        isExpanded: true,
+                      ),
                     ),
                     SizedBox(height: 20.0),
                     RaisedButton(
