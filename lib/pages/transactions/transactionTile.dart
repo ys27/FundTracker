@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
@@ -25,15 +26,18 @@ class TransactionTile extends StatelessWidget {
         child: ListTile(
           onTap: () => openPage(
             context,
-            TransactionForm(
-              Transaction(
-                tid: transaction.tid,
-                date: transaction.date,
-                isExpense: transaction.isExpense,
-                payee: transaction.payee,
-                amount: transaction.amount,
-                category: transaction.category,
-                uid: _user.uid,
+            StreamProvider<List<Category>>.value(
+              value: LocalDBService().getCategories(_user.uid),
+              child: TransactionForm(
+                Transaction(
+                  tid: transaction.tid,
+                  date: transaction.date,
+                  isExpense: transaction.isExpense,
+                  payee: transaction.payee,
+                  amount: transaction.amount,
+                  category: transaction.category,
+                  uid: _user.uid,
+                ),
               ),
             ),
           ),
@@ -72,10 +76,15 @@ class TransactionTile extends StatelessWidget {
                     uid: _user.uid,
                   );
                   if (val == MenuItems.Edit) {
-                    openPage(context, TransactionForm(tx));
+                    openPage(
+                      context,
+                      StreamProvider<List<Category>>.value(
+                        value: LocalDBService().getCategories(_user.uid),
+                        child: TransactionForm(tx),
+                      ),
+                    );
                   } else if (val == MenuItems.Delete) {
                     LocalDBService().deleteTransaction(tx);
-                    goHome(context);
                   }
                 },
                 itemBuilder: (context) {

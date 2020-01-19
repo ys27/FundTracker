@@ -6,7 +6,6 @@ import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -20,9 +19,6 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
-  final LocalDBService _localDBService = LocalDBService();
-  List<Category> _categories;
-  List<Category> _enabledCategories;
 
   DateTime _date;
   bool _isExpense;
@@ -36,13 +32,9 @@ class _TransactionFormState extends State<TransactionForm> {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
-
-    if (_categories == null) {
-      getCategories(_user.uid);
-    } else {
-      _enabledCategories =
-          _categories.where((category) => category.enabled).toList();
-    }
+    final List<Category> _categories = Provider.of<List<Category>>(context);
+    final List<Category> _enabledCategories =
+        _categories != null ? _categories.where((category) => category.enabled).toList() : [];
 
     return Scaffold(
       appBar: AppBar(
@@ -190,17 +182,16 @@ class _TransactionFormState extends State<TransactionForm> {
                         items: _enabledCategories.map((category) {
                               return DropdownMenuItem(
                                 value: category.name,
-                                child: Row(
-                                    children: <Widget>[
-                                      Icon(IconData(
-                                        category.icon,
-                                        fontFamily: 'MaterialIcons',
-                                      )),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        category.name,
-                                      ),
-                                    ]),
+                                child: Row(children: <Widget>[
+                                  Icon(IconData(
+                                    category.icon,
+                                    fontFamily: 'MaterialIcons',
+                                  )),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    category.name,
+                                  ),
+                                ]),
                               );
                             }).toList() +
                             (_enabledCategories.any((category) =>
@@ -210,22 +201,21 @@ class _TransactionFormState extends State<TransactionForm> {
                                 : [
                                     DropdownMenuItem(
                                       value: widget.tx.category,
-                                      child: Row(
-                                          children: <Widget>[
-                                            Icon(IconData(
-                                              _categories
-                                                  .where((cat) =>
-                                                      cat.name ==
-                                                      widget.tx.category)
-                                                  .first
-                                                  .icon,
-                                              fontFamily: 'MaterialIcons',
-                                            )),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              widget.tx.category,
-                                            ),
-                                          ]),
+                                      child: Row(children: <Widget>[
+                                        Icon(IconData(
+                                          _categories
+                                              .where((cat) =>
+                                                  cat.name ==
+                                                  widget.tx.category)
+                                              .first
+                                              .icon,
+                                          fontFamily: 'MaterialIcons',
+                                        )),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          widget.tx.category,
+                                        ),
+                                      ]),
                                     )
                                   ]),
                         onChanged: (val) {
@@ -272,15 +262,5 @@ class _TransactionFormState extends State<TransactionForm> {
             )
           : Loader(),
     );
-  }
-
-  void getCategories(String uid) {
-    final Future<Database> dbFuture = _localDBService.initializeDBs();
-    dbFuture.then((db) {
-      Future<List<Category>> usersFuture = _localDBService.getCategories(uid);
-      usersFuture.then((categories) {
-        setState(() => _categories = categories);
-      });
-    });
   }
 }

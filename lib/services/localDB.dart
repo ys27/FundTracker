@@ -3,47 +3,49 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
+import 'package:streamqflite/streamqflite.dart';
 import 'package:uuid/uuid.dart';
 
 class LocalDBService {
   static final LocalDBService _localDBService = new LocalDBService.internal();
-
   factory LocalDBService() => _localDBService;
-  static Database _localDB;
+  static StreamDatabase _streamDatabase;
 
-  Future<Database> get db async {
-    if (_localDB != null) {
-      return _localDB;
+  Future<StreamDatabase> get db async {
+    if (_streamDatabase != null) {
+      return _streamDatabase;
     }
-    _localDB = await initializeDBs();
-    return _localDB;
+    _streamDatabase = StreamDatabase(await initializeDBs());
+    return _streamDatabase;
   }
 
   LocalDBService.internal();
 
-  Future<List<Transaction>> getTransactions(String uid) async {
-    Database db = await this.db;
-    List<Map<String, dynamic>> resultsMap = await db.query('transactions',
-        where: 'uid = ?', whereArgs: [uid], orderBy: 'datetime(date) DESC');
-    return resultsMap.map((map) => Transaction.fromMap(map)).toList();
+  Stream<List<Transaction>> getTransactions(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db
+        .createQuery('transactions',
+            where: 'uid = ?', whereArgs: [uid], orderBy: 'datetime(date) DESC')
+        .mapToList((map) => Transaction.fromMap(map));
   }
 
-  Future<List<Category>> getCategories(String uid) async {
-    Database db = await this.db;
-    List<Map<String, dynamic>> resultsMap = await db.query('categories',
-        where: 'uid = ?', whereArgs: [uid], orderBy: 'orderIndex ASC');
-    return resultsMap.map((map) => Category.fromMap(map)).toList();
+  Stream<List<Category>> getCategories(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db
+        .createQuery('categories',
+            where: 'uid = ?', whereArgs: [uid], orderBy: 'orderIndex ASC')
+        .mapToList((map) => Category.fromMap(map));
   }
 
-  Future<List<User>> findUser(String uid) async {
-    Database db = await this.db;
-    List<Map<String, dynamic>> resultsMap =
-        await db.query('users', where: 'uid = ?', whereArgs: [uid]);
-    return resultsMap.map((map) => User.fromMap(map)).toList();
+  Stream<User> findUser(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db.createQuery('users',
+        where: 'uid = ?',
+        whereArgs: [uid]).mapToOne((map) => User.fromMap(map));
   }
 
   void addDefaultCategories(String uid) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     CATEGORIES.asMap().forEach((index, category) async {
       await db.insert('categories', {
         'cid': new Uuid().v1(),
@@ -57,37 +59,36 @@ class LocalDBService {
   }
 
   Future<int> addTransaction(Transaction tx) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     return await db.insert('transactions', tx.toMap());
   }
 
   Future<int> addUser(User user) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     return await db.insert('users', user.toMap());
   }
 
   void setCategory(Category category) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     await db.update('categories', category.toMap(),
         where: 'cid = ?', whereArgs: [category.cid]);
   }
 
   Future<int> updateTransaction(Transaction tx) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     return await db.update('transactions', tx.toMap(),
         where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   Future<int> deleteTransaction(Transaction tx) async {
-    Database db = await this.db;
+    StreamDatabase db = await this.db;
     return await db
         .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   Future<int> removeAllCategories(String uid) async {
-    Database db = await this.db;
-    return await db
-        .delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+    StreamDatabase db = await this.db;
+    return await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   String getTypeInDB(dynamic column) {

@@ -259,6 +259,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  streamqflite:
+    dependency: "direct main"
+    description:
+      name: streamqflite
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   string_scanner:
     dependency: transitive
     description:

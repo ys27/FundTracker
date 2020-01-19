@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
-import 'package:fund_tracker/services/localDB.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart' hide Transaction;
 
 class TransactionsList extends StatefulWidget {
   @override
@@ -12,16 +9,10 @@ class TransactionsList extends StatefulWidget {
 }
 
 class _TransactionsListState extends State<TransactionsList> {
-  final LocalDBService _localDBService = LocalDBService();
-  List<Transaction> _transactions;
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
-
-    if (_transactions == null) {
-      getTransactions(_user.uid);
-    }
+    final List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
 
     if (_transactions == null || _transactions.length == 0) {
       return Center(
@@ -36,16 +27,5 @@ class _TransactionsListState extends State<TransactionsList> {
         },
       );
     }
-  }
-
-  void getTransactions(String uid) {
-    final Future<Database> dbFuture = _localDBService.initializeDBs();
-    dbFuture.then((db) {
-      Future<List<Transaction>> transactionsFuture =
-          _localDBService.getTransactions(uid);
-      transactionsFuture.then((transactions) {
-        setState(() => _transactions = transactions);
-      });
-    });
   }
 }

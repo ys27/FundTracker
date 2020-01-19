@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categories.dart';
 import 'package:fund_tracker/pages/preferences/preferences.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 import 'library.dart';
 
@@ -17,27 +16,21 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   final AuthService _auth = AuthService();
-  final LocalDBService _localDBService = LocalDBService();
-  User user;
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
-
-    if (user == null) {
-      getUser(_user.uid);
-    }
+    final User userInfo = Provider.of<User>(context);
 
     return Drawer(
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(user != null ? user.fullname : ''),
-            accountEmail: Text(user != null ? user.email : ''),
+            accountName: Text(userInfo != null ? userInfo.fullname : ''),
+            accountEmail: Text(userInfo != null ? userInfo.email : ''),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
-                user != null ? user.fullname[0] : '',
+                userInfo != null ? userInfo.fullname[0] : '',
                 style: TextStyle(
                     fontSize: 40.0, color: Theme.of(context).primaryColor),
               ),
@@ -51,7 +44,13 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Categories'),
             leading: Icon(Icons.category),
-            onTap: () => openPage(context, Categories()),
+            onTap: () => openPage(
+              context,
+              StreamProvider<List<Category>>.value(
+                value: LocalDBService().getCategories(userInfo.uid),
+                child: Categories(),
+              ),
+            ),
           ),
           ListTile(
             title: Text('Preferences'),
@@ -69,15 +68,5 @@ class _MainDrawerState extends State<MainDrawer> {
         ],
       ),
     );
-  }
-
-  void getUser(String uid) {
-    final Future<Database> dbFuture = _localDBService.initializeDBs();
-    dbFuture.then((db) {
-      Future<List<User>> usersFuture = _localDBService.findUser(uid);
-      usersFuture.then((users) {
-        setState(() => user = users.first);
-      });
-    });
   }
 }

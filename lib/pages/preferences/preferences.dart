@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/drawer.dart';
 import 'package:provider/provider.dart';
@@ -10,13 +11,15 @@ class Preferences extends StatefulWidget {
 }
 
 class _PreferencesState extends State<Preferences> {
-
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
 
     return Scaffold(
-      drawer: MainDrawer(),
+      drawer: StreamProvider<User>.value(
+        value: LocalDBService().findUser(_user.uid),
+        child: MainDrawer(),
+      ),
       appBar: AppBar(
         title: Text('Preferences'),
       ),
