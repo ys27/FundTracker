@@ -47,4 +47,9 @@ class Category {
     this.enabled = enabled;
     return this;
   }
+
+  Category setOrder(int orderIndex) {
+    this.orderIndex = orderIndex;
+    return this;
+  }
 }

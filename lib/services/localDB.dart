@@ -21,6 +21,7 @@ class LocalDBService {
 
   LocalDBService.internal();
 
+  // Transactions
   Stream<List<Transaction>> getTransactions(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db
@@ -29,19 +30,30 @@ class LocalDBService {
         .mapToList((map) => Transaction.fromMap(map));
   }
 
+  Future<int> addTransaction(Transaction tx) async {
+    StreamDatabase db = await this.db;
+    return await db.insert('transactions', tx.toMap());
+  }
+
+  Future<int> updateTransaction(Transaction tx) async {
+    StreamDatabase db = await this.db;
+    return await db.update('transactions', tx.toMap(),
+        where: 'tid = ?', whereArgs: [tx.tid]);
+  }
+
+  Future<int> deleteTransaction(Transaction tx) async {
+    StreamDatabase db = await this.db;
+    return await db
+        .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
+  }
+
+  // Categories
   Stream<List<Category>> getCategories(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db
         .createQuery('categories',
             where: 'uid = ?', whereArgs: [uid], orderBy: 'orderIndex ASC')
         .mapToList((map) => Category.fromMap(map));
-  }
-
-  Stream<User> findUser(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db.createQuery('users',
-        where: 'uid = ?',
-        whereArgs: [uid]).mapToOne((map) => User.fromMap(map));
   }
 
   void addDefaultCategories(String uid) async {
@@ -58,9 +70,23 @@ class LocalDBService {
     });
   }
 
-  Future<int> addTransaction(Transaction tx) async {
+  void setCategory(Category category) async {
     StreamDatabase db = await this.db;
-    return await db.insert('transactions', tx.toMap());
+    await db.update('categories', category.toMap(),
+        where: 'cid = ?', whereArgs: [category.cid]);
+  }
+
+  Future<int> removeAllCategories(String uid) async {
+    StreamDatabase db = await this.db;
+    return await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+  }
+
+  // User
+  Stream<User> findUser(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db.createQuery('users',
+        where: 'uid = ?',
+        whereArgs: [uid]).mapToOne((map) => User.fromMap(map));
   }
 
   Future<int> addUser(User user) async {
@@ -68,28 +94,7 @@ class LocalDBService {
     return await db.insert('users', user.toMap());
   }
 
-  void setCategory(Category category) async {
-    StreamDatabase db = await this.db;
-    await db.update('categories', category.toMap(),
-        where: 'cid = ?', whereArgs: [category.cid]);
-  }
-
-  Future<int> updateTransaction(Transaction tx) async {
-    StreamDatabase db = await this.db;
-    return await db.update('transactions', tx.toMap(),
-        where: 'tid = ?', whereArgs: [tx.tid]);
-  }
-
-  Future<int> deleteTransaction(Transaction tx) async {
-    StreamDatabase db = await this.db;
-    return await db
-        .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
-  }
-
-  Future<int> removeAllCategories(String uid) async {
-    StreamDatabase db = await this.db;
-    return await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
-  }
+  // Database-related
 
   String getTypeInDB(dynamic column) {
     if (column is String) {
@@ -110,7 +115,7 @@ class LocalDBService {
   Future<Database> initializeDBs() async {
     String directory = await getDatabasesPath();
 
-    return await openDatabase('$directory/local.db',
+    return await openDatabase('$directory/test2.db',
         version: 1, onCreate: _createDBs);
   }
 
