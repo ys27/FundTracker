@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/localDB.dart';
-import 'package:fund_tracker/shared/drawer.dart';
+import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
 class Categories extends StatefulWidget {
@@ -18,10 +17,7 @@ class _CategoriesState extends State<Categories> {
     final List<Category> _categories = Provider.of<List<Category>>(context);
 
     return Scaffold(
-      drawer: StreamProvider<User>.value(
-        value: LocalDBService().findUser(_user.uid),
-        child: MainDrawer(),
-      ),
+      drawer: MainDrawer(_user),
       appBar: AppBar(
         title: Text('Categories'),
       ),

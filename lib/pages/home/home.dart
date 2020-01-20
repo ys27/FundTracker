@@ -2,12 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/localDB.dart';
-import 'package:fund_tracker/shared/drawer.dart';
+import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
@@ -31,10 +30,7 @@ class _HomeState extends State<Home> {
     ];
 
     return Scaffold(
-      drawer: StreamProvider<User>.value(
-        value: LocalDBService().findUser(_user.uid),
-        child: MainDrawer(),
-      ),
+      drawer: MainDrawer(_user),
       appBar: AppBar(
         title: Text('Records'),
       ),
