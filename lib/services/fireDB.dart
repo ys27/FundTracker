@@ -20,10 +20,9 @@ class FireDBService {
         .collection('transactions')
         .orderBy('date', descending: true)
         .snapshots()
-        .map((snapshot) =>
-                snapshot.documents.map((map) => Transaction.fromMap(map.data))
-            // .toList()
-            );
+        .map((snapshot) => snapshot.documents
+            .map((map) => Transaction.fromMap(map.data))
+            .toList());
   }
 
   Future addTransaction(Transaction tx) async {
