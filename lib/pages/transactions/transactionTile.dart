@@ -2,11 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/constants.dart';
-import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 enum MenuItems { Edit, Delete }
@@ -25,22 +23,24 @@ class TransactionTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
         child: ListTile(
-          onTap: () => openPage(
-            context,
-            StreamProvider<List<Category>>.value(
-              value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
-              child: TransactionForm(
-                Transaction(
-                  tid: transaction.tid,
-                  date: transaction.date,
-                  isExpense: transaction.isExpense,
-                  payee: transaction.payee,
-                  amount: transaction.amount,
-                  category: transaction.category,
-                  uid: _user.uid,
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) {
+              return StreamProvider<List<Category>>.value(
+                value: DatabaseWrapper(_user.uid).getCategories(),
+                child: TransactionForm(
+                  Transaction(
+                    tid: transaction.tid,
+                    date: transaction.date,
+                    isExpense: transaction.isExpense,
+                    payee: transaction.payee,
+                    amount: transaction.amount,
+                    category: transaction.category,
+                    uid: _user.uid,
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
           leading: CircleAvatar(
             radius: 25.0,
@@ -77,15 +77,17 @@ class TransactionTile extends StatelessWidget {
                     uid: _user.uid,
                   );
                   if (val == MenuItems.Edit) {
-                    openPage(
-                      context,
-                      StreamProvider<List<Category>>.value(
-                        value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
-                        child: TransactionForm(tx),
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return StreamProvider<List<Category>>.value(
+                          value: DatabaseWrapper(_user.uid).getCategories(),
+                          child: TransactionForm(tx),
+                        );
+                      },
                     );
                   } else if (val == MenuItems.Delete) {
-                    DatabaseWrapper(_user.uid, DatabaseType.Local).deleteTransaction(tx);
+                    DatabaseWrapper(_user.uid).deleteTransaction(tx);
                   }
                 },
                 itemBuilder: (context) {

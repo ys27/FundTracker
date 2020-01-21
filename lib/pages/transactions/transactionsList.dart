@@ -13,7 +13,7 @@ class _TransactionsListState extends State<TransactionsList> {
   @override
   Widget build(BuildContext context) {
     final List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
-
+    
     if (_transactions == null || _transactions.length == 0) {
       return Center(
         child:

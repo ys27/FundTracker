@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:uuid/uuid.dart';
 
 class FireDBService {
@@ -25,23 +26,23 @@ class FireDBService {
             .toList());
   }
 
-  Future addTransaction(Transaction tx) async {
-    return await usersCollection
+  void addTransaction(Transaction tx) async {
+    await usersCollection
         .document(uid)
         .collection('transactions')
         .add(tx.toMap());
   }
 
-  Future updateTransaction(Transaction tx) async {
-    return await usersCollection
+  void updateTransaction(Transaction tx) async {
+    await usersCollection
         .document(uid)
         .collection('transactions')
         .document(tx.tid)
         .setData(tx.toMap());
   }
 
-  Future deleteTransaction(Transaction tx) async {
-    return await usersCollection
+  void deleteTransaction(Transaction tx) async {
+    await usersCollection
         .document(uid)
         .collection('transactions')
         .document(tx.tid)
@@ -62,7 +63,7 @@ class FireDBService {
 
   void addDefaultCategories() {
     CATEGORIES.asMap().forEach((index, category) async {
-      return await usersCollection.document(uid).collection('categories').add({
+      await usersCollection.document(uid).collection('categories').add({
         'cid': new Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
@@ -74,7 +75,7 @@ class FireDBService {
   }
 
   void setCategory(Category category) async {
-    return await usersCollection
+    await usersCollection
         .document(uid)
         .collection('categories')
         .document(category.cid)
@@ -82,7 +83,7 @@ class FireDBService {
   }
 
   void removeAllCategories() async {
-    return await usersCollection
+    await usersCollection
         .document(uid)
         .collection('categories')
         .getDocuments()
@@ -103,11 +104,46 @@ class FireDBService {
         .map((snapshot) => User.fromMap(snapshot.data));
   }
 
-  Future addUser(User user) async {
-    return await usersCollection
+  void addUser(User user) async {
+    await usersCollection
         .document(uid)
         .collection('user')
         .document(uid)
         .setData(user.toMap());
+  }
+
+  // Periods
+  Stream<List<Period>> getPeriods() {
+    return usersCollection
+        .document(uid)
+        .collection('periods')
+        .orderBy('isDefault', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.documents
+            .map((map) => Period.fromMap(map.data))
+            .toList());
+  }
+
+  void addPeriod(Period period) async {
+    await usersCollection
+        .document(uid)
+        .collection('periods')
+        .add(period.toMap());
+  }
+
+  void updatePeriod(Period period) async {
+    await usersCollection
+        .document(uid)
+        .collection('periods')
+        .document(period.pid)
+        .setData(period.toMap());
+  }
+
+  void deletePeriod(Period period) async {
+    await usersCollection
+        .document(uid)
+        .collection('periods')
+        .document(period.pid)
+        .delete();
   }
 }

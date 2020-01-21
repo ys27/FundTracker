@@ -3,7 +3,11 @@ class User {
   String email;
   String fullname;
 
-  User({this.uid, this.email, this.fullname});
+  User({
+    this.uid,
+    this.email,
+    this.fullname,
+  });
 
   User.example() {
     uid = '';

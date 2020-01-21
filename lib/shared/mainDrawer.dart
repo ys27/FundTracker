@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/preferences/categories.dart';
+import 'package:fund_tracker/pages/categories/categories.dart';
+import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferences.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/constants.dart';
 
 import 'library.dart';
 
@@ -28,10 +28,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    DatabaseWrapper(widget.user.uid, DatabaseType.Local)
-        .findUser()
-        .first
-        .then(
+    DatabaseWrapper(widget.user.uid).findUser().first.then(
           (user) => setState(() {
             userInfo = user;
           }),
@@ -68,7 +65,8 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Home'),
             leading: Icon(Icons.home),
-            onTap: () => goHome(context),
+            onTap: () => Navigator.popUntil(
+                context, ModalRoute.withName(Navigator.defaultRouteName)),
           ),
           ListTile(
             title: Text('Categories'),
@@ -76,6 +74,14 @@ class _MainDrawerState extends State<MainDrawer> {
             onTap: () => openPage(
               context,
               Categories(widget.user),
+            ),
+          ),
+          ListTile(
+            title: Text('Periods'),
+            leading: Icon(Icons.date_range),
+            onTap: () => openPage(
+              context,
+              Periods(widget.user),
             ),
           ),
           ListTile(

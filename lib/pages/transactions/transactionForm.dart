@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/constants.dart';
-import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -47,14 +45,15 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    DatabaseWrapper(_user.uid, DatabaseType.Local).deleteTransaction(widget.tx);
-                    goHome(context);
+                    DatabaseWrapper(_user.uid).deleteTransaction(widget.tx);
+                    // goHome(context);
+                    Navigator.pop(context);
                   },
                 )
               ]
             : null,
       ),
-      body: (_enabledCategories != null && _enabledCategories.isNotEmpty)
+      body: (_enabledCategories != null && _enabledCategories.isNotEmpty && !isLoading)
           ? Container(
               padding: EdgeInsets.symmetric(
                 vertical: 20.0,
@@ -251,9 +250,10 @@ class _TransactionFormState extends State<TransactionForm> {
 
                           setState(() => isLoading = true);
                           isEditMode
-                              ? DatabaseWrapper(_user.uid, DatabaseType.Local).updateTransaction(tx)
-                              : DatabaseWrapper(_user.uid, DatabaseType.Local).addTransaction(tx);
-                          goHome(context);
+                              ? DatabaseWrapper(_user.uid).updateTransaction(tx)
+                              : DatabaseWrapper(_user.uid).addTransaction(tx);
+                          // goHome(context);
+                          Navigator.pop(context);
                         }
                       },
                     )

@@ -6,9 +6,7 @@ import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
-import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -24,7 +22,7 @@ class _HomeState extends State<Home> {
     final _user = Provider.of<FirebaseUser>(context);
     List<Widget> tabItems = [
       StreamProvider<List<Transaction>>.value(
-        value: DatabaseWrapper(_user.uid, DatabaseType.Local).getTransactions(),
+        value: DatabaseWrapper(_user.uid).getTransactions(),
         child: TransactionsList(),
       ),
       Statistics()
@@ -38,12 +36,14 @@ class _HomeState extends State<Home> {
       body: tabItems[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () => openPage(
-          context,
-          StreamProvider<List<Category>>.value(
-            value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
-            child: TransactionForm(Transaction.empty()),
-          ),
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) {
+            return StreamProvider<List<Category>>.value(
+              value: DatabaseWrapper(_user.uid).getCategories(),
+              child: TransactionForm(Transaction.empty()),
+            );
+          },
         ),
         child: Icon(Icons.add),
       ),

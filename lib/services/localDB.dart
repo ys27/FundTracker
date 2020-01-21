@@ -1,7 +1,9 @@
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:streamqflite/streamqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -30,21 +32,20 @@ class LocalDBService {
         .mapToList((map) => Transaction.fromMap(map));
   }
 
-  Future<int> addTransaction(Transaction tx) async {
+  void addTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    return await db.insert('transactions', tx.toMap());
+    await db.insert('transactions', tx.toMap());
   }
 
-  Future<int> updateTransaction(Transaction tx) async {
+  void updateTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    return await db.update('transactions', tx.toMap(),
+    await db.update('transactions', tx.toMap(),
         where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
-  Future<int> deleteTransaction(Transaction tx) async {
+  void deleteTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    return await db
-        .delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
+    await db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   // Categories
@@ -76,9 +77,9 @@ class LocalDBService {
         where: 'cid = ?', whereArgs: [category.cid]);
   }
 
-  Future<int> removeAllCategories(String uid) async {
+  void removeAllCategories(String uid) async {
     StreamDatabase db = await this.db;
-    return await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+    await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // User
@@ -89,13 +90,37 @@ class LocalDBService {
         whereArgs: [uid]).mapToOne((map) => User.fromMap(map));
   }
 
-  Future<int> addUser(User user) async {
+  void addUser(User user) async {
     StreamDatabase db = await this.db;
-    return await db.insert('users', user.toMap());
+    await db.insert('users', user.toMap());
+  }
+
+  // Periods
+  Stream<List<Period>> getPeriods(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db
+        .createQuery('periods',
+            where: 'uid = ?', whereArgs: [uid], orderBy: 'isDefault DESC')
+        .mapToList((map) => Period.fromMap(map));
+  }
+
+  void addPeriod(Period period) async {
+    StreamDatabase db = await this.db;
+    await db.insert('periods', period.toMap());
+  }
+
+  void updatePeriod(Period period) async {
+    StreamDatabase db = await this.db;
+    await db.update('periods', period.toMap(),
+        where: 'pid = ?', whereArgs: [period.pid]);
+  }
+
+  void deletePeriod(Period period) async {
+    StreamDatabase db = await this.db;
+    await db.delete('periods', where: 'pid = ?', whereArgs: [period.pid]);
   }
 
   // Database-related
-
   String getTypeInDB(dynamic column) {
     if (column is String) {
       return 'TEXT';
@@ -107,6 +132,8 @@ class LocalDBService {
       return 'TEXT';
     } else if (column is double) {
       return 'REAL';
+    } else if (column is DurationUnit) {
+      return 'INTEGER';
     } else {
       return 'TEXT';
     }
@@ -124,6 +151,7 @@ class LocalDBService {
       'categories': Category.example(),
       'transactions': Transaction.example(),
       'users': User.example(),
+      'periods': Period.example(),
     };
     tables.forEach((tableName, model) async {
       String columnsQuery = '';

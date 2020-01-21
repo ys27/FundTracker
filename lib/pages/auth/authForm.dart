@@ -177,7 +177,7 @@ class _AuthFormState extends State<AuthForm> {
                               ? await _auth.register(_email, _password)
                               : await _auth.signIn(_email, _password);
                           if (isRegister) {
-                            DatabaseWrapper(_user.uid, DatabaseType.Local).addUser(
+                            DatabaseWrapper(_user.uid).addUser(
                               User(
                                   uid: _user.uid,
                                   email: _email,
@@ -190,7 +190,7 @@ class _AuthFormState extends State<AuthForm> {
                               _error = _user;
                             });
                           } else if (isRegister) {
-                            DatabaseWrapper(_user.uid, DatabaseType.Local)
+                            DatabaseWrapper(_user.uid)
                                 .addDefaultCategories();
                           }
                         }

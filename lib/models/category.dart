@@ -6,13 +6,14 @@ class Category {
   int orderIndex;
   String uid;
 
-  Category(
-      {this.cid,
-      this.name,
-      this.icon,
-      this.enabled,
-      this.orderIndex,
-      this.uid});
+  Category({
+    this.cid,
+    this.name,
+    this.icon,
+    this.enabled,
+    this.orderIndex,
+    this.uid,
+  });
 
   Category.example() {
     cid = '';
