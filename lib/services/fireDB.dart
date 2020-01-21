@@ -14,7 +14,7 @@ class FireDBService {
       Firestore.instance.collection('users');
 
   // Transactions
-  Stream<List<Transaction>> get transactions {
+  Stream<List<Transaction>> getTransactions() {
     return usersCollection
         .document(uid)
         .collection('transactions')
@@ -49,7 +49,7 @@ class FireDBService {
   }
 
   // Categories
-  Stream<List<Category>> get categories {
+  Stream<List<Category>> getCategories() {
     return usersCollection
         .document(uid)
         .collection('categories')
@@ -94,7 +94,7 @@ class FireDBService {
   }
 
   // User Info
-  Stream<User> get user {
+  Stream<User> findUser() {
     return usersCollection
         .document(uid)
         .collection('user')

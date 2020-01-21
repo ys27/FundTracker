@@ -41,7 +41,6 @@ class _AuthFormState extends State<AuthForm> {
             textColor: Colors.white,
             child: Text(isRegister ? 'Back' : 'Register'),
             onPressed: () {
-              LocalDBService().initializeDBs();
               widget.toggleView();
             },
           )
