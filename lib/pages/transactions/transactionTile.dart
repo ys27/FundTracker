@@ -62,7 +62,11 @@ class TransactionTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                  '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}'),
+                '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: transaction.isExpense ? Colors.red : Colors.green,
+                ),
+              ),
               SizedBox(width: 5.0),
               PopupMenuButton(
                 child: Icon(Icons.more_vert),
