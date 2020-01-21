@@ -1,23 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
-import 'package:provider/provider.dart';
 
 class Categories extends StatefulWidget {
+  final FirebaseUser user;
+
+  Categories(this.user);
+
   @override
   _CategoriesState createState() => _CategoriesState();
 }
 
 class _CategoriesState extends State<Categories> {
+  List<Category> _categories;
+  @override
+  void initState() {
+    super.initState();
+    DatabaseWrapper(widget.user.uid, DatabaseType.Local)
+        .getCategories()
+        .first
+        .then(
+          (categories) => setState(() {
+            _categories = List<Category>.from(categories);
+          }),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
-    final List<Category> _categories = Provider.of<List<Category>>(context);
-
     return Scaffold(
-      drawer: MainDrawer(_user),
+      drawer: MainDrawer(widget.user),
       appBar: AppBar(
         title: Text('Categories'),
       ),
@@ -46,14 +61,24 @@ class _CategoriesState extends State<Categories> {
                       oldIndex < newIndex ? oldIndex + 1 : newIndex;
                   int untilIndex =
                       oldIndex < newIndex ? newIndex - 1 : oldIndex - 1;
-                  int finalIndex = oldIndex < newIndex ? newIndex -1 : newIndex;
+                  int finalIndex =
+                      oldIndex < newIndex ? newIndex - 1 : newIndex;
                   for (int i = startIndex; i <= untilIndex; i++) {
                     int newOrderIndex = oldIndex < newIndex ? i - 1 : i + 1;
-                    LocalDBService()
+                    DatabaseWrapper(widget.user.uid, DatabaseType.Local)
                         .setCategory(_categories[i].setOrder(newOrderIndex));
                   }
-                  LocalDBService()
+                  DatabaseWrapper(widget.user.uid, DatabaseType.Local)
                       .setCategory(_categories[oldIndex].setOrder(finalIndex));
+                  setState(
+                    () {
+                      if (newIndex > oldIndex) {
+                        newIndex -= 1;
+                      }
+                      final Category item = _categories.removeAt(oldIndex);
+                      _categories.insert(newIndex, item);
+                    },
+                  );
                 },
                 children: _categories.map((category) {
                   return CheckboxListTile(
@@ -71,7 +96,8 @@ class _CategoriesState extends State<Categories> {
                     ),
                     onChanged: (val) {
                       if (category.name != 'Others') {
-                        LocalDBService().setCategory(category.setEnabled(val));
+                        DatabaseWrapper(widget.user.uid, DatabaseType.Local)
+                            .setCategory(category.setEnabled(val));
                       }
                     },
                   );

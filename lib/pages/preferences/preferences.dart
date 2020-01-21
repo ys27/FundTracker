@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +30,8 @@ class _PreferencesState extends State<Preferences> {
             RaisedButton(
               child: Text('Reset Categories'),
               onPressed: () {
-                LocalDBService().removeAllCategories(_user.uid);
-                LocalDBService().addDefaultCategories(_user.uid);
+                DatabaseWrapper(_user.uid, DatabaseType.Local).removeAllCategories();
+                DatabaseWrapper(_user.uid, DatabaseType.Local).addDefaultCategories();
               },
             ),
           ],

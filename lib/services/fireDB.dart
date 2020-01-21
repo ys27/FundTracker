@@ -8,7 +8,7 @@ import 'package:uuid/uuid.dart';
 class FireDBService {
   final String uid;
 
-  FireDBService({this.uid});
+  FireDBService(this.uid);
 
   final CollectionReference usersCollection =
       Firestore.instance.collection('users');

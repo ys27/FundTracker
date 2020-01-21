@@ -5,7 +5,8 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
-import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class _HomeState extends State<Home> {
     final _user = Provider.of<FirebaseUser>(context);
     List<Widget> tabItems = [
       StreamProvider<List<Transaction>>.value(
-        value: LocalDBService().getTransactions(_user.uid),
+        value: DatabaseWrapper(_user.uid, DatabaseType.Local).getTransactions(),
         child: TransactionsList(),
       ),
       Statistics()
@@ -40,7 +41,7 @@ class _HomeState extends State<Home> {
         onPressed: () => openPage(
           context,
           StreamProvider<List<Category>>.value(
-            value: LocalDBService().getCategories(_user.uid),
+            value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
             child: TransactionForm(Transaction.empty()),
           ),
         ),

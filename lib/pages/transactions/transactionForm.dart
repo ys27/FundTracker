@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    LocalDBService().deleteTransaction(widget.tx);
+                    DatabaseWrapper(_user.uid, DatabaseType.Local).deleteTransaction(widget.tx);
                     goHome(context);
                   },
                 )
@@ -250,8 +251,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
                           setState(() => isLoading = true);
                           isEditMode
-                              ? LocalDBService().updateTransaction(tx)
-                              : LocalDBService().addTransaction(tx);
+                              ? DatabaseWrapper(_user.uid, DatabaseType.Local).updateTransaction(tx)
+                              : DatabaseWrapper(_user.uid, DatabaseType.Local).addTransaction(tx);
                           goHome(context);
                         }
                       },

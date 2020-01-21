@@ -4,7 +4,8 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/preferences/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
-import 'package:fund_tracker/services/localDB.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,7 @@ class TransactionTile extends StatelessWidget {
           onTap: () => openPage(
             context,
             StreamProvider<List<Category>>.value(
-              value: LocalDBService().getCategories(_user.uid),
+              value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
               child: TransactionForm(
                 Transaction(
                   tid: transaction.tid,
@@ -79,12 +80,12 @@ class TransactionTile extends StatelessWidget {
                     openPage(
                       context,
                       StreamProvider<List<Category>>.value(
-                        value: LocalDBService().getCategories(_user.uid),
+                        value: DatabaseWrapper(_user.uid, DatabaseType.Local).getCategories(),
                         child: TransactionForm(tx),
                       ),
                     );
                   } else if (val == MenuItems.Delete) {
-                    LocalDBService().deleteTransaction(tx);
+                    DatabaseWrapper(_user.uid, DatabaseType.Local).deleteTransaction(tx);
                   }
                 },
                 itemBuilder: (context) {

@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/preferences/categories.dart';
 import 'package:fund_tracker/pages/preferences/preferences.dart';
 import 'package:fund_tracker/services/auth.dart';
-import 'package:fund_tracker/services/localDB.dart';
-import 'package:provider/provider.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 
 import 'library.dart';
 
@@ -29,7 +28,14 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    LocalDBService().findUser(widget.user.uid).first.then((user) => setState(() => userInfo = user));
+    DatabaseWrapper(widget.user.uid, DatabaseType.Local)
+        .findUser()
+        .first
+        .then(
+          (user) => setState(() {
+            userInfo = user;
+          }),
+        );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         final result = await InternetAddress.lookup('google.com');
@@ -69,10 +75,7 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: Icon(Icons.category),
             onTap: () => openPage(
               context,
-              StreamProvider<List<Category>>.value(
-                value: LocalDBService().getCategories(widget.user.uid),
-                child: Categories(),
-              ),
+              Categories(widget.user),
             ),
           ),
           ListTile(
