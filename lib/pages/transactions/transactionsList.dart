@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
@@ -24,8 +25,9 @@ class _TransactionsListState extends State<TransactionsList> {
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);
     }
-
-    if (_transactions == null || _transactions.length == 0) {
+    if (_transactions == null) {
+      return Loader();
+    } else if (_transactions.length == 0) {
       return Center(
         child:
             Text('No transactions available. Add one using the button below.'),
