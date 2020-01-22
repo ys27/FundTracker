@@ -5,6 +5,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 enum MenuItems { Edit, Delete }
@@ -26,8 +27,8 @@ class TransactionTile extends StatelessWidget {
           onTap: () => showDialog(
             context: context,
             builder: (context) {
-              return StreamProvider<List<Category>>.value(
-                value: DatabaseWrapper(_user.uid).getCategories(),
+              return StreamProvider<List<Category>>(
+                create: (_) => DatabaseWrapper(_user.uid).getCategories(),
                 child: TransactionForm(
                   Transaction(
                     tid: transaction.tid,
@@ -56,8 +57,7 @@ class TransactionTile extends StatelessWidget {
                 fontFamily: 'MaterialIcons')),
           ),
           title: Text(transaction.payee),
-          subtitle: Text(
-              '${transaction.date.year.toString()}.${transaction.date.month.toString()}.${transaction.date.day.toString()}'),
+          subtitle: Text(getDate(transaction.date)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -84,8 +84,8 @@ class TransactionTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return StreamProvider<List<Category>>.value(
-                          value: DatabaseWrapper(_user.uid).getCategories(),
+                        return StreamProvider<List<Category>>(
+                          create: (_) => DatabaseWrapper(_user.uid).getCategories(),
                           child: TransactionForm(tx),
                         );
                       },

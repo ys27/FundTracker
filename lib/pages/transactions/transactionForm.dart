@@ -247,7 +247,6 @@ class _TransactionFormState extends State<TransactionForm> {
                                 _enabledCategories.first.name,
                             uid: _user.uid,
                           );
-
                           setState(() => isLoading = true);
                           isEditMode
                               ? DatabaseWrapper(_user.uid).updateTransaction(tx)

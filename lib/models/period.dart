@@ -1,5 +1,4 @@
 import 'package:fund_tracker/shared/constants.dart';
-import 'package:uuid/uuid.dart';
 
 class Period {
   String pid;
@@ -35,7 +34,7 @@ class Period {
 
     pid = '';
     name = 'Default Monthly';
-    startDate = DateTime(now.year, now.month, 1);
+    startDate = DateTime.utc(now.year, now.month, 1);
     durationValue = 1;
     durationUnit = DurationUnit.Months;
     isDefault = false;
@@ -72,5 +71,10 @@ class Period {
       'isDefault': isDefault ? 1 : 0,
       'uid': uid,
     };
+  }
+
+  Period setStartDate(DateTime startDate) {
+    this.startDate = startDate;
+    return this;
   }
 }

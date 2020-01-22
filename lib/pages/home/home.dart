@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
@@ -21,8 +22,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
     List<Widget> tabItems = [
-      StreamProvider<List<Transaction>>.value(
-        value: DatabaseWrapper(_user.uid).getTransactions(),
+      MultiProvider(
+        providers: [
+          StreamProvider<List<Transaction>>(
+            create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
+          ),
+          StreamProvider<Period>(
+            create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+          ),
+        ],
         child: TransactionsList(),
       ),
       Statistics()
@@ -39,8 +47,8 @@ class _HomeState extends State<Home> {
         onPressed: () => showDialog(
           context: context,
           builder: (context) {
-            return StreamProvider<List<Category>>.value(
-              value: DatabaseWrapper(_user.uid).getCategories(),
+            return StreamProvider<List<Category>>(
+              create: (_) => DatabaseWrapper(_user.uid).getCategories(),
               child: TransactionForm(Transaction.empty()),
             );
           },

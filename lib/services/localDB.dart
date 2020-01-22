@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
+import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:streamqflite/streamqflite.dart';
@@ -104,6 +105,14 @@ class LocalDBService {
         .mapToList((map) => Period.fromMap(map));
   }
 
+  Stream<Period> getDefaultPeriod(String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db
+        .createQuery('periods',
+            where: 'uid = ? AND isDefault = ?', whereArgs: [uid, 1])
+        .mapToOne((map) => Period.fromMap(map));
+  }
+
   void addPeriod(Period period) async {
     StreamDatabase db = await this.db;
     await db.insert('periods', period.toMap());
@@ -142,7 +151,7 @@ class LocalDBService {
   Future<Database> initializeDBs() async {
     String directory = await getDatabasesPath();
 
-    return await openDatabase('$directory/test2.db',
+    return await openDatabase('$directory/$LOCAL_DATABASE_FILENAME.db',
         version: 1, onCreate: _createDBs);
   }
 

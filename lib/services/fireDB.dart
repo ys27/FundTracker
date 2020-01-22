@@ -8,16 +8,15 @@ import 'package:uuid/uuid.dart';
 
 class FireDBService {
   final String uid;
+  DocumentReference db;
 
-  FireDBService(this.uid);
-
-  final CollectionReference usersCollection =
-      Firestore.instance.collection('users');
+  FireDBService(this.uid) {
+    this.db = Firestore.instance.collection('users').document(this.uid);
+  }
 
   // Transactions
   Stream<List<Transaction>> getTransactions() {
-    return usersCollection
-        .document(uid)
+    return db
         .collection('transactions')
         .orderBy('date', descending: true)
         .snapshots()
@@ -27,43 +26,28 @@ class FireDBService {
   }
 
   void addTransaction(Transaction tx) async {
-    await usersCollection
-        .document(uid)
-        .collection('transactions')
-        .add(tx.toMap());
+    await db.collection('transactions').add(tx.toMap());
   }
 
   void updateTransaction(Transaction tx) async {
-    await usersCollection
-        .document(uid)
-        .collection('transactions')
-        .document(tx.tid)
-        .setData(tx.toMap());
+    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
 
   void deleteTransaction(Transaction tx) async {
-    await usersCollection
-        .document(uid)
-        .collection('transactions')
-        .document(tx.tid)
-        .delete();
+    await db.collection('transactions').document(tx.tid).delete();
   }
 
   // Categories
   Stream<List<Category>> getCategories() {
-    return usersCollection
-        .document(uid)
-        .collection('categories')
-        .orderBy('orderIndex')
-        .snapshots()
-        .map((snapshot) => snapshot.documents
+    return db.collection('categories').orderBy('orderIndex').snapshots().map(
+        (snapshot) => snapshot.documents
             .map((map) => Category.fromMap(map.data))
             .toList());
   }
 
   void addDefaultCategories() {
     CATEGORIES.asMap().forEach((index, category) async {
-      await usersCollection.document(uid).collection('categories').add({
+      await db.collection('categories').add({
         'cid': new Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
@@ -75,19 +59,14 @@ class FireDBService {
   }
 
   void setCategory(Category category) async {
-    await usersCollection
-        .document(uid)
+    await db
         .collection('categories')
         .document(category.cid)
         .setData(category.toMap());
   }
 
   void removeAllCategories() async {
-    await usersCollection
-        .document(uid)
-        .collection('categories')
-        .getDocuments()
-        .then((snapshot) {
+    await db.collection('categories').getDocuments().then((snapshot) {
       for (DocumentSnapshot doc in snapshot.documents) {
         doc.reference.delete();
       }
@@ -96,8 +75,7 @@ class FireDBService {
 
   // User Info
   Stream<User> findUser() {
-    return usersCollection
-        .document(uid)
+    return db
         .collection('user')
         .document(uid)
         .snapshots()
@@ -105,45 +83,39 @@ class FireDBService {
   }
 
   void addUser(User user) async {
-    await usersCollection
-        .document(uid)
-        .collection('user')
-        .document(uid)
-        .setData(user.toMap());
+    await db.collection('user').document(uid).setData(user.toMap());
   }
 
   // Periods
   Stream<List<Period>> getPeriods() {
-    return usersCollection
-        .document(uid)
+    return db
         .collection('periods')
         .orderBy('isDefault', descending: true)
         .snapshots()
+        .map((snapshot) =>
+            snapshot.documents.map((map) => Period.fromMap(map.data)).toList());
+  }
+
+  Stream<Period> getDefaultPeriod() {
+    return db
+        .collection('periods')
+        .where('isDefault', isEqualTo: 1)
+        .snapshots()
         .map((snapshot) => snapshot.documents
             .map((map) => Period.fromMap(map.data))
-            .toList());
+            .toList()
+            .first);
   }
 
   void addPeriod(Period period) async {
-    await usersCollection
-        .document(uid)
-        .collection('periods')
-        .add(period.toMap());
+    await db.collection('periods').add(period.toMap());
   }
 
   void updatePeriod(Period period) async {
-    await usersCollection
-        .document(uid)
-        .collection('periods')
-        .document(period.pid)
-        .setData(period.toMap());
+    await db.collection('periods').document(period.pid).setData(period.toMap());
   }
 
   void deletePeriod(Period period) async {
-    await usersCollection
-        .document(uid)
-        .collection('periods')
-        .document(period.pid)
-        .delete();
+    await db.collection('periods').document(period.pid).delete();
   }
 }

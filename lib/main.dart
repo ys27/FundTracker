@@ -9,8 +9,8 @@ void main() => runApp(App());
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<FirebaseUser>.value(
-      value: AuthService().user,
+    return StreamProvider<FirebaseUser>(
+      create: (_) => AuthService().user,
       child: MaterialApp(
         home: Wrapper(),
         theme: ThemeData(

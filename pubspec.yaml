@@ -30,6 +30,7 @@ dependencies:
   sqflite: ^1.2.0
   uuid: ^2.0.4
   streamqflite: ^1.0.0
+  sticky_headers: ^0.1.8+1
 
 dev_dependencies:
   flutter_test:
