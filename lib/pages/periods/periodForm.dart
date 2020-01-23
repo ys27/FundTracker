@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class PeriodForm extends StatefulWidget {
   final Period period;
@@ -20,7 +22,7 @@ class _PeriodFormState extends State<PeriodForm> {
 
   String _name;
   DateTime _startDate;
-  int _durationValue;
+  String _durationValue = '';
   DurationUnit _durationUnit;
   bool _isDefault;
 
@@ -57,154 +59,129 @@ class _PeriodFormState extends State<PeriodForm> {
               ),
               child: Form(
                 key: _formKey,
-                child: Container(),
-                // child: ListView(
-                //   children: <Widget>[
-                //     SizedBox(height: 20.0),
-                //     Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //       children: <Widget>[
-                //         Expanded(
-                //           child: FlatButton(
-                //             padding: EdgeInsets.all(15.0),
-                //             color: (_isExpense ?? widget.period.isExpense)
-                //                 ? Colors.grey[100]
-                //                 : Theme.of(context).primaryColor,
-                //             child: Text(
-                //               'Income',
-                //               style: TextStyle(
-                //                   fontWeight:
-                //                       (_isExpense ?? widget.period.isExpense)
-                //                           ? FontWeight.normal
-                //                           : FontWeight.bold,
-                //                   color: (_isExpense ?? widget.period.isExpense)
-                //                       ? Colors.black
-                //                       : Colors.white),
-                //             ),
-                //             onPressed: () => setState(() => _isExpense = false),
-                //           ),
-                //         ),
-                //         Expanded(
-                //           child: FlatButton(
-                //             padding: EdgeInsets.all(15.0),
-                //             color: (_isExpense ?? widget.period.isExpense)
-                //                 ? Theme.of(context).primaryColor
-                //                 : Colors.grey[100],
-                //             child: Text(
-                //               'Expense',
-                //               style: TextStyle(
-                //                 fontWeight:
-                //                     (_isExpense ?? widget.period.isExpense)
-                //                         ? FontWeight.bold
-                //                         : FontWeight.normal,
-                //                 color: (_isExpense ?? widget.period.isExpense)
-                //                     ? Colors.white
-                //                     : Colors.black,
-                //               ),
-                //             ),
-                //             onPressed: () => setState(() => _isExpense = true),
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //     SizedBox(height: 20.0),
-                //     FlatButton(
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //         children: <Widget>[
-                //           Text(
-                //               '${(_date ?? widget.period.date).year.toString()}.${(_date ?? widget.period.date).month.toString()}.${(_date ?? widget.period.date).day.toString()}'),
-                //           Icon(Icons.date_range),
-                //         ],
-                //       ),
-                //       onPressed: () async {
-                //         DateTime date = await showDatePicker(
-                //           context: context,
-                //           initialDate: new DateTime.now(),
-                //           firstDate: DateTime.now().subtract(
-                //             Duration(days: 365),
-                //           ),
-                //           lastDate: DateTime.now().add(
-                //             Duration(days: 365),
-                //           ),
-                //         );
-                //         if (date != null) {
-                //           setState(() => _date = date);
-                //         }
-                //       },
-                //     ),
-                //     SizedBox(height: 20.0),
-                //     TextFormField(
-                //       initialValue: widget.period.payee,
-                //       validator: (val) {
-                //         if (val.isEmpty) {
-                //           return 'Enter a payee or a note.';
-                //         }
-                //         return null;
-                //       },
-                //       decoration: InputDecoration(
-                //         labelText: 'Payee',
-                //       ),
-                //       textCapitalization: TextCapitalization.words,
-                //       onChanged: (val) {
-                //         setState(() => _payee = val);
-                //       },
-                //     ),
-                //     SizedBox(height: 20.0),
-                //     TextFormField(
-                //       initialValue: widget.period.amount != null
-                //           ? widget.period.amount.toStringAsFixed(2)
-                //           : null,
-                //       autovalidate: _amount != null,
-                //       validator: (val) {
-                //         if (val.isEmpty) {
-                //           return 'Please enter an amount.';
-                //         }
-                //         if (val.indexOf('.') > 0 &&
-                //             val.split('.')[1].length > 2) {
-                //           return 'At most 2 decimal places allowed.';
-                //         }
-                //         return null;
-                //       },
-                //       decoration: InputDecoration(
-                //         labelText: 'Amount',
-                //       ),
-                //       keyboardType: TextInputType.number,
-                //       onChanged: (val) {
-                //         setState(() => _amount = double.parse(val));
-                //       },
-                //     ),
-                //     SizedBox(height: 20.0),
-                //     RaisedButton(
-                //       color: Theme.of(context).primaryColor,
-                //       child: Text(
-                //         isEditMode ? 'Save' : 'Add',
-                //         style: TextStyle(color: Colors.white),
-                //       ),
-                //       onPressed: () async {
-                //         if (_formKey.currentState.validate()) {
-                //           Transaction tx = Transaction(
-                //             tid: widget.period.tid ?? new Uuid().v1(),
-                //             date: _date ?? widget.period.date,
-                //             isExpense: _isExpense ?? widget.period.isExpense,
-                //             payee: _payee ?? widget.period.payee,
-                //             amount: _amount ?? widget.period.amount,
-                //             category: _category ??
-                //                 widget.period.category ??
-                //                 _enabledCategories.first.name,
-                //             uid: _user.uid,
-                //           );
+                child: ListView(
+                  children: <Widget>[
+                    SizedBox(height: 20.0),
+                    FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Start Date:                         '),
+                          Text(
+                              '${getDate(_startDate ?? widget.period.startDate)}'),
+                          Icon(Icons.date_range),
+                        ],
+                      ),
+                      onPressed: () async {
+                        DateTime startDate = await showDatePicker(
+                          context: context,
+                          initialDate: new DateTime.now(),
+                          firstDate: DateTime.now().subtract(
+                            Duration(days: 365),
+                          ),
+                          lastDate: DateTime.now().add(
+                            Duration(days: 365),
+                          ),
+                        );
+                        if (startDate != null) {
+                          setState(() => _startDate = startDate);
+                        }
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue: widget.period.name,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'Enter a name for this period.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                      onChanged: (val) {
+                        setState(() => _name = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue: widget.period.durationValue != null
+                          ? widget.period.durationValue.toString()
+                          : '',
+                      autovalidate: _durationValue.isNotEmpty,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'Enter a value for the duration.';
+                        } else if (val.contains('.')) {
+                          return 'This value must be an integer.';
+                        } else if (int.parse(val) <= 0) {
+                          return 'This value must be greater than 0';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Duration',
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (val) {
+                        setState(() => _durationValue = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    DropdownButton<DurationUnit>(
+                      items: DurationUnit.values.map((unit) {
+                        return DropdownMenuItem<DurationUnit>(
+                          value: unit,
+                          child: Text(unit.toString().split('.')[1]),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() => _durationUnit = val);
+                      },
+                      value: _durationUnit ?? widget.period.durationUnit,
+                      isExpanded: true,
+                    ),
+                    SizedBox(height: 20.0),
+                    SwitchListTile(
+                        title: Text('Set to default (allowed: 1)'),
+                        value: _isDefault ?? widget.period.isDefault,
+                        onChanged: (val) {
+                          setState(() => _isDefault = val);
+                        }),
+                    SizedBox(height: 20.0),
+                    RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        isEditMode ? 'Save' : 'Add',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          Period period = Period(
+                            pid: widget.period.pid ?? new Uuid().v1(),
+                            name: _name ?? widget.period.name,
+                            startDate: _startDate ?? widget.period.startDate,
+                            durationValue: _durationValue != ''
+                                ? int.parse(_durationValue)
+                                : widget.period.durationValue,
+                            durationUnit:
+                                _durationUnit ?? widget.period.durationUnit,
+                            isDefault: _isDefault ?? widget.period.isDefault,
+                            uid: _user.uid,
+                          );
 
-                //           setState(() => isLoading = true);
-                //           isEditMode
-                //               ? DatabaseWrapper(_user.uid).updateTransaction(tx)
-                //               : DatabaseWrapper(_user.uid).addTransaction(tx);
-                //           goHome(context);
-                //         }
-                //       },
-                //     )
-                //   ],
-                // ),
+                          setState(() => isLoading = true);
+                          isEditMode
+                              ? DatabaseWrapper(_user.uid).updatePeriod(period)
+                              : DatabaseWrapper(_user.uid).addPeriod(period);
+                          Navigator.pop(context);
+                        }
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
     );

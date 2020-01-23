@@ -156,7 +156,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     TextFormField(
                       initialValue: widget.tx.amount != null
                           ? widget.tx.amount.toStringAsFixed(2)
-                          : null,
+                          : '',
                       autovalidate: _amount != null,
                       validator: (val) {
                         if (val.isEmpty) {
@@ -251,7 +251,6 @@ class _TransactionFormState extends State<TransactionForm> {
                           isEditMode
                               ? DatabaseWrapper(_user.uid).updateTransaction(tx)
                               : DatabaseWrapper(_user.uid).addTransaction(tx);
-                          // goHome(context);
                           Navigator.pop(context);
                         }
                       },

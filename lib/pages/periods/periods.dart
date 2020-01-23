@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/loader.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
+import 'package:provider/provider.dart';
 
 class Periods extends StatefulWidget {
   final FirebaseUser user;
@@ -15,38 +18,55 @@ class Periods extends StatefulWidget {
 }
 
 class _PeriodsState extends State<Periods> {
-  List<Period> _periods;
-
-  @override
-  void initState() {
-    super.initState();
-    DatabaseWrapper(widget.user.uid).getPeriods().first.then((periods) {
-      setState(() {
-        _periods = List<Period>.from(periods);
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final List<Period> _periods = Provider.of<List<Period>>(context);
+    Widget bodyWidget;
+
+    if (_periods == null) {
+      bodyWidget = Loader();
+    } else if (_periods.length == 0) {
+      bodyWidget = Center(
+        child: Text(
+          'You haven\'t set any periods. Add one using the button below.',
+        ),
+      );
+    } else {
+      bodyWidget = Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: 10.0,
+        ),
+        child: ListView.builder(
+          itemCount: _periods.length,
+          itemBuilder: (context, index) {
+            Period period = _periods[index];
+            return Card(
+              child: ListTile(
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return PeriodForm(period);
+                  },
+                ),
+                title: Text(period.name),
+                subtitle: Text(
+                    'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}'),
+                selected: period.isDefault,
+                trailing: Text('Start Date: ${getDate(period.startDate)}'),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
     return Scaffold(
       drawer: MainDrawer(widget.user),
       appBar: AppBar(
         title: Text('Periods'),
       ),
-      body: (_periods == null || _periods.length == 0)
-          ? Center(
-              child: Text(
-                'You haven\'t set any periods. Add one using the button below.',
-              ),
-            )
-          : Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 10.0,
-              ),
-              child: Container(),
-            ),
+      body: bodyWidget,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () => showDialog(

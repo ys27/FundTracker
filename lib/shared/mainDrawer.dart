@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categories.dart';
 import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferences.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:provider/provider.dart';
 
 import 'library.dart';
 
@@ -81,7 +83,10 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: Icon(Icons.date_range),
             onTap: () => openPage(
               context,
-              Periods(widget.user),
+              StreamProvider<List<Period>>(
+                create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
+                child: Periods(widget.user),
+              ),
             ),
           ),
           ListTile(
