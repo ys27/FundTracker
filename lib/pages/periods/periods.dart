@@ -42,6 +42,7 @@ class _PeriodsState extends State<Periods> {
           itemBuilder: (context, index) {
             Period period = _periods[index];
             return Card(
+              color: period.isDefault ? Colors.blue[50] : null,
               child: ListTile(
                 onTap: () => showDialog(
                   context: context,
@@ -52,7 +53,6 @@ class _PeriodsState extends State<Periods> {
                 title: Text(period.name),
                 subtitle: Text(
                     'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}'),
-                selected: period.isDefault,
                 trailing: Text('Start Date: ${getDate(period.startDate)}'),
               ),
             );

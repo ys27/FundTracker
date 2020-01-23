@@ -176,6 +176,10 @@ class _PeriodFormState extends State<PeriodForm> {
                           isEditMode
                               ? DatabaseWrapper(_user.uid).updatePeriod(period)
                               : DatabaseWrapper(_user.uid).addPeriod(period);
+
+                          if (period.isDefault) {
+                            DatabaseWrapper(_user.uid).setRemainingNotDefault(period);
+                          }
                           Navigator.pop(context);
                         }
                       },

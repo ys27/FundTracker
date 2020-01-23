@@ -25,16 +25,16 @@ class FireDBService {
             .toList());
   }
 
-  void addTransaction(Transaction tx) async {
-    await db.collection('transactions').add(tx.toMap());
+  void addTransaction(Transaction tx) {
+    db.collection('transactions').add(tx.toMap());
   }
 
-  void updateTransaction(Transaction tx) async {
-    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
+  void updateTransaction(Transaction tx) {
+    db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
 
-  void deleteTransaction(Transaction tx) async {
-    await db.collection('transactions').document(tx.tid).delete();
+  void deleteTransaction(Transaction tx) {
+    db.collection('transactions').document(tx.tid).delete();
   }
 
   // Categories
@@ -46,8 +46,8 @@ class FireDBService {
   }
 
   void addDefaultCategories() {
-    CATEGORIES.asMap().forEach((index, category) async {
-      await db.collection('categories').add({
+    CATEGORIES.asMap().forEach((index, category) {
+      db.collection('categories').add({
         'cid': new Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
@@ -58,15 +58,15 @@ class FireDBService {
     });
   }
 
-  void setCategory(Category category) async {
-    await db
+  void setCategory(Category category) {
+    db
         .collection('categories')
         .document(category.cid)
         .setData(category.toMap());
   }
 
-  void removeAllCategories() async {
-    await db.collection('categories').getDocuments().then((snapshot) {
+  void removeAllCategories() {
+    db.collection('categories').getDocuments().then((snapshot) {
       for (DocumentSnapshot doc in snapshot.documents) {
         doc.reference.delete();
       }
@@ -82,8 +82,8 @@ class FireDBService {
         .map((snapshot) => User.fromMap(snapshot.data));
   }
 
-  void addUser(User user) async {
-    await db.collection('user').document(uid).setData(user.toMap());
+  void addUser(User user) {
+    db.collection('user').document(uid).setData(user.toMap());
   }
 
   // Periods
@@ -107,15 +107,23 @@ class FireDBService {
             .first);
   }
 
-  void addPeriod(Period period) async {
-    await db.collection('periods').add(period.toMap());
+  void setRemainingNotDefault(Period period) {
+    db.collection('periods').snapshots().map((snapshot) {
+      snapshot.documents
+          .map((map) => map.reference.updateData({'isDefault': 0}));
+    });
+    db.collection('periods').document(period.pid).updateData({'isDefault': 1});
   }
 
-  void updatePeriod(Period period) async {
-    await db.collection('periods').document(period.pid).setData(period.toMap());
+  void addPeriod(Period period) {
+    db.collection('periods').add(period.toMap());
   }
 
-  void deletePeriod(Period period) async {
-    await db.collection('periods').document(period.pid).delete();
+  void updatePeriod(Period period) {
+    db.collection('periods').document(period.pid).setData(period.toMap());
+  }
+
+  void deletePeriod(Period period) {
+    db.collection('periods').document(period.pid).delete();
   }
 }

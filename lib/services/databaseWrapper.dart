@@ -93,6 +93,12 @@ class DatabaseWrapper {
         : _localDBService.getDefaultPeriod(uid);
   }
 
+  Future setRemainingNotDefault(Period period) async {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.setRemainingNotDefault(period)
+        : _localDBService.setRemainingNotDefault(period);
+  }
+
   Future addPeriod(Period period) async {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addPeriod(period)

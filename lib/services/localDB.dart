@@ -35,18 +35,18 @@ class LocalDBService {
 
   void addTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    await db.insert('transactions', tx.toMap());
+    db.insert('transactions', tx.toMap());
   }
 
   void updateTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    await db.update('transactions', tx.toMap(),
+    db.update('transactions', tx.toMap(),
         where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   void deleteTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    await db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
+    db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   // Categories
@@ -61,7 +61,7 @@ class LocalDBService {
   void addDefaultCategories(String uid) async {
     StreamDatabase db = await this.db;
     CATEGORIES.asMap().forEach((index, category) async {
-      await db.insert('categories', {
+      db.insert('categories', {
         'cid': new Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
@@ -74,13 +74,13 @@ class LocalDBService {
 
   void setCategory(Category category) async {
     StreamDatabase db = await this.db;
-    await db.update('categories', category.toMap(),
+    db.update('categories', category.toMap(),
         where: 'cid = ?', whereArgs: [category.cid]);
   }
 
   void removeAllCategories(String uid) async {
     StreamDatabase db = await this.db;
-    await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+    db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // User
@@ -93,7 +93,7 @@ class LocalDBService {
 
   void addUser(User user) async {
     StreamDatabase db = await this.db;
-    await db.insert('users', user.toMap());
+    db.insert('users', user.toMap());
   }
 
   // Periods
@@ -107,26 +107,32 @@ class LocalDBService {
 
   Stream<Period> getDefaultPeriod(String uid) async* {
     StreamDatabase db = await this.db;
-    yield* db
-        .createQuery('periods',
-            where: 'uid = ? AND isDefault = ?', whereArgs: [uid, 1])
-        .mapToOne((map) => Period.fromMap(map));
+    yield* db.createQuery('periods',
+        where: 'uid = ? AND isDefault = ?',
+        whereArgs: [uid, 1]).mapToOne((map) => Period.fromMap(map));
+  }
+
+  void setRemainingNotDefault(Period period) async {
+    StreamDatabase db = await this.db;
+    db.update('periods', {'isDefault': 0});
+    db.update('periods', {'isDefault': 1},
+        where: 'pid = ?', whereArgs: [period.pid]);
   }
 
   void addPeriod(Period period) async {
     StreamDatabase db = await this.db;
-    await db.insert('periods', period.toMap());
+    db.insert('periods', period.toMap());
   }
 
   void updatePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    await db.update('periods', period.toMap(),
+    db.update('periods', period.toMap(),
         where: 'pid = ?', whereArgs: [period.pid]);
   }
 
   void deletePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    await db.delete('periods', where: 'pid = ?', whereArgs: [period.pid]);
+    db.delete('periods', where: 'pid = ?', whereArgs: [period.pid]);
   }
 
   // Database-related
@@ -172,7 +178,7 @@ class LocalDBService {
         columnsQuery += ', ';
       }
       columnsQuery = columnsQuery.substring(0, columnsQuery.length - 2);
-      await db.execute('CREATE TABLE $tableName($columnsQuery)');
+      db.execute('CREATE TABLE $tableName($columnsQuery)');
     });
   }
 }
