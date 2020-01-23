@@ -19,8 +19,7 @@ class _TransactionsListState extends State<TransactionsList> {
   Widget build(BuildContext context) {
     final List<Transaction> _transactions =
         Provider.of<List<Transaction>>(context);
-    final Period _currentPeriod =
-        Provider.of<Period>(context) ?? Period.monthly();
+    final Period _currentPeriod = Provider.of<Period>(context);
     if (_transactions != null && _transactions.length > 0) {
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);

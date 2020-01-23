@@ -108,8 +108,8 @@ class LocalDBService {
   Stream<Period> getDefaultPeriod(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db.createQuery('periods',
-        where: 'uid = ? AND isDefault = ?',
-        whereArgs: [uid, 1]).mapToOne((map) => Period.fromMap(map));
+        where: 'uid = ? AND isDefault = 1',
+        whereArgs: [uid]).mapToOneOrDefault((map) => Period.fromMap(map), Period.monthly());
   }
 
   void setRemainingNotDefault(Period period) async {

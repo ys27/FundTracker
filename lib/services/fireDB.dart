@@ -101,10 +101,14 @@ class FireDBService {
         .collection('periods')
         .where('isDefault', isEqualTo: 1)
         .snapshots()
-        .map((snapshot) => snapshot.documents
-            .map((map) => Period.fromMap(map.data))
-            .toList()
-            .first);
+        .map(
+          (snapshot) =>
+              snapshot.documents
+                  .map((map) => Period.fromMap(map.data))
+                  .toList()
+                  .first ??
+              Period.monthly(),
+        );
   }
 
   void setRemainingNotDefault(Period period) {
