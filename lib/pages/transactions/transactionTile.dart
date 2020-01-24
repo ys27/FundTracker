@@ -24,92 +24,103 @@ class TransactionTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
         child: ListTile(
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) {
-              return StreamProvider<List<Category>>(
-                create: (_) => DatabaseWrapper(_user.uid).getCategories(),
-                child: TransactionForm(
-                  Transaction(
-                    tid: transaction.tid,
-                    date: transaction.date,
-                    isExpense: transaction.isExpense,
-                    payee: transaction.payee,
-                    amount: transaction.amount,
-                    category: transaction.category,
-                    uid: _user.uid,
+            onTap: () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return StreamProvider<List<Category>>(
+                      create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+                      child: TransactionForm(
+                        Transaction(
+                          tid: transaction.tid,
+                          date: transaction.date,
+                          isExpense: transaction.isExpense,
+                          payee: transaction.payee,
+                          amount: transaction.amount,
+                          category: transaction.category,
+                          uid: _user.uid,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            leading: CircleAvatar(
+              radius: 25.0,
+              backgroundColor: Theme.of(context).backgroundColor,
+              foregroundColor: Colors.black,
+              child: Icon(IconData(
+                  CATEGORIES
+                      .where((category) {
+                        return category['name'] == transaction.category;
+                      })
+                      .toList()
+                      .first['icon'],
+                  fontFamily: 'MaterialIcons')),
+            ),
+            title: Text(transaction.payee),
+            subtitle: Text(transaction.category),
+            trailing: Column(
+              children: <Widget>[
+                Text(
+                  '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: transaction.isExpense ? Colors.red : Colors.green,
                   ),
                 ),
-              );
-            },
-          ),
-          leading: CircleAvatar(
-            radius: 25.0,
-            backgroundColor: Theme.of(context).backgroundColor,
-            foregroundColor: Colors.black,
-            child: Icon(IconData(
-                CATEGORIES
-                    .where((category) {
-                      return category['name'] == transaction.category;
-                    })
-                    .toList()
-                    .first['icon'],
-                fontFamily: 'MaterialIcons')),
-          ),
-          title: Text(transaction.payee),
-          subtitle: Text(getDate(transaction.date)),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: transaction.isExpense ? Colors.red : Colors.green,
-                ),
-              ),
-              SizedBox(width: 5.0),
-              PopupMenuButton(
-                child: Icon(Icons.more_vert),
-                onSelected: (val) async {
-                  Transaction tx = Transaction(
-                    tid: transaction.tid,
-                    date: transaction.date,
-                    isExpense: transaction.isExpense,
-                    payee: transaction.payee,
-                    amount: transaction.amount,
-                    category: transaction.category,
-                    uid: _user.uid,
-                  );
-                  if (val == MenuItems.Edit) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return StreamProvider<List<Category>>(
-                          create: (_) => DatabaseWrapper(_user.uid).getCategories(),
-                          child: TransactionForm(tx),
-                        );
-                      },
-                    );
-                  } else if (val == MenuItems.Delete) {
-                    DatabaseWrapper(_user.uid).deleteTransaction(tx);
-                  }
-                },
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: MenuItems.Edit,
-                      child: Text('Edit'),
-                    ),
-                    PopupMenuItem(
-                      value: MenuItems.Delete,
-                      child: Text('Delete'),
-                    ),
-                  ];
-                },
-              ),
-            ],
-          ),
-        ),
+                Text(getDate(transaction.date)),
+              ],
+            )
+            // trailing: Row(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: <Widget>[
+            //     Text(
+            //       '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}',
+            //       style: TextStyle(
+            //         color: transaction.isExpense ? Colors.red : Colors.green,
+            //       ),
+            //     ),
+            //     SizedBox(width: 5.0),
+            //     PopupMenuButton(
+            //       child: Icon(Icons.more_vert),
+            //       onSelected: (val) async {
+            //         Transaction tx = Transaction(
+            //           tid: transaction.tid,
+            //           date: transaction.date,
+            //           isExpense: transaction.isExpense,
+            //           payee: transaction.payee,
+            //           amount: transaction.amount,
+            //           category: transaction.category,
+            //           uid: _user.uid,
+            //         );
+            //         if (val == MenuItems.Edit) {
+            //           showDialog(
+            //             context: context,
+            //             builder: (context) {
+            //               return StreamProvider<List<Category>>(
+            //                 create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+            //                 child: TransactionForm(tx),
+            //               );
+            //             },
+            //           );
+            //         } else if (val == MenuItems.Delete) {
+            //           DatabaseWrapper(_user.uid).deleteTransaction(tx);
+            //         }
+            //       },
+            //       itemBuilder: (context) {
+            //         return [
+            //           PopupMenuItem(
+            //             value: MenuItems.Edit,
+            //             child: Text('Edit'),
+            //           ),
+            //           PopupMenuItem(
+            //             value: MenuItems.Delete,
+            //             child: Text('Delete'),
+            //           ),
+            //         ];
+            //       },
+            //     ),
+            //   ],
+            // ),
+            ),
       ),
     );
   }
