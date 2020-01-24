@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +21,14 @@ class _TransactionsListState extends State<TransactionsList> {
     final List<Transaction> _transactions =
         Provider.of<List<Transaction>>(context);
     final Period _currentPeriod = Provider.of<Period>(context);
-    if (_transactions != null && _transactions.length > 0) {
+
+    if (_transactions != null &&
+        _transactions.length > 0 &&
+        _currentPeriod != null) {
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);
     }
+
     if (_transactions == null) {
       return Loader();
     } else if (_transactions.length == 0) {
@@ -35,6 +40,7 @@ class _TransactionsListState extends State<TransactionsList> {
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> periodMap = _dividedTransactions[index];
+          print(periodMap['startDate']);
           return StickyHeader(
             header: Container(
               height: 50.0,
@@ -42,7 +48,9 @@ class _TransactionsListState extends State<TransactionsList> {
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               alignment: Alignment.centerLeft,
               child: Text(
-                '${getDate(periodMap['startDate'])} - ${getDate(periodMap['endDate'])}',
+                _currentPeriod.name == 'Default Monthly'
+                    ? '${Months[periodMap['startDate'].month.toString()]} ${periodMap['startDate'].year}'
+                    : '${getDate(periodMap['startDate'])} - ${getDate(periodMap['endDate'])}',
                 style: const TextStyle(color: Colors.white),
               ),
             ),

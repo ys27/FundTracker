@@ -21,27 +21,33 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    List<Widget> tabItems = [
-      MultiProvider(
-        providers: [
-          StreamProvider<List<Transaction>>(
-            create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
-          ),
-          StreamProvider<Period>(
-            create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
-          ),
-        ],
-        child: TransactionsList(),
-      ),
-      Statistics()
+    List<Map<String, dynamic>> tabItems = [
+      {
+        'name': 'Records',
+        'widget': MultiProvider(
+          providers: [
+            StreamProvider<List<Transaction>>(
+              create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
+            ),
+            StreamProvider<Period>(
+              create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+            ),
+          ],
+          child: TransactionsList(),
+        ),
+      },
+      {
+        'name': 'Statistics',
+        'widget': Statistics(),
+      }
     ];
 
     return Scaffold(
       drawer: MainDrawer(_user),
       appBar: AppBar(
-        title: Text('Records'),
+        title: Text(tabItems[_selectedIndex]['name']),
       ),
-      body: tabItems[_selectedIndex],
+      body: tabItems[_selectedIndex]['widget'],
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () => showDialog(
