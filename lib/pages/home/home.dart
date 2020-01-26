@@ -18,40 +18,43 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+  final _pages = ['Records', 'Statistics'];
+  PageController _pageController =
+      PageController(initialPage: 0, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    List<Map<String, dynamic>> tabItems = [
-      {
-        'name': 'Records',
-        'widget': MultiProvider(
-          providers: [
-            StreamProvider<List<Transaction>>(
-              create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
-            ),
-            StreamProvider<Period>(
-              create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
-            ),
-            StreamProvider<Preferences>(
-              create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
-            ),
-          ],
-          child: TransactionsList(),
-        ),
-      },
-      {
-        'name': 'Statistics',
-        'widget': Statistics(),
-      }
-    ];
 
     return Scaffold(
       drawer: MainDrawer(_user),
       appBar: AppBar(
-        title: Text(tabItems[_selectedIndex]['name']),
+        title: Text(_pages[_selectedIndex]),
       ),
-      body: tabItems[_selectedIndex]['widget'],
+      // body: tabItems[_selectedIndex]['widget'],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _selectedIndex = index);
+        },
+        children: <Widget>[
+          MultiProvider(
+            providers: [
+              StreamProvider<List<Transaction>>(
+                create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
+              ),
+              StreamProvider<Period>(
+                create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+              ),
+              StreamProvider<Preferences>(
+                create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
+              ),
+            ],
+            child: TransactionsList(),
+          ),
+          Statistics(),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () => showDialog(
@@ -77,7 +80,14 @@ class _HomeState extends State<Home> {
           )
         ],
         currentIndex: _selectedIndex,
-        onTap: (val) => setState(() => _selectedIndex = val),
+        onTap: (index) => setState(() {
+          _selectedIndex = index;
+          _pageController.animateToPage(
+            index,
+            duration: Duration(milliseconds: 1),
+            curve: Curves.linear,
+          );
+        }),
       ),
     );
   }
