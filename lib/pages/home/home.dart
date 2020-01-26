@@ -82,11 +82,12 @@ class _HomeState extends State<Home> {
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() {
           _selectedIndex = index;
-          _pageController.animateToPage(
-            index,
-            duration: Duration(milliseconds: 1),
-            curve: Curves.linear,
-          );
+          _pageController.jumpToPage(index);
+          // _pageController.animateToPage(
+          //   index,
+          //   duration: Duration(milliseconds: 1),
+          //   curve: Curves.linear,
+          // );
         }),
       ),
     );
