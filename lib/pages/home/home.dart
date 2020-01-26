@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
@@ -31,6 +32,9 @@ class _HomeState extends State<Home> {
             ),
             StreamProvider<Period>(
               create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+            ),
+            StreamProvider<Preferences>(
+              create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
             ),
           ],
           child: TransactionsList(),

@@ -15,7 +15,6 @@ void openPage(BuildContext context, Widget page) {
 
 void goHome(BuildContext context) {
   Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-  Navigator.popAndPushNamed(context, Navigator.defaultRouteName);
 }
 
 DateTime findPrevPeriodStartDate(Period period) {
@@ -64,8 +63,7 @@ DateTime findPrevPeriodStartDate(Period period) {
       break;
   }
 
-  periodStartDate =
-      periodStartDate.subtract(new Duration(days: numDaysInPeriod));
+  periodStartDate = periodStartDate.subtract(Duration(days: numDaysInPeriod));
 
   return DateTime.utc(
       periodStartDate.year, periodStartDate.month, periodStartDate.day);

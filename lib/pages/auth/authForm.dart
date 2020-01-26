@@ -190,8 +190,8 @@ class _AuthFormState extends State<AuthForm> {
                               _error = _user;
                             });
                           } else if (isRegister) {
-                            DatabaseWrapper(_user.uid)
-                                .addDefaultCategories();
+                            DatabaseWrapper(_user.uid).addDefaultCategories();
+                            DatabaseWrapper(_user.uid).addDefaultPreferences();
                           }
                         }
                       },

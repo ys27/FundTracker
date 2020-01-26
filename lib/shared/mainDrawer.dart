@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categories.dart';
 import 'package:fund_tracker/pages/periods/periods.dart';
-import 'package:fund_tracker/pages/preferences/preferences.dart';
+import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,9 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Home'),
             leading: Icon(Icons.home),
             onTap: () => Navigator.popUntil(
-                context, ModalRoute.withName(Navigator.defaultRouteName)),
+              context,
+              ModalRoute.withName(Navigator.defaultRouteName),
+            ),
           ),
           ListTile(
             title: Text('Categories'),
@@ -92,13 +95,20 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Preferences'),
             leading: Icon(Icons.tune),
-            onTap: () => openPage(context, Preferences()),
+            onTap: () => openPage(
+              context,
+              StreamProvider<Preferences>(
+                create: (_) =>
+                    DatabaseWrapper(widget.user.uid).getPreferences(),
+                child: PreferencesForm(),
+              ),
+            ),
           ),
           ListTile(
             title: Text('Sign Out'),
             leading: Icon(Icons.person),
             onTap: () async {
-              Navigator.pop(context);
+              goHome(context);
               await _auth.signOut();
             },
           ),

@@ -1,5 +1,6 @@
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -10,7 +11,7 @@ import 'package:streamqflite/streamqflite.dart';
 import 'package:uuid/uuid.dart';
 
 class LocalDBService {
-  static final LocalDBService _localDBService = new LocalDBService.internal();
+  static final LocalDBService _localDBService = LocalDBService.internal();
   factory LocalDBService() => _localDBService;
   static StreamDatabase _streamDatabase;
 
@@ -28,8 +29,12 @@ class LocalDBService {
   Stream<List<Transaction>> getTransactions(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db
-        .createQuery('transactions',
-            where: 'uid = ?', whereArgs: [uid], orderBy: 'datetime(date) DESC')
+        .createQuery(
+          'transactions',
+          where: 'uid = ?',
+          whereArgs: [uid],
+          orderBy: 'datetime(date) DESC',
+        )
         .mapToList((map) => Transaction.fromMap(map));
   }
 
@@ -40,8 +45,12 @@ class LocalDBService {
 
   void updateTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    db.update('transactions', tx.toMap(),
-        where: 'tid = ?', whereArgs: [tx.tid]);
+    db.update(
+      'transactions',
+      tx.toMap(),
+      where: 'tid = ?',
+      whereArgs: [tx.tid],
+    );
   }
 
   void deleteTransaction(Transaction tx) async {
@@ -53,29 +62,40 @@ class LocalDBService {
   Stream<List<Category>> getCategories(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db
-        .createQuery('categories',
-            where: 'uid = ?', whereArgs: [uid], orderBy: 'orderIndex ASC')
+        .createQuery(
+          'categories',
+          where: 'uid = ?',
+          whereArgs: [uid],
+          orderBy: 'orderIndex ASC',
+        )
         .mapToList((map) => Category.fromMap(map));
   }
 
   void addDefaultCategories(String uid) async {
     StreamDatabase db = await this.db;
     CATEGORIES.asMap().forEach((index, category) async {
-      db.insert('categories', {
-        'cid': new Uuid().v1(),
-        'name': category['name'],
-        'icon': category['icon'],
-        'enabled': true,
-        'orderIndex': index,
-        'uid': uid,
-      });
+      db.insert(
+        'categories',
+        {
+          'cid': Uuid().v1(),
+          'name': category['name'],
+          'icon': category['icon'],
+          'enabled': true,
+          'orderIndex': index,
+          'uid': uid,
+        },
+      );
     });
   }
 
   void setCategory(Category category) async {
     StreamDatabase db = await this.db;
-    db.update('categories', category.toMap(),
-        where: 'cid = ?', whereArgs: [category.cid]);
+    db.update(
+      'categories',
+      category.toMap(),
+      where: 'cid = ?',
+      whereArgs: [category.cid],
+    );
   }
 
   void removeAllCategories(String uid) async {
@@ -86,9 +106,11 @@ class LocalDBService {
   // User
   Stream<User> findUser(String uid) async* {
     StreamDatabase db = await this.db;
-    yield* db.createQuery('users',
-        where: 'uid = ?',
-        whereArgs: [uid]).mapToOne((map) => User.fromMap(map));
+    yield* db.createQuery(
+      'users',
+      where: 'uid = ?',
+      whereArgs: [uid],
+    ).mapToOne((map) => User.fromMap(map));
   }
 
   void addUser(User user) async {
@@ -100,23 +122,33 @@ class LocalDBService {
   Stream<List<Period>> getPeriods(String uid) async* {
     StreamDatabase db = await this.db;
     yield* db
-        .createQuery('periods',
-            where: 'uid = ?', whereArgs: [uid], orderBy: 'isDefault DESC')
+        .createQuery(
+          'periods',
+          where: 'uid = ?',
+          whereArgs: [uid],
+          orderBy: 'isDefault DESC',
+        )
         .mapToList((map) => Period.fromMap(map));
   }
 
   Stream<Period> getDefaultPeriod(String uid) async* {
     StreamDatabase db = await this.db;
-    yield* db.createQuery('periods',
-        where: 'uid = ? AND isDefault = 1',
-        whereArgs: [uid]).mapToOneOrDefault((map) => Period.fromMap(map), Period.monthly());
+    yield* db.createQuery(
+      'periods',
+      where: 'uid = ? AND isDefault = 1',
+      whereArgs: [uid],
+    ).mapToOneOrDefault((map) => Period.fromMap(map), Period.monthly());
   }
 
   void setRemainingNotDefault(Period period) async {
     StreamDatabase db = await this.db;
     db.update('periods', {'isDefault': 0});
-    db.update('periods', {'isDefault': 1},
-        where: 'pid = ?', whereArgs: [period.pid]);
+    db.update(
+      'periods',
+      {'isDefault': 1},
+      where: 'pid = ?',
+      whereArgs: [period.pid],
+    );
   }
 
   void addPeriod(Period period) async {
@@ -126,13 +158,58 @@ class LocalDBService {
 
   void updatePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    db.update('periods', period.toMap(),
-        where: 'pid = ?', whereArgs: [period.pid]);
+    db.update(
+      'periods',
+      period.toMap(),
+      where: 'pid = ?',
+      whereArgs: [period.pid],
+    );
   }
 
   void deletePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    db.delete('periods', where: 'pid = ?', whereArgs: [period.pid]);
+    db.delete(
+      'periods',
+      where: 'pid = ?',
+      whereArgs: [period.pid],
+    );
+  }
+
+  // Preferences
+  Stream<Preferences> getPreferences(String pid) async* {
+    StreamDatabase db = await this.db;
+    yield* db.createQuery(
+      'preferences',
+      where: 'pid = ?',
+      whereArgs: [pid],
+    ).mapToOne((map) => Preferences.fromMap(map));
+  }
+
+  void addDefaultPreferences(String pid) async {
+    StreamDatabase db = await this.db;
+    db.insert(
+      'preferences',
+      Preferences.original().setPreference('pid', pid).toMap(),
+    );
+  }
+
+  void updatePreferences(Preferences prefs) async {
+    StreamDatabase db = await this.db;
+    db.update(
+      'preferences',
+      prefs.toMap(),
+      where: 'pid = ?',
+      whereArgs: [prefs.pid],
+    );
+  }
+
+  void removePreferences(String pid) async {
+    StreamDatabase db = await this.db;
+    db.delete(
+      'preferences',
+      where: 'pid = ?',
+      whereArgs: [pid],
+    );
   }
 
   // Database-related
@@ -158,16 +235,18 @@ class LocalDBService {
     String directory = await getDatabasesPath();
 
     return await openDatabase('$directory/$LOCAL_DATABASE_FILENAME.db',
-        version: 1, onCreate: _createDBs);
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
-  void _createDBs(Database db, int version) {
+  void _createDB(Database db, int version) {
     Map<String, dynamic> tables = {
       'categories': Category.example(),
       'transactions': Transaction.example(),
       'users': User.example(),
       'periods': Period.example(),
+      'preferences': Preferences.example(),
     };
+
     tables.forEach((tableName, model) async {
       String columnsQuery = '';
       for (MapEntry<String, dynamic> column in model.toMap().entries) {
@@ -181,4 +260,6 @@ class LocalDBService {
       db.execute('CREATE TABLE $tableName($columnsQuery)');
     });
   }
+
+  void _upgradeDB(Database db, int oldVersion, int newVersion) {}
 }

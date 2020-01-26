@@ -75,7 +75,7 @@ class _PeriodFormState extends State<PeriodForm> {
                       onPressed: () async {
                         DateTime startDate = await showDatePicker(
                           context: context,
-                          initialDate: new DateTime.now(),
+                          initialDate: DateTime.now(),
                           firstDate: DateTime.now().subtract(
                             Duration(days: 365),
                           ),
@@ -160,7 +160,7 @@ class _PeriodFormState extends State<PeriodForm> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Period period = Period(
-                            pid: widget.period.pid ?? new Uuid().v1(),
+                            pid: widget.period.pid ?? Uuid().v1(),
                             name: _name ?? widget.period.name,
                             startDate: _startDate ?? widget.period.startDate,
                             durationValue: _durationValue != ''
@@ -178,12 +178,13 @@ class _PeriodFormState extends State<PeriodForm> {
                               : DatabaseWrapper(_user.uid).addPeriod(period);
 
                           if (period.isDefault) {
-                            DatabaseWrapper(_user.uid).setRemainingNotDefault(period);
+                            DatabaseWrapper(_user.uid)
+                                .setRemainingNotDefault(period);
                           }
                           Navigator.pop(context);
                         }
                       },
-                    )
+                    ),
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/shared/constants.dart';
@@ -18,13 +19,18 @@ class _TransactionsListState extends State<TransactionsList> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Transaction> _transactions =
-        Provider.of<List<Transaction>>(context);
+    List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
     final Period _currentPeriod = Provider.of<Period>(context);
+    final Preferences _prefs = Provider.of<Preferences>(context);
 
     if (_transactions != null &&
         _transactions.length > 0 &&
-        _currentPeriod != null) {
+        _currentPeriod != null &&
+        _prefs != null) {
+      _transactions = _transactions
+          .where((tx) => tx.date.isAfter(
+              DateTime.now().subtract(Duration(days: _prefs.limitDays))))
+          .toList();
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);
     }
@@ -40,11 +46,10 @@ class _TransactionsListState extends State<TransactionsList> {
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> periodMap = _dividedTransactions[index];
-          print(periodMap['startDate']);
           return StickyHeader(
             header: Container(
               height: 50.0,
-              color: Theme.of(context).accentColor,
+              color: Colors.grey,
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               alignment: Alignment.centerLeft,
               child: Text(
@@ -81,7 +86,7 @@ class _TransactionsListState extends State<TransactionsList> {
       int numDaysInPeriod =
           findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
       DateTime iteratingNextPeriodStartDate =
-          iteratingPeriodStartDate.add(new Duration(days: numDaysInPeriod));
+          iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
       iteratingNextPeriodStartDate = DateTime.utc(
           iteratingNextPeriodStartDate.year,
           iteratingNextPeriodStartDate.month,
@@ -89,8 +94,8 @@ class _TransactionsListState extends State<TransactionsList> {
 
       periodsList.insert(0, {
         'startDate': iteratingPeriodStartDate,
-        'endDate': iteratingNextPeriodStartDate
-            .subtract(new Duration(microseconds: 1)),
+        'endDate':
+            iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
         'transactions': transactions
             .where((tx) =>
                 tx.date.isAfter(iteratingPeriodStartDate) &&

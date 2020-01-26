@@ -1,5 +1,6 @@
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/fireDB.dart';
@@ -24,20 +25,20 @@ class DatabaseWrapper {
         : _localDBService.getTransactions(uid);
   }
 
-  Future addTransaction(Transaction tx) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void addTransaction(Transaction tx) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addTransaction(tx)
         : _localDBService.addTransaction(tx);
   }
 
-  Future updateTransaction(Transaction tx) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void updateTransaction(Transaction tx) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.updateTransaction(tx)
         : _localDBService.updateTransaction(tx);
   }
 
-  Future deleteTransaction(Transaction tx) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void deleteTransaction(Transaction tx) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.deleteTransaction(tx)
         : _localDBService.deleteTransaction(tx);
   }
@@ -50,21 +51,31 @@ class DatabaseWrapper {
   }
 
   void addDefaultCategories() {
-    return DATABASE_TYPE == DatabaseType.Firebase
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addDefaultCategories()
         : _localDBService.addDefaultCategories(uid);
   }
 
-  void setCategory(Category category) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void setCategory(Category category) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.setCategory(category)
         : _localDBService.setCategory(category);
   }
 
-  void removeAllCategories() async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void removeAllCategories() {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.removeAllCategories()
         : _localDBService.removeAllCategories(uid);
+  }
+
+  void resetCategories() {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.removeAllCategories()
+        : _localDBService.removeAllCategories(uid);
+
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.addDefaultCategories()
+        : _localDBService.addDefaultCategories(uid);
   }
 
   // User Info
@@ -74,7 +85,7 @@ class DatabaseWrapper {
         : _localDBService.findUser(uid);
   }
 
-  Future addUser(User user) async {
+  void addUser(User user) {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addUser(user)
         : _localDBService.addUser(user);
@@ -93,27 +104,56 @@ class DatabaseWrapper {
         : _localDBService.getDefaultPeriod(uid);
   }
 
-  Future setRemainingNotDefault(Period period) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void setRemainingNotDefault(Period period) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.setRemainingNotDefault(period)
         : _localDBService.setRemainingNotDefault(period);
   }
 
-  Future addPeriod(Period period) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void addPeriod(Period period) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addPeriod(period)
         : _localDBService.addPeriod(period);
   }
 
-  Future updatePeriod(Period period) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void updatePeriod(Period period) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.updatePeriod(period)
         : _localDBService.updatePeriod(period);
   }
 
-  Future deletePeriod(Period period) async {
-    return DATABASE_TYPE == DatabaseType.Firebase
+  void deletePeriod(Period period) {
+    DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.deletePeriod(period)
         : _localDBService.deletePeriod(period);
+  }
+
+  // Preferences
+  Stream<Preferences> getPreferences() {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.getPreferences()
+        : _localDBService.getPreferences(uid);
+  }
+
+  void addDefaultPreferences() {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.addDefaultPreferences()
+        : _localDBService.addDefaultPreferences(uid);
+  }
+
+  void updatePreferences(Preferences prefs) {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.updatePreferences(prefs)
+        : _localDBService.updatePreferences(prefs);
+  }
+
+  void resetPreferences() {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.removePreferences()
+        : _localDBService.removePreferences(uid);
+
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.addDefaultPreferences()
+        : _localDBService.addDefaultPreferences(uid);
   }
 }

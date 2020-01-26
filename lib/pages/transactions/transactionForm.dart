@@ -32,8 +32,9 @@ class _TransactionFormState extends State<TransactionForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
     final List<Category> _categories = Provider.of<List<Category>>(context);
-    final List<Category> _enabledCategories =
-        _categories != null ? _categories.where((category) => category.enabled).toList() : [];
+    final List<Category> _enabledCategories = _categories != null
+        ? _categories.where((category) => category.enabled).toList()
+        : [];
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +54,9 @@ class _TransactionFormState extends State<TransactionForm> {
               ]
             : null,
       ),
-      body: (_enabledCategories != null && _enabledCategories.isNotEmpty && !isLoading)
+      body: (_enabledCategories != null &&
+              _enabledCategories.isNotEmpty &&
+              !isLoading)
           ? Container(
               padding: EdgeInsets.symmetric(
                 vertical: 20.0,
@@ -122,7 +125,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       onPressed: () async {
                         DateTime date = await showDatePicker(
                           context: context,
-                          initialDate: new DateTime.now(),
+                          initialDate: DateTime.now(),
                           firstDate: DateTime.now().subtract(
                             Duration(days: 365),
                           ),
@@ -237,7 +240,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Transaction tx = Transaction(
-                            tid: widget.tx.tid ?? new Uuid().v1(),
+                            tid: widget.tx.tid ?? Uuid().v1(),
                             date: _date ?? widget.tx.date,
                             isExpense: _isExpense ?? widget.tx.isExpense,
                             payee: _payee ?? widget.tx.payee,

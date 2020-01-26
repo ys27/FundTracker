@@ -4,7 +4,7 @@ enum DatabaseType { Firebase, Local }
 
 enum DurationUnit { Days, Weeks, Months, Years }
 
-Map<String, String> Months = {
+const Map<String, String> Months = {
   '1': 'January',
   '2': 'February',
   '3': 'March',

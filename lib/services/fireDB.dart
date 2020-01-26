@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -48,7 +49,7 @@ class FireDBService {
   void addDefaultCategories() {
     CATEGORIES.asMap().forEach((index, category) {
       db.collection('categories').add({
-        'cid': new Uuid().v1(),
+        'cid': Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
         'enabled': true,
@@ -129,5 +130,28 @@ class FireDBService {
 
   void deletePeriod(Period period) {
     db.collection('periods').document(period.pid).delete();
+  }
+
+  // Preferences
+  Stream<Preferences> getPreferences() {
+    return db
+        .collection('preferences')
+        .document(uid)
+        .snapshots()
+        .map((snapshot) => Preferences.fromMap(snapshot.data));
+  }
+
+  void addDefaultPreferences() {
+    db
+        .collection('preferences')
+        .add(Preferences.original().setPreference('pid', uid).toMap());
+  }
+
+  void updatePreferences(Preferences prefs) {
+    db.collection('preferences').document(uid).setData(prefs.toMap());
+  }
+
+  void removePreferences() {
+    db.collection('preferences').document(uid).delete();
   }
 }
