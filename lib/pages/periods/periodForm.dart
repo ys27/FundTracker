@@ -111,16 +111,7 @@ class _PeriodFormState extends State<PeriodForm> {
                           ? widget.period.durationValue.toString()
                           : '',
                       autovalidate: _durationValue.isNotEmpty,
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'Enter a value for the duration.';
-                        } else if (val.contains('.')) {
-                          return 'This value must be an integer.';
-                        } else if (int.parse(val) <= 0) {
-                          return 'This value must be greater than 0';
-                        }
-                        return null;
-                      },
+                      validator: checkIfInteger,
                       decoration: InputDecoration(
                         labelText: 'Duration',
                       ),

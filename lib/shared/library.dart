@@ -109,3 +109,14 @@ int findNumDaysInPeriod(Period period) {
 String getDate(DateTime date) {
   return '${date.year.toString()}.${date.month.toString()}.${date.day.toString()}';
 }
+
+String checkIfInteger(String val) {
+  if (val.isEmpty) {
+    return 'Enter a value for the duration.';
+  } else if (val.contains('.')) {
+    return 'This value must be an integer.';
+  } else if (int.parse(val) <= 0) {
+    return 'This value must be greater than 0';
+  }
+  return null;
+}

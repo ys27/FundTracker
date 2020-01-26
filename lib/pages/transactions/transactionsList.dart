@@ -27,12 +27,21 @@ class _TransactionsListState extends State<TransactionsList> {
         _transactions.length > 0 &&
         _currentPeriod != null &&
         _prefs != null) {
-      _transactions = _transactions
-          .where((tx) => tx.date.isAfter(
-              DateTime.now().subtract(Duration(days: _prefs.limitDays))))
-          .toList();
+      if (_prefs.isLimitDaysEnabled) {
+        _transactions = _transactions
+            .where((tx) => tx.date.isAfter(
+                DateTime.now().subtract(Duration(days: _prefs.limitDays))))
+            .toList();
+      }
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);
+      if (_prefs.isLimitPeriodsEnabled) {
+        DateTime now = DateTime.now();
+        int currentDatePeriodIndex = _dividedTransactions.indexWhere((map) =>
+            map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
+        _dividedTransactions = _dividedTransactions.sublist(
+            0, currentDatePeriodIndex + _prefs.limitPeriods);
+      }
     }
 
     if (_transactions == null) {

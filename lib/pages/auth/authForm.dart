@@ -179,9 +179,10 @@ class _AuthFormState extends State<AuthForm> {
                           if (isRegister) {
                             DatabaseWrapper(_user.uid).addUser(
                               User(
-                                  uid: _user.uid,
-                                  email: _email,
-                                  fullname: _fullname),
+                                uid: _user.uid,
+                                email: _email,
+                                fullname: _fullname,
+                              ),
                             );
                           }
                           if (_user is String) {
