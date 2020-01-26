@@ -98,7 +98,7 @@ class LocalDBService {
     );
   }
 
-  void removeAllCategories(String uid) async {
+  void deleteAllCategories(String uid) async {
     StreamDatabase db = await this.db;
     db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
@@ -203,7 +203,7 @@ class LocalDBService {
     );
   }
 
-  void removePreferences(String pid) async {
+  void deletePreferences(String pid) async {
     StreamDatabase db = await this.db;
     db.delete(
       'preferences',

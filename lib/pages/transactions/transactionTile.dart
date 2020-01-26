@@ -8,8 +8,6 @@ import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
-enum MenuItems { Edit, Delete }
-
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
 

@@ -62,16 +62,16 @@ class DatabaseWrapper {
         : _localDBService.setCategory(category);
   }
 
-  void removeAllCategories() {
+  void deleteAllCategories() {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? _fireDBService.removeAllCategories()
-        : _localDBService.removeAllCategories(uid);
+        ? _fireDBService.deleteAllCategories()
+        : _localDBService.deleteAllCategories(uid);
   }
 
   void resetCategories() {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? _fireDBService.removeAllCategories()
-        : _localDBService.removeAllCategories(uid);
+        ? _fireDBService.deleteAllCategories()
+        : _localDBService.deleteAllCategories(uid);
 
     DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addDefaultCategories()
@@ -149,8 +149,8 @@ class DatabaseWrapper {
 
   void resetPreferences() {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? _fireDBService.removePreferences()
-        : _localDBService.removePreferences(uid);
+        ? _fireDBService.deletePreferences()
+        : _localDBService.deletePreferences(uid);
 
     DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.addDefaultPreferences()

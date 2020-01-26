@@ -66,7 +66,7 @@ class FireDBService {
         .setData(category.toMap());
   }
 
-  void removeAllCategories() {
+  void deleteAllCategories() {
     db.collection('categories').getDocuments().then((snapshot) {
       for (DocumentSnapshot doc in snapshot.documents) {
         doc.reference.delete();
@@ -151,7 +151,7 @@ class FireDBService {
     db.collection('preferences').document(uid).setData(prefs.toMap());
   }
 
-  void removePreferences() {
+  void deletePreferences() {
     db.collection('preferences').document(uid).delete();
   }
 }
