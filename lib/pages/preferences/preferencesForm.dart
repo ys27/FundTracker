@@ -15,10 +15,11 @@ class PreferencesForm extends StatefulWidget {
 class _PreferencesFormState extends State<PreferencesForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String _limitDays = '';
-  String _limitPeriods = '';
+  String _limit = '';
+  DateTime _limitByDate;
   bool _isLimitDaysEnabled;
   bool _isLimitPeriodsEnabled;
+  bool _isLimitByDateEnabled;
   bool _wasUpdated = false;
 
   @override
@@ -34,6 +35,10 @@ class _PreferencesFormState extends State<PreferencesForm> {
       _isLimitPeriodsEnabled = _isLimitPeriodsEnabled != null
           ? _isLimitPeriodsEnabled
           : _prefs.isLimitPeriodsEnabled;
+
+      _isLimitByDateEnabled = _isLimitByDateEnabled != null
+          ? _isLimitByDateEnabled
+          : _prefs.isLimitByDateEnabled;
     }
 
     return Scaffold(
@@ -53,55 +58,132 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
-                    TextFormField(
-                      initialValue: _prefs.limitDays.toString(),
-                      autovalidate: _limitDays.isNotEmpty,
-                      validator: checkIfInteger,
-                      decoration: InputDecoration(
-                        labelText: '# days of visible transactions',
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (val) {
-                        setState(() => _limitDays = val);
-                      },
+                    Center(
+                      child:
+                          Text('Limit # of Days/Periods prior to current date'),
                     ),
-                    SwitchListTile(
-                        title: Text('Limit # of days shown on Records'),
-                        subtitle: Text('Current value: ${_prefs.limitDays}'),
-                        value: _isLimitDaysEnabled,
-                        onChanged: (val) {
-                          setState(() {
-                            _isLimitDaysEnabled = val;
-                            if (_isLimitDaysEnabled && _isLimitPeriodsEnabled) {
-                              _isLimitPeriodsEnabled = false;
-                            }
-                          });
-                        }),
                     SizedBox(height: 20.0),
-                    TextFormField(
-                      initialValue: _prefs.limitPeriods.toString(),
-                      autovalidate: _limitPeriods.isNotEmpty,
-                      validator: checkIfInteger,
-                      decoration: InputDecoration(
-                        labelText: '# periods of visible transactions',
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (val) {
-                        setState(() => _limitPeriods = val);
-                      },
-                    ),
-                    SwitchListTile(
-                        title: Text('Limit # of periods shown on Records'),
-                        subtitle: Text('Current value: ${_prefs.limitPeriods}'),
-                        value: _isLimitPeriodsEnabled,
-                        onChanged: (val) {
-                          setState(() {
-                            _isLimitPeriodsEnabled = val;
-                            if (_isLimitPeriodsEnabled && _isLimitDaysEnabled) {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Expanded(
+                          child: FlatButton(
+                            padding: EdgeInsets.all(15.0),
+                            color: _isLimitDaysEnabled
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey[100],
+                            child: Text(
+                              'Days',
+                              style: TextStyle(
+                                  fontWeight: _isLimitDaysEnabled
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: _isLimitDaysEnabled
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                            onPressed: () => setState(() {
+                              _isLimitDaysEnabled = true;
+                              _isLimitPeriodsEnabled = false;
+                              _isLimitByDateEnabled = false;
+                            }),
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            padding: EdgeInsets.all(15.0),
+                            color: _isLimitPeriodsEnabled
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey[100],
+                            child: Text(
+                              'Periods',
+                              style: TextStyle(
+                                  fontWeight: _isLimitPeriodsEnabled
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: _isLimitPeriodsEnabled
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                            onPressed: () => setState(() {
+                              _isLimitPeriodsEnabled = true;
                               _isLimitDaysEnabled = false;
-                            }
-                          });
-                        }),
+                              _isLimitByDateEnabled = false;
+                            }),
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            padding: EdgeInsets.all(15.0),
+                            color: _isLimitByDateEnabled
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey[100],
+                            child: Text(
+                              'Start Date',
+                              style: TextStyle(
+                                  fontWeight: _isLimitByDateEnabled
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: _isLimitByDateEnabled
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                            onPressed: () => setState(() {
+                              _isLimitByDateEnabled = true;
+                              _isLimitDaysEnabled = false;
+                              _isLimitPeriodsEnabled = false;
+                            }),
+                          ),
+                        ),
+                      ],
+                    ),
+                    _isLimitByDateEnabled
+                        ? FlatButton(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(getDate(
+                                    _limitByDate ?? _prefs.limitByDate)),
+                                Icon(Icons.date_range),
+                              ],
+                            ),
+                            onPressed: () async {
+                              DateTime date = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now().subtract(
+                                  Duration(days: 365),
+                                ),
+                                lastDate: DateTime.now().add(
+                                  Duration(days: 365),
+                                ),
+                              );
+                              if (date != null) {
+                                setState(() => _limitByDate = date);
+                              }
+                            },
+                          )
+                        : TextFormField(
+                            autovalidate: _limit.isNotEmpty,
+                            validator: (val) {
+                              if (val.isNotEmpty) {
+                                if (val.contains('.')) {
+                                  return 'This value must be an integer.';
+                                } else if (int.parse(val) <= 0) {
+                                  return 'This value must be greater than 0';
+                                }
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              labelText:
+                                  'Current Value: ${_isLimitDaysEnabled ? _prefs.limitDays : _prefs.limitPeriods}',
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (val) {
+                              setState(() => _limit = val);
+                            },
+                          ),
                     SizedBox(height: 20.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
@@ -109,18 +191,29 @@ class _PreferencesFormState extends State<PreferencesForm> {
                           Text('Save', style: TextStyle(color: Colors.white)),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
+                          int limitDays = _limit != '' && _isLimitDaysEnabled
+                              ? int.parse(_limit)
+                              : _prefs.limitDays;
+                          int limitPeriods =
+                              _limit != '' && _isLimitPeriodsEnabled
+                                  ? int.parse(_limit)
+                                  : _prefs.limitPeriods;
+                          DateTime limitByDate =
+                              _limitByDate != null && _isLimitByDateEnabled
+                                  ? _limitByDate
+                                  : _prefs.limitByDate;
+
                           Preferences prefs = Preferences(
                             pid: _user.uid,
-                            limitDays: _limitDays != ''
-                                ? int.parse(_limitDays)
-                                : _prefs.limitDays,
+                            limitDays: limitDays,
                             isLimitDaysEnabled: _isLimitDaysEnabled ??
                                 _prefs.isLimitDaysEnabled,
-                            limitPeriods: _limitPeriods != ''
-                                ? int.parse(_limitPeriods)
-                                : _prefs.limitPeriods,
+                            limitPeriods: limitPeriods,
                             isLimitPeriodsEnabled: _isLimitPeriodsEnabled ??
                                 _prefs.isLimitPeriodsEnabled,
+                            limitByDate: limitByDate,
+                            isLimitByDateEnabled: _isLimitByDateEnabled ??
+                                _prefs.isLimitByDateEnabled,
                           );
                           DatabaseWrapper(_user.uid).updatePreferences(prefs);
                           displayUpdated();

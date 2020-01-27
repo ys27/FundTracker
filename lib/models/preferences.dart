@@ -4,6 +4,8 @@ class Preferences {
   bool isLimitDaysEnabled;
   int limitPeriods;
   bool isLimitPeriodsEnabled;
+  DateTime limitByDate;
+  bool isLimitByDateEnabled;
 
   Preferences({
     this.pid,
@@ -11,6 +13,8 @@ class Preferences {
     this.isLimitDaysEnabled,
     this.limitPeriods,
     this.isLimitPeriodsEnabled,
+    this.limitByDate,
+    this.isLimitByDateEnabled,
   });
 
   Preferences.example() {
@@ -19,6 +23,8 @@ class Preferences {
     isLimitDaysEnabled = false;
     limitPeriods = 0;
     isLimitPeriodsEnabled = false;
+    limitByDate = DateTime.now();
+    isLimitByDateEnabled = false;
   }
 
   Preferences.original() {
@@ -27,6 +33,8 @@ class Preferences {
     isLimitDaysEnabled = true;
     limitPeriods = 12;
     isLimitPeriodsEnabled = false;
+    limitByDate = DateTime(DateTime.now().year, 1, 1);
+    isLimitByDateEnabled = false;
   }
 
   Preferences.fromMap(Map<String, dynamic> map) {
@@ -35,6 +43,8 @@ class Preferences {
     this.isLimitDaysEnabled = map['isLimitDaysEnabled'] == 1;
     this.limitPeriods = map['limitPeriods'];
     this.isLimitPeriodsEnabled = map['isLimitPeriodsEnabled'] == 1;
+    this.limitByDate = DateTime.parse(map['limitByDate']);
+    this.isLimitByDateEnabled = map['isLimitByDateEnabled'] == 1;
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +54,8 @@ class Preferences {
       'isLimitDaysEnabled': isLimitDaysEnabled ? 1 : 0,
       'limitPeriods': limitPeriods,
       'isLimitPeriodsEnabled': isLimitPeriodsEnabled ? 1 : 0,
+      'limitByDate': limitByDate.toString(),
+      'isLimitByDateEnabled': isLimitByDateEnabled ? 1 : 0,
     };
   }
 
@@ -63,6 +75,12 @@ class Preferences {
         break;
       case 'isLimitPeriodsEnabled':
         this.isLimitPeriodsEnabled = value;
+        break;
+      case 'limitByDate':
+        this.limitByDate = value;
+        break;
+      case 'isLimitByDateEnabled':
+        this.isLimitByDateEnabled = value;
         break;
     }
     return this;

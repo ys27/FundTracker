@@ -32,6 +32,10 @@ class _TransactionsListState extends State<TransactionsList> {
             .where((tx) => tx.date.isAfter(
                 DateTime.now().subtract(Duration(days: _prefs.limitDays))))
             .toList();
+      } else if (_prefs.isLimitByDateEnabled) {
+        _transactions = _transactions
+            .where((tx) => tx.date.isAfter(_prefs.limitByDate))
+            .toList();
       }
       _dividedTransactions =
           divideTransactionsIntoPeriods(_transactions, _currentPeriod);

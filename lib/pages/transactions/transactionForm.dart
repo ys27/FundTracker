@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -117,8 +118,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                              '${(_date ?? widget.tx.date).year.toString()}.${(_date ?? widget.tx.date).month.toString()}.${(_date ?? widget.tx.date).day.toString()}'),
+                          Text(getDate(_date ?? widget.tx.date)),
                           Icon(Icons.date_range),
                         ],
                       ),
