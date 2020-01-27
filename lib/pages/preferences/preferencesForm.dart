@@ -138,30 +138,36 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       ],
                     ),
                     _isLimitByDateEnabled
-                        ? FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(getDate(
-                                    _limitByDate ?? _prefs.limitByDate)),
-                                Icon(Icons.date_range),
-                              ],
-                            ),
-                            onPressed: () async {
-                              DateTime date = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now().subtract(
-                                  Duration(days: 365),
+                        ? Column(
+                            children: <Widget>[
+                              SizedBox(height: 20.0),
+                              FlatButton(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(getDate(
+                                        _limitByDate ?? _prefs.limitByDate)),
+                                    Icon(Icons.date_range),
+                                  ],
                                 ),
-                                lastDate: DateTime.now().add(
-                                  Duration(days: 365),
-                                ),
-                              );
-                              if (date != null) {
-                                setState(() => _limitByDate = date);
-                              }
-                            },
+                                onPressed: () async {
+                                  DateTime date = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now().subtract(
+                                      Duration(days: 365),
+                                    ),
+                                    lastDate: DateTime.now().add(
+                                      Duration(days: 365),
+                                    ),
+                                  );
+                                  if (date != null) {
+                                    setState(() => _limitByDate = date);
+                                  }
+                                },
+                              ),
+                            ],
                           )
                         : TextFormField(
                             autovalidate: _limit.isNotEmpty,
@@ -233,6 +239,11 @@ class _PreferencesFormState extends State<PreferencesForm> {
                     RaisedButton(
                       child: Text('Reset Preferences'),
                       onPressed: () {
+                        setState(() {
+                          _isLimitDaysEnabled = null;
+                          _isLimitPeriodsEnabled = null;
+                          _isLimitByDateEnabled = null;
+                        });
                         DatabaseWrapper(_user.uid).resetPreferences();
                       },
                     )
