@@ -232,8 +232,16 @@ class _PreferencesFormState extends State<PreferencesForm> {
                     SizedBox(height: 60.0),
                     RaisedButton(
                       child: Text('Reset Categories'),
-                      onPressed: () {
-                        DatabaseWrapper(_user.uid).resetCategories();
+                      onPressed: () async {
+                        bool hasBeenConfirmed = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Alert('This will reset your categories.');
+                          },
+                        ) ?? false;
+                        if (hasBeenConfirmed) {
+                          DatabaseWrapper(_user.uid).resetCategories();
+                        }
                       },
                     ),
                     SizedBox(height: 20.0),
@@ -245,7 +253,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                           builder: (BuildContext context) {
                             return Alert('This will reset your preferences.');
                           },
-                        );
+                        ) ?? false;
                         if (hasBeenConfirmed) {
                           await DatabaseWrapper(_user.uid).resetPreferences();
                           setState(() {

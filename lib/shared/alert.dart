@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Alert extends StatefulWidget {
+class Alert extends StatelessWidget {
   final String content;
 
   Alert(this.content);
 
   @override
-  _AlertState createState() => _AlertState();
-}
-
-class _AlertState extends State<Alert> {
-  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Are you sure?"),
-      content: Text(widget.content),
+      content: Text(content),
       actions: <Widget>[
         FlatButton(
           child: Text("Cancel"),

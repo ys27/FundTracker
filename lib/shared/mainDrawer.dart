@@ -10,6 +10,7 @@ import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/alert.dart';
 import 'package:provider/provider.dart';
 
 import 'library.dart';
@@ -108,8 +109,17 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Sign Out'),
             leading: Icon(Icons.person),
             onTap: () async {
-              goHome(context);
-              await _auth.signOut();
+              bool hasBeenConfirmed = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Alert('You will be signed out.');
+                    },
+                  ) ??
+                  false;
+              if (hasBeenConfirmed) {
+                goHome(context);
+                _auth.signOut();
+              }
             },
           ),
           isConnected

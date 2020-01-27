@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/alert.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:provider/provider.dart';
@@ -46,10 +47,17 @@ class _TransactionFormState extends State<TransactionForm> {
                   textColor: Colors.white,
                   child: Icon(Icons.delete),
                   onPressed: () async {
-                    setState(() => isLoading = true);
-                    DatabaseWrapper(_user.uid).deleteTransaction(widget.tx);
-                    // goHome(context);
-                    Navigator.pop(context);
+                    bool hasBeenConfirmed = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Alert('This transaction will be deleted.');
+                      },
+                    ) ?? false;
+                    if (hasBeenConfirmed) {
+                      setState(() => isLoading = true);
+                      DatabaseWrapper(_user.uid).deleteTransaction(widget.tx);
+                      Navigator.pop(context);
+                    }
                   },
                 )
               ]
