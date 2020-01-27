@@ -26,6 +26,16 @@ class _PreferencesFormState extends State<PreferencesForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final _prefs = Provider.of<Preferences>(context);
 
+    if (_prefs != null) {
+      _isLimitDaysEnabled = _isLimitDaysEnabled != null
+          ? _isLimitDaysEnabled
+          : _prefs.isLimitDaysEnabled;
+
+      _isLimitPeriodsEnabled = _isLimitPeriodsEnabled != null
+          ? _isLimitPeriodsEnabled
+          : _prefs.isLimitPeriodsEnabled;
+    }
+
     return Scaffold(
       drawer: MainDrawer(_user),
       appBar: AppBar(
@@ -43,18 +53,6 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
-                    SwitchListTile(
-                        title: Text('Limit # of days shown on Records'),
-                        subtitle: Text('Current value: ${_prefs.limitDays}'),
-                        value: _isLimitDaysEnabled ?? _prefs.isLimitDaysEnabled,
-                        onChanged: (val) {
-                          setState(() {
-                            _isLimitDaysEnabled = val;
-                            if (_isLimitDaysEnabled && _isLimitPeriodsEnabled) {
-                              _isLimitPeriodsEnabled = false;
-                            }
-                          });
-                        }),
                     TextFormField(
                       initialValue: _prefs.limitDays.toString(),
                       autovalidate: _limitDays.isNotEmpty,
@@ -67,20 +65,19 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         setState(() => _limitDays = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
                     SwitchListTile(
-                        title: Text('Limit # of periods shown on Records'),
-                        subtitle: Text('Current value: ${_prefs.limitPeriods}'),
-                        value: _isLimitPeriodsEnabled ??
-                            _prefs.isLimitPeriodsEnabled,
+                        title: Text('Limit # of days shown on Records'),
+                        subtitle: Text('Current value: ${_prefs.limitDays}'),
+                        value: _isLimitDaysEnabled,
                         onChanged: (val) {
                           setState(() {
-                            _isLimitPeriodsEnabled = val;
-                            if (_isLimitPeriodsEnabled && _isLimitDaysEnabled) {
-                              _isLimitDaysEnabled = false;
+                            _isLimitDaysEnabled = val;
+                            if (_isLimitDaysEnabled && _isLimitPeriodsEnabled) {
+                              _isLimitPeriodsEnabled = false;
                             }
                           });
                         }),
+                    SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: _prefs.limitPeriods.toString(),
                       autovalidate: _limitPeriods.isNotEmpty,
@@ -93,6 +90,18 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         setState(() => _limitPeriods = val);
                       },
                     ),
+                    SwitchListTile(
+                        title: Text('Limit # of periods shown on Records'),
+                        subtitle: Text('Current value: ${_prefs.limitPeriods}'),
+                        value: _isLimitPeriodsEnabled,
+                        onChanged: (val) {
+                          setState(() {
+                            _isLimitPeriodsEnabled = val;
+                            if (_isLimitPeriodsEnabled && _isLimitDaysEnabled) {
+                              _isLimitDaysEnabled = false;
+                            }
+                          });
+                        }),
                     SizedBox(height: 20.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
