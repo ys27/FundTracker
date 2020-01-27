@@ -26,16 +26,16 @@ class FireDBService {
             .toList());
   }
 
-  void addTransaction(Transaction tx) {
-    db.collection('transactions').add(tx.toMap());
+  Future addTransaction(Transaction tx) async {
+    await db.collection('transactions').add(tx.toMap());
   }
 
-  void updateTransaction(Transaction tx) {
-    db.collection('transactions').document(tx.tid).setData(tx.toMap());
+  Future updateTransaction(Transaction tx) async {
+    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
 
-  void deleteTransaction(Transaction tx) {
-    db.collection('transactions').document(tx.tid).delete();
+  Future deleteTransaction(Transaction tx) async {
+    await db.collection('transactions').document(tx.tid).delete();
   }
 
   // Categories
@@ -46,9 +46,9 @@ class FireDBService {
             .toList());
   }
 
-  void addDefaultCategories() {
-    CATEGORIES.asMap().forEach((index, category) {
-      db.collection('categories').add({
+  Future addDefaultCategories() async {
+    CATEGORIES.asMap().forEach((index, category) async {
+      await db.collection('categories').add({
         'cid': Uuid().v1(),
         'name': category['name'],
         'icon': category['icon'],
@@ -59,17 +59,17 @@ class FireDBService {
     });
   }
 
-  void setCategory(Category category) {
-    db
+  Future setCategory(Category category) async {
+    await db
         .collection('categories')
         .document(category.cid)
         .setData(category.toMap());
   }
 
-  void deleteAllCategories() {
-    db.collection('categories').getDocuments().then((snapshot) {
+  Future deleteAllCategories() async {
+    await db.collection('categories').getDocuments().then((snapshot) async {
       for (DocumentSnapshot doc in snapshot.documents) {
-        doc.reference.delete();
+        await doc.reference.delete();
       }
     });
   }
@@ -83,8 +83,8 @@ class FireDBService {
         .map((snapshot) => User.fromMap(snapshot.data));
   }
 
-  void addUser(User user) {
-    db.collection('user').document(uid).setData(user.toMap());
+  Future addUser(User user) async {
+    await db.collection('user').document(uid).setData(user.toMap());
   }
 
   // Periods
@@ -112,24 +112,28 @@ class FireDBService {
         );
   }
 
-  void setRemainingNotDefault(Period period) {
+  Future setRemainingNotDefault(Period period) async {
     db.collection('periods').snapshots().map((snapshot) {
-      snapshot.documents
-          .map((map) => map.reference.updateData({'isDefault': 0}));
+      snapshot.documents.map((map) async {
+        return await map.reference.updateData({'isDefault': 0});
+      });
     });
-    db.collection('periods').document(period.pid).updateData({'isDefault': 1});
+    await db
+        .collection('periods')
+        .document(period.pid)
+        .updateData({'isDefault': 1});
   }
 
-  void addPeriod(Period period) {
-    db.collection('periods').add(period.toMap());
+  Future addPeriod(Period period) async {
+    await db.collection('periods').add(period.toMap());
   }
 
-  void updatePeriod(Period period) {
-    db.collection('periods').document(period.pid).setData(period.toMap());
+  Future updatePeriod(Period period) async {
+    await db.collection('periods').document(period.pid).setData(period.toMap());
   }
 
-  void deletePeriod(Period period) {
-    db.collection('periods').document(period.pid).delete();
+  Future deletePeriod(Period period) async {
+    await db.collection('periods').document(period.pid).delete();
   }
 
   // Preferences
@@ -141,17 +145,17 @@ class FireDBService {
         .map((snapshot) => Preferences.fromMap(snapshot.data));
   }
 
-  void addDefaultPreferences() {
-    db
+  Future addDefaultPreferences() async {
+    await db
         .collection('preferences')
         .add(Preferences.original().setPreference('pid', uid).toMap());
   }
 
-  void updatePreferences(Preferences prefs) {
-    db.collection('preferences').document(uid).setData(prefs.toMap());
+  Future updatePreferences(Preferences prefs) async {
+    await db.collection('preferences').document(uid).setData(prefs.toMap());
   }
 
-  void deletePreferences() {
-    db.collection('preferences').document(uid).delete();
+  Future deletePreferences() async {
+    await db.collection('preferences').document(uid).delete();
   }
 }

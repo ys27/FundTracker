@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/alert.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/loader.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
@@ -238,13 +239,21 @@ class _PreferencesFormState extends State<PreferencesForm> {
                     SizedBox(height: 20.0),
                     RaisedButton(
                       child: Text('Reset Preferences'),
-                      onPressed: () {
-                        setState(() {
-                          _isLimitDaysEnabled = null;
-                          _isLimitPeriodsEnabled = null;
-                          _isLimitByDateEnabled = null;
-                        });
-                        DatabaseWrapper(_user.uid).resetPreferences();
+                      onPressed: () async {
+                        bool hasBeenConfirmed = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Alert('This will reset your preferences.');
+                          },
+                        );
+                        if (hasBeenConfirmed) {
+                          await DatabaseWrapper(_user.uid).resetPreferences();
+                          setState(() {
+                            _isLimitDaysEnabled = null;
+                            _isLimitPeriodsEnabled = null;
+                            _isLimitByDateEnabled = null;
+                          });
+                        }
                       },
                     )
                   ],

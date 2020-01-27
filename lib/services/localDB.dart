@@ -38,14 +38,14 @@ class LocalDBService {
         .mapToList((map) => Transaction.fromMap(map));
   }
 
-  void addTransaction(Transaction tx) async {
+  Future addTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    db.insert('transactions', tx.toMap());
+    await db.insert('transactions', tx.toMap());
   }
 
-  void updateTransaction(Transaction tx) async {
+  Future updateTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    db.update(
+    await db.update(
       'transactions',
       tx.toMap(),
       where: 'tid = ?',
@@ -53,9 +53,9 @@ class LocalDBService {
     );
   }
 
-  void deleteTransaction(Transaction tx) async {
+  Future deleteTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
-    db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
+    await db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
   // Categories
@@ -71,10 +71,10 @@ class LocalDBService {
         .mapToList((map) => Category.fromMap(map));
   }
 
-  void addDefaultCategories(String uid) async {
+  Future addDefaultCategories(String uid) async {
     StreamDatabase db = await this.db;
     CATEGORIES.asMap().forEach((index, category) async {
-      db.insert(
+      await db.insert(
         'categories',
         {
           'cid': Uuid().v1(),
@@ -88,9 +88,9 @@ class LocalDBService {
     });
   }
 
-  void setCategory(Category category) async {
+  Future setCategory(Category category) async {
     StreamDatabase db = await this.db;
-    db.update(
+    await db.update(
       'categories',
       category.toMap(),
       where: 'cid = ?',
@@ -98,9 +98,9 @@ class LocalDBService {
     );
   }
 
-  void deleteAllCategories(String uid) async {
+  Future deleteAllCategories(String uid) async {
     StreamDatabase db = await this.db;
-    db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+    await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // User
@@ -113,9 +113,9 @@ class LocalDBService {
     ).mapToOne((map) => User.fromMap(map));
   }
 
-  void addUser(User user) async {
+  Future addUser(User user) async {
     StreamDatabase db = await this.db;
-    db.insert('users', user.toMap());
+    await db.insert('users', user.toMap());
   }
 
   // Periods
@@ -140,10 +140,10 @@ class LocalDBService {
     ).mapToOneOrDefault((map) => Period.fromMap(map), Period.monthly());
   }
 
-  void setRemainingNotDefault(Period period) async {
+  Future setRemainingNotDefault(Period period) async {
     StreamDatabase db = await this.db;
-    db.update('periods', {'isDefault': 0});
-    db.update(
+    await db.update('periods', {'isDefault': 0});
+    await db.update(
       'periods',
       {'isDefault': 1},
       where: 'pid = ?',
@@ -151,14 +151,14 @@ class LocalDBService {
     );
   }
 
-  void addPeriod(Period period) async {
+  Future addPeriod(Period period) async {
     StreamDatabase db = await this.db;
-    db.insert('periods', period.toMap());
+    await db.insert('periods', period.toMap());
   }
 
-  void updatePeriod(Period period) async {
+  Future updatePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    db.update(
+    await db.update(
       'periods',
       period.toMap(),
       where: 'pid = ?',
@@ -166,9 +166,9 @@ class LocalDBService {
     );
   }
 
-  void deletePeriod(Period period) async {
+  Future deletePeriod(Period period) async {
     StreamDatabase db = await this.db;
-    db.delete(
+    await db.delete(
       'periods',
       where: 'pid = ?',
       whereArgs: [period.pid],
@@ -185,17 +185,17 @@ class LocalDBService {
     ).mapToOne((map) => Preferences.fromMap(map));
   }
 
-  void addDefaultPreferences(String pid) async {
+  Future addDefaultPreferences(String pid) async {
     StreamDatabase db = await this.db;
-    db.insert(
+    await db.insert(
       'preferences',
       Preferences.original().setPreference('pid', pid).toMap(),
     );
   }
 
-  void updatePreferences(Preferences prefs) async {
+  Future updatePreferences(Preferences prefs) async {
     StreamDatabase db = await this.db;
-    db.update(
+    await db.update(
       'preferences',
       prefs.toMap(),
       where: 'pid = ?',
@@ -203,9 +203,9 @@ class LocalDBService {
     );
   }
 
-  void deletePreferences(String pid) async {
+  Future deletePreferences(String pid) async {
     StreamDatabase db = await this.db;
-    db.delete(
+    await db.delete(
       'preferences',
       where: 'pid = ?',
       whereArgs: [pid],

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
@@ -126,7 +128,11 @@ List<Map<String, dynamic>> filterTransactionsByLimit(
     int currentDatePeriodIndex = dividedTransactions.indexWhere(
         (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
     dividedTransactions = dividedTransactions.sublist(
-        0, currentDatePeriodIndex + prefs.limitPeriods);
+        0,
+        min(
+          currentDatePeriodIndex + prefs.limitPeriods,
+          dividedTransactions.length,
+        ));
   }
 
   return dividedTransactions;
