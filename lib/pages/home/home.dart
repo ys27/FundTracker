@@ -11,6 +11,7 @@ import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/loader.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _dividedTransactions = [];
+  List<Transaction> _filteredTransactions = [];
+  Widget _body = Loader();
   final _pages = ['Records', 'Statistics'];
   PageController _pageController =
       PageController(initialPage: 0, keepPage: true);
@@ -37,8 +40,19 @@ class _HomeState extends State<Home> {
         _transactions.length > 0 &&
         _currentPeriod != null &&
         _prefs != null) {
+      _filteredTransactions = filterTransactionsByLimit(_transactions, _prefs);
       _dividedTransactions =
-          filterTransactionsByLimit(_transactions, _prefs, _currentPeriod);
+          filterTransactionsByPeriods(_transactions, _prefs, _currentPeriod);
+      _body = PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _selectedIndex = index);
+        },
+        children: <Widget>[
+          TransactionsList(_dividedTransactions),
+          Statistics(_filteredTransactions, _dividedTransactions),
+        ],
+      );
     }
 
     return Scaffold(
@@ -46,30 +60,22 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]),
       ),
-      // body: tabItems[_selectedIndex]['widget'],
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
-        },
-        children: <Widget>[
-          TransactionsList(_dividedTransactions),
-          Statistics(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () => showDialog(
-          context: context,
-          builder: (context) {
-            return StreamProvider<List<Category>>(
-              create: (_) => DatabaseWrapper(_user.uid).getCategories(),
-              child: TransactionForm(Transaction.empty()),
-            );
-          },
-        ),
-        child: Icon(Icons.add),
-      ),
+      body: _body,
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) {
+                  return StreamProvider<List<Category>>(
+                    create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+                    child: TransactionForm(Transaction.empty()),
+                  );
+                },
+              ),
+              child: Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -133,17 +139,24 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   return periodsList;
 }
 
-List<Map<String, dynamic>> filterTransactionsByLimit(
-    List<Transaction> transactions, Preferences prefs, Period currentPeriod) {
+List<Transaction> filterTransactionsByLimit(
+    List<Transaction> transactions, Preferences prefs) {
   if (prefs.isLimitDaysEnabled) {
-    transactions = transactions
+    return transactions
         .where((tx) => tx.date
             .isAfter(DateTime.now().subtract(Duration(days: prefs.limitDays))))
         .toList();
   } else if (prefs.isLimitByDateEnabled) {
-    transactions =
-        transactions.where((tx) => tx.date.isAfter(prefs.limitByDate)).toList();
+    return transactions
+        .where((tx) => tx.date.isAfter(prefs.limitByDate))
+        .toList();
+  } else {
+    return transactions;
   }
+}
+
+List<Map<String, dynamic>> filterTransactionsByPeriods(
+    List<Transaction> transactions, Preferences prefs, Period currentPeriod) {
   List<Map<String, dynamic>> dividedTransactions =
       divideTransactionsIntoPeriods(transactions, currentPeriod);
 

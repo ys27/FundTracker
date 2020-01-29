@@ -1,9 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
-import 'package:fund_tracker/models/preferences.dart';
-import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
