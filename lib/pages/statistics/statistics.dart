@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
@@ -23,16 +24,40 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
+    List<Transaction> _transactions;
+    List<Transaction> _allTransactions =
+        Provider.of<List<Transaction>>(context);
     Preferences _prefs = Provider.of<Preferences>(context);
 
-    if (_prefs != null) {
+    if (_allTransactions != null && _prefs != null) {
       if (_prefs.isLimitDaysEnabled) {
         _visiblePrefs = '${_prefs.limitDays} days';
       } else if (_prefs.isLimitPeriodsEnabled) {
         _visiblePrefs = '${_prefs.limitPeriods} periods';
       } else if (_prefs.isLimitByDateEnabled) {
         _visiblePrefs = 'From ${getDate(_prefs.limitByDate)}';
+      }
+      if (_showAllTimeStats) {
+        _transactions = _allTransactions;
+      }
+
+      if (_showPreferredStats) {
+        if (_prefs.isLimitDaysEnabled || _prefs.isLimitByDateEnabled) {
+          _transactions = widget.filteredTransactions;
+        } else {
+          _transactions =
+              filterTransactionsByPeriods(widget.dividedTransactions, _prefs)
+                  .map((map) => map['transactions'])
+                  .expand((x) => x)
+                  .toList();
+        }
+      }
+
+      if (_showPeriodStats) {
+        _transactions = filterTransactionsByPeriods(
+          widget.dividedTransactions,
+          _prefs.setPreference('limitPeriods', 0),
+        ).map((map) => map['transactions']).expand((x) => x).toList();
       }
     }
 
@@ -109,6 +134,7 @@ class _StatisticsState extends State<Statistics> {
       ),
       children: <Widget>[
         _transactionsSelection,
+        Balance(_transactions),
       ],
     );
   }

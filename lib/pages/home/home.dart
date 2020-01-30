@@ -42,7 +42,11 @@ class _HomeState extends State<Home> {
         _prefs != null) {
       _filteredTransactions = filterTransactionsByLimit(_transactions, _prefs);
       _dividedTransactions =
-          filterTransactionsByPeriods(_transactions, _prefs, _currentPeriod);
+          divideTransactionsIntoPeriods(_filteredTransactions, _currentPeriod);
+      if (_prefs.isLimitPeriodsEnabled) {
+        _dividedTransactions =
+            filterTransactionsByPeriods(_dividedTransactions, _prefs);
+      }
       _body = PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -100,77 +104,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-List<Map<String, dynamic>> divideTransactionsIntoPeriods(
-    List<Transaction> transactions, Period period) {
-  List<Map<String, dynamic>> periodsList = [];
-
-  DateTime iteratingPeriodStartDate =
-      findFirstPeriodDate(transactions.last, period);
-
-  while (iteratingPeriodStartDate.isBefore(transactions.first.date)) {
-    int numDaysInPeriod =
-        findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
-    DateTime iteratingNextPeriodStartDate =
-        iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
-    iteratingNextPeriodStartDate = DateTime.utc(
-      iteratingNextPeriodStartDate.year,
-      iteratingNextPeriodStartDate.month,
-      iteratingNextPeriodStartDate.day,
-    );
-
-    periodsList.insert(
-      0,
-      {
-        'startDate': iteratingPeriodStartDate,
-        'endDate':
-            iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
-        'transactions': transactions
-            .where((tx) =>
-                tx.date.isAfter(iteratingPeriodStartDate) &&
-                tx.date.isBefore(iteratingNextPeriodStartDate))
-            .toList(),
-      },
-    );
-
-    iteratingPeriodStartDate = iteratingNextPeriodStartDate;
-  }
-  return periodsList;
-}
-
-List<Transaction> filterTransactionsByLimit(
-    List<Transaction> transactions, Preferences prefs) {
-  if (prefs.isLimitDaysEnabled) {
-    return transactions
-        .where((tx) => tx.date
-            .isAfter(DateTime.now().subtract(Duration(days: prefs.limitDays))))
-        .toList();
-  } else if (prefs.isLimitByDateEnabled) {
-    return transactions
-        .where((tx) => tx.date.isAfter(prefs.limitByDate))
-        .toList();
-  } else {
-    return transactions;
-  }
-}
-
-List<Map<String, dynamic>> filterTransactionsByPeriods(
-    List<Transaction> transactions, Preferences prefs, Period currentPeriod) {
-  List<Map<String, dynamic>> dividedTransactions =
-      divideTransactionsIntoPeriods(transactions, currentPeriod);
-
-  if (prefs.isLimitPeriodsEnabled) {
-    DateTime now = DateTime.now();
-    int currentDatePeriodIndex = dividedTransactions.indexWhere(
-        (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
-    dividedTransactions = dividedTransactions.sublist(
-        0,
-        min(
-          currentDatePeriodIndex + prefs.limitPeriods,
-          dividedTransactions.length,
-        ));
-  }
-
-  return dividedTransactions;
 }

@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
@@ -119,4 +122,71 @@ String checkIfInteger(String val) {
     return 'This value must be greater than 0';
   }
   return null;
+}
+
+List<Map<String, dynamic>> divideTransactionsIntoPeriods(
+    List<Transaction> transactions, Period period) {
+  List<Map<String, dynamic>> periodsList = [];
+
+  DateTime iteratingPeriodStartDate =
+      findFirstPeriodDate(transactions.last, period);
+
+  while (iteratingPeriodStartDate.isBefore(transactions.first.date)) {
+    int numDaysInPeriod =
+        findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
+    DateTime iteratingNextPeriodStartDate =
+        iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
+    iteratingNextPeriodStartDate = DateTime.utc(
+      iteratingNextPeriodStartDate.year,
+      iteratingNextPeriodStartDate.month,
+      iteratingNextPeriodStartDate.day,
+    );
+
+    periodsList.insert(
+      0,
+      {
+        'startDate': iteratingPeriodStartDate,
+        'endDate':
+            iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
+        'transactions': transactions
+            .where((tx) =>
+                tx.date.isAfter(iteratingPeriodStartDate) &&
+                tx.date.isBefore(iteratingNextPeriodStartDate))
+            .toList(),
+      },
+    );
+
+    iteratingPeriodStartDate = iteratingNextPeriodStartDate;
+  }
+  return periodsList;
+}
+
+List<Transaction> filterTransactionsByLimit(
+    List<Transaction> transactions, Preferences prefs) {
+  if (prefs.isLimitDaysEnabled) {
+    return transactions
+        .where((tx) => tx.date
+            .isAfter(DateTime.now().subtract(Duration(days: prefs.limitDays))))
+        .toList();
+  } else if (prefs.isLimitByDateEnabled) {
+    return transactions
+        .where((tx) => tx.date.isAfter(prefs.limitByDate))
+        .toList();
+  } else {
+    return transactions;
+  }
+}
+
+List<Map<String, dynamic>> filterTransactionsByPeriods(
+    List<Map<String, dynamic>> transactions, Preferences prefs) {
+  DateTime now = DateTime.now();
+  int currentDatePeriodIndex = transactions.indexWhere(
+      (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
+  return transactions.sublist(
+    0,
+    min(
+      currentDatePeriodIndex + prefs.limitPeriods,
+      transactions.length,
+    ),
+  );
 }
