@@ -54,7 +54,8 @@ class _HomeState extends State<Home> {
         },
         children: <Widget>[
           TransactionsList(_dividedTransactions),
-          Statistics(_filteredTransactions, _dividedTransactions),
+          Statistics(_filteredTransactions,
+              divideTransactionsIntoPeriods(_transactions, _currentPeriod)),
         ],
       );
     }

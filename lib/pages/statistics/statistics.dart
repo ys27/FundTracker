@@ -47,7 +47,7 @@ class _StatisticsState extends State<Statistics> {
         } else {
           _transactions =
               filterTransactionsByPeriods(widget.dividedTransactions, _prefs)
-                  .map((map) => map['transactions'])
+                  .map<List<Transaction>>((map) => map['transactions'])
                   .expand((x) => x)
                   .toList();
         }
@@ -56,8 +56,11 @@ class _StatisticsState extends State<Statistics> {
       if (_showPeriodStats) {
         _transactions = filterTransactionsByPeriods(
           widget.dividedTransactions,
-          _prefs.setPreference('limitPeriods', 0),
-        ).map((map) => map['transactions']).expand((x) => x).toList();
+          _prefs.setPreference('limitPeriods', 1),
+        )
+            .map<List<Transaction>>((map) => map['transactions'])
+            .expand((x) => x)
+            .toList();
       }
     }
 
