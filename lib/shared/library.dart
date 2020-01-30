@@ -108,7 +108,8 @@ int findNumDaysInPeriod(Period period) {
 }
 
 String getDate(DateTime date) {
-  return '${date.year.toString()}.${date.month.toString()}.${date.day.toString()}';
+  String day = date.day.toString();
+  return '${date.year.toString()}.${date.month.toString()}.${day.length == 1 ? '0$day' : day}';
 }
 
 String checkIfInteger(String val) {
@@ -202,8 +203,3 @@ int min(int a, int b) {
   }
   return b;
 }
-
-// List<double> getPercentages(List<double> values) {
-//   values.sort((a, b) => b.compareTo(a));
-
-// }

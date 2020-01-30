@@ -35,7 +35,7 @@ class _StatisticsState extends State<Statistics> {
       } else if (_prefs.isLimitPeriodsEnabled) {
         _visiblePrefs = '${_prefs.limitPeriods} periods';
       } else if (_prefs.isLimitByDateEnabled) {
-        _visiblePrefs = 'From ${getDate(_prefs.limitByDate)}';
+        _visiblePrefs = '~ ${getDate(_prefs.limitByDate)}';
       }
       if (_showAllTimeStats) {
         _transactions = _allTransactions;
