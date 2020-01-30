@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:random_color/random_color.dart';
 
 class Categorical extends StatefulWidget {
   final List<Transaction> transactions;
@@ -31,14 +31,14 @@ class _CategoricalState extends State<Categorical> {
             ),
           ] +
           _individualPercentages
-              .map((category) => [
+              .map((categorical) => [
                     SizedBox(height: 10.0),
                     BarTile(
-                      title: category['category'],
-                      amount: category['amount'],
-                      percentage: category['percentage'],
-                      color: RandomColor()
-                          .randomColor(colorSaturation: ColorSaturation.random),
+                      title: categorical['category'],
+                      amount: categorical['amount'],
+                      percentage: categorical['percentage'],
+                      color: categoriesRegistry.firstWhere((category) =>
+                          category['name'] == categorical['category'])['color'],
                     ),
                   ])
               .expand((x) => x)

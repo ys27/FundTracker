@@ -46,7 +46,7 @@ class TransactionTile extends StatelessWidget {
               backgroundColor: Theme.of(context).backgroundColor,
               foregroundColor: Colors.black,
               child: Icon(IconData(
-                  CATEGORIES
+                  categoriesRegistry
                       .where((category) {
                         return category['name'] == transaction.category;
                       })

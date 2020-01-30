@@ -73,7 +73,7 @@ class LocalDBService {
 
   Future addDefaultCategories(String uid) async {
     StreamDatabase db = await this.db;
-    CATEGORIES.asMap().forEach((index, category) async {
+    categoriesRegistry.asMap().forEach((index, category) async {
       await db.insert(
         'categories',
         {

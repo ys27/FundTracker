@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:random_color/random_color.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
@@ -40,8 +40,8 @@ class _TopExpensesState extends State<TopExpenses> {
                       subtitle: tx['category'],
                       amount: tx['amount'],
                       percentage: tx['percentage'],
-                      color: RandomColor()
-                          .randomColor(colorSaturation: ColorSaturation.random),
+                      color: categoriesRegistry.firstWhere((category) =>
+                          category['name'] == tx['category'])['color'],
                     ),
                   ])
               .expand((x) => x)

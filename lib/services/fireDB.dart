@@ -47,7 +47,7 @@ class FireDBService {
   }
 
   Future addDefaultCategories() async {
-    CATEGORIES.asMap().forEach((index, category) async {
+    categoriesRegistry.asMap().forEach((index, category) async {
       await db.collection('categories').add({
         'cid': Uuid().v1(),
         'name': category['name'],
