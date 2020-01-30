@@ -227,10 +227,9 @@ class _TransactionFormState extends State<TransactionForm> {
                                         Icon(
                                             IconData(
                                               _categories
-                                                  .where((cat) =>
+                                                  .firstWhere((cat) =>
                                                       cat.name ==
                                                       widget.tx.category)
-                                                  .first
                                                   .icon,
                                               fontFamily: 'MaterialIcons',
                                             ),
