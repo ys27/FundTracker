@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categorical.dart';
+import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
@@ -142,6 +143,8 @@ class _StatisticsState extends State<Statistics> {
         Balance(_transactions),
         SizedBox(height: 20.0),
         Categorical(_transactions),
+        SizedBox(height: 20.0),
+        TopExpenses(_transactions),
       ],
     );
   }

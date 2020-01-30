@@ -211,6 +211,44 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
   return dividedTransactions;
 }
 
+List<Map<String, dynamic>> getRelativePercentages(
+    List<Map<String, dynamic>> values) {
+  double max = values.first['amount'];
+  values.forEach((e) {
+    if (e['amount'] > max) max = e['amount'];
+  });
+  return values
+      .map((v) => {
+            ...v,
+            'percentage': v['amount'] / max,
+          })
+      .toList();
+}
+
+List<Map<String, dynamic>> getTotalValues(
+    List<Map<String, dynamic>> dividedTransactions) {
+  return dividedTransactions
+      .map((map) => {
+            'category': map['category'],
+            'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
+          })
+      .toList();
+}
+
+List<Map<String, dynamic>> getIndividualPercentages(
+    List<Map<String, dynamic>> values) {
+  double sum = values.first['amount'];
+  values.forEach((e) {
+    sum += e['amount'];
+  });
+  return values
+      .map((v) => {
+            ...v,
+            'percentage': v['amount'] / sum,
+          })
+      .toList();
+}
+
 double abs(double value) {
   if (value < 0) {
     return -1 * value;

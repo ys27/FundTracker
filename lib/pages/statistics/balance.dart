@@ -15,19 +15,25 @@ class Balance extends StatefulWidget {
 class _BalanceState extends State<Balance> {
   @override
   Widget build(BuildContext context) {
-    final List<double> amounts = [
-      widget.transactions
-          .where((tx) => !tx.isExpense)
-          .fold(0.0, (a, b) => a + b.amount),
-      widget.transactions
-          .where((tx) => tx.isExpense)
-          .fold(0.0, (a, b) => a + b.amount),
+    final List<Map<String, dynamic>> balancesList = [
+      {
+        'amount': widget.transactions
+            .where((tx) => !tx.isExpense)
+            .fold(0.0, (a, b) => a + b.amount),
+      },
+      {
+        'amount': widget.transactions
+            .where((tx) => tx.isExpense)
+            .fold(0.0, (a, b) => a + b.amount),
+      },
     ];
-    final double balance = amounts[0] - amounts[1];
+    final double balance =
+        balancesList[0]['amount'] - balancesList[1]['amount'];
     final String balanceStr = balance < 0
         ? '-\$${abs(balance).toStringAsFixed(2)}'
         : '\$${balance.toStringAsFixed(2)}';
-    final List<double> relativePercentages = getRelativePercentages(amounts);
+    final List<Map<String, dynamic>> relativePercentages =
+        getRelativePercentages(balancesList);
 
     return Column(
       children: <Widget>[
@@ -38,26 +44,18 @@ class _BalanceState extends State<Balance> {
         SizedBox(height: 10.0),
         BarTile(
           title: 'Income',
-          amount: amounts[0],
-          percentage: relativePercentages[0],
+          amount: balancesList[0]['amount'],
+          percentage: relativePercentages[0]['percentage'],
           color: Colors.green[800],
         ),
         SizedBox(height: 10.0),
         BarTile(
           title: 'Expenses',
-          amount: amounts[1],
-          percentage: relativePercentages[1],
+          amount: balancesList[1]['amount'],
+          percentage: relativePercentages[1]['percentage'],
           color: Colors.red[800],
         ),
       ],
     );
   }
-}
-
-List<double> getRelativePercentages(List<double> values) {
-  double max = values.first;
-  values.forEach((e) {
-    if (e > max) max = e;
-  });
-  return values.map((v) => v / max).toList();
 }

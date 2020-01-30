@@ -46,27 +46,3 @@ class _CategoricalState extends State<Categorical> {
     );
   }
 }
-
-List<Map<String, dynamic>> getTotalValues(
-    List<Map<String, dynamic>> dividedTransactions) {
-  return dividedTransactions
-      .map((map) => {
-            'category': map['category'],
-            'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
-          })
-      .toList();
-}
-
-List<Map<String, dynamic>> getIndividualPercentages(
-    List<Map<String, dynamic>> values) {
-  double sum = values.first['amount'];
-  values.forEach((e) {
-    sum += e['amount'];
-  });
-  return values
-      .map((v) => {
-            ...v,
-            'percentage': v['amount'] / sum,
-          })
-      .toList();
-}
