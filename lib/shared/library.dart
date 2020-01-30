@@ -190,6 +190,27 @@ List<Map<String, dynamic>> filterTransactionsByPeriods(
   );
 }
 
+List<Map<String, dynamic>> divideTransactionsIntoCategories(
+    List<Transaction> transactions) {
+  List<Map<String, dynamic>> dividedTransactions = [];
+  transactions.forEach((tx) {
+    if (dividedTransactions
+        .where((div) => div['category'] == tx.category)
+        .toList()
+        .isEmpty) {
+      dividedTransactions.add({
+        'category': tx.category,
+        'transactions': [tx],
+      });
+    } else {
+      dividedTransactions
+          .firstWhere((div) => div['category'] == tx.category)['transactions']
+          .add(tx);
+    }
+  });
+  return dividedTransactions;
+}
+
 double abs(double value) {
   if (value < 0) {
     return -1 * value;
