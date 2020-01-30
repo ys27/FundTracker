@@ -130,6 +130,16 @@ class _StatisticsState extends State<Statistics> {
       ],
     );
 
-    return Balance(_transactions);
+    return ListView(
+      padding: EdgeInsets.symmetric(
+        vertical: 20.0,
+        horizontal: 10.0,
+      ),
+      children: <Widget>[
+        _transactionsSelection,
+        SizedBox(height: 20.0),
+        Balance(_transactions),
+      ],
+    );
   }
 }

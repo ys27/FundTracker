@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
@@ -190,3 +188,22 @@ List<Map<String, dynamic>> filterTransactionsByPeriods(
     ),
   );
 }
+
+double abs(double value) {
+  if (value < 0) {
+    return -1 * value;
+  }
+  return value;
+}
+
+int min(int a, int b) {
+  if (a < b) {
+    return a;
+  }
+  return b;
+}
+
+// List<double> getPercentages(List<double> values) {
+//   values.sort((a, b) => b.compareTo(a));
+
+// }
