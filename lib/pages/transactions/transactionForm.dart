@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/alert.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -198,10 +199,16 @@ class _TransactionFormState extends State<TransactionForm> {
                               return DropdownMenuItem(
                                 value: category.name,
                                 child: Row(children: <Widget>[
-                                  Icon(IconData(
-                                    category.icon,
-                                    fontFamily: 'MaterialIcons',
-                                  )),
+                                  Icon(
+                                    IconData(
+                                      category.icon,
+                                      fontFamily: 'MaterialIcons',
+                                    ),
+                                    color: categoriesRegistry.firstWhere(
+                                        (cat) =>
+                                            cat['name'] ==
+                                            category.name)['color'],
+                                  ),
                                   SizedBox(width: 10),
                                   Text(
                                     category.name,
@@ -217,15 +224,21 @@ class _TransactionFormState extends State<TransactionForm> {
                                     DropdownMenuItem(
                                       value: widget.tx.category,
                                       child: Row(children: <Widget>[
-                                        Icon(IconData(
-                                          _categories
-                                              .where((cat) =>
-                                                  cat.name ==
-                                                  widget.tx.category)
-                                              .first
-                                              .icon,
-                                          fontFamily: 'MaterialIcons',
-                                        )),
+                                        Icon(
+                                            IconData(
+                                              _categories
+                                                  .where((cat) =>
+                                                      cat.name ==
+                                                      widget.tx.category)
+                                                  .first
+                                                  .icon,
+                                              fontFamily: 'MaterialIcons',
+                                            ),
+                                            color: categoriesRegistry
+                                                .firstWhere((cat) =>
+                                                    cat['name'] ==
+                                                    widget
+                                                        .tx.category)['color']),
                                         SizedBox(width: 10),
                                         Text(
                                           widget.tx.category,

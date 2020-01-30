@@ -17,9 +17,8 @@ class TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
 
-    Map<String, dynamic> _category = categoriesRegistry.firstWhere((category) {
-      return category['name'] == transaction.category;
-    });
+    Map<String, dynamic> _category = categoriesRegistry
+        .firstWhere((category) => category['name'] == transaction.category);
 
     return Padding(
       padding: EdgeInsets.only(top: 5.0),
