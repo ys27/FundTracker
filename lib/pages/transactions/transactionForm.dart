@@ -48,11 +48,12 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     bool hasBeenConfirmed = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Alert('This transaction will be deleted.');
-                      },
-                    ) ?? false;
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Alert('This transaction will be deleted.');
+                          },
+                        ) ??
+                        false;
                     if (hasBeenConfirmed) {
                       setState(() => isLoading = true);
                       DatabaseWrapper(_user.uid).deleteTransaction(widget.tx);
@@ -149,9 +150,12 @@ class _TransactionFormState extends State<TransactionForm> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: widget.tx.payee,
+                      autovalidate: _payee != null,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter a payee or a note.';
+                        } else if (val.length > 30) {
+                          return 'Max 30 characters.';
                         }
                         return null;
                       },
