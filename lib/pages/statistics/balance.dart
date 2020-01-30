@@ -21,6 +21,6 @@ class _BalanceState extends State<Balance> {
         .fold(0.0, (a, b) => a + b.amount);
     final double balance = incomeAmount - expenseAmount;
 
-    return Text(expenseAmount.toString());
+    return
   }
 }
