@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 class BarTile extends StatefulWidget {
   final String title;
   final String subtitle;
+  final String midLine;
   final double amount;
   final double percentage;
   final Color color;
 
-  BarTile(
-      {this.title, this.subtitle, this.amount, this.percentage, this.color});
+  BarTile({
+    this.title,
+    this.subtitle,
+    this.midLine,
+    this.amount,
+    this.percentage,
+    this.color,
+  });
 
   @override
   _BarTileState createState() => _BarTileState();
@@ -23,6 +30,12 @@ class _BarTileState extends State<BarTile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(widget.title),
+            widget.midLine != null
+                ? Text(
+                    widget.midLine,
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  )
+                : Container(),
             Text('\$${widget.amount.toStringAsFixed(2)}'),
           ],
         ),

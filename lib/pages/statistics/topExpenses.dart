@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/shared.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
@@ -25,12 +26,7 @@ class _TopExpensesState extends State<TopExpenses> {
                 })
             .toList());
     return Column(
-      children: <Widget>[
-            Text(
-              'Top Expenses',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ] +
+      children: <Widget>[StatTitle(title: 'Top Expenses')] +
           _sortedTransactions
               .sublist(0, 5)
               .map((tx) => [

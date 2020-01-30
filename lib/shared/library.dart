@@ -249,6 +249,12 @@ List<Map<String, dynamic>> getIndividualPercentages(
       .toList();
 }
 
+String getAmountStr(double amount) {
+  return amount < 0
+      ? '-\$${abs(amount).toStringAsFixed(2)}'
+      : '\$${amount.toStringAsFixed(2)}';
+}
+
 double abs(double value) {
   if (value < 0) {
     return -1 * value;

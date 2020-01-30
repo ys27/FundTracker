@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/shared.dart';
 
 class Categorical extends StatefulWidget {
   final List<Transaction> transactions;
@@ -24,12 +25,7 @@ class _CategoricalState extends State<Categorical> {
     );
 
     return Column(
-      children: <Widget>[
-            Text(
-              'Categories',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ] +
+      children: <Widget>[StatTitle(title: 'Categories')] +
           _individualPercentages
               .map((categorical) => [
                     SizedBox(height: 10.0),

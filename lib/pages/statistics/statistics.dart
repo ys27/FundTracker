@@ -27,6 +27,7 @@ class _StatisticsState extends State<Statistics> {
   @override
   Widget build(BuildContext context) {
     List<Transaction> _transactions;
+    List<Transaction> _prevTransactions = [];
     List<Transaction> _allTransactions =
         Provider.of<List<Transaction>>(context);
     Preferences _prefs = Provider.of<Preferences>(context);
@@ -60,6 +61,15 @@ class _StatisticsState extends State<Statistics> {
           widget.dividedTransactions,
           _prefs.setPreference('limitPeriods', 1),
         )
+            .map<List<Transaction>>((map) => map['transactions'])
+            .expand((x) => x)
+            .toList();
+
+        _prevTransactions = filterTransactionsByPeriods(
+          widget.dividedTransactions,
+          _prefs.setPreference('limitPeriods', 2),
+        )
+            .sublist(1, 2)
             .map<List<Transaction>>((map) => map['transactions'])
             .expand((x) => x)
             .toList();
@@ -140,7 +150,7 @@ class _StatisticsState extends State<Statistics> {
       children: <Widget>[
         _transactionsSelection,
         SizedBox(height: 20.0),
-        Balance(_transactions),
+        Balance(_transactions, _prevTransactions, _showPeriodStats),
         SizedBox(height: 20.0),
         Categorical(_transactions),
         SizedBox(height: 20.0),
