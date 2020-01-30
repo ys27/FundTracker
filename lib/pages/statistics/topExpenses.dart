@@ -7,14 +7,16 @@ import 'package:fund_tracker/shared/shared.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
+  final ScrollController scrollController;
 
-  TopExpenses(this.transactions);
+  TopExpenses(this.transactions, this.scrollController);
 
   @override
   _TopExpensesState createState() => _TopExpensesState();
 }
 
 class _TopExpensesState extends State<TopExpenses> {
+  int _showCount = 5;
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> _sortedTransactions =
@@ -28,7 +30,7 @@ class _TopExpensesState extends State<TopExpenses> {
     return Column(
       children: <Widget>[StatTitle(title: 'Top Expenses')] +
           _sortedTransactions
-              .sublist(0, 5)
+              .sublist(0, min(_showCount, _sortedTransactions.length))
               .map((tx) => [
                     SizedBox(height: 10.0),
                     BarTile(
@@ -41,7 +43,33 @@ class _TopExpensesState extends State<TopExpenses> {
                     ),
                   ])
               .expand((x) => x)
-              .toList(),
+              .toList() +
+          <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                FlatButton(
+                  child: Text('Collapse'),
+                  onPressed: () => setState(() => _showCount = 5),
+                ),
+                // FlatButton(
+                //   child: Text('Show less...'),
+                //   onPressed: () => setState(() => _showCount -= 5),
+                // ),
+                FlatButton(
+                  child: Text('Show more'),
+                  onPressed: () {
+                    setState(() => _showCount += 5);
+                    widget.scrollController.animateTo(
+                      99999,
+                      duration: Duration(seconds: 3),
+                      curve: Curves.easeInOutQuint,
+                    );
+                  },
+                )
+              ],
+            )
+          ],
     );
   }
 }

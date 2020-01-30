@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 
@@ -65,6 +66,8 @@ class _CategoriesState extends State<Categories> {
                         category.icon,
                         fontFamily: 'MaterialIcons',
                       ),
+                      color: categoriesRegistry.firstWhere(
+                          (cat) => cat['name'] == category.name)['color'],
                     ),
                     onChanged: (val) {
                       if (category.name != 'Others') {

@@ -20,8 +20,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  List<Map<String, dynamic>> _dividedTransactions = [];
-  List<Transaction> _filteredTransactions = [];
   Widget _body = Loader();
   final _pages = ['Records', 'Statistics'];
   PageController _pageController =
@@ -33,6 +31,9 @@ class _HomeState extends State<Home> {
     List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
     final Period _currentPeriod = Provider.of<Period>(context);
     final Preferences _prefs = Provider.of<Preferences>(context);
+
+    List<Map<String, dynamic>> _dividedTransactions = [];
+    List<Transaction> _filteredTransactions = [];
 
     if (_transactions != null &&
         _transactions.length > 0 &&

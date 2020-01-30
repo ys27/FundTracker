@@ -72,7 +72,6 @@ DateTime findPrevPeriodStartDate(Period period) {
 
 DateTime findFirstPeriodDate(Transaction firstTx, Period period) {
   DateTime iteratingDate = period.startDate;
-
   while (iteratingDate.isAfter(firstTx.date)) {
     iteratingDate = findPrevPeriodStartDate(period.setStartDate(iteratingDate));
   }

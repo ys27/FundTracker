@@ -32,6 +32,8 @@ class _StatisticsState extends State<Statistics> {
         Provider.of<List<Transaction>>(context);
     Preferences _prefs = Provider.of<Preferences>(context);
 
+    ScrollController _scrollController = ScrollController();
+
     if (_allTransactions != null && _prefs != null) {
       if (_prefs.isLimitDaysEnabled) {
         _visiblePrefs = '${_prefs.limitDays} days';
@@ -143,6 +145,7 @@ class _StatisticsState extends State<Statistics> {
     );
 
     return ListView(
+      controller: _scrollController,
       padding: EdgeInsets.symmetric(
         vertical: 20.0,
         horizontal: 10.0,
@@ -154,7 +157,7 @@ class _StatisticsState extends State<Statistics> {
         SizedBox(height: 20.0),
         Categorical(_transactions),
         SizedBox(height: 20.0),
-        TopExpenses(_transactions),
+        TopExpenses(_transactions, _scrollController),
       ],
     );
   }

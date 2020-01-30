@@ -257,7 +257,6 @@ class LocalDBService {
         columnsQuery += ', ';
       }
       columnsQuery = columnsQuery.substring(0, columnsQuery.length - 2);
-      print(columnsQuery);
       db.execute('CREATE TABLE $tableName($columnsQuery)');
     });
   }
