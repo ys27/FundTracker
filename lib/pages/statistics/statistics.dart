@@ -71,10 +71,8 @@ class _StatisticsState extends State<Statistics> {
 
       if (_showPeriodStats) {
         List<Map<String, dynamic>> _periodFilteredTransactions =
-            filterTransactionsByPeriodsFromCurrentPeriod(
-          _dividedTransactions,
-          _prefs.setPreference('limitPeriods', 2),
-        );
+            findCurrentAndPreviousPeriods(_dividedTransactions);
+        print(_periodFilteredTransactions.length);
         _transactions = _periodFilteredTransactions.length > 0
             ? _periodFilteredTransactions[0]['transactions']
             : [];

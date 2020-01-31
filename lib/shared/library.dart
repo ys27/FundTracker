@@ -179,32 +179,32 @@ List<Transaction> filterTransactionsByLimit(
 }
 
 List<Map<String, dynamic>> filterTransactionsByPeriods(
-    List<Map<String, dynamic>> transactions, Preferences prefs) {
+    List<Map<String, dynamic>> periods, Preferences prefs) {
   DateTime now = DateTime.now();
-  int currentDatePeriodIndex = transactions.indexWhere(
+  int currentDatePeriodIndex = periods.indexWhere(
       (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
-  return transactions.sublist(
+  return periods.sublist(
     0,
     min(
-      currentDatePeriodIndex + prefs.limitPeriods - 1,
-      transactions.length,
+      currentDatePeriodIndex + prefs.limitPeriods,
+      periods.length,
     ),
   );
 }
 
-List<Map<String, dynamic>> filterTransactionsByPeriodsFromCurrentPeriod(
-    List<Map<String, dynamic>> transactions, Preferences prefs) {
+List<Map<String, dynamic>> findCurrentAndPreviousPeriods(
+    List<Map<String, dynamic>> periods) {
   DateTime now = DateTime.now();
-  int currentDatePeriodIndex = transactions.indexWhere(
+  int currentDatePeriodIndex = periods.indexWhere(
       (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
   if (currentDatePeriodIndex == -1) {
     return [];
   }
-  return transactions.sublist(
+  return periods.sublist(
     currentDatePeriodIndex,
     min(
-      currentDatePeriodIndex + prefs.limitPeriods - 1,
-      transactions.length,
+      currentDatePeriodIndex + 2,
+      periods.length,
     ),
   );
 }
