@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 

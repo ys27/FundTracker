@@ -3,7 +3,7 @@ import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 

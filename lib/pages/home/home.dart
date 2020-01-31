@@ -9,7 +9,7 @@ import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -28,23 +28,24 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    List<Transaction> _transactions = Provider.of<List<Transaction>>(context);
+    final List<Transaction> _transactions =
+        Provider.of<List<Transaction>>(context);
     final Period _currentPeriod = Provider.of<Period>(context);
     final Preferences _prefs = Provider.of<Preferences>(context);
 
     List<Map<String, dynamic>> _dividedTransactions = [];
     List<Transaction> _filteredTransactions = [];
 
-    if (_transactions != null &&
-        _transactions.length > 0 &&
-        _currentPeriod != null &&
-        _prefs != null) {
-      _filteredTransactions = filterTransactionsByLimit(_transactions, _prefs);
-      _dividedTransactions =
-          divideTransactionsIntoPeriods(_filteredTransactions, _currentPeriod);
-      if (_prefs.isLimitPeriodsEnabled) {
-        _dividedTransactions =
-            filterTransactionsByPeriods(_dividedTransactions, _prefs);
+    if (_transactions != null && _currentPeriod != null && _prefs != null) {
+      if (_transactions.length > 0) {
+        _filteredTransactions =
+            filterTransactionsByLimit(_transactions, _prefs);
+        _dividedTransactions = divideTransactionsIntoPeriods(
+            _filteredTransactions, _currentPeriod);
+        if (_prefs.isLimitPeriodsEnabled) {
+          _dividedTransactions =
+              filterTransactionsByPeriods(_dividedTransactions, _prefs);
+        }
       }
       _body = PageView(
         controller: _pageController,
@@ -68,15 +69,12 @@ class _HomeState extends State<Home> {
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) {
-                  return StreamProvider<List<Category>>(
+              onPressed: () => openPage(
+                  context,
+                  StreamProvider<List<Category>>(
                     create: (_) => DatabaseWrapper(_user.uid).getCategories(),
                     child: TransactionForm(Transaction.empty()),
-                  );
-                },
-              ),
+                  )),
               child: Icon(Icons.add),
             )
           : null,

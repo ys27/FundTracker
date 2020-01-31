@@ -126,36 +126,39 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
     List<Transaction> transactions, Period period) {
   List<Map<String, dynamic>> periodsList = [];
 
-  DateTime iteratingPeriodStartDate =
-      findFirstPeriodDate(transactions.last, period);
+  if (transactions.length > 0) {
+    DateTime iteratingPeriodStartDate =
+        findFirstPeriodDate(transactions.last, period);
 
-  while (iteratingPeriodStartDate.isBefore(transactions.first.date)) {
-    int numDaysInPeriod =
-        findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
-    DateTime iteratingNextPeriodStartDate =
-        iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
-    iteratingNextPeriodStartDate = DateTime.utc(
-      iteratingNextPeriodStartDate.year,
-      iteratingNextPeriodStartDate.month,
-      iteratingNextPeriodStartDate.day,
-    );
+    while (iteratingPeriodStartDate.isBefore(transactions.first.date)) {
+      int numDaysInPeriod =
+          findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
+      DateTime iteratingNextPeriodStartDate =
+          iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
+      iteratingNextPeriodStartDate = DateTime.utc(
+        iteratingNextPeriodStartDate.year,
+        iteratingNextPeriodStartDate.month,
+        iteratingNextPeriodStartDate.day,
+      );
 
-    periodsList.insert(
-      0,
-      {
-        'startDate': iteratingPeriodStartDate,
-        'endDate':
-            iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
-        'transactions': transactions
-            .where((tx) =>
-                tx.date.isAfter(iteratingPeriodStartDate) &&
-                tx.date.isBefore(iteratingNextPeriodStartDate))
-            .toList(),
-      },
-    );
+      periodsList.insert(
+        0,
+        {
+          'startDate': iteratingPeriodStartDate,
+          'endDate':
+              iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
+          'transactions': transactions
+              .where((tx) =>
+                  tx.date.isAfter(iteratingPeriodStartDate) &&
+                  tx.date.isBefore(iteratingNextPeriodStartDate))
+              .toList(),
+        },
+      );
 
-    iteratingPeriodStartDate = iteratingNextPeriodStartDate;
+      iteratingPeriodStartDate = iteratingNextPeriodStartDate;
+    }
   }
+
   return periodsList;
 }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/pages/auth/authWrapper.dart';
 import 'package:fund_tracker/pages/home/home.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'models/period.dart';

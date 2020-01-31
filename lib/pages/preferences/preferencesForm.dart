@@ -2,9 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/alert.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -234,11 +233,13 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       child: Text('Reset Categories'),
                       onPressed: () async {
                         bool hasBeenConfirmed = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Alert('This will reset your categories.');
-                          },
-                        ) ?? false;
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Alert(
+                                    'This will reset your categories.');
+                              },
+                            ) ??
+                            false;
                         if (hasBeenConfirmed) {
                           DatabaseWrapper(_user.uid).resetCategories();
                         }
@@ -249,11 +250,13 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       child: Text('Reset Preferences'),
                       onPressed: () async {
                         bool hasBeenConfirmed = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Alert('This will reset your preferences.');
-                          },
-                        ) ?? false;
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Alert(
+                                    'This will reset your preferences.');
+                              },
+                            ) ??
+                            false;
                         if (hasBeenConfirmed) {
                           await DatabaseWrapper(_user.uid).resetPreferences();
                           setState(() {

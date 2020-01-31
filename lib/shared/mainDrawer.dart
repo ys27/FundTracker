@@ -10,7 +10,7 @@ import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/alert.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'library.dart';

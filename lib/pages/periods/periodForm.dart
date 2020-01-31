@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/alert.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,11 +43,12 @@ class _PeriodFormState extends State<PeriodForm> {
                   child: Icon(Icons.delete),
                   onPressed: () async {
                     bool hasBeenConfirmed = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Alert('This custom period will be deleted.');
-                      },
-                    ) ?? false;
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Alert('This custom period will be deleted.');
+                          },
+                        ) ??
+                        false;
                     if (hasBeenConfirmed) {
                       setState(() => isLoading = true);
                       DatabaseWrapper(_user.uid).deletePeriod(widget.period);

@@ -3,7 +3,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/shared.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;

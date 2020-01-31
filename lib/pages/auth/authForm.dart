@@ -3,7 +3,7 @@ import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/constants.dart';
-import 'package:fund_tracker/shared/loader.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 
 class AuthForm extends StatefulWidget {
   final Function toggleView;

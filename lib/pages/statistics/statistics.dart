@@ -34,7 +34,9 @@ class _StatisticsState extends State<Statistics> {
 
     ScrollController _scrollController = ScrollController();
 
-    if (_allTransactions != null && _prefs != null) {
+    if (_allTransactions != null &&
+        _prefs != null &&
+        _allTransactions.length > 0) {
       if (_prefs.isLimitDaysEnabled) {
         _visiblePrefs = '${_prefs.limitDays} days';
       } else if (_prefs.isLimitPeriodsEnabled) {
@@ -67,11 +69,14 @@ class _StatisticsState extends State<Statistics> {
             .expand((x) => x)
             .toList();
 
-        _prevTransactions = filterTransactionsByPeriods(
+        List<Map<String, dynamic>> _periodFilteredTransactions =
+            filterTransactionsByPeriods(
           widget.dividedTransactions,
           _prefs.setPreference('limitPeriods', 2),
-        )
-            .sublist(1, 2)
+        );
+
+        _prevTransactions = _periodFilteredTransactions
+            .sublist(1, min(2, _periodFilteredTransactions.length))
             .map<List<Transaction>>((map) => map['transactions'])
             .expand((x) => x)
             .toList();
@@ -144,21 +149,28 @@ class _StatisticsState extends State<Statistics> {
       ],
     );
 
-    return ListView(
-      controller: _scrollController,
-      padding: EdgeInsets.symmetric(
-        vertical: 20.0,
-        horizontal: 10.0,
-      ),
-      children: <Widget>[
-        _transactionsSelection,
-        SizedBox(height: 20.0),
-        Balance(_transactions, _prevTransactions, _showPeriodStats),
-        SizedBox(height: 20.0),
-        Categorical(_transactions),
-        SizedBox(height: 20.0),
-        TopExpenses(_transactions, _scrollController),
-      ],
-    );
+    return (_allTransactions != null &&
+            _prefs != null &&
+            _allTransactions.length > 0)
+        ? ListView(
+            controller: _scrollController,
+            padding: EdgeInsets.symmetric(
+              vertical: 20.0,
+              horizontal: 10.0,
+            ),
+            children: <Widget>[
+              _transactionsSelection,
+              SizedBox(height: 20.0),
+              Balance(_transactions, _prevTransactions, _showPeriodStats),
+              SizedBox(height: 20.0),
+              Categorical(_transactions),
+              SizedBox(height: 20.0),
+              TopExpenses(_transactions, _scrollController),
+            ],
+          )
+        : Center(
+            child: Text(
+                'No transactions available. Add one in the page to the left.'),
+          );
   }
 }
