@@ -32,10 +32,11 @@ class _TransactionsListState extends State<TransactionsList> {
             _filteredTransactions, _currentPeriod);
         if (_prefs.isLimitPeriodsEnabled) {
           _dividedTransactions =
-              filterTransactionsByPeriods(_dividedTransactions, _prefs)
-                  .where((period) => period['transactions'].length > 0)
-                  .toList();
+              filterTransactionsByPeriods(_dividedTransactions, _prefs);
         }
+        _dividedTransactions = _dividedTransactions
+            .where((period) => period['transactions'].length > 0)
+            .toList();
       }
     }
 
