@@ -186,7 +186,24 @@ List<Map<String, dynamic>> filterTransactionsByPeriods(
   return transactions.sublist(
     0,
     min(
-      currentDatePeriodIndex + prefs.limitPeriods,
+      currentDatePeriodIndex + prefs.limitPeriods - 1,
+      transactions.length,
+    ),
+  );
+}
+
+List<Map<String, dynamic>> filterTransactionsByPeriodsFromCurrentPeriod(
+    List<Map<String, dynamic>> transactions, Preferences prefs) {
+  DateTime now = DateTime.now();
+  int currentDatePeriodIndex = transactions.indexWhere(
+      (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
+  if (currentDatePeriodIndex == -1) {
+    return [];
+  }
+  return transactions.sublist(
+    currentDatePeriodIndex,
+    min(
+      currentDatePeriodIndex + prefs.limitPeriods - 1,
       transactions.length,
     ),
   );
@@ -222,7 +239,7 @@ List<Map<String, dynamic>> getRelativePercentages(
   return values
       .map((v) => {
             ...v,
-            'percentage': v['amount'] / max,
+            'percentage': max == 0 ? 0.0 : v['amount'] / max,
           })
       .toList();
 }

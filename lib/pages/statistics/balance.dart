@@ -95,7 +95,12 @@ class _BalanceState extends State<Balance> {
 }
 
 String getPrevStr(double current, double previous) {
-  String percentage = (100 * current / previous).toStringAsFixed(2);
-  percentage = current * previous < 0 ? '- $percentage' : '+ $percentage';
-  return '$percentage% vs Prev. (${getAmountStr(previous)})';
+  double percentage = 100 * current / previous;
+  if (percentage.isNaN) {
+    return 'No available data this period';
+  }
+  String percentageStr = percentage < 0
+      ? percentage.toStringAsFixed(2)
+      : '+${percentage.toStringAsFixed(2)}';
+  return '$percentageStr% (vs prev. ${getAmountStr(previous)})';
 }

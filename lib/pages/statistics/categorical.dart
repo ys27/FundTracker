@@ -15,30 +15,40 @@ class Categorical extends StatefulWidget {
 }
 
 class _CategoricalState extends State<Categorical> {
+  List<Map<String, dynamic>> _individualPercentages;
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> _individualPercentages =
-        getIndividualPercentages(
-      getTotalValues(
-        divideTransactionsIntoCategories(widget.transactions),
-      ),
-    );
+    if (widget.transactions.length > 0) {
+      _individualPercentages = getIndividualPercentages(
+        getTotalValues(
+          divideTransactionsIntoCategories(widget.transactions),
+        ),
+      );
+    }
 
     return Column(
       children: <Widget>[StatTitle(title: 'Categories')] +
-          _individualPercentages
-              .map((categorical) => [
-                    SizedBox(height: 10.0),
-                    BarTile(
-                      title: categorical['category'],
-                      amount: categorical['amount'],
-                      percentage: categorical['percentage'],
-                      color: categoriesRegistry.firstWhere((category) =>
-                          category['name'] == categorical['category'])['color'],
-                    ),
-                  ])
-              .expand((x) => x)
-              .toList(),
+          ((widget.transactions.length > 0)
+              ? _individualPercentages
+                  .map((categorical) => [
+                        SizedBox(height: 10.0),
+                        BarTile(
+                          title: categorical['category'],
+                          amount: categorical['amount'],
+                          percentage: categorical['percentage'],
+                          color: categoriesRegistry.firstWhere((category) =>
+                              category['name'] ==
+                              categorical['category'])['color'],
+                        ),
+                      ])
+                  .expand((x) => x)
+                  .toList()
+              : <Widget>[
+                  SizedBox(height: 35.0),
+                  Center(
+                    child: Text('No transactions found in current period.'),
+                  )
+                ]),
     );
   }
 }

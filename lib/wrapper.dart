@@ -2,13 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/pages/auth/authWrapper.dart';
 import 'package:fund_tracker/pages/home/home.dart';
-import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
-
-import 'models/period.dart';
-import 'models/preferences.dart';
-import 'models/transaction.dart';
 
 class Wrapper extends StatelessWidget {
   @override

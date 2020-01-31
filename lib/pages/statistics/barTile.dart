@@ -48,6 +48,7 @@ class _BarTileState extends State<BarTile> {
               )
             : Container(),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
               height: 25.0,
@@ -58,11 +59,13 @@ class _BarTileState extends State<BarTile> {
                 borderRadius: new BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
-            Container(
-              height: 25.0,
-              width: (1 - widget.percentage) *
-                  (MediaQuery.of(context).size.width - 20),
-            ),
+            // Expanded(
+            //   child: Container(
+            //     height: 25.0,
+            //     // width: (1 - widget.percentage) *
+            //     //     (MediaQuery.of(context).size.width - 20),
+            //   ),
+            // ),
           ],
         ),
       ],
