@@ -20,20 +20,7 @@ class Wrapper extends StatelessWidget {
     } else if (_user == -1) {
       return AuthWrapper();
     } else {
-      return MultiProvider(
-        providers: [
-          StreamProvider<List<Transaction>>(
-            create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
-          ),
-          StreamProvider<Period>(
-            create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
-          ),
-          StreamProvider<Preferences>(
-            create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
-          ),
-        ],
-        child: Home(),
-      );
+      return Home();
     }
   }
 }

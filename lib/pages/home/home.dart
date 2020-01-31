@@ -20,7 +20,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  Widget _body = Loader();
   final _pages = ['Records', 'Statistics'];
   PageController _pageController =
       PageController(initialPage: 0, keepPage: true);
@@ -28,44 +27,48 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    final List<Transaction> _transactions =
-        Provider.of<List<Transaction>>(context);
-    final Period _currentPeriod = Provider.of<Period>(context);
-    final Preferences _prefs = Provider.of<Preferences>(context);
-
-    List<Map<String, dynamic>> _dividedTransactions = [];
-    List<Transaction> _filteredTransactions = [];
-
-    if (_transactions != null && _currentPeriod != null && _prefs != null) {
-      if (_transactions.length > 0) {
-        _filteredTransactions =
-            filterTransactionsByLimit(_transactions, _prefs);
-        _dividedTransactions = divideTransactionsIntoPeriods(
-            _filteredTransactions, _currentPeriod);
-        if (_prefs.isLimitPeriodsEnabled) {
-          _dividedTransactions =
-              filterTransactionsByPeriods(_dividedTransactions, _prefs);
-        }
-      }
-      _body = PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
-        },
-        children: <Widget>[
-          TransactionsList(_dividedTransactions),
-          Statistics(_filteredTransactions,
-              divideTransactionsIntoPeriods(_transactions, _currentPeriod)),
-        ],
-      );
-    }
 
     return Scaffold(
       drawer: MainDrawer(_user),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]),
       ),
-      body: _body,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _selectedIndex = index);
+        },
+        children: <Widget>[
+          MultiProvider(
+            providers: [
+              StreamProvider<List<Transaction>>(
+                create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
+              ),
+              StreamProvider<Period>(
+                create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+              ),
+              StreamProvider<Preferences>(
+                create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
+              ),
+            ],
+            child: TransactionsList(),
+          ),
+          MultiProvider(
+            providers: [
+              StreamProvider<List<Transaction>>(
+                create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
+              ),
+              StreamProvider<Period>(
+                create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+              ),
+              StreamProvider<Preferences>(
+                create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
+              ),
+            ],
+            child: Statistics(),
+          ),
+        ],
+      ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,

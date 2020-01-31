@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/balance.dart';
@@ -8,11 +9,6 @@ import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
 class Statistics extends StatefulWidget {
-  final List<Transaction> filteredTransactions;
-  final List<Map<String, dynamic>> dividedTransactions;
-
-  Statistics(this.filteredTransactions, this.dividedTransactions);
-
   @override
   _StatisticsState createState() => _StatisticsState();
 }
@@ -26,17 +22,24 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Transaction> _allTransactions =
+        Provider.of<List<Transaction>>(context);
+    final Period _currentPeriod = Provider.of<Period>(context);
+    final Preferences _prefs = Provider.of<Preferences>(context);
+
     List<Transaction> _transactions;
     List<Transaction> _prevTransactions = [];
-    List<Transaction> _allTransactions =
-        Provider.of<List<Transaction>>(context);
-    Preferences _prefs = Provider.of<Preferences>(context);
 
     ScrollController _scrollController = ScrollController();
 
-    if (_allTransactions != null &&
-        _prefs != null &&
-        _allTransactions.length > 0) {
+    List<Map<String, dynamic>> _dividedTransactions = [];
+
+    if (_allTransactions != null && _currentPeriod != null && _prefs != null) {
+      if (_allTransactions.length > 0) {
+        _dividedTransactions =
+            divideTransactionsIntoPeriods(_allTransactions, _currentPeriod);
+      }
+
       if (_prefs.isLimitDaysEnabled) {
         _visiblePrefs = '${_prefs.limitDays} days';
       } else if (_prefs.isLimitPeriodsEnabled) {
@@ -44,16 +47,18 @@ class _StatisticsState extends State<Statistics> {
       } else if (_prefs.isLimitByDateEnabled) {
         _visiblePrefs = '~ ${getDate(_prefs.limitByDate)}';
       }
+
       if (_showAllTimeStats) {
         _transactions = _allTransactions;
       }
 
       if (_showPreferredStats) {
-        if (_prefs.isLimitDaysEnabled || _prefs.isLimitByDateEnabled) {
-          _transactions = widget.filteredTransactions;
+        if (_allTransactions.length > 0 && _prefs.isLimitDaysEnabled ||
+            _prefs.isLimitByDateEnabled) {
+          _transactions = filterTransactionsByLimit(_allTransactions, _prefs);
         } else {
           _transactions =
-              filterTransactionsByPeriods(widget.dividedTransactions, _prefs)
+              filterTransactionsByPeriods(_dividedTransactions, _prefs)
                   .map<List<Transaction>>((map) => map['transactions'])
                   .expand((x) => x)
                   .toList();
@@ -62,7 +67,7 @@ class _StatisticsState extends State<Statistics> {
 
       if (_showPeriodStats) {
         _transactions = filterTransactionsByPeriods(
-          widget.dividedTransactions,
+          _dividedTransactions,
           _prefs.setPreference('limitPeriods', 1),
         )
             .map<List<Transaction>>((map) => map['transactions'])
@@ -71,7 +76,7 @@ class _StatisticsState extends State<Statistics> {
 
         List<Map<String, dynamic>> _periodFilteredTransactions =
             filterTransactionsByPeriods(
-          widget.dividedTransactions,
+          _dividedTransactions,
           _prefs.setPreference('limitPeriods', 2),
         );
 
