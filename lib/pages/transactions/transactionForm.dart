@@ -56,7 +56,8 @@ class _TransactionFormState extends State<TransactionForm> {
                         false;
                     if (hasBeenConfirmed) {
                       setState(() => isLoading = true);
-                      DatabaseWrapper(_user.uid).deleteTransaction(widget.tx);
+                      DatabaseWrapper(_user.uid)
+                          .deleteTransactions([widget.tx]);
                       Navigator.pop(context);
                     }
                   },
@@ -275,8 +276,10 @@ class _TransactionFormState extends State<TransactionForm> {
                           );
                           setState(() => isLoading = true);
                           isEditMode
-                              ? DatabaseWrapper(_user.uid).updateTransaction(tx)
-                              : DatabaseWrapper(_user.uid).addTransaction(tx);
+                              ? DatabaseWrapper(_user.uid)
+                                  .updateTransactions([tx])
+                              : DatabaseWrapper(_user.uid)
+                                  .addTransactions([tx]);
                           Navigator.pop(context);
                         }
                       },

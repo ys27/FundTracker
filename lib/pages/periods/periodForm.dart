@@ -51,7 +51,7 @@ class _PeriodFormState extends State<PeriodForm> {
                         false;
                     if (hasBeenConfirmed) {
                       setState(() => isLoading = true);
-                      DatabaseWrapper(_user.uid).deletePeriod(widget.period);
+                      DatabaseWrapper(_user.uid).deletePeriods([widget.period]);
                       Navigator.pop(context);
                     }
                   },
@@ -174,8 +174,9 @@ class _PeriodFormState extends State<PeriodForm> {
 
                           setState(() => isLoading = true);
                           isEditMode
-                              ? DatabaseWrapper(_user.uid).updatePeriod(period)
-                              : DatabaseWrapper(_user.uid).addPeriod(period);
+                              ? DatabaseWrapper(_user.uid)
+                                  .updatePeriods([period])
+                              : DatabaseWrapper(_user.uid).addPeriods([period]);
 
                           if (period.isDefault) {
                             DatabaseWrapper(_user.uid)

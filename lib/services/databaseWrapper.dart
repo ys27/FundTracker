@@ -25,22 +25,22 @@ class DatabaseWrapper {
         : _localDBService.getTransactions(uid);
   }
 
-  Future addTransaction(Transaction tx) async {
+  Future addTransactions(List<Transaction> transactions) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addTransaction(tx)
-        : await _localDBService.addTransaction(tx);
+        ? await _fireDBService.addTransactions(transactions)
+        : await _localDBService.addTransactions(transactions);
   }
 
-  Future updateTransaction(Transaction tx) async {
+  Future updateTransactions(List<Transaction> transactions) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.updateTransaction(tx)
-        : await _localDBService.updateTransaction(tx);
+        ? await _fireDBService.updateTransactions(transactions)
+        : await _localDBService.updateTransactions(transactions);
   }
 
-  Future deleteTransaction(Transaction tx) async {
+  Future deleteTransactions(List<Transaction> transactions) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.deleteTransaction(tx)
-        : await _localDBService.deleteTransaction(tx);
+        ? await _fireDBService.deleteTransactions(transactions)
+        : await _localDBService.deleteTransactions(transactions);
   }
 
   Future deleteAllTransactions() async {
@@ -61,10 +61,16 @@ class DatabaseWrapper {
     await _localDBService.addDefaultCategories(uid);
   }
 
-  Future setCategory(Category category) async {
+  Future addCategories(List<Category> categories) async {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.addCategories(categories)
+        : _localDBService.addCategories(categories);
+  }
+
+  Future updateCategories(List<Category> categories) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.setCategory(category)
-        : await _localDBService.setCategory(category);
+        ? await _fireDBService.updateCategories(categories)
+        : await _localDBService.updateCategories(categories);
   }
 
   Future deleteAllCategories() async {
@@ -114,22 +120,22 @@ class DatabaseWrapper {
         : await _localDBService.setRemainingNotDefault(period);
   }
 
-  Future addPeriod(Period period) async {
+  Future addPeriods(List<Period> periods) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addPeriod(period)
-        : await _localDBService.addPeriod(period);
+        ? await _fireDBService.addPeriods(periods)
+        : await _localDBService.addPeriods(periods);
   }
 
-  Future updatePeriod(Period period) async {
+  Future updatePeriods(List<Period> periods) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.updatePeriod(period)
-        : await _localDBService.updatePeriod(period);
+        ? await _fireDBService.updatePeriods(periods)
+        : await _localDBService.updatePeriods(periods);
   }
 
-  Future deletePeriod(Period period) async {
+  Future deletePeriods(List<Period> periods) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.deletePeriod(period)
-        : await _localDBService.deletePeriod(period);
+        ? await _fireDBService.deletePeriods(periods)
+        : await _localDBService.deletePeriods(periods);
   }
 
   // Preferences

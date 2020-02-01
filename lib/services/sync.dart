@@ -1,3 +1,5 @@
+import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
 
@@ -11,25 +13,53 @@ class SyncService {
     this._localDBService = LocalDBService();
   }
 
-  Future syncToCloud() async {
-    await _fireDBService.deleteAllTransactions();
-    _localDBService.getTransactions(uid).first.then(
-        (transactions) => _fireDBService.addAllTransactions(transactions));
+  void syncTransactions() async {
+    List<Transaction> cloudTransactions =
+        await _fireDBService.getTransactions().first;
+    List<Transaction> localTransactions =
+        await _localDBService.getTransactions(uid).first;
+    List<Transaction> transactionsOnlyInCloud = cloudTransactions
+        .where((tx) => !localTransactions.contains(tx))
+        .toList();
+    List<Transaction> transactionsOnlyInLocal = localTransactions
+        .where((tx) => !cloudTransactions.contains(tx))
+        .toList();
+    _fireDBService.deleteTransactions(transactionsOnlyInCloud);
+    _fireDBService.addTransactions(transactionsOnlyInLocal);
+  }
+
+  void syncCategories() async {
     await _fireDBService.deleteAllCategories();
     _localDBService
         .getCategories(uid)
         .first
-        .then((categories) => _fireDBService.addAllCategories(categories));
-    await _fireDBService.deleteAllPeriods();
-    _localDBService
-        .getPeriods(uid)
-        .first
-        .then((periods) => _fireDBService.addAllPeriods(periods));
+        .then((categories) => _fireDBService.addCategories(categories));
+  }
+
+  void syncPeriods() async {
+    List<Period> cloudPeriods = await _fireDBService.getPeriods().first;
+    List<Period> localPeriods = await _localDBService.getPeriods(uid).first;
+    List<Period> periodsOnlyInCloud =
+        cloudPeriods.where((tx) => !localPeriods.contains(tx)).toList();
+    List<Period> periodsOnlyInLocal =
+        localPeriods.where((tx) => !cloudPeriods.contains(tx)).toList();
+    _fireDBService.deletePeriods(periodsOnlyInCloud);
+    _fireDBService.addPeriods(periodsOnlyInLocal);
+  }
+
+  void syncPreferences() async {
     await _fireDBService.deletePreferences();
     _localDBService
         .getPreferences(uid)
         .first
         .then((preferences) => _fireDBService.addPreferences(preferences));
+  }
+
+  void syncToCloud() {
+    syncTransactions();
+    syncCategories();
+    syncPeriods();
+    syncPreferences();
   }
 
   Future syncToLocal() async {
@@ -39,19 +69,21 @@ class SyncService {
     _localDBService.getTransactions(uid).first.then((localTransactions) {
       if (localTransactions.length == 0) {
         _fireDBService.getTransactions().first.then((cloudTransactions) =>
-            _localDBService.addAllTransactions(cloudTransactions));
+            _localDBService.addTransactions(cloudTransactions));
       }
     });
     _localDBService.getCategories(uid).first.then((localCategories) {
       if (localCategories.length == 0) {
         _fireDBService.getCategories().first.then((cloudCategories) =>
-            _localDBService.addAllCategories(cloudCategories));
+            _localDBService.addCategories(cloudCategories));
       }
     });
     _localDBService.getPeriods(uid).first.then((localPeriods) {
       if (localPeriods.length == 0) {
-        _fireDBService.getPeriods().first.then(
-            (cloudPeriods) => _localDBService.addAllPeriods(cloudPeriods));
+        _fireDBService
+            .getPeriods()
+            .first
+            .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods));
       }
     });
     _localDBService.getPreferences(uid).first.then((localPreferences) {

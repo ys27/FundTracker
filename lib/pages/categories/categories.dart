@@ -75,7 +75,7 @@ class _CategoriesState extends State<Categories> {
                           category.enabled = val;
                         });
                         DatabaseWrapper(widget.user.uid)
-                            .setCategory(category.setEnabled(val));
+                            .updateCategories([category.setEnabled(val)]);
                       }
                     },
                   );
@@ -97,10 +97,10 @@ class _CategoriesState extends State<Categories> {
     for (int i = startIndex; i <= untilIndex; i++) {
       int newOrderIndex = oldIndex < newIndex ? i - 1 : i + 1;
       DatabaseWrapper(widget.user.uid)
-          .setCategory(_categories[i].setOrder(newOrderIndex));
+          .updateCategories([_categories[i].setOrder(newOrderIndex)]);
     }
     DatabaseWrapper(widget.user.uid)
-        .setCategory(_categories[oldIndex].setOrder(finalIndex));
+        .updateCategories([_categories[oldIndex].setOrder(finalIndex)]);
     setState(() {
       if (newIndex > oldIndex) {
         newIndex -= 1;

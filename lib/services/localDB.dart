@@ -62,12 +62,7 @@ class LocalDBService {
   //           transactions.map((map) => Transaction.fromMap(map)).toList());
   // }
 
-  Future addTransaction(Transaction tx) async {
-    StreamDatabase db = await this.db;
-    await db.insert('transactions', tx.toMap());
-  }
-
-  Future addAllTransactions(List<Transaction> transactions) async {
+  Future addTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
     transactions.forEach((tx) {
@@ -76,19 +71,27 @@ class LocalDBService {
     batch.commit();
   }
 
-  Future updateTransaction(Transaction tx) async {
+  Future updateTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
-    await db.update(
-      'transactions',
-      tx.toMap(),
-      where: 'tid = ?',
-      whereArgs: [tx.tid],
-    );
+    StreamBatch batch = db.batch();
+    transactions.forEach((tx) {
+      batch.update(
+        'transactions',
+        tx.toMap(),
+        where: 'tid = ?',
+        whereArgs: [tx.tid],
+      );
+    });
+    batch.commit();
   }
 
-  Future deleteTransaction(Transaction tx) async {
+  Future deleteTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
-    await db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
+    StreamBatch batch = db.batch();
+    transactions.forEach((tx) {
+      batch.delete('transactions');
+    });
+    batch.commit();
   }
 
   Future deleteAllTransactions(String uid) async {
@@ -126,21 +129,27 @@ class LocalDBService {
     });
   }
 
-  Future addAllCategories(List<Category> categories) async {
+  Future addCategories(List<Category> categories) async {
     StreamDatabase db = await this.db;
-    categories.forEach((category) async {
-      await db.insert('categories', category.toMap());
+    StreamBatch batch = db.batch();
+    categories.forEach((category) {
+      batch.insert('categories', category.toMap());
     });
+    batch.commit();
   }
 
-  Future setCategory(Category category) async {
+  Future updateCategories(List<Category> categories) async {
     StreamDatabase db = await this.db;
-    await db.update(
-      'categories',
-      category.toMap(),
-      where: 'cid = ?',
-      whereArgs: [category.cid],
-    );
+    StreamBatch batch = db.batch();
+    categories.forEach((category) {
+      batch.update(
+        'categories',
+        category.toMap(),
+        where: 'cid = ?',
+        whereArgs: [category.cid],
+      );
+    });
+    batch.commit();
   }
 
   Future deleteAllCategories(String uid) async {
@@ -196,35 +205,40 @@ class LocalDBService {
     );
   }
 
-  Future addPeriod(Period period) async {
+  Future addPeriods(List<Period> periods) async {
     StreamDatabase db = await this.db;
-    await db.insert('periods', period.toMap());
-  }
-
-  Future addAllPeriods(List<Period> periods) async {
-    StreamDatabase db = await this.db;
-    periods.forEach((period) async {
-      await db.insert('periods', period.toMap());
+    StreamBatch batch = db.batch();
+    periods.forEach((period) {
+      batch.insert('periods', period.toMap());
     });
+    batch.commit();
   }
 
-  Future updatePeriod(Period period) async {
+  Future updatePeriods(List<Period> periods) async {
     StreamDatabase db = await this.db;
-    await db.update(
-      'periods',
-      period.toMap(),
-      where: 'pid = ?',
-      whereArgs: [period.pid],
-    );
+    StreamBatch batch = db.batch();
+    periods.forEach((period) {
+      batch.update(
+        'periods',
+        period.toMap(),
+        where: 'pid = ?',
+        whereArgs: [period.pid],
+      );
+    });
+    batch.commit();
   }
 
-  Future deletePeriod(Period period) async {
+  Future deletePeriods(List<Period> periods) async {
     StreamDatabase db = await this.db;
-    await db.delete(
-      'periods',
-      where: 'pid = ?',
-      whereArgs: [period.pid],
-    );
+    StreamBatch batch = db.batch();
+    periods.forEach((period) {
+      batch.delete(
+        'periods',
+        where: 'pid = ?',
+        whereArgs: [period.pid],
+      );
+    });
+    batch.commit();
   }
 
   Future deleteAllPeriods(String uid) async {

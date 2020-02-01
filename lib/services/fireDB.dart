@@ -26,11 +26,7 @@ class FireDBService {
             .toList());
   }
 
-  Future addTransaction(Transaction tx) async {
-    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
-  }
-
-  Future addAllTransactions(List<Transaction> transactions) async {
+  Future addTransactions(List<Transaction> transactions) async {
     WriteBatch batch = Firestore.instance.batch();
     transactions.forEach((tx) {
       batch.setData(db.collection('transactions').document(tx.tid), tx.toMap());
@@ -38,12 +34,21 @@ class FireDBService {
     await batch.commit();
   }
 
-  Future updateTransaction(Transaction tx) async {
-    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
+  Future updateTransactions(List<Transaction> transactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    transactions.forEach((tx) {
+      batch.updateData(
+          db.collection('transactions').document(tx.tid), tx.toMap());
+    });
+    await batch.commit();
   }
 
-  Future deleteTransaction(Transaction tx) async {
-    await db.collection('transactions').document(tx.tid).delete();
+  Future deleteTransactions(List<Transaction> transactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    transactions.forEach((tx) {
+      batch.delete(db.collection('transactions').document(tx.tid));
+    });
+    await batch.commit();
   }
 
   Future deleteAllTransactions() async {
@@ -78,7 +83,7 @@ class FireDBService {
     });
   }
 
-  Future addAllCategories(List<Category> categories) async {
+  Future addCategories(List<Category> categories) async {
     WriteBatch batch = Firestore.instance.batch();
     categories.forEach((category) {
       batch.setData(
@@ -89,11 +94,15 @@ class FireDBService {
     await batch.commit();
   }
 
-  Future setCategory(Category category) async {
-    await db
-        .collection('categories')
-        .document(category.cid)
-        .setData(category.toMap());
+  Future updateCategories(List<Category> categories) async {
+    WriteBatch batch = Firestore.instance.batch();
+    categories.forEach((category) {
+      batch.updateData(
+        db.collection('categories').document(category.cid),
+        category.toMap(),
+      );
+    });
+    await batch.commit();
   }
 
   Future deleteAllCategories() async {
@@ -152,11 +161,7 @@ class FireDBService {
         .updateData({'isDefault': 1});
   }
 
-  Future addPeriod(Period period) async {
-    await db.collection('periods').document(period.pid).setData(period.toMap());
-  }
-
-  Future addAllPeriods(List<Period> periods) async {
+  Future addPeriods(List<Period> periods) async {
     WriteBatch batch = Firestore.instance.batch();
     periods.forEach((period) {
       batch.setData(
@@ -165,12 +170,21 @@ class FireDBService {
     await batch.commit();
   }
 
-  Future updatePeriod(Period period) async {
-    await db.collection('periods').document(period.pid).setData(period.toMap());
+  Future updatePeriods(List<Period> periods) async {
+    WriteBatch batch = Firestore.instance.batch();
+    periods.forEach((period) {
+      batch.updateData(
+          db.collection('periods').document(period.pid), period.toMap());
+    });
+    await batch.commit();
   }
 
-  Future deletePeriod(Period period) async {
-    await db.collection('periods').document(period.pid).delete();
+  Future deletePeriods(List<Period> periods) async {
+    WriteBatch batch = Firestore.instance.batch();
+    periods.forEach((period) {
+      batch.delete(db.collection('periods').document(period.pid));
+    });
+    await batch.commit();
   }
 
   Future deleteAllPeriods() async {
@@ -205,7 +219,7 @@ class FireDBService {
   }
 
   Future updatePreferences(Preferences prefs) async {
-    await db.collection('preferences').document(uid).setData(prefs.toMap());
+    await db.collection('preferences').document(uid).updateData(prefs.toMap());
   }
 
   Future deletePreferences() async {
