@@ -29,7 +29,13 @@ class _BarTileState extends State<BarTile> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(widget.title),
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             widget.midLine != null
                 ? Text(
                     widget.midLine,
