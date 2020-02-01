@@ -29,14 +29,10 @@ class SyncService {
         .listen((preferences) => _fireDBService.addPreferences(preferences));
   }
 
-  void syncToLocal() {
-    _localDBService.findUser(uid).listen((localUser) {
-      if (localUser == null) {
-        _fireDBService
-            .findUser()
-            .listen((user) => _localDBService.addUser(user));
-      }
-    });
+  Future syncToLocal() async {
+    if (await _localDBService.findUser(uid) == null) {
+      _fireDBService.findUser().then((user) => _localDBService.addUser(user));
+    }
     _localDBService.getTransactions(uid).listen((localTransactions) {
       if (localTransactions.length == 0) {
         _fireDBService.getTransactions().listen((cloudTransactions) =>

@@ -33,7 +33,8 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    DatabaseWrapper(widget.user.uid).findUser().listen((user) {
+    DatabaseWrapper(widget.user.uid).findUser().then((user) {
+      print(user);
       setState(() => userInfo = user);
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -125,9 +126,7 @@ class _MainDrawerState extends State<MainDrawer> {
               ? ListTile(
                   title: Text('Sync'),
                   leading: Icon(Icons.sync),
-                  onTap: () {
-                    SyncService(widget.user.uid).syncToCloud();
-                  },
+                  onTap: () => SyncService(widget.user.uid).syncToCloud(),
                 )
               : ListTile(
                   title: Text('Sync Unavailable'),

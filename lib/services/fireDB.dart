@@ -105,12 +105,12 @@ class FireDBService {
   }
 
   // User Info
-  Stream<User> findUser() {
+  Future<User> findUser() {
     return db
         .collection('user')
         .document(uid)
-        .snapshots()
-        .map((snapshot) => User.fromMap(snapshot.data));
+        .get()
+        .then((snapshot) => User.fromMap(snapshot.data));
   }
 
   Future addUser(User user) async {

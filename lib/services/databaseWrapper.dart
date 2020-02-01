@@ -84,7 +84,7 @@ class DatabaseWrapper {
   }
 
   // User Info
-  Stream<User> findUser() {
+  Future<User> findUser() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.findUser()
         : _localDBService.findUser(uid);

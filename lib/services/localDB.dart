@@ -14,6 +14,7 @@ class LocalDBService {
   static final LocalDBService _localDBService = LocalDBService.internal();
   factory LocalDBService() => _localDBService;
   static StreamDatabase _streamDatabase;
+  static Database _localDB;
 
   Future<StreamDatabase> get db async {
     if (_streamDatabase != null) {
@@ -21,6 +22,14 @@ class LocalDBService {
     }
     _streamDatabase = StreamDatabase(await initializeDBs());
     return _streamDatabase;
+  }
+
+  Future<Database> get database async {
+    if (_localDB == null) {
+      _localDB = await initializeDBs();
+    }
+
+    return _localDB;
   }
 
   LocalDBService.internal();
@@ -38,6 +47,21 @@ class LocalDBService {
         .mapToList((map) => Transaction.fromMap(map));
   }
 
+  // Alternative
+  // Stream<List<Transaction>> getTransactions(String uid) async* {
+  //   Database db = await this.database;
+  //   yield* db
+  //       .query(
+  //         'transactions',
+  //         where: 'uid = ?',
+  //         whereArgs: [uid],
+  //         orderBy: 'datetime(date) DESC',
+  //       )
+  //       .asStream()
+  //       .map((transactions) =>
+  //           transactions.map((map) => Transaction.fromMap(map)).toList());
+  // }
+
   Future addTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
     await db.insert('transactions', tx.toMap());
@@ -45,8 +69,8 @@ class LocalDBService {
 
   Future addAllTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
-    transactions.forEach((tx) async {
-      await db.insert('transactions', tx.toMap());
+    transactions.forEach((tx) {
+      db.insert('transactions', tx.toMap());
     });
   }
 
@@ -123,13 +147,13 @@ class LocalDBService {
   }
 
   // User
-  Stream<User> findUser(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db.createQuery(
+  Future<User> findUser(String uid) async {
+    Database db = await this.database;
+    return db.query(
       'users',
       where: 'uid = ?',
       whereArgs: [uid],
-    ).mapToOneOrDefault((map) => User.fromMap(map), null);
+    ).then((map) => map.length == 1 ? User.fromMap(map[0]) : null);
   }
 
   Future addUser(User user) async {
