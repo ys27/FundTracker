@@ -171,7 +171,8 @@ List<Transaction> filterTransactionsByLimit(
         .toList();
   } else if (prefs.isLimitByDateEnabled) {
     return transactions
-        .where((tx) => tx.date.isAfter(prefs.limitByDate.subtract(Duration(milliseconds: 1))))
+        .where((tx) => tx.date
+            .isAfter(prefs.limitByDate.subtract(Duration(milliseconds: 1))))
         .toList();
   } else {
     return transactions;

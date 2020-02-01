@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 
 class Categories extends StatefulWidget {
@@ -25,6 +26,12 @@ class _CategoriesState extends State<Categories> {
         _categories = List<Category>.from(categories);
       });
     });
+  }
+
+  @override
+  void dispose() {
+    SyncService(widget.user.uid).syncCategories();
+    super.dispose();
   }
 
   @override

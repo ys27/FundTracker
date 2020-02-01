@@ -100,7 +100,7 @@ class _MainDrawerState extends State<MainDrawer> {
               StreamProvider<Preferences>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getPreferences(),
-                child: PreferencesForm(),
+                child: PreferencesForm(widget.user),
               ),
             ),
           ),

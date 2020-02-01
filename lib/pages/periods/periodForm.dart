@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
@@ -52,6 +53,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     if (hasBeenConfirmed) {
                       setState(() => isLoading = true);
                       DatabaseWrapper(_user.uid).deletePeriods([widget.period]);
+                      SyncService(_user.uid).syncPeriods();
                       Navigator.pop(context);
                     }
                   },
@@ -177,7 +179,7 @@ class _PeriodFormState extends State<PeriodForm> {
                               ? DatabaseWrapper(_user.uid)
                                   .updatePeriods([period])
                               : DatabaseWrapper(_user.uid).addPeriods([period]);
-
+                          SyncService(_user.uid).syncPeriods();
                           if (period.isDefault) {
                             DatabaseWrapper(_user.uid)
                                 .setRemainingNotDefault(period);

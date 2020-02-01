@@ -2,12 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
 class PreferencesForm extends StatefulWidget {
+  final FirebaseUser user;
+
+  PreferencesForm(this.user);
+
   @override
   _PreferencesFormState createState() => _PreferencesFormState();
 }
@@ -23,8 +28,13 @@ class _PreferencesFormState extends State<PreferencesForm> {
   bool _wasUpdated = false;
 
   @override
+  void dispose() {
+    SyncService(widget.user.uid).syncPreferences();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
     final _prefs = Provider.of<Preferences>(context);
 
     if (_prefs != null) {
@@ -42,7 +52,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
     }
 
     return Scaffold(
-      drawer: MainDrawer(_user),
+      drawer: MainDrawer(widget.user),
       appBar: AppBar(
         title: Text('Preferences'),
       ),
@@ -210,7 +220,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                                   : _prefs.limitByDate;
 
                           Preferences prefs = Preferences(
-                            pid: _user.uid,
+                            pid: widget.user.uid,
                             limitDays: limitDays,
                             isLimitDaysEnabled: _isLimitDaysEnabled ??
                                 _prefs.isLimitDaysEnabled,
@@ -221,7 +231,8 @@ class _PreferencesFormState extends State<PreferencesForm> {
                             isLimitByDateEnabled: _isLimitByDateEnabled ??
                                 _prefs.isLimitByDateEnabled,
                           );
-                          DatabaseWrapper(_user.uid).updatePreferences(prefs);
+                          DatabaseWrapper(widget.user.uid)
+                              .updatePreferences(prefs);
                           displayUpdated();
                         }
                       },
@@ -241,7 +252,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                             ) ??
                             false;
                         if (hasBeenConfirmed) {
-                          DatabaseWrapper(_user.uid).resetCategories();
+                          DatabaseWrapper(widget.user.uid).resetCategories();
                         }
                       },
                     ),
@@ -258,7 +269,8 @@ class _PreferencesFormState extends State<PreferencesForm> {
                             ) ??
                             false;
                         if (hasBeenConfirmed) {
-                          await DatabaseWrapper(_user.uid).resetPreferences();
+                          await DatabaseWrapper(widget.user.uid)
+                              .resetPreferences();
                           setState(() {
                             _isLimitDaysEnabled = null;
                             _isLimitPeriodsEnabled = null;
