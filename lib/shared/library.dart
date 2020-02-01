@@ -195,8 +195,10 @@ List<Map<String, dynamic>> filterTransactionsByPeriods(
 List<Map<String, dynamic>> findCurrentAndPreviousPeriods(
     List<Map<String, dynamic>> periods) {
   DateTime now = DateTime.now();
+
   int currentDatePeriodIndex = periods.indexWhere(
       (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
+
   if (currentDatePeriodIndex == -1) {
     return [];
   }
