@@ -160,9 +160,12 @@ class _StatisticsState extends State<Statistics> {
           SizedBox(height: 20.0),
           Balance(_transactions, _prevTransactions, _showPeriodStats),
           SizedBox(height: 20.0),
-          Categorical(_transactions),
+          Categorical(_transactions.where((tx) => tx.isExpense).toList()),
           SizedBox(height: 20.0),
-          TopExpenses(_transactions, _scrollController),
+          TopExpenses(
+            _transactions.where((tx) => tx.isExpense).toList(),
+            _scrollController,
+          ),
         ],
       );
     }
