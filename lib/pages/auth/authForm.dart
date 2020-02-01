@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
@@ -193,6 +194,8 @@ class _AuthFormState extends State<AuthForm> {
                           } else if (isRegister) {
                             DatabaseWrapper(_user.uid).addDefaultCategories();
                             DatabaseWrapper(_user.uid).addDefaultPreferences();
+                          } else {
+                            SyncService(_user.uid).syncToLocal();
                           }
                         }
                       },

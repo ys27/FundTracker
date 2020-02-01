@@ -43,6 +43,13 @@ class LocalDBService {
     await db.insert('transactions', tx.toMap());
   }
 
+  Future addAllTransactions(List<Transaction> transactions) async {
+    StreamDatabase db = await this.db;
+    transactions.forEach((tx) async {
+      await db.insert('transactions', tx.toMap());
+    });
+  }
+
   Future updateTransaction(Transaction tx) async {
     StreamDatabase db = await this.db;
     await db.update(
@@ -93,6 +100,13 @@ class LocalDBService {
     });
   }
 
+  Future addAllCategories(List<Category> categories) async {
+    StreamDatabase db = await this.db;
+    categories.forEach((category) async {
+      await db.insert('categories', category.toMap());
+    });
+  }
+
   Future setCategory(Category category) async {
     StreamDatabase db = await this.db;
     await db.update(
@@ -115,7 +129,7 @@ class LocalDBService {
       'users',
       where: 'uid = ?',
       whereArgs: [uid],
-    ).mapToOne((map) => User.fromMap(map));
+    ).mapToOneOrDefault((map) => User.fromMap(map), null);
   }
 
   Future addUser(User user) async {
@@ -161,6 +175,13 @@ class LocalDBService {
     await db.insert('periods', period.toMap());
   }
 
+  Future addAllPeriods(List<Period> periods) async {
+    StreamDatabase db = await this.db;
+    periods.forEach((period) async {
+      await db.insert('periods', period.toMap());
+    });
+  }
+
   Future updatePeriod(Period period) async {
     StreamDatabase db = await this.db;
     await db.update(
@@ -192,7 +213,7 @@ class LocalDBService {
       'preferences',
       where: 'pid = ?',
       whereArgs: [pid],
-    ).mapToOne((map) => Preferences.fromMap(map));
+    ).mapToOneOrDefault((map) => Preferences.fromMap(map), null);
   }
 
   Future addDefaultPreferences(String pid) async {
@@ -201,6 +222,11 @@ class LocalDBService {
       'preferences',
       Preferences.original().setPreference('pid', pid).toMap(),
     );
+  }
+
+  Future addPreferences(Preferences prefs) async {
+    StreamDatabase db = await this.db;
+    await db.insert('preferences', prefs.toMap());
   }
 
   Future updatePreferences(Preferences prefs) async {
@@ -220,11 +246,6 @@ class LocalDBService {
       where: 'pid = ?',
       whereArgs: [pid],
     );
-  }
-
-  Future deleteAllPreferences(String pid) async {
-    StreamDatabase db = await this.db;
-    await db.delete('preferences', where: 'pid = ?', whereArgs: [pid]);
   }
 
   // Database-related

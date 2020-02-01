@@ -30,6 +30,14 @@ class FireDBService {
     await db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
 
+  Future addAllTransactions(List<Transaction> transactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    transactions.forEach((tx) {
+      batch.setData(db.collection('transactions').document(tx.tid), tx.toMap());
+    });
+    await batch.commit();
+  }
+
   Future updateTransaction(Transaction tx) async {
     await db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
@@ -68,6 +76,17 @@ class FireDBService {
             ).toMap(),
           );
     });
+  }
+
+  Future addAllCategories(List<Category> categories) async {
+    WriteBatch batch = Firestore.instance.batch();
+    categories.forEach((category) {
+      batch.setData(
+        db.collection('categories').document(category.cid),
+        category.toMap(),
+      );
+    });
+    await batch.commit();
   }
 
   Future setCategory(Category category) async {
@@ -114,12 +133,10 @@ class FireDBService {
         .where('isDefault', isEqualTo: 1)
         .snapshots()
         .map(
-          (snapshot) =>
-              snapshot.documents
-                  .map((map) => Period.fromMap(map.data))
-                  .toList()
-                  .first ??
-              Period.monthly(),
+          (snapshot) => snapshot.documents
+              .map((map) => Period.fromMap(map.data))
+              .toList()
+              .first,
         );
   }
 
@@ -137,6 +154,15 @@ class FireDBService {
 
   Future addPeriod(Period period) async {
     await db.collection('periods').document(period.pid).setData(period.toMap());
+  }
+
+  Future addAllPeriods(List<Period> periods) async {
+    WriteBatch batch = Firestore.instance.batch();
+    periods.forEach((period) {
+      batch.setData(
+          db.collection('periods').document(period.pid), period.toMap());
+    });
+    await batch.commit();
   }
 
   Future updatePeriod(Period period) async {
@@ -171,19 +197,18 @@ class FireDBService {
         .setData(Preferences.original().setPreference('pid', uid).toMap());
   }
 
+  Future addPreferences(Preferences prefs) async {
+    await db
+        .collection('preferences')
+        .document(prefs.pid)
+        .setData(prefs.toMap());
+  }
+
   Future updatePreferences(Preferences prefs) async {
     await db.collection('preferences').document(uid).setData(prefs.toMap());
   }
 
   Future deletePreferences() async {
     await db.collection('preferences').document(uid).delete();
-  }
-
-  Future deleteAllPreferences() async {
-    await db.collection('preferences').getDocuments().then((snapshot) async {
-      for (DocumentSnapshot doc in snapshot.documents) {
-        await doc.reference.delete();
-      }
-    });
   }
 }

@@ -45,6 +45,7 @@ class _HomeState extends State<Home> {
               ),
               StreamProvider<Period>(
                 create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+                catchError: (_, __) => Period.monthly(),
               ),
               StreamProvider<Preferences>(
                 create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
@@ -59,6 +60,7 @@ class _HomeState extends State<Home> {
               ),
               StreamProvider<Period>(
                 create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
+                catchError: (_, __) => Period.monthly(),
               ),
               StreamProvider<Preferences>(
                 create: (_) => DatabaseWrapper(_user.uid).getPreferences(),

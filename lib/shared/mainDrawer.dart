@@ -33,11 +33,9 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    DatabaseWrapper(widget.user.uid).findUser().first.then(
-          (user) => setState(() {
-            userInfo = user;
-          }),
-        );
+    DatabaseWrapper(widget.user.uid).findUser().listen((user) {
+      setState(() => userInfo = user);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         final result = await InternetAddress.lookup('google.com');
@@ -128,7 +126,7 @@ class _MainDrawerState extends State<MainDrawer> {
                   title: Text('Sync'),
                   leading: Icon(Icons.sync),
                   onTap: () {
-                    SyncService(widget.user.uid).syncAll();
+                    SyncService(widget.user.uid).syncToCloud();
                   },
                 )
               : ListTile(
