@@ -30,6 +30,7 @@ class _TransactionsListState extends State<TransactionsList> {
             filterTransactionsByLimit(_transactions, _prefs);
         _dividedTransactions = divideTransactionsIntoPeriods(
             _filteredTransactions, _currentPeriod);
+        print(_dividedTransactions);
         if (_prefs.isLimitPeriodsEnabled) {
           _dividedTransactions =
               filterTransactionsByPeriods(_dividedTransactions, _prefs);

@@ -26,7 +26,7 @@ DateTime findPrevPeriodStartDate(Period period) {
     case DurationUnit.Years:
       {
         numDaysInPeriod = periodStartDate
-            .difference(DateTime.utc(
+            .difference(DateTime(
               periodStartDate.year - period.durationValue,
               periodStartDate.month,
               periodStartDate.day,
@@ -44,7 +44,7 @@ DateTime findPrevPeriodStartDate(Period period) {
                 ? 12
                 : periodStartDate.month - period.durationValue;
         numDaysInPeriod = periodStartDate
-            .difference(DateTime.utc(
+            .difference(DateTime(
               prevDateTimeYear,
               prevDateTimeMonth,
               periodStartDate.day,
@@ -66,7 +66,7 @@ DateTime findPrevPeriodStartDate(Period period) {
 
   periodStartDate = periodStartDate.subtract(Duration(days: numDaysInPeriod));
 
-  return DateTime.utc(
+  return DateTime(
       periodStartDate.year, periodStartDate.month, periodStartDate.day);
 }
 
@@ -84,14 +84,14 @@ int findNumDaysInPeriod(Period period) {
 
   switch (period.durationUnit) {
     case DurationUnit.Years:
-      return DateTime.utc(
+      return DateTime(
         periodStartDate.year + period.durationValue,
         periodStartDate.month,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
       break;
     case DurationUnit.Months:
-      return DateTime.utc(
+      return DateTime(
         periodStartDate.year,
         periodStartDate.month + period.durationValue,
         periodStartDate.day,
@@ -129,18 +129,17 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   if (transactions.length > 0) {
     DateTime iteratingPeriodStartDate =
         findFirstPeriodDate(transactions.last, period);
-
-    while (iteratingPeriodStartDate.isBefore(transactions.first.date)) {
+    while (iteratingPeriodStartDate.isBefore(transactions.first.date) ||
+        iteratingPeriodStartDate.isAtSameMomentAs(transactions.first.date)) {
       int numDaysInPeriod =
           findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
       DateTime iteratingNextPeriodStartDate =
           iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
-      iteratingNextPeriodStartDate = DateTime.utc(
+      iteratingNextPeriodStartDate = DateTime(
         iteratingNextPeriodStartDate.year,
         iteratingNextPeriodStartDate.month,
         iteratingNextPeriodStartDate.day,
       );
-
       periodsList.insert(
         0,
         {
@@ -149,7 +148,8 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
               iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
           'transactions': transactions
               .where((tx) =>
-                  tx.date.isAfter(iteratingPeriodStartDate) &&
+                  tx.date.isAfter(iteratingPeriodStartDate
+                      .subtract(Duration(microseconds: 1))) &&
                   tx.date.isBefore(iteratingNextPeriodStartDate))
               .toList(),
         },
@@ -158,7 +158,6 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
       iteratingPeriodStartDate = iteratingNextPeriodStartDate;
     }
   }
-
   return periodsList;
 }
 

@@ -34,7 +34,7 @@ class Period {
 
     pid = '';
     name = 'Default Monthly';
-    startDate = DateTime.utc(now.year, now.month, 1);
+    startDate = DateTime(now.year, now.month, 1);
     durationValue = 1;
     durationUnit = DurationUnit.Months;
     isDefault = false;
