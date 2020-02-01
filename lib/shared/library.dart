@@ -166,12 +166,12 @@ List<Transaction> filterTransactionsByLimit(
     List<Transaction> transactions, Preferences prefs) {
   if (prefs.isLimitDaysEnabled) {
     return transactions
-        .where((tx) => tx.date
-            .isAfter(DateTime.now().subtract(Duration(days: prefs.limitDays))))
+        .where((tx) => tx.date.isAfter(DateTime.now()
+            .subtract(Duration(days: prefs.limitDays, milliseconds: 1))))
         .toList();
   } else if (prefs.isLimitByDateEnabled) {
     return transactions
-        .where((tx) => tx.date.isAfter(prefs.limitByDate))
+        .where((tx) => tx.date.isAfter(prefs.limitByDate.subtract(Duration(milliseconds: 1))))
         .toList();
   } else {
     return transactions;
