@@ -19,10 +19,14 @@ class SyncService {
     List<Transaction> localTransactions =
         await _localDBService.getTransactions(uid).first;
     List<Transaction> transactionsOnlyInCloud = cloudTransactions
-        .where((tx) => !localTransactions.contains(tx))
+        .where((cloud) =>
+            localTransactions.where((local) => local.equalTo(cloud)).length ==
+            0)
         .toList();
     List<Transaction> transactionsOnlyInLocal = localTransactions
-        .where((tx) => !cloudTransactions.contains(tx))
+        .where((local) =>
+            cloudTransactions.where((cloud) => cloud.equalTo(local)).length ==
+            0)
         .toList();
     _fireDBService.deleteTransactions(transactionsOnlyInCloud);
     _fireDBService.addTransactions(transactionsOnlyInLocal);
@@ -39,10 +43,14 @@ class SyncService {
   void syncPeriods() async {
     List<Period> cloudPeriods = await _fireDBService.getPeriods().first;
     List<Period> localPeriods = await _localDBService.getPeriods(uid).first;
-    List<Period> periodsOnlyInCloud =
-        cloudPeriods.where((tx) => !localPeriods.contains(tx)).toList();
-    List<Period> periodsOnlyInLocal =
-        localPeriods.where((tx) => !cloudPeriods.contains(tx)).toList();
+    List<Period> periodsOnlyInCloud = cloudPeriods
+        .where((cloud) =>
+            localPeriods.where((local) => local.equalTo(cloud)).length == 0)
+        .toList();
+    List<Period> periodsOnlyInLocal = localPeriods
+        .where((local) =>
+            cloudPeriods.where((cloud) => cloud.equalTo(local)).length == 0)
+        .toList();
     _fireDBService.deletePeriods(periodsOnlyInCloud);
     _fireDBService.addPeriods(periodsOnlyInLocal);
   }

@@ -4,6 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       setState(() => isLoading = true);
                       DatabaseWrapper(_user.uid)
                           .deleteTransactions([widget.tx]);
+                      SyncService(_user.uid).syncTransactions();
                       Navigator.pop(context);
                     }
                   },
@@ -280,6 +282,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                   .updateTransactions([tx])
                               : DatabaseWrapper(_user.uid)
                                   .addTransactions([tx]);
+                          SyncService(_user.uid).syncTransactions();
                           Navigator.pop(context);
                         }
                       },

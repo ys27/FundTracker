@@ -77,4 +77,14 @@ class Period {
     this.startDate = startDate;
     return this;
   }
+
+  bool equalTo(Period period) {
+    return (this.pid == period.pid &&
+        this.name == period.name &&
+        this.startDate == period.startDate &&
+        this.durationValue == period.durationValue &&
+        this.durationUnit == period.durationUnit &&
+        this.isDefault == period.isDefault &&
+        this.uid == period.uid);
+  }
 }

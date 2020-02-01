@@ -58,4 +58,14 @@ class Transaction {
       'uid': uid,
     };
   }
+
+  bool equalTo(Transaction tx) {
+    return (this.tid == tx.tid &&
+        this.date == tx.date &&
+        this.isExpense == tx.isExpense &&
+        this.payee == tx.payee &&
+        this.amount == tx.amount &&
+        this.category == tx.category &&
+        this.uid == tx.uid);
+  }
 }

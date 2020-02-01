@@ -89,7 +89,7 @@ class LocalDBService {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
     transactions.forEach((tx) {
-      batch.delete('transactions');
+      batch.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
     });
     batch.commit();
   }
