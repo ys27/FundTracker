@@ -8,8 +8,9 @@ class Balance extends StatefulWidget {
   final List<Transaction> transactions;
   final List<Transaction> prevTransactions;
   final bool showPeriodStats;
+  final int daysLeft;
 
-  Balance(this.transactions, this.prevTransactions, this.showPeriodStats);
+  Balance(this.transactions, this.prevTransactions, this.showPeriodStats, this.daysLeft);
 
   @override
   _BalanceState createState() => _BalanceState();
@@ -68,6 +69,12 @@ class _BalanceState extends State<Balance> {
             style: TextStyle(fontSize: 25.0),
           ),
         ),
+        widget.showPeriodStats
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[Text('${widget.daysLeft} days remaining')],
+              )
+            : SizedBox(height: 23.0),
         SizedBox(height: 10.0),
         BarTile(
           title: 'Income',

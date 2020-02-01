@@ -27,6 +27,7 @@ class _StatisticsState extends State<Statistics> {
   List<Transaction> _transactions;
   List<Transaction> _prevTransactions = [];
   List<Map<String, dynamic>> _dividedTransactions = [];
+  int _daysLeft;
 
   ScrollController _scrollController = ScrollController();
 
@@ -72,7 +73,9 @@ class _StatisticsState extends State<Statistics> {
       if (_showPeriodStats) {
         List<Map<String, dynamic>> _periodFilteredTransactions =
             findCurrentAndPreviousPeriods(_dividedTransactions);
-
+        _daysLeft = _periodFilteredTransactions[0]['endDate']
+            .difference(DateTime.now())
+            .inDays;
         _transactions = _periodFilteredTransactions.length > 0
             ? _periodFilteredTransactions[0]['transactions']
             : [];
@@ -158,7 +161,7 @@ class _StatisticsState extends State<Statistics> {
             ],
           ),
           SizedBox(height: 20.0),
-          Balance(_transactions, _prevTransactions, _showPeriodStats),
+          Balance(_transactions, _prevTransactions, _showPeriodStats, _daysLeft),
           SizedBox(height: 20.0),
           Categorical(_transactions.where((tx) => tx.isExpense).toList()),
           SizedBox(height: 20.0),
