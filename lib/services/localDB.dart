@@ -69,9 +69,11 @@ class LocalDBService {
 
   Future addAllTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
     transactions.forEach((tx) {
-      db.insert('transactions', tx.toMap());
+      batch.insert('transactions', tx.toMap());
     });
+    batch.commit();
   }
 
   Future updateTransaction(Transaction tx) async {
