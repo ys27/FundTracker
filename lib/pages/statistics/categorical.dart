@@ -24,6 +24,8 @@ class _CategoricalState extends State<Categorical> {
           divideTransactionsIntoCategories(widget.transactions),
         ),
       );
+      _individualPercentages
+          .sort((a, b) => b['percentage'].compareTo(a['percentage']));
     }
 
     return Column(
