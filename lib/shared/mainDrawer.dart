@@ -10,6 +10,7 @@ import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -126,12 +127,14 @@ class _MainDrawerState extends State<MainDrawer> {
               ? ListTile(
                   title: Text('Sync'),
                   leading: Icon(Icons.sync),
-                  onTap: () async {},
+                  onTap: () {
+                    SyncService(widget.user.uid).syncAll();
+                  },
                 )
               : ListTile(
                   title: Text('Sync Unavailable'),
                   leading: Icon(Icons.sync_problem),
-                  onTap: () async {},
+                  onTap: () {},
                 ),
         ],
       ),

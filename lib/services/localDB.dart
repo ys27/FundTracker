@@ -58,6 +58,11 @@ class LocalDBService {
     await db.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
   }
 
+  Future deleteAllTransactions(String uid) async {
+    StreamDatabase db = await this.db;
+    await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+  }
+
   // Categories
   Stream<List<Category>> getCategories(String uid) async* {
     StreamDatabase db = await this.db;
@@ -76,14 +81,14 @@ class LocalDBService {
     categoriesRegistry.asMap().forEach((index, category) async {
       await db.insert(
         'categories',
-        {
-          'cid': Uuid().v1(),
-          'name': category['name'],
-          'icon': category['icon'],
-          'enabled': true,
-          'orderIndex': index,
-          'uid': uid,
-        },
+        Category(
+          cid: Uuid().v1(),
+          name: category['name'],
+          icon: category['icon'],
+          enabled: true,
+          orderIndex: index,
+          uid: uid,
+        ).toMap(),
       );
     });
   }
@@ -100,7 +105,7 @@ class LocalDBService {
 
   Future deleteAllCategories(String uid) async {
     StreamDatabase db = await this.db;
-    await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
+    await db.delete('categories', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // User
@@ -175,6 +180,11 @@ class LocalDBService {
     );
   }
 
+  Future deleteAllPeriods(String uid) async {
+    StreamDatabase db = await this.db;
+    await db.delete('periods', where: 'uid = ?', whereArgs: [uid]);
+  }
+
   // Preferences
   Stream<Preferences> getPreferences(String pid) async* {
     StreamDatabase db = await this.db;
@@ -210,6 +220,11 @@ class LocalDBService {
       where: 'pid = ?',
       whereArgs: [pid],
     );
+  }
+
+  Future deleteAllPreferences(String pid) async {
+    StreamDatabase db = await this.db;
+    await db.delete('preferences', where: 'pid = ?', whereArgs: [pid]);
   }
 
   // Database-related

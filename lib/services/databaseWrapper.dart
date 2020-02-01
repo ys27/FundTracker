@@ -43,6 +43,12 @@ class DatabaseWrapper {
         : await _localDBService.deleteTransaction(tx);
   }
 
+  Future deleteAllTransactions() async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.deleteAllTransactions()
+        : await _localDBService.deleteAllTransactions(uid);
+  }
+
   // Categories
   Stream<List<Category>> getCategories() {
     return DATABASE_TYPE == DatabaseType.Firebase
@@ -51,9 +57,8 @@ class DatabaseWrapper {
   }
 
   Future addDefaultCategories() async {
-    DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addDefaultCategories()
-        : await _localDBService.addDefaultCategories(uid);
+    await _fireDBService.addDefaultCategories();
+    await _localDBService.addDefaultCategories(uid);
   }
 
   Future setCategory(Category category) async {
@@ -86,9 +91,8 @@ class DatabaseWrapper {
   }
 
   Future addUser(User user) async {
-    DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addUser(user)
-        : await _localDBService.addUser(user);
+    await _fireDBService.addUser(user);
+    await _localDBService.addUser(user);
   }
 
   // Periods
@@ -136,9 +140,8 @@ class DatabaseWrapper {
   }
 
   Future addDefaultPreferences() async {
-    DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addDefaultPreferences()
-        : await _localDBService.addDefaultPreferences(uid);
+    await _fireDBService.addDefaultPreferences();
+    await _localDBService.addDefaultPreferences(uid);
   }
 
   Future updatePreferences(Preferences prefs) async {

@@ -27,7 +27,7 @@ class FireDBService {
   }
 
   Future addTransaction(Transaction tx) async {
-    await db.collection('transactions').add(tx.toMap());
+    await db.collection('transactions').document(tx.tid).setData(tx.toMap());
   }
 
   Future updateTransaction(Transaction tx) async {
@@ -36,6 +36,14 @@ class FireDBService {
 
   Future deleteTransaction(Transaction tx) async {
     await db.collection('transactions').document(tx.tid).delete();
+  }
+
+  Future deleteAllTransactions() async {
+    await db.collection('transactions').getDocuments().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.documents) {
+        await doc.reference.delete();
+      }
+    });
   }
 
   // Categories
@@ -48,14 +56,17 @@ class FireDBService {
 
   Future addDefaultCategories() async {
     categoriesRegistry.asMap().forEach((index, category) async {
-      await db.collection('categories').add({
-        'cid': Uuid().v1(),
-        'name': category['name'],
-        'icon': category['icon'],
-        'enabled': true,
-        'orderIndex': index,
-        'uid': uid,
-      });
+      String cid = Uuid().v1();
+      await db.collection('categories').document(cid).setData(
+            Category(
+              cid: cid,
+              name: category['name'],
+              icon: category['icon'],
+              enabled: true,
+              orderIndex: index,
+              uid: uid,
+            ).toMap(),
+          );
     });
   }
 
@@ -125,7 +136,7 @@ class FireDBService {
   }
 
   Future addPeriod(Period period) async {
-    await db.collection('periods').add(period.toMap());
+    await db.collection('periods').document(period.pid).setData(period.toMap());
   }
 
   Future updatePeriod(Period period) async {
@@ -134,6 +145,14 @@ class FireDBService {
 
   Future deletePeriod(Period period) async {
     await db.collection('periods').document(period.pid).delete();
+  }
+
+  Future deleteAllPeriods() async {
+    await db.collection('periods').getDocuments().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.documents) {
+        await doc.reference.delete();
+      }
+    });
   }
 
   // Preferences
@@ -148,7 +167,8 @@ class FireDBService {
   Future addDefaultPreferences() async {
     await db
         .collection('preferences')
-        .add(Preferences.original().setPreference('pid', uid).toMap());
+        .document(uid)
+        .setData(Preferences.original().setPreference('pid', uid).toMap());
   }
 
   Future updatePreferences(Preferences prefs) async {
@@ -157,5 +177,13 @@ class FireDBService {
 
   Future deletePreferences() async {
     await db.collection('preferences').document(uid).delete();
+  }
+
+  Future deleteAllPreferences() async {
+    await db.collection('preferences').getDocuments().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.documents) {
+        await doc.reference.delete();
+      }
+    });
   }
 }
