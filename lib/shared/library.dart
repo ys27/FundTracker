@@ -107,8 +107,9 @@ int findNumDaysInPeriod(Period period) {
 }
 
 String getDate(DateTime date) {
+  String month = date.month.toString();
   String day = date.day.toString();
-  return '${date.year.toString()}.${date.month.toString()}.${day.length == 1 ? '0$day' : day}';
+  return '${date.year.toString()}.${month.length == 1 ? '0$month' : month}.${day.length == 1 ? '0$day' : day}';
 }
 
 String checkIfInteger(String val) {
