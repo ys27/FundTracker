@@ -255,7 +255,7 @@ List<Map<String, dynamic>> getRelativePercentages(
       .toList();
 }
 
-List<Map<String, dynamic>> getPercentagesOutOfTotalIncome(
+List<Map<String, dynamic>> getPercentagesOutOfTotalAmount(
   List<Map<String, dynamic>> values,
   double totalIncome,
 ) {

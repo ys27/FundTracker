@@ -171,6 +171,9 @@ class _StatisticsState extends State<Statistics> {
             _transactions
                 .where((tx) => !tx.isExpense)
                 .fold(0.0, (a, b) => a + b.amount),
+            _transactions
+                .where((tx) => tx.isExpense)
+                .fold(0.0, (a, b) => a + b.amount),
             _scrollController,
           ),
         ],
