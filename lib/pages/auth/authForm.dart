@@ -107,15 +107,17 @@ class _AuthFormState extends State<AuthForm> {
                     isRegister
                         ? TextFormField(
                             autovalidate: _passwordConfirm.isNotEmpty,
-                            validator: (val) =>
-                                passwordConfirmValidator(val, _password),
+                            validator: (val) {
+                              passwordConfirmValidator(val, _password);
+                            },
                             obscureText: _obscurePasswordConfirm,
                             decoration: showPasswordToggle(
                               'Confirm Password',
                               _obscurePasswordConfirm,
                             ),
-                            onChanged: (val) =>
-                                setState(() => _passwordConfirm = val),
+                            onChanged: (val) {
+                              setState(() => _passwordConfirm = val);
+                            },
                           )
                         : Container(),
                     SizedBox(height: 20.0),

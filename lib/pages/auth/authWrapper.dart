@@ -11,9 +11,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
   AuthMethod method = AuthMethod.SignIn;
 
   void toggleView() {
-    setState(() => method = (method == AuthMethod.SignIn
-        ? AuthMethod.Register
-        : AuthMethod.SignIn));
+    setState(() {
+      method = (method == AuthMethod.SignIn)
+          ? AuthMethod.Register
+          : AuthMethod.SignIn;
+    });
   }
 
   @override
@@ -26,7 +28,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return AuthForm(toggleView: toggleView, method: AuthMethod.Register);
         break;
       default:
-        return Text('Something is wrong with the Authentication Wrapper.');
+        return Text('Error in the AuthWrapper.');
         break;
     }
   }
