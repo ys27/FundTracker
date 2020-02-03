@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +33,7 @@ class _PeriodsState extends State<Periods> {
       );
     } else {
       bodyWidget = Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 10.0,
-        ),
+        padding: bodyPadding,
         child: ListView.builder(
           itemCount: _periods.length,
           itemBuilder: (context, index) {

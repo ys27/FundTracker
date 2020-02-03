@@ -65,7 +65,7 @@ class _PeriodFormState extends State<PeriodForm> {
       body: isLoading
           ? Loader()
           : Container(
-              padding: customPadding,
+              padding: formPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(

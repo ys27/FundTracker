@@ -79,7 +79,7 @@ class _AuthFormState extends State<AuthForm> {
       body: _isLoading
           ? Loader()
           : Container(
-              padding: customPadding,
+              padding: formPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -108,7 +108,7 @@ class _AuthFormState extends State<AuthForm> {
                         ? TextFormField(
                             autovalidate: _passwordConfirm.isNotEmpty,
                             validator: (val) {
-                              passwordConfirmValidator(val, _password);
+                              return passwordConfirmValidator(val, _password);
                             },
                             obscureText: _obscurePasswordConfirm,
                             decoration: showPasswordToggle(

@@ -6,6 +6,7 @@ import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categorical.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/styles.dart';
 import 'package:provider/provider.dart';
 
 class Statistics extends StatefulWidget {
@@ -88,10 +89,7 @@ class _StatisticsState extends State<Statistics> {
 
       _body = ListView(
         controller: _scrollController,
-        padding: EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 10.0,
-        ),
+        padding: bodyPadding,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -72,7 +72,7 @@ class _TransactionFormState extends State<TransactionForm> {
               _enabledCategories.isNotEmpty &&
               !isLoading)
           ? Container(
-              padding: customPadding,
+              padding: formPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(
