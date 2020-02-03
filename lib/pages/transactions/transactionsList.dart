@@ -22,33 +22,20 @@ class _TransactionsListState extends State<TransactionsList> {
     final Period _currentPeriod = Provider.of<Period>(context);
     final Preferences _prefs = Provider.of<Preferences>(context);
 
-    List<Map<String, dynamic>> _dividedTransactions = [];
-
-    if (_transactions != null &&
-        _transactions.length > 0 &&
-        _currentPeriod != null &&
-        _prefs != null) {
-      List<Transaction> _filteredTransactions =
-          filterTransactionsByLimit(_transactions, _prefs);
-      _dividedTransactions =
-          divideTransactionsIntoPeriods(_filteredTransactions, _currentPeriod);
-      if (_prefs.isLimitPeriodsEnabled) {
-        _dividedTransactions =
-            filterTransactionsByPeriods(_dividedTransactions, _prefs);
-      }
-      // Remove periods without any txs
-      _dividedTransactions = _dividedTransactions
-          .where((period) => period['transactions'].length > 0)
-          .toList();
-    }
-
-    if (_transactions == null) {
+    if (_transactions == null || _currentPeriod == null || _prefs == null) {
       return Loader();
     } else if (_transactions.length == 0) {
       return Center(
         child: Text('Add a transaction using the button below.'),
       );
     } else {
+      List<Map<String, dynamic>> _dividedTransactions =
+          filterByLimitAndDivideIntoPeriods(
+        _transactions,
+        _prefs,
+        _currentPeriod,
+      );
+
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];

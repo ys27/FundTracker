@@ -18,7 +18,7 @@ class TransactionTile extends StatelessWidget {
     final _user = Provider.of<FirebaseUser>(context);
 
     Map<String, dynamic> _category = categoriesRegistry
-        .firstWhere((category) => category['name'] == transaction.category);
+        .singleWhere((category) => category['name'] == transaction.category);
 
     return Padding(
       padding: EdgeInsets.only(top: 5.0),
@@ -47,7 +47,6 @@ class TransactionTile extends StatelessWidget {
           leading: CircleAvatar(
             radius: 25.0,
             backgroundColor: Theme.of(context).backgroundColor,
-            foregroundColor: Colors.black,
             child: Icon(
               IconData(
                 _category['icon'],
