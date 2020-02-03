@@ -67,8 +67,13 @@ class _BalanceState extends State<Balance> {
         ),
         widget.showPeriodStats
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[Text('${widget.daysLeft} days remaining')],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('${widget.daysLeft} days remaining'),
+                  Text(
+                    '\$${(balance / widget.daysLeft).toStringAsFixed(2)} / day left',
+                  ),
+                ],
               )
             : SizedBox(height: 23.0),
         SizedBox(height: 10.0),
@@ -86,7 +91,9 @@ class _BalanceState extends State<Balance> {
           amount: balancesList['expenses'],
           midLine: widget.showPeriodStats
               ? getPrevStr(
-                  balancesList['expenses'], prevBalancesList['expenses'])
+                  balancesList['expenses'],
+                  prevBalancesList['expenses'],
+                )
               : null,
           percentage: relativePercentages['expenses'],
           color: Colors.red[800],
