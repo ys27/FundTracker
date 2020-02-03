@@ -15,7 +15,7 @@ class Wrapper extends StatelessWidget {
     } else if (_user == -1) {
       return AuthWrapper();
     } else {
-      return Home();
+      return Home(_user);
     }
   }
 }

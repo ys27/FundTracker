@@ -13,97 +13,92 @@ import 'package:fund_tracker/shared/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
+  final FirebaseUser user;
+
+  Home(this.user);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  final _pages = ['Records', 'Statistics'];
-  PageController _pageController =
-      PageController(initialPage: 0, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
+    final List<Map<String, dynamic>> _pages = [
+      {
+        'name': 'Records',
+        'widget': txPeriodPrefsProvider(TransactionsList()),
+        'addButton': addTransactionButton(),
+      },
+      {
+        'name': 'Statistics',
+        'widget': txPeriodPrefsProvider(Statistics()),
+      }
+    ];
 
     return Scaffold(
-      drawer: MainDrawer(_user),
+      drawer: MainDrawer(widget.user),
       appBar: AppBar(
-        title: Text(_pages[_selectedIndex]),
+        title: Text(_pages[_selectedIndex]['name']),
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
-        },
-        children: <Widget>[
-          MultiProvider(
-            providers: [
-              StreamProvider<List<Transaction>>(
-                create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
-              ),
-              StreamProvider<Period>(
-                create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
-                catchError: (_, __) => Period.monthly(),
-              ),
-              StreamProvider<Preferences>(
-                create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
-              ),
-            ],
-            child: TransactionsList(),
+      body: _pages[_selectedIndex]['widget'],
+      floatingActionButton: _pages[_selectedIndex]['addButton'],
+      bottomNavigationBar: transactionsAndStatistics(),
+    );
+  }
+
+  MultiProvider txPeriodPrefsProvider(Widget page) {
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<Transaction>>(
+          create: (_) => DatabaseWrapper(widget.user.uid).getTransactions(),
+        ),
+        StreamProvider<Period>(
+          create: (_) => DatabaseWrapper(widget.user.uid).getDefaultPeriod(),
+          catchError: (_, __) => Period.monthly(),
+        ),
+        StreamProvider<Preferences>(
+          create: (_) => DatabaseWrapper(widget.user.uid).getPreferences(),
+        ),
+      ],
+      child: page,
+    );
+  }
+
+  Widget addTransactionButton() {
+    return FloatingActionButton(
+      backgroundColor: Theme.of(context).primaryColor,
+      onPressed: () {
+        openPage(
+          context,
+          StreamProvider<List<Category>>(
+            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
+            child: TransactionForm(Transaction.empty()),
           ),
-          MultiProvider(
-            providers: [
-              StreamProvider<List<Transaction>>(
-                create: (_) => DatabaseWrapper(_user.uid).getTransactions(),
-              ),
-              StreamProvider<Period>(
-                create: (_) => DatabaseWrapper(_user.uid).getDefaultPeriod(),
-                catchError: (_, __) => Period.monthly(),
-              ),
-              StreamProvider<Preferences>(
-                create: (_) => DatabaseWrapper(_user.uid).getPreferences(),
-              ),
-            ],
-            child: Statistics(),
-          ),
-        ],
-      ),
-      floatingActionButton: _selectedIndex == 0
-          ? FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () => openPage(
-                  context,
-                  StreamProvider<List<Category>>(
-                    create: (_) => DatabaseWrapper(_user.uid).getCategories(),
-                    child: TransactionForm(Transaction.empty()),
-                  )),
-              child: Icon(Icons.add),
-            )
-          : null,
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            title: Text('Records'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.equalizer),
-            title: Text('Statistics'),
-          )
-        ],
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() {
-          _selectedIndex = index;
-          _pageController.jumpToPage(index);
-          // _pageController.animateToPage(
-          //   index,
-          //   duration: Duration(milliseconds: 1),
-          //   curve: Curves.linear,
-          // );
-        }),
-      ),
+        );
+      },
+      child: Icon(Icons.add),
+    );
+  }
+
+  Widget transactionsAndStatistics() {
+    return BottomNavigationBar(
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.receipt),
+          title: Text('Records'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.equalizer),
+          title: Text('Statistics'),
+        )
+      ],
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() => _selectedIndex = index);
+      },
     );
   }
 }
