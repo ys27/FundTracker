@@ -45,7 +45,6 @@ class _TopExpensesState extends State<TopExpenses> {
           .toList();
       _sortedTransactions = getPercentagesOutOfTotalAmount(
           _sortedTransactions, widget.totalExpenses);
-      // _sortedTransactions = getRelativePercentages(_sortedTransactions);
       _columnContent = sublist(_sortedTransactions, 0, _showCount)
               .map((tx) => <Widget>[
                     SizedBox(height: 10.0),

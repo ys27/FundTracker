@@ -20,7 +20,7 @@ class _CategoricalState extends State<Categorical> {
   Widget build(BuildContext context) {
     if (widget.transactions.length > 0) {
       _individualPercentages = getIndividualPercentages(
-        getTotalValues(
+        appendTotalCategorialAmounts(
           divideTransactionsIntoCategories(widget.transactions),
         ),
       );

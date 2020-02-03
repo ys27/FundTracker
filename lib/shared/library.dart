@@ -220,6 +220,16 @@ int getCurrentPeriodIndex(List<Map<String, dynamic>> list) {
   );
 }
 
+List<Map<String, dynamic>> appendTotalCategorialAmounts(
+    List<Map<String, dynamic>> dividedTransactions) {
+  return dividedTransactions
+      .map((map) => {
+            'category': map['category'],
+            'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
+          })
+      .toList();
+}
+
 List<Map<String, dynamic>> divideTransactionsIntoCategories(
   List<Transaction> transactions,
 ) {
@@ -241,18 +251,24 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
   return dividedTransactions;
 }
 
-List<Map<String, dynamic>> getRelativePercentages(
-    List<Map<String, dynamic>> values) {
-  double max = values.first['amount'];
-  values.forEach((e) {
-    if (e['amount'] > max) max = e['amount'];
+double filterAndGetTotalAmounts(
+  List<Transaction> transactions, {
+  bool filterOnlyExpenses,
+}) {
+  return transactions
+      .where((tx) => tx.isExpense == filterOnlyExpenses)
+      .fold(0.0, (a, b) => a + b.amount);
+}
+
+Map<String, double> getRelativePercentages(Map<String, double> values) {
+  double max = 0;
+  values.forEach((key, value) {
+    if (value > max) max = value;
   });
-  return values
-      .map((v) => {
-            ...v,
-            'percentage': max == 0 ? 0.0 : v['amount'] / max,
-          })
-      .toList();
+  return {
+    'income': values['income'] / max,
+    'expenses': values['expenses'] / max,
+  };
 }
 
 List<Map<String, dynamic>> getPercentagesOutOfTotalAmount(
@@ -263,16 +279,6 @@ List<Map<String, dynamic>> getPercentagesOutOfTotalAmount(
       .map((v) => {
             ...v,
             'percentage': v['amount'] / totalIncome,
-          })
-      .toList();
-}
-
-List<Map<String, dynamic>> getTotalValues(
-    List<Map<String, dynamic>> dividedTransactions) {
-  return dividedTransactions
-      .map((map) => {
-            'category': map['category'],
-            'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
           })
       .toList();
 }

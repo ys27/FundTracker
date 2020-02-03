@@ -20,36 +20,31 @@ class Balance extends StatefulWidget {
 class _BalanceState extends State<Balance> {
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> balancesList = [
-      {
-        'amount': widget.transactions
-            .where((tx) => !tx.isExpense)
-            .fold(0.0, (a, b) => a + b.amount),
-      },
-      {
-        'amount': widget.transactions
-            .where((tx) => tx.isExpense)
-            .fold(0.0, (a, b) => a + b.amount),
-      },
-    ];
-    final List<Map<String, dynamic>> prevBalancesList = [
-      {
-        'amount': widget.prevTransactions
-            .where((tx) => !tx.isExpense)
-            .fold(0.0, (a, b) => a + b.amount),
-      },
-      {
-        'amount': widget.prevTransactions
-            .where((tx) => tx.isExpense)
-            .fold(0.0, (a, b) => a + b.amount),
-      },
-    ];
-    final double balance =
-        balancesList[0]['amount'] - balancesList[1]['amount'];
+    final Map<String, double> balancesList = {
+      'income': filterAndGetTotalAmounts(
+        widget.transactions,
+        filterOnlyExpenses: false,
+      ),
+      'expenses': filterAndGetTotalAmounts(
+        widget.transactions,
+        filterOnlyExpenses: true,
+      ),
+    };
+    final Map<String, double> prevBalancesList = {
+      'income': filterAndGetTotalAmounts(
+        widget.prevTransactions,
+        filterOnlyExpenses: false,
+      ),
+      'expenses': filterAndGetTotalAmounts(
+        widget.prevTransactions,
+        filterOnlyExpenses: true,
+      ),
+    };
+    final double balance = balancesList['income'] - balancesList['expenses'];
     final double prevBalance =
-        prevBalancesList[0]['amount'] - prevBalancesList[1]['amount'];
+        prevBalancesList['income'] - prevBalancesList['expenses'];
 
-    final List<Map<String, dynamic>> relativePercentages =
+    final Map<String, dynamic> relativePercentages =
         getRelativePercentages(balancesList);
 
     return Column(
@@ -79,22 +74,21 @@ class _BalanceState extends State<Balance> {
         SizedBox(height: 10.0),
         BarTile(
           title: 'Income',
-          amount: balancesList[0]['amount'],
+          amount: balancesList['income'],
           midLine: widget.showPeriodStats
-              ? getPrevStr(
-                  balancesList[0]['amount'], prevBalancesList[0]['amount'])
+              ? getPrevStr(balancesList['income'], prevBalancesList['income'])
               : null,
-          percentage: relativePercentages[0]['percentage'],
+          percentage: relativePercentages['income'],
           color: Colors.green[800],
         ),
         BarTile(
           title: 'Expenses',
-          amount: balancesList[1]['amount'],
+          amount: balancesList['expenses'],
           midLine: widget.showPeriodStats
               ? getPrevStr(
-                  balancesList[1]['amount'], prevBalancesList[1]['amount'])
+                  balancesList['expenses'], prevBalancesList['expenses'])
               : null,
-          percentage: relativePercentages[1]['percentage'],
+          percentage: relativePercentages['expenses'],
           color: Colors.red[800],
         ),
       ],
