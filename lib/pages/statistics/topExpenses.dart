@@ -7,9 +7,10 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
+  final double totalIncome;
   final ScrollController scrollController;
 
-  TopExpenses(this.transactions, this.scrollController);
+  TopExpenses(this.transactions, this.totalIncome, this.scrollController);
 
   @override
   _TopExpensesState createState() => _TopExpensesState();
@@ -19,70 +20,71 @@ class _TopExpensesState extends State<TopExpenses> {
   int _showCount = 5;
   List<Map<String, dynamic>> _sortedTransactions;
 
+  List<Widget> _columnContent = <Widget>[
+    SizedBox(height: 35.0),
+    Center(
+      child: Text('No transactions found in current period.'),
+    )
+  ];
+
   @override
   Widget build(BuildContext context) {
     if (widget.transactions.length > 0) {
-      _sortedTransactions =
-          getRelativePercentages(sortByAmountDescending(widget.transactions)
-              .map((tx) => {
-                    'payee': tx.payee,
-                    'category': tx.category,
-                    'amount': tx.amount,
-                  })
-              .toList());
+      _sortedTransactions = sortByAmountDescending(widget.transactions)
+          .map((tx) => {
+                'payee': tx.payee,
+                'category': tx.category,
+                'amount': tx.amount,
+              })
+          .toList();
+      _sortedTransactions = getPercentagesOutOfTotalIncome(
+          _sortedTransactions, widget.totalIncome);
+      // _sortedTransactions = getRelativePercentages(_sortedTransactions);
+      _columnContent = sublist(_sortedTransactions, 0, _showCount)
+              .map((tx) => <Widget>[
+                    SizedBox(height: 10.0),
+                    Column(
+                      children: <Widget>[
+                        BarTile(
+                          title: tx['payee'],
+                          subtitle: tx['category'],
+                          amount: tx['amount'],
+                          percentage: tx['percentage'],
+                          color: categoriesRegistry.singleWhere((category) {
+                            return category['name'] == tx['category'];
+                          })['color'],
+                        ),
+                      ],
+                    ),
+                  ])
+              .expand((x) => x)
+              .toList() +
+          <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                FlatButton(
+                  child: Text('Collapse'),
+                  onPressed: () => setState(() => _showCount = 5),
+                ),
+                FlatButton(
+                  child: Text('Show more'),
+                  onPressed: () {
+                    setState(() => _showCount += 5);
+                    widget.scrollController.animateTo(
+                      99999,
+                      duration: Duration(seconds: 3),
+                      curve: Curves.easeInOutQuint,
+                    );
+                  },
+                )
+              ],
+            )
+          ];
     }
 
     return Column(
-      children: <Widget>[statTitle(title: 'Top Expenses')] +
-          ((widget.transactions.length > 0)
-              ? sublist(_sortedTransactions, 0, _showCount)
-                      .map((tx) => [
-                            SizedBox(height: 10.0),
-                            BarTile(
-                              title: tx['payee'],
-                              subtitle: tx['category'],
-                              amount: tx['amount'],
-                              percentage: tx['percentage'],
-                              color: categoriesRegistry.singleWhere(
-                                  (category) =>
-                                      category['name'] ==
-                                      tx['category'])['color'],
-                            ),
-                          ])
-                      .expand((x) => x)
-                      .toList() +
-                  <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        FlatButton(
-                          child: Text('Collapse'),
-                          onPressed: () => setState(() => _showCount = 5),
-                        ),
-                        // FlatButton(
-                        //   child: Text('Show less...'),
-                        //   onPressed: () => setState(() => _showCount -= 5),
-                        // ),
-                        FlatButton(
-                          child: Text('Show more'),
-                          onPressed: () {
-                            setState(() => _showCount += 5);
-                            widget.scrollController.animateTo(
-                              99999,
-                              duration: Duration(seconds: 3),
-                              curve: Curves.easeInOutQuint,
-                            );
-                          },
-                        )
-                      ],
-                    )
-                  ]
-              : <Widget>[
-                  SizedBox(height: 35.0),
-                  Center(
-                    child: Text('No transactions found in current period.'),
-                  )
-                ]),
+      children: <Widget>[statTitle(title: 'Top Expenses')] + _columnContent,
     );
   }
 }

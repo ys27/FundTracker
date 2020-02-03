@@ -168,6 +168,9 @@ class _StatisticsState extends State<Statistics> {
           SizedBox(height: 20.0),
           TopExpenses(
             _transactions.where((tx) => tx.isExpense).toList(),
+            _transactions
+                .where((tx) => !tx.isExpense)
+                .fold(0.0, (a, b) => a + b.amount),
             _scrollController,
           ),
         ],

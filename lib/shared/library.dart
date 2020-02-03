@@ -255,6 +255,18 @@ List<Map<String, dynamic>> getRelativePercentages(
       .toList();
 }
 
+List<Map<String, dynamic>> getPercentagesOutOfTotalIncome(
+  List<Map<String, dynamic>> values,
+  double totalIncome,
+) {
+  return values
+      .map((v) => {
+            ...v,
+            'percentage': v['amount'] / totalIncome,
+          })
+      .toList();
+}
+
 List<Map<String, dynamic>> getTotalValues(
     List<Map<String, dynamic>> dividedTransactions) {
   return dividedTransactions
