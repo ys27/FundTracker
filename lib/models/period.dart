@@ -1,4 +1,5 @@
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:fund_tracker/shared/library.dart';
 
 class Period {
   String pid;
@@ -23,7 +24,7 @@ class Period {
     DateTime now = DateTime.now();
     pid = null;
     name = null;
-    startDate = DateTime(now.year, now.month, now.day);
+    startDate = getDateNotTime(now);
     durationValue = null;
     durationUnit = DurationUnit.Weeks;
     isDefault = false;

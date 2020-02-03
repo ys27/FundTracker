@@ -67,7 +67,7 @@ class _TransactionsListState extends State<TransactionsList> {
       child: Text(
         isDefault
             ? '${Months[startDate.month.toString()]} ${startDate.year}'
-            : '${getDate(startDate)} - ${getDate(endDate)}',
+            : '${getDateStr(startDate)} - ${getDateStr(endDate)}',
         style: const TextStyle(color: Colors.white),
       ),
     );

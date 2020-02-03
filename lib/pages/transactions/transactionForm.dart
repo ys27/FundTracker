@@ -115,7 +115,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(getDate(_date ?? widget.tx.date)),
+                          Text(getDateStr(_date ?? widget.tx.date)),
                           Icon(Icons.date_range),
                         ],
                       ),
@@ -182,7 +182,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                       category.icon,
                                       fontFamily: 'MaterialIcons',
                                     ),
-                                    color: categoriesRegistry.firstWhere(
+                                    color: categoriesRegistry.singleWhere(
                                         (cat) =>
                                             cat['name'] ==
                                             category.name)['color'],
@@ -205,14 +205,14 @@ class _TransactionFormState extends State<TransactionForm> {
                                         Icon(
                                             IconData(
                                               _categories
-                                                  .firstWhere((cat) =>
+                                                  .singleWhere((cat) =>
                                                       cat.name ==
                                                       widget.tx.category)
                                                   .icon,
                                               fontFamily: 'MaterialIcons',
                                             ),
                                             color: categoriesRegistry
-                                                .firstWhere((cat) =>
+                                                .singleWhere((cat) =>
                                                     cat['name'] ==
                                                     widget
                                                         .tx.category)['color']),

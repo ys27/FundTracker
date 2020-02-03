@@ -38,7 +38,7 @@ class _CategoricalState extends State<Categorical> {
                           title: categorical['category'],
                           amount: categorical['amount'],
                           percentage: categorical['percentage'],
-                          color: categoriesRegistry.firstWhere((category) =>
+                          color: categoriesRegistry.singleWhere((category) =>
                               category['name'] ==
                               categorical['category'])['color'],
                         ),

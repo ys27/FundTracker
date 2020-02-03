@@ -62,7 +62,7 @@ class _PeriodsState extends State<Periods> {
         subtitle: Text(
           'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}',
         ),
-        trailing: Text('Start Date: ${getDate(period.startDate)}'),
+        trailing: Text('Start Date: ${getDateStr(period.startDate)}'),
       ),
     );
   }

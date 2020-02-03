@@ -79,7 +79,7 @@ class _CategoriesState extends State<Categories> {
           category.icon,
           fontFamily: 'MaterialIcons',
         ),
-        color: categoriesRegistry.firstWhere((cat) {
+        color: categoriesRegistry.singleWhere((cat) {
           return cat['name'] == category.name;
         })['color'],
       ),

@@ -65,7 +65,7 @@ class TransactionTile extends StatelessWidget {
                   color: transaction.isExpense ? Colors.red : Colors.green,
                 ),
               ),
-              Text(getDate(transaction.date)),
+              Text(getDateStr(transaction.date)),
             ],
           ),
         ),

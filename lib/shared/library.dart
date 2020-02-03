@@ -66,8 +66,7 @@ DateTime findPrevPeriodStartDate(Period period) {
 
   periodStartDate = periodStartDate.subtract(Duration(days: numDaysInPeriod));
 
-  return DateTime(
-      periodStartDate.year, periodStartDate.month, periodStartDate.day);
+  return getDateNotTime(periodStartDate);
 }
 
 DateTime findFirstPeriodDate(Transaction firstTx, Period period) {
@@ -75,7 +74,6 @@ DateTime findFirstPeriodDate(Transaction firstTx, Period period) {
   while (iteratingDate.isAfter(firstTx.date)) {
     iteratingDate = findPrevPeriodStartDate(period.setStartDate(iteratingDate));
   }
-
   return iteratingDate;
 }
 
@@ -106,57 +104,47 @@ int findNumDaysInPeriod(Period period) {
   }
 }
 
-String getDate(DateTime date) {
+String getDateStr(DateTime date) {
   String month = date.month.toString();
   String day = date.day.toString();
   return '${date.year.toString()}.${month.length == 1 ? '0$month' : month}.${day.length == 1 ? '0$day' : day}';
 }
 
-String checkIfInteger(String val) {
-  if (val.isEmpty) {
-    return 'Enter a value for the duration.';
-  } else if (val.contains('.')) {
-    return 'This value must be an integer.';
-  } else if (int.parse(val) <= 0) {
-    return 'This value must be greater than 0';
-  }
-  return null;
+DateTime getDateNotTime(DateTime date) {
+  return DateTime(date.year, date.month, date.day);
 }
 
 List<Map<String, dynamic>> divideTransactionsIntoPeriods(
-    List<Transaction> transactions, Period period) {
+  List<Transaction> transactions,
+  Period period,
+) {
   List<Map<String, dynamic>> periodsList = [];
 
   if (transactions.length > 0) {
-    DateTime iteratingPeriodStartDate =
+    DateTime currentPeriodStartDate =
         findFirstPeriodDate(transactions.last, period);
-    while (iteratingPeriodStartDate.isBefore(transactions.first.date) ||
-        iteratingPeriodStartDate.isAtSameMomentAs(transactions.first.date)) {
+    while (currentPeriodStartDate.isBefore(
+      transactions.first.date.add(Duration(milliseconds: 1)),
+    )) {
       int numDaysInPeriod =
-          findNumDaysInPeriod(period.setStartDate(iteratingPeriodStartDate));
-      DateTime iteratingNextPeriodStartDate =
-          iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod));
-      iteratingNextPeriodStartDate = DateTime(
-        iteratingNextPeriodStartDate.year,
-        iteratingNextPeriodStartDate.month,
-        iteratingNextPeriodStartDate.day,
+          findNumDaysInPeriod(period.setStartDate(currentPeriodStartDate));
+      DateTime nextPeriodStartDate = getDateNotTime(
+        currentPeriodStartDate.add(Duration(days: numDaysInPeriod)),
       );
       periodsList.insert(
         0,
         {
-          'startDate': iteratingPeriodStartDate,
-          'endDate':
-              iteratingNextPeriodStartDate.subtract(Duration(microseconds: 1)),
+          'startDate': currentPeriodStartDate,
+          'endDate': nextPeriodStartDate.subtract(Duration(microseconds: 1)),
           'transactions': transactions
               .where((tx) =>
-                  tx.date.isAfter(iteratingPeriodStartDate
+                  tx.date.isAfter(currentPeriodStartDate
                       .subtract(Duration(microseconds: 1))) &&
-                  tx.date.isBefore(iteratingNextPeriodStartDate))
+                  tx.date.isBefore(nextPeriodStartDate))
               .toList(),
         },
       );
-
-      iteratingPeriodStartDate = iteratingNextPeriodStartDate;
+      currentPeriodStartDate = nextPeriodStartDate;
     }
   }
   return periodsList;
@@ -173,7 +161,7 @@ List<Map<String, dynamic>> filterByLimitAndDivideIntoPeriods(
       divideTransactionsIntoPeriods(filteredTransactions, currentPeriod);
   if (prefs.isLimitPeriodsEnabled) {
     dividedTransactions =
-        filterTransactionsByPeriods(dividedTransactions, prefs);
+        filterPeriodsWithLimit(dividedTransactions, prefs.limitPeriods);
   }
   // Remove periods without any txs
   return dividedTransactions
@@ -182,7 +170,9 @@ List<Map<String, dynamic>> filterByLimitAndDivideIntoPeriods(
 }
 
 List<Transaction> filterTransactionsByLimit(
-    List<Transaction> transactions, Preferences prefs) {
+  List<Transaction> transactions,
+  Preferences prefs,
+) {
   if (prefs.isLimitDaysEnabled) {
     return transactions
         .where((tx) => tx.date.isAfter(DateTime.now()
@@ -198,55 +188,54 @@ List<Transaction> filterTransactionsByLimit(
   }
 }
 
-List<Map<String, dynamic>> filterTransactionsByPeriods(
-    List<Map<String, dynamic>> periods, Preferences prefs) {
-  DateTime now = DateTime.now();
-  int currentDatePeriodIndex = periods.indexWhere(
-      (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
-  return periods.sublist(
-    0,
-    min(
-      currentDatePeriodIndex + prefs.limitPeriods,
-      periods.length,
-    ),
-  );
+List<Map<String, dynamic>> filterPeriodsWithLimit(
+  List<Map<String, dynamic>> periods,
+  int numPeriods,
+) {
+  int currentPeriodIndex = getCurrentPeriodIndex(periods);
+  return sublist(periods, 0, currentPeriodIndex + numPeriods);
+}
+
+List<Map<String, dynamic>> sublist(
+    List<Map<String, dynamic>> list, int start, int end) {
+  return list.sublist(start, min(end, list.length));
 }
 
 List<Map<String, dynamic>> findCurrentAndPreviousPeriods(
-    List<Map<String, dynamic>> periods) {
-  DateTime now = DateTime.now();
+  List<Map<String, dynamic>> periods,
+) {
+  int currentPeriodIndex = getCurrentPeriodIndex(periods);
 
-  int currentDatePeriodIndex = periods.indexWhere(
-      (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now));
-
-  if (currentDatePeriodIndex == -1) {
+  if (currentPeriodIndex == -1) {
     return [];
+  } else {
+    return sublist(periods, currentPeriodIndex, currentPeriodIndex + 2);
   }
-  return periods.sublist(
-    currentDatePeriodIndex,
-    min(
-      currentDatePeriodIndex + 2,
-      periods.length,
-    ),
+}
+
+int getCurrentPeriodIndex(List<Map<String, dynamic>> list) {
+  DateTime now = DateTime.now();
+  return list.indexWhere(
+    (map) => map['startDate'].isBefore(now) && map['endDate'].isAfter(now),
   );
 }
 
 List<Map<String, dynamic>> divideTransactionsIntoCategories(
-    List<Transaction> transactions) {
+  List<Transaction> transactions,
+) {
   List<Map<String, dynamic>> dividedTransactions = [];
   transactions.forEach((tx) {
-    if (dividedTransactions
-        .where((div) => div['category'] == tx.category)
-        .toList()
-        .isEmpty) {
+    bool categoryFound =
+        dividedTransactions.any((div) => div['category'] == tx.category);
+    if (categoryFound) {
+      dividedTransactions
+          .singleWhere((div) => div['category'] == tx.category)['transactions']
+          .add(tx);
+    } else {
       dividedTransactions.add({
         'category': tx.category,
         'transactions': [tx],
       });
-    } else {
-      dividedTransactions
-          .firstWhere((div) => div['category'] == tx.category)['transactions']
-          .add(tx);
     }
   });
   return dividedTransactions;

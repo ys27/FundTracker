@@ -139,7 +139,8 @@ class _PreferencesFormState extends State<PreferencesForm> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(getDate(_limitByDate ?? _prefs.limitByDate)),
+                              Text(getDateStr(
+                                  _limitByDate ?? _prefs.limitByDate)),
                               Icon(Icons.date_range),
                             ],
                           ),

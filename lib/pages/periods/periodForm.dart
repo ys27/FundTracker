@@ -69,7 +69,7 @@ class _PeriodFormState extends State<PeriodForm> {
                         children: <Widget>[
                           Text('Start Date:                         '),
                           Text(
-                            '${getDate(_startDate ?? widget.period.startDate)}',
+                            '${getDateStr(_startDate ?? widget.period.startDate)}',
                           ),
                           Icon(Icons.date_range),
                         ],
@@ -104,7 +104,16 @@ class _PeriodFormState extends State<PeriodForm> {
                           ? widget.period.durationValue.toString()
                           : '',
                       autovalidate: _durationValue.isNotEmpty,
-                      validator: checkIfInteger,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'Enter a value for the duration.';
+                        } else if (val.contains('.')) {
+                          return 'This value must be an integer.';
+                        } else if (int.parse(val) <= 0) {
+                          return 'This value must be greater than 0';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                         labelText: 'Duration',
                       ),

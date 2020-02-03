@@ -51,7 +51,7 @@ class _StatisticsState extends State<Statistics> {
       } else if (_prefs.isLimitPeriodsEnabled) {
         _visiblePrefs = '${_prefs.limitPeriods} periods';
       } else if (_prefs.isLimitByDateEnabled) {
-        _visiblePrefs = '~ ${getDate(_prefs.limitByDate)}';
+        _visiblePrefs = '~ ${getDateStr(_prefs.limitByDate)}';
       }
 
       if (_showAllTimeStats) {
@@ -64,7 +64,7 @@ class _StatisticsState extends State<Statistics> {
           _transactions = filterTransactionsByLimit(_allTransactions, _prefs);
         } else {
           _transactions =
-              filterTransactionsByPeriods(_dividedTransactions, _prefs)
+              filterPeriodsWithLimit(_dividedTransactions, _prefs.limitPeriods)
                   .map<List<Transaction>>((map) => map['transactions'])
                   .expand((x) => x)
                   .toList();
