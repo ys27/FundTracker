@@ -4,6 +4,7 @@ import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
 class AuthForm extends StatefulWidget {
@@ -29,6 +30,34 @@ class _AuthFormState extends State<AuthForm> {
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
 
+  Widget authTitleText(bool isRegister) {
+    return Text(
+      isRegister ? 'Register' : 'Sign In',
+      style: TextStyle(
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget authToggleText(bool isRegister) {
+    return Text(isRegister ? 'Back' : 'Register');
+  }
+
+  InputDecoration showPasswordToggle(String label, bool isVisible) {
+    return InputDecoration(
+      labelText: label,
+      suffix: ButtonTheme(
+        minWidth: 10.0,
+        child: FlatButton(
+          child: _obscurePassword
+              ? Icon(Icons.visibility_off)
+              : Icon(Icons.visibility),
+          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isRegister = widget.method == AuthMethod.Register;
@@ -36,11 +65,11 @@ class _AuthFormState extends State<AuthForm> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(isRegister ? 'Register' : 'Sign In'),
+        title: authTitleText(isRegister),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            child: Text(isRegister ? 'Back' : 'Register'),
+            child: authToggleText(isRegister),
             onPressed: () {
               widget.toggleView();
             },
@@ -50,10 +79,7 @@ class _AuthFormState extends State<AuthForm> {
       body: _isLoading
           ? Loader()
           : Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 50.0,
-              ),
+              padding: customPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -62,114 +88,50 @@ class _AuthFormState extends State<AuthForm> {
                     TextFormField(
                       initialValue: _email,
                       autovalidate: _email.isNotEmpty,
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'An email is required.';
-                        }
-                        if (!RegExp(
-                                r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                            .hasMatch(val)) {
-                          return 'Not a valid email address format.';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                      ),
+                      validator: emailValidator,
+                      decoration: InputDecoration(labelText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) {
-                        setState(() => _email = val);
-                      },
+                      onChanged: (val) => setState(() => _email = val),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: _password,
                       autovalidate: _password.isNotEmpty,
-                      validator: (val) {
-                        if (val.length < 6) {
-                          return 'The password must be 6 or more characters.';
-                        }
-                        return null;
-                      },
+                      validator: passwordValidator,
                       obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffix: ButtonTheme(
-                          minWidth: 10.0,
-                          child: FlatButton(
-                            child: _obscurePassword
-                                ? Icon(Icons.visibility_off)
-                                : Icon(Icons.visibility),
-                            onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
-                          ),
-                        ),
-                      ),
-                      onChanged: (val) {
-                        setState(() => _password = val);
-                      },
+                      decoration:
+                          showPasswordToggle('Password', _obscurePassword),
+                      onChanged: (val) => setState(() => _password = val),
                     ),
                     isRegister ? SizedBox(height: 20.0) : Container(),
                     isRegister
                         ? TextFormField(
                             autovalidate: _passwordConfirm.isNotEmpty,
-                            validator: (val) {
-                              if (val.isEmpty) {
-                                return 'This is a required field.';
-                              }
-                              if (val != _password) {
-                                return 'The passwords do not match.';
-                              }
-                              return null;
-                            },
+                            validator: (val) =>
+                                passwordConfirmValidator(val, _password),
                             obscureText: _obscurePasswordConfirm,
-                            decoration: InputDecoration(
-                              labelText: 'Confirm Password',
-                              suffix: ButtonTheme(
-                                minWidth: 10.0,
-                                child: FlatButton(
-                                  child: _obscurePasswordConfirm
-                                      ? Icon(Icons.visibility_off)
-                                      : Icon(Icons.visibility),
-                                  onPressed: () => setState(() =>
-                                      _obscurePasswordConfirm =
-                                          !_obscurePasswordConfirm),
-                                ),
-                              ),
+                            decoration: showPasswordToggle(
+                              'Confirm Password',
+                              _obscurePasswordConfirm,
                             ),
-                            onChanged: (val) {
-                              setState(() => _passwordConfirm = val);
-                            },
+                            onChanged: (val) =>
+                                setState(() => _passwordConfirm = val),
                           )
                         : Container(),
                     SizedBox(height: 20.0),
                     isRegister
                         ? TextFormField(
                             autovalidate: _fullname.isNotEmpty,
-                            validator: (val) {
-                              if (val.isEmpty) {
-                                return 'This is a required field.';
-                              }
-                              return null;
-                            },
+                            validator: fullNameValidator,
                             textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(
-                              labelText: 'Full Name',
-                            ),
-                            onChanged: (val) {
-                              setState(() => _fullname = val);
-                            },
+                            decoration: InputDecoration(labelText: 'Full Name'),
+                            onChanged: (val) => setState(() => _fullname = val),
                           )
                         : Container(),
                     SizedBox(height: 20.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
-                      child: Text(
-                        isRegister ? 'Register' : 'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: authTitleText(isRegister),
                       onPressed: () async {
                         setState(() => _error = '');
                         if (_formKey.currentState.validate()) {
@@ -177,7 +139,12 @@ class _AuthFormState extends State<AuthForm> {
                           dynamic _user = isRegister
                               ? await _auth.register(_email, _password)
                               : await _auth.signIn(_email, _password);
-                          if (isRegister) {
+                          if (_user is String) {
+                            setState(() {
+                              _isLoading = false;
+                              _error = _user;
+                            });
+                          } else if (isRegister) {
                             DatabaseWrapper(_user.uid).addUser(
                               User(
                                 uid: _user.uid,
@@ -185,16 +152,9 @@ class _AuthFormState extends State<AuthForm> {
                                 fullname: _fullname,
                               ),
                             );
-                          }
-                          if (_user is String) {
-                            setState(() {
-                              _isLoading = false;
-                              _error = _user;
-                            });
-                          } else if (isRegister) {
                             DatabaseWrapper(_user.uid).addDefaultCategories();
                             DatabaseWrapper(_user.uid).addDefaultPreferences();
-                          } else {
+                          } else if (!isRegister) {
                             SyncService(_user.uid).syncToLocal();
                           }
                         }
@@ -214,4 +174,40 @@ class _AuthFormState extends State<AuthForm> {
             ),
     );
   }
+}
+
+String emailValidator(val) {
+  if (val.isEmpty) {
+    return 'An email is required.';
+  }
+  if (!RegExp(
+          r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+      .hasMatch(val)) {
+    return 'Not a valid email address format.';
+  }
+  return null;
+}
+
+String passwordValidator(val) {
+  if (val.length < 6) {
+    return 'The password must be 6 or more characters.';
+  }
+  return null;
+}
+
+String passwordConfirmValidator(val, password) {
+  if (val.isEmpty) {
+    return 'This is a required field.';
+  }
+  if (val != password) {
+    return 'The passwords do not match.';
+  }
+  return null;
+}
+
+String fullNameValidator(val) {
+  if (val.isEmpty) {
+    return 'This is a required field.';
+  }
+  return null;
 }

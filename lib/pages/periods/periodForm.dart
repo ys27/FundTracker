@@ -5,6 +5,7 @@ import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -64,10 +65,7 @@ class _PeriodFormState extends State<PeriodForm> {
       body: isLoading
           ? Loader()
           : Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 50.0,
-              ),
+              padding: customPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(

@@ -6,6 +6,7 @@ import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -71,10 +72,7 @@ class _TransactionFormState extends State<TransactionForm> {
               _enabledCategories.isNotEmpty &&
               !isLoading)
           ? Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 20.0,
-                horizontal: 50.0,
-              ),
+              padding: customPadding,
               child: Form(
                 key: _formKey,
                 child: ListView(
