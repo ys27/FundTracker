@@ -21,17 +21,15 @@ class _PeriodsState extends State<Periods> {
   @override
   Widget build(BuildContext context) {
     final List<Period> _periods = Provider.of<List<Period>>(context);
-    Widget _bodyWidget = Loader();
+    Widget _body = Loader();
 
     if (_periods != null) {
       if (_periods.length == 0) {
-        _bodyWidget = Center(
-          child: Text(
-            'You haven\'t set any periods. Add one using the button below.',
-          ),
+        _body = Center(
+          child: Text('Add a period using the button below.'),
         );
       } else {
-        _bodyWidget = Container(
+        _body = Container(
           padding: bodyPadding,
           child: ListView.builder(
             itemCount: _periods.length,
@@ -44,7 +42,7 @@ class _PeriodsState extends State<Periods> {
     return Scaffold(
       drawer: MainDrawer(widget.user),
       appBar: AppBar(title: Text('Periods')),
-      body: _bodyWidget,
+      body: _body,
       floatingActionButton: addFloatingButton(
         context,
         PeriodForm(Period.empty()),

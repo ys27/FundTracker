@@ -48,7 +48,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 deleteIcon(
                   context,
                   'transaction',
-                  () => DatabaseWrapper(_user.uid)
+                  () async => await DatabaseWrapper(_user.uid)
                       .deleteTransactions([widget.tx]),
                   () => SyncService(_user.uid).syncTransactions(),
                 ),
@@ -254,9 +254,9 @@ class _TransactionFormState extends State<TransactionForm> {
                           );
                           setState(() => isLoading = true);
                           isEditMode
-                              ? DatabaseWrapper(_user.uid)
+                              ? await DatabaseWrapper(_user.uid)
                                   .updateTransactions([tx])
-                              : DatabaseWrapper(_user.uid)
+                              : await DatabaseWrapper(_user.uid)
                                   .addTransactions([tx]);
                           SyncService(_user.uid).syncTransactions();
                           Navigator.pop(context);

@@ -68,7 +68,7 @@ class LocalDBService {
     transactions.forEach((tx) {
       batch.insert('transactions', tx.toMap());
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future updateTransactions(List<Transaction> transactions) async {
@@ -82,7 +82,7 @@ class LocalDBService {
         whereArgs: [tx.tid],
       );
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future deleteTransactions(List<Transaction> transactions) async {
@@ -91,7 +91,7 @@ class LocalDBService {
     transactions.forEach((tx) {
       batch.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future deleteAllTransactions(String uid) async {
@@ -135,7 +135,7 @@ class LocalDBService {
     categories.forEach((category) {
       batch.insert('categories', category.toMap());
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future updateCategories(List<Category> categories) async {
@@ -149,7 +149,7 @@ class LocalDBService {
         whereArgs: [category.cid],
       );
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future deleteAllCategories(String uid) async {
@@ -211,7 +211,7 @@ class LocalDBService {
     periods.forEach((period) {
       batch.insert('periods', period.toMap());
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future updatePeriods(List<Period> periods) async {
@@ -225,7 +225,7 @@ class LocalDBService {
         whereArgs: [period.pid],
       );
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future deletePeriods(List<Period> periods) async {
@@ -238,7 +238,7 @@ class LocalDBService {
         whereArgs: [period.pid],
       );
     });
-    batch.commit();
+    await batch.commit();
   }
 
   Future deleteAllPeriods(String uid) async {

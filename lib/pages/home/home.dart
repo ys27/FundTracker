@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
-        'widget': txPeriodPrefsProvider(TransactionsList()),
+        'widget': provideTxPeriodPrefs(TransactionsList()),
         'addButton': addFloatingButton(
           context,
           StreamProvider<List<Category>>(
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
       },
       {
         'name': 'Statistics',
-        'widget': txPeriodPrefsProvider(Statistics()),
+        'widget': provideTxPeriodPrefs(Statistics()),
       }
     ];
 
@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  MultiProvider txPeriodPrefsProvider(Widget page) {
+  MultiProvider provideTxPeriodPrefs(Widget page) {
     return MultiProvider(
       providers: [
         StreamProvider<List<Transaction>>(

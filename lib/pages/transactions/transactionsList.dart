@@ -24,51 +24,43 @@ class _TransactionsListState extends State<TransactionsList> {
 
     List<Map<String, dynamic>> _dividedTransactions = [];
 
-    if (_transactions != null && _currentPeriod != null && _prefs != null) {
-      if (_transactions.length > 0) {
-        List<Transaction> _filteredTransactions =
-            filterTransactionsByLimit(_transactions, _prefs);
-        _dividedTransactions = divideTransactionsIntoPeriods(
-            _filteredTransactions, _currentPeriod);
-        if (_prefs.isLimitPeriodsEnabled) {
-          _dividedTransactions =
-              filterTransactionsByPeriods(_dividedTransactions, _prefs);
-        }
-        _dividedTransactions = _dividedTransactions
-            .where((period) => period['transactions'].length > 0)
-            .toList();
+    if (_transactions != null &&
+        _transactions.length > 0 &&
+        _currentPeriod != null &&
+        _prefs != null) {
+      List<Transaction> _filteredTransactions =
+          filterTransactionsByLimit(_transactions, _prefs);
+      _dividedTransactions =
+          divideTransactionsIntoPeriods(_filteredTransactions, _currentPeriod);
+      if (_prefs.isLimitPeriodsEnabled) {
+        _dividedTransactions =
+            filterTransactionsByPeriods(_dividedTransactions, _prefs);
       }
+      // Remove periods without any txs
+      _dividedTransactions = _dividedTransactions
+          .where((period) => period['transactions'].length > 0)
+          .toList();
     }
 
-    if (_dividedTransactions == null) {
+    if (_transactions == null) {
       return Loader();
-    } else if (_dividedTransactions.length == 0) {
+    } else if (_transactions.length == 0) {
       return Center(
-        child:
-            Text('No transactions available. Add one using the button below.'),
+        child: Text('Add a transaction using the button below.'),
       );
     } else {
       return ListView.builder(
         itemBuilder: (context, index) {
-          Map<String, dynamic> periodMap = _dividedTransactions[index];
+          Map<String, dynamic> period = _dividedTransactions[index];
           return StickyHeader(
-            header: Container(
-              height: 50.0,
-              color: Colors.grey,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                _currentPeriod.name == 'Default Monthly'
-                    ? '${Months[periodMap['startDate'].month.toString()]} ${periodMap['startDate'].year}'
-                    : '${getDate(periodMap['startDate'])} - ${getDate(periodMap['endDate'])}',
-                style: const TextStyle(color: Colors.white),
-              ),
+            header: transactionsPeriodHeader(
+              _currentPeriod.name == 'Default Monthly',
+              period['startDate'],
+              period['endDate'],
             ),
             content: Column(
-              children: periodMap['transactions']
-                  .map<Widget>(
-                    (tx) => TransactionTile(transaction: tx),
-                  )
+              children: period['transactions']
+                  .map<Widget>((tx) => TransactionTile(transaction: tx))
                   .toList(),
             ),
           );
@@ -76,5 +68,21 @@ class _TransactionsListState extends State<TransactionsList> {
         itemCount: _dividedTransactions.length,
       );
     }
+  }
+
+  Widget transactionsPeriodHeader(
+      bool isDefault, DateTime startDate, DateTime endDate) {
+    return Container(
+      height: 50.0,
+      color: Colors.grey,
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        isDefault
+            ? '${Months[startDate.month.toString()]} ${startDate.year}'
+            : '${getDate(startDate)} - ${getDate(endDate)}',
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
   }
 }
