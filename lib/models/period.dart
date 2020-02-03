@@ -20,9 +20,10 @@ class Period {
   });
 
   Period.empty() {
+    DateTime now = DateTime.now();
     pid = null;
     name = null;
-    startDate = DateTime.now();
+    startDate = DateTime(now.year, now.month, now.day);
     durationValue = null;
     durationUnit = DurationUnit.Weeks;
     isDefault = false;

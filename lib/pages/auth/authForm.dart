@@ -30,7 +30,7 @@ class _AuthFormState extends State<AuthForm> {
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
 
-  Widget authTitleText(bool isRegister) {
+  Widget title(bool isRegister) {
     return Text(
       isRegister ? 'Register' : 'Sign In',
       style: TextStyle(
@@ -65,7 +65,7 @@ class _AuthFormState extends State<AuthForm> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: authTitleText(isRegister),
+        title: title(isRegister),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
@@ -133,7 +133,7 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(height: 20.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
-                      child: authTitleText(isRegister),
+                      child: title(isRegister),
                       onPressed: () async {
                         setState(() => _error = '');
                         if (_formKey.currentState.validate()) {

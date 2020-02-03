@@ -45,26 +45,13 @@ class _TransactionFormState extends State<TransactionForm> {
         title: Text(isEditMode ? 'Edit Transaction' : 'Add Transaction'),
         actions: isEditMode
             ? <Widget>[
-                FlatButton(
-                  textColor: Colors.white,
-                  child: Icon(Icons.delete),
-                  onPressed: () async {
-                    bool hasBeenConfirmed = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Alert('This transaction will be deleted.');
-                          },
-                        ) ??
-                        false;
-                    if (hasBeenConfirmed) {
-                      setState(() => isLoading = true);
-                      DatabaseWrapper(_user.uid)
-                          .deleteTransactions([widget.tx]);
-                      SyncService(_user.uid).syncTransactions();
-                      Navigator.pop(context);
-                    }
-                  },
-                )
+                deleteIcon(
+                  context,
+                  'transaction',
+                  () => DatabaseWrapper(_user.uid)
+                      .deleteTransactions([widget.tx]),
+                  () => SyncService(_user.uid).syncTransactions(),
+                ),
               ]
             : null,
       ),
@@ -133,16 +120,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         ],
                       ),
                       onPressed: () async {
-                        DateTime date = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now().subtract(
-                            Duration(days: 365),
-                          ),
-                          lastDate: DateTime.now().add(
-                            Duration(days: 365),
-                          ),
-                        );
+                        DateTime date = await openDatePicker(context);
                         if (date != null) {
                           setState(() => _date = date);
                         }

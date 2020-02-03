@@ -5,7 +5,7 @@ import 'package:fund_tracker/pages/periods/periodForm.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
-import 'package:fund_tracker/shared/mainDrawer.dart';
+import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
 class Periods extends StatefulWidget {
@@ -21,58 +21,50 @@ class _PeriodsState extends State<Periods> {
   @override
   Widget build(BuildContext context) {
     final List<Period> _periods = Provider.of<List<Period>>(context);
-    Widget bodyWidget;
+    Widget _bodyWidget = Loader();
 
-    if (_periods == null) {
-      bodyWidget = Loader();
-    } else if (_periods.length == 0) {
-      bodyWidget = Center(
-        child: Text(
-          'You haven\'t set any periods. Add one using the button below.',
-        ),
-      );
-    } else {
-      bodyWidget = Container(
-        padding: bodyPadding,
-        child: ListView.builder(
-          itemCount: _periods.length,
-          itemBuilder: (context, index) {
-            Period period = _periods[index];
-            return Card(
-              color: period.isDefault ? Colors.blue[50] : null,
-              child: ListTile(
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (context) {
-                    return PeriodForm(period);
-                  },
-                ),
-                title: Text(period.name),
-                subtitle: Text(
-                    'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}'),
-                trailing: Text('Start Date: ${getDate(period.startDate)}'),
-              ),
-            );
-          },
-        ),
-      );
+    if (_periods != null) {
+      if (_periods.length == 0) {
+        _bodyWidget = Center(
+          child: Text(
+            'You haven\'t set any periods. Add one using the button below.',
+          ),
+        );
+      } else {
+        _bodyWidget = Container(
+          padding: bodyPadding,
+          child: ListView.builder(
+            itemCount: _periods.length,
+            itemBuilder: (context, index) => periodCard(_periods[index]),
+          ),
+        );
+      }
     }
 
     return Scaffold(
       drawer: MainDrawer(widget.user),
-      appBar: AppBar(
-        title: Text('Periods'),
+      appBar: AppBar(title: Text('Periods')),
+      body: _bodyWidget,
+      floatingActionButton: addFloatingButton(
+        context,
+        PeriodForm(Period.empty()),
       ),
-      body: bodyWidget,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () => showDialog(
+    );
+  }
+
+  Widget periodCard(Period period) {
+    return Card(
+      color: period.isDefault ? Colors.blue[50] : null,
+      child: ListTile(
+        onTap: () => showDialog(
           context: context,
-          builder: (context) {
-            return PeriodForm(Period.empty());
-          },
+          builder: (context) => PeriodForm(period),
         ),
-        child: Icon(Icons.add),
+        title: Text(period.name),
+        subtitle: Text(
+          'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}',
+        ),
+        trailing: Text('Start Date: ${getDate(period.startDate)}'),
       ),
     );
   }

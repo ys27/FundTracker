@@ -29,7 +29,7 @@ class _CategoricalState extends State<Categorical> {
     }
 
     return Column(
-      children: <Widget>[StatTitle(title: 'Categories')] +
+      children: <Widget>[statTitle(title: 'Categories')] +
           ((widget.transactions.length > 0)
               ? _individualPercentages
                   .map((categorical) => [

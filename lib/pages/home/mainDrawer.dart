@@ -11,10 +11,9 @@ import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
-
-import 'library.dart';
 
 class MainDrawer extends StatefulWidget {
   final FirebaseUser user;

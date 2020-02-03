@@ -33,7 +33,7 @@ class _TopExpensesState extends State<TopExpenses> {
     }
 
     return Column(
-      children: <Widget>[StatTitle(title: 'Top Expenses')] +
+      children: <Widget>[statTitle(title: 'Top Expenses')] +
           ((widget.transactions.length > 0)
               ? _sortedTransactions
                       .sublist(0, min(_showCount, _sortedTransactions.length))

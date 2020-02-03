@@ -30,34 +30,26 @@ class _PeriodFormState extends State<PeriodForm> {
 
   bool isLoading = false;
 
+  Widget title(bool isEditMode) {
+    return Text(isEditMode ? 'Edit Period' : 'Add Period');
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    final isEditMode = widget.period.pid != null;
+    final isEditMode = !widget.period.equalTo(Period.empty());
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Edit Period' : 'Add Period'),
+        title: title(isEditMode),
         actions: isEditMode
             ? <Widget>[
-                FlatButton(
-                  textColor: Colors.white,
-                  child: Icon(Icons.delete),
-                  onPressed: () async {
-                    bool hasBeenConfirmed = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Alert('This custom period will be deleted.');
-                          },
-                        ) ??
-                        false;
-                    if (hasBeenConfirmed) {
-                      setState(() => isLoading = true);
-                      DatabaseWrapper(_user.uid).deletePeriods([widget.period]);
-                      SyncService(_user.uid).syncPeriods();
-                      Navigator.pop(context);
-                    }
-                  },
+                deleteIcon(
+                  context,
+                  'custom period',
+                  () =>
+                      DatabaseWrapper(_user.uid).deletePeriods([widget.period]),
+                  () => SyncService(_user.uid).syncPeriods(),
                 )
               ]
             : null,
@@ -77,21 +69,13 @@ class _PeriodFormState extends State<PeriodForm> {
                         children: <Widget>[
                           Text('Start Date:                         '),
                           Text(
-                              '${getDate(_startDate ?? widget.period.startDate)}'),
+                            '${getDate(_startDate ?? widget.period.startDate)}',
+                          ),
                           Icon(Icons.date_range),
                         ],
                       ),
                       onPressed: () async {
-                        DateTime startDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now().subtract(
-                            Duration(days: 365),
-                          ),
-                          lastDate: DateTime.now().add(
-                            Duration(days: 365),
-                          ),
-                        );
+                        DateTime startDate = await openDatePicker(context);
                         if (startDate != null) {
                           setState(() => _startDate = startDate);
                         }

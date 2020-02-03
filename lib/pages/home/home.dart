@@ -8,8 +8,8 @@ import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/mainDrawer.dart';
+import 'package:fund_tracker/pages/home/mainDrawer.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -30,7 +30,13 @@ class _HomeState extends State<Home> {
       {
         'name': 'Records',
         'widget': txPeriodPrefsProvider(TransactionsList()),
-        'addButton': addTransactionButton(),
+        'addButton': addFloatingButton(
+          context,
+          StreamProvider<List<Category>>(
+            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
+            child: TransactionForm(Transaction.empty()),
+          ),
+        ),
       },
       {
         'name': 'Statistics',
@@ -64,22 +70,6 @@ class _HomeState extends State<Home> {
         ),
       ],
       child: page,
-    );
-  }
-
-  Widget addTransactionButton() {
-    return FloatingActionButton(
-      backgroundColor: Theme.of(context).primaryColor,
-      onPressed: () {
-        openPage(
-          context,
-          StreamProvider<List<Category>>(
-            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
-            child: TransactionForm(Transaction.empty()),
-          ),
-        );
-      },
-      child: Icon(Icons.add),
     );
   }
 
