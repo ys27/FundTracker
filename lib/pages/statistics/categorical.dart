@@ -5,23 +5,19 @@ import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
-class Categorical extends StatefulWidget {
+class Categorical extends StatelessWidget {
   final List<Transaction> transactions;
 
   Categorical(this.transactions);
 
   @override
-  _CategoricalState createState() => _CategoricalState();
-}
-
-class _CategoricalState extends State<Categorical> {
-  List<Map<String, dynamic>> _individualPercentages;
-  @override
   Widget build(BuildContext context) {
-    if (widget.transactions.length > 0) {
+    List<Map<String, dynamic>> _individualPercentages;
+
+    if (transactions.length > 0) {
       _individualPercentages = getIndividualPercentages(
         appendTotalCategorialAmounts(
-          divideTransactionsIntoCategories(widget.transactions),
+          divideTransactionsIntoCategories(transactions),
         ),
       );
       _individualPercentages
@@ -30,7 +26,7 @@ class _CategoricalState extends State<Categorical> {
 
     return Column(
       children: <Widget>[statTitle(title: 'Categories')] +
-          ((widget.transactions.length > 0)
+          ((transactions.length > 0)
               ? _individualPercentages
                   .map((categorical) => [
                         SizedBox(height: 10.0),

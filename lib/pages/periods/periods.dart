@@ -8,16 +8,11 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
-class Periods extends StatefulWidget {
+class Periods extends StatelessWidget {
   final FirebaseUser user;
 
   Periods(this.user);
 
-  @override
-  _PeriodsState createState() => _PeriodsState();
-}
-
-class _PeriodsState extends State<Periods> {
   @override
   Widget build(BuildContext context) {
     final List<Period> _periods = Provider.of<List<Period>>(context);
@@ -33,14 +28,15 @@ class _PeriodsState extends State<Periods> {
           padding: bodyPadding,
           child: ListView.builder(
             itemCount: _periods.length,
-            itemBuilder: (context, index) => periodCard(_periods[index]),
+            itemBuilder: (context, index) =>
+                periodCard(context, _periods[index]),
           ),
         );
       }
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user),
+      drawer: MainDrawer(user),
       appBar: AppBar(title: Text('Periods')),
       body: _body,
       floatingActionButton: addFloatingButton(
@@ -50,7 +46,7 @@ class _PeriodsState extends State<Periods> {
     );
   }
 
-  Widget periodCard(Period period) {
+  Widget periodCard(BuildContext context, Period period) {
     return Card(
       color: period.isDefault ? Colors.blue[50] : null,
       child: ListTile(

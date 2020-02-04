@@ -9,12 +9,7 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
-class TransactionsList extends StatefulWidget {
-  @override
-  _TransactionsListState createState() => _TransactionsListState();
-}
-
-class _TransactionsListState extends State<TransactionsList> {
+class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Transaction> _transactions =

@@ -4,7 +4,7 @@ import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
-class Balance extends StatefulWidget {
+class Balance extends StatelessWidget {
   final List<Transaction> transactions;
   final List<Transaction> prevTransactions;
   final bool showPeriodStats;
@@ -14,29 +14,24 @@ class Balance extends StatefulWidget {
       this.daysLeft);
 
   @override
-  _BalanceState createState() => _BalanceState();
-}
-
-class _BalanceState extends State<Balance> {
-  @override
   Widget build(BuildContext context) {
     final Map<String, double> balancesList = {
       'income': filterAndGetTotalAmounts(
-        widget.transactions,
+        transactions,
         filterOnlyExpenses: false,
       ),
       'expenses': filterAndGetTotalAmounts(
-        widget.transactions,
+        transactions,
         filterOnlyExpenses: true,
       ),
     };
     final Map<String, double> prevBalancesList = {
       'income': filterAndGetTotalAmounts(
-        widget.prevTransactions,
+        prevTransactions,
         filterOnlyExpenses: false,
       ),
       'expenses': filterAndGetTotalAmounts(
-        widget.prevTransactions,
+        prevTransactions,
         filterOnlyExpenses: true,
       ),
     };
@@ -52,7 +47,7 @@ class _BalanceState extends State<Balance> {
         statTitle(
           title: 'Balance',
           alignment: MainAxisAlignment.spaceBetween,
-          appendWidget: widget.showPeriodStats
+          appendWidget: showPeriodStats
               ? Text(
                   getPrevStr(balance, prevBalance),
                   style: TextStyle(fontStyle: FontStyle.italic),
@@ -65,13 +60,13 @@ class _BalanceState extends State<Balance> {
             style: TextStyle(fontSize: 25.0),
           ),
         ),
-        widget.showPeriodStats
+        showPeriodStats
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('${widget.daysLeft} days remaining'),
+                  Text('$daysLeft days remaining'),
                   Text(
-                    '\$${(balance / widget.daysLeft).toStringAsFixed(2)} / day left',
+                    '\$${(balance / daysLeft).toStringAsFixed(2)} / day left',
                   ),
                 ],
               )
@@ -80,7 +75,7 @@ class _BalanceState extends State<Balance> {
         BarTile(
           title: 'Income',
           amount: balancesList['income'],
-          midLine: widget.showPeriodStats
+          midLine: showPeriodStats
               ? getPrevStr(balancesList['income'], prevBalancesList['income'])
               : null,
           percentage: relativePercentages['income'],
@@ -89,7 +84,7 @@ class _BalanceState extends State<Balance> {
         BarTile(
           title: 'Expenses',
           amount: balancesList['expenses'],
-          midLine: widget.showPeriodStats
+          midLine: showPeriodStats
               ? getPrevStr(
                   balancesList['expenses'],
                   prevBalancesList['expenses'],

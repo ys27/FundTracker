@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BarTile extends StatefulWidget {
+class BarTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final String midLine;
@@ -18,11 +18,6 @@ class BarTile extends StatefulWidget {
   });
 
   @override
-  _BarTileState createState() => _BarTileState();
-}
-
-class _BarTileState extends State<BarTile> {
-  @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -30,26 +25,26 @@ class _BarTileState extends State<BarTile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              widget.title,
+              title,
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            widget.midLine != null
+            midLine != null
                 ? Text(
-                    widget.midLine,
+                    midLine,
                     style: TextStyle(fontStyle: FontStyle.italic),
                   )
                 : Container(),
-            Text('\$${widget.amount.toStringAsFixed(2)}'),
+            Text('\$${amount.toStringAsFixed(2)}'),
           ],
         ),
-        widget.subtitle != null
+        subtitle != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text(widget.subtitle),
+                  Text(subtitle),
                 ],
               )
             : Container(),
@@ -58,17 +53,16 @@ class _BarTileState extends State<BarTile> {
           children: <Widget>[
             Container(
               height: 25.0,
-              width:
-                  widget.percentage * (MediaQuery.of(context).size.width - 20),
+              width: percentage * (MediaQuery.of(context).size.width - 20),
               decoration: BoxDecoration(
-                color: widget.color,
+                color: color,
                 borderRadius: new BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
             // Expanded(
             //   child: Container(
             //     height: 25.0,
-            //     // width: (1 - widget.percentage) *
+            //     // width: (1 - percentage) *
             //     //     (MediaQuery.of(context).size.width - 20),
             //   ),
             // ),
