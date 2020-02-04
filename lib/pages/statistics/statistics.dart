@@ -7,9 +7,14 @@ import 'package:fund_tracker/pages/statistics/categorical.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
-import 'package:provider/provider.dart';
 
 class Statistics extends StatefulWidget {
+  final List<Transaction> allTransactions;
+  final Period currentPeriod;
+  final Preferences prefs;
+
+  Statistics(this.allTransactions, this.currentPeriod, this.prefs);
+
   @override
   _StatisticsState createState() => _StatisticsState();
 }
@@ -34,40 +39,37 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Transaction> _allTransactions =
-        Provider.of<List<Transaction>>(context);
-    final Period _currentPeriod = Provider.of<Period>(context);
-    final Preferences _prefs = Provider.of<Preferences>(context);
+    if (widget.allTransactions != null &&
+        widget.currentPeriod != null &&
+        widget.prefs != null &&
+        widget.allTransactions.length > 0) {
+      _dividedTransactions = divideTransactionsIntoPeriods(
+          widget.allTransactions, widget.currentPeriod);
 
-    if (_allTransactions != null &&
-        _currentPeriod != null &&
-        _prefs != null &&
-        _allTransactions.length > 0) {
-      _dividedTransactions =
-          divideTransactionsIntoPeriods(_allTransactions, _currentPeriod);
-
-      if (_prefs.isLimitDaysEnabled) {
-        _visiblePrefs = '${_prefs.limitDays} days';
-      } else if (_prefs.isLimitPeriodsEnabled) {
-        _visiblePrefs = '${_prefs.limitPeriods} periods';
-      } else if (_prefs.isLimitByDateEnabled) {
-        _visiblePrefs = '~ ${getDateStr(_prefs.limitByDate)}';
+      if (widget.prefs.isLimitDaysEnabled) {
+        _visiblePrefs = '${widget.prefs.limitDays} days';
+      } else if (widget.prefs.isLimitPeriodsEnabled) {
+        _visiblePrefs = '${widget.prefs.limitPeriods} periods';
+      } else if (widget.prefs.isLimitByDateEnabled) {
+        _visiblePrefs = '~ ${getDateStr(widget.prefs.limitByDate)}';
       }
 
       if (_showAllTimeStats) {
-        _transactions = _allTransactions;
+        _transactions = widget.allTransactions;
       }
 
       if (_showPreferredStats) {
-        if (_allTransactions.length > 0 && _prefs.isLimitDaysEnabled ||
-            _prefs.isLimitByDateEnabled) {
-          _transactions = filterTransactionsByLimit(_allTransactions, _prefs);
-        } else {
+        if (widget.allTransactions.length > 0 &&
+                widget.prefs.isLimitDaysEnabled ||
+            widget.prefs.isLimitByDateEnabled) {
           _transactions =
-              filterPeriodsWithLimit(_dividedTransactions, _prefs.limitPeriods)
-                  .map<List<Transaction>>((map) => map['transactions'])
-                  .expand((x) => x)
-                  .toList();
+              filterTransactionsByLimit(widget.allTransactions, widget.prefs);
+        } else {
+          _transactions = filterPeriodsWithLimit(
+                  _dividedTransactions, widget.prefs.limitPeriods)
+              .map<List<Transaction>>((map) => map['transactions'])
+              .expand((x) => x)
+              .toList();
         }
       }
 

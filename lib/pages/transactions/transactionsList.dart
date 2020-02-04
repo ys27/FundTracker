@@ -6,29 +6,30 @@ import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 class TransactionsList extends StatelessWidget {
+  final List<Transaction> transactions;
+  final Period currentPeriod;
+  final Preferences prefs;
+
+  TransactionsList(this.transactions, this.currentPeriod, this.prefs);
+
   @override
   Widget build(BuildContext context) {
-    final List<Transaction> _transactions =
-        Provider.of<List<Transaction>>(context);
-    final Period _currentPeriod = Provider.of<Period>(context);
-    final Preferences _prefs = Provider.of<Preferences>(context);
-
-    if (_transactions == null || _currentPeriod == null || _prefs == null) {
+    if (transactions == null) {
       return Loader();
-    } else if (_transactions.length == 0) {
+    }
+    if (transactions.length == 0) {
       return Center(
         child: Text('Add a transaction using the button below.'),
       );
     } else {
       List<Map<String, dynamic>> _dividedTransactions =
           filterByLimitAndDivideIntoPeriods(
-        _transactions,
-        _prefs,
-        _currentPeriod,
+        transactions,
+        prefs,
+        currentPeriod,
       );
 
       return ListView.builder(
@@ -36,7 +37,7 @@ class TransactionsList extends StatelessWidget {
           Map<String, dynamic> period = _dividedTransactions[index];
           return StickyHeader(
             header: transactionsPeriodHeader(
-              _currentPeriod.name == 'Default Monthly',
+              currentPeriod.name == 'Default Monthly',
               period['startDate'],
               period['endDate'],
             ),

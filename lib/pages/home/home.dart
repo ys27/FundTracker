@@ -13,63 +13,49 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  final FirebaseUser user;
-
-  Home(this.user);
-
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+  List<Transaction> _transactions;
+  Period _currentPeriod;
+  Preferences _prefs;
 
   @override
   Widget build(BuildContext context) {
+    FirebaseUser _user = Provider.of<FirebaseUser>(context);
+    getTransactions(_user.uid);
+    getDefaultPeriod(_user.uid);
+    getPreferences(_user.uid);
+
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
-        'widget': provideTxPeriodPrefs(TransactionsList()),
+        'widget': TransactionsList(_transactions, _currentPeriod, _prefs),
         'addButton': addFloatingButton(
           context,
           StreamProvider<List<Category>>(
-            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
+            create: (_) => DatabaseWrapper(_user.uid).getCategories(),
             child: TransactionForm(Transaction.empty()),
           ),
         ),
       },
       {
         'name': 'Statistics',
-        'widget': provideTxPeriodPrefs(Statistics()),
+        'widget': Statistics(_transactions, _currentPeriod, _prefs),
       }
     ];
 
     return Scaffold(
-      drawer: MainDrawer(widget.user),
+      drawer: MainDrawer(_user),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
       ),
       body: _pages[_selectedIndex]['widget'],
       floatingActionButton: _pages[_selectedIndex]['addButton'],
       bottomNavigationBar: transactionsAndStatistics(),
-    );
-  }
-
-  MultiProvider provideTxPeriodPrefs(Widget page) {
-    return MultiProvider(
-      providers: [
-        StreamProvider<List<Transaction>>(
-          create: (_) => DatabaseWrapper(widget.user.uid).getTransactions(),
-        ),
-        StreamProvider<Period>(
-          create: (_) => DatabaseWrapper(widget.user.uid).getDefaultPeriod(),
-          catchError: (_, __) => Period.monthly(),
-        ),
-        StreamProvider<Preferences>(
-          create: (_) => DatabaseWrapper(widget.user.uid).getPreferences(),
-        ),
-      ],
-      child: page,
     );
   }
 
@@ -90,5 +76,26 @@ class _HomeState extends State<Home> {
         setState(() => _selectedIndex = index);
       },
     );
+  }
+
+  getTransactions(String uid) {
+    DatabaseWrapper(uid)
+        .getTransactions()
+        .first
+        .then((transactions) => setState(() => _transactions = transactions));
+  }
+
+  getDefaultPeriod(String uid) {
+    DatabaseWrapper(uid)
+        .getDefaultPeriod()
+        .first
+        .then((period) => setState(() => _currentPeriod = period));
+  }
+
+  getPreferences(String uid) {
+    DatabaseWrapper(uid)
+        .getPreferences()
+        .first
+        .then((prefs) => setState(() => _prefs = prefs));
   }
 }
