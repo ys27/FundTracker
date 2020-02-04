@@ -201,16 +201,11 @@ List<Map<String, dynamic>> sublist(
   return list.sublist(start, min(end, list.length));
 }
 
-List<Map<String, dynamic>> findCurrentAndPreviousPeriods(
+Map<String, dynamic> findCurrentPeriod(
   List<Map<String, dynamic>> periods,
 ) {
   int currentPeriodIndex = getCurrentPeriodIndex(periods);
-
-  if (currentPeriodIndex == -1) {
-    return [];
-  } else {
-    return sublist(periods, currentPeriodIndex, currentPeriodIndex + 2);
-  }
+  return currentPeriodIndex == -1 ? {} : periods[currentPeriodIndex];
 }
 
 int getCurrentPeriodIndex(List<Map<String, dynamic>> list) {

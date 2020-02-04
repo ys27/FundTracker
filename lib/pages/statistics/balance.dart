@@ -6,12 +6,10 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class Balance extends StatelessWidget {
   final List<Transaction> transactions;
-  final List<Transaction> prevTransactions;
   final bool showPeriodStats;
   final int daysLeft;
 
-  Balance(this.transactions, this.prevTransactions, this.showPeriodStats,
-      this.daysLeft);
+  Balance(this.transactions, this.showPeriodStats, this.daysLeft);
 
   @override
   Widget build(BuildContext context) {

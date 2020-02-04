@@ -7,6 +7,7 @@ import 'package:fund_tracker/pages/statistics/categorical.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
+import 'package:fund_tracker/shared/widgets.dart';
 
 class Statistics extends StatefulWidget {
   final List<Transaction> allTransactions;
@@ -30,12 +31,13 @@ class _StatisticsState extends State<Statistics> {
     child: Text('No statistics available. Requires at least one transaction.'),
   );
 
-  Widget _limitCustomizer = SizedBox(height: 20.0);
+  Widget _limitCustomizer;
 
   List<Transaction> _transactions;
-  List<Transaction> _prevTransactions = [];
   List<Map<String, dynamic>> _dividedTransactions = [];
   int _daysLeft;
+  DateTime _customLimitByDate;
+  bool _showStatistics = true;
 
   ScrollController _scrollController = ScrollController();
 
@@ -50,22 +52,32 @@ class _StatisticsState extends State<Statistics> {
 
       if (widget.prefs.isLimitDaysEnabled) {
         _visiblePrefs = '${widget.prefs.limitDays} days';
+      } else if (widget.prefs.isLimitByDateEnabled) {
+        _visiblePrefs = _customLimitByDate != null
+            ? '~ ${getDateStr(_customLimitByDate)}'
+            : '~ ${getDateStr(widget.prefs.limitByDate)}';
       } else if (widget.prefs.isLimitPeriodsEnabled) {
         _visiblePrefs = '${widget.prefs.limitPeriods} periods';
-      } else if (widget.prefs.isLimitByDateEnabled) {
-        _visiblePrefs = '~ ${getDateStr(widget.prefs.limitByDate)}';
       }
 
       if (_showAllTimeStats) {
         _transactions = widget.allTransactions;
+        _limitCustomizer = SizedBox(height: 48.0);
       }
 
       if (_showPreferredStats) {
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
             widget.prefs.isLimitByDateEnabled) {
+          Preferences customPrefs;
+          if (_customLimitByDate != null) {
+            customPrefs =
+                widget.prefs.setPreference('limitByDate', _customLimitByDate);
+          } else {
+            customPrefs = widget.prefs;
+          }
           _transactions =
-              filterTransactionsByLimit(widget.allTransactions, widget.prefs);
+              filterTransactionsByLimit(widget.allTransactions, customPrefs);
         } else {
           _transactions = filterPeriodsWithLimit(
                   _dividedTransactions, widget.prefs.limitPeriods)
@@ -73,30 +85,39 @@ class _StatisticsState extends State<Statistics> {
               .expand((x) => x)
               .toList();
         }
-        // _limitCustomizer = openDatePicker(context);
+        _limitCustomizer = datePicker(
+          context,
+          getDateStr(widget.prefs.limitByDate),
+          '',
+          (date) => _customLimitByDate = getDateNotTime(date),
+        );
+        if (_customLimitByDate != null &&
+            _customLimitByDate.isAfter(widget.allTransactions.first.date)) {
+          _showStatistics = false;
+        } else {
+          _showStatistics = true;
+        }
       }
 
       if (_showPeriodStats) {
-        List<Map<String, dynamic>> _periodFilteredTransactions =
-            findCurrentAndPreviousPeriods(_dividedTransactions);
-        _daysLeft = _periodFilteredTransactions.length > 0
-            ? _periodFilteredTransactions[0]['endDate']
-                .difference(DateTime.now())
-                .inDays
-            : 0;
-        _transactions = _periodFilteredTransactions.length > 0
-            ? _periodFilteredTransactions[0]['transactions']
-            : [];
-        _prevTransactions = _periodFilteredTransactions.length > 1
-            ? _periodFilteredTransactions[1]['transactions']
-            : [];
+        Map<String, dynamic> _currentPeriodTransactions =
+            findCurrentPeriod(_dividedTransactions);
+        if (_currentPeriodTransactions.containsKey('transactions')) {
+          _daysLeft = _currentPeriodTransactions['endDate']
+              .difference(DateTime.now())
+              .inDays;
+          _transactions = _currentPeriodTransactions['transactions'];
+        } else {
+          _daysLeft = 0;
+          _transactions = [];
+        }
+        _limitCustomizer = Text('dropdown');
       }
 
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
-          _limitCustomizer,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
@@ -166,22 +187,33 @@ class _StatisticsState extends State<Statistics> {
               ),
             ],
           ),
-          SizedBox(height: 20.0),
-          Balance(
-              _transactions, _prevTransactions, _showPeriodStats, _daysLeft),
-          SizedBox(height: 20.0),
-          Categorical(_transactions.where((tx) => tx.isExpense).toList()),
-          SizedBox(height: 20.0),
-          TopExpenses(
-            _transactions.where((tx) => tx.isExpense).toList(),
-            _transactions
-                .where((tx) => !tx.isExpense)
-                .fold(0.0, (a, b) => a + b.amount),
-            _transactions
-                .where((tx) => tx.isExpense)
-                .fold(0.0, (a, b) => a + b.amount),
-            _scrollController,
-          ),
+          _limitCustomizer,
+          _showStatistics
+              ? Balance(
+                  _transactions,
+                  _showPeriodStats,
+                  _daysLeft,
+                )
+              : Center(
+                  child: Text('No transactions available after this date.'),
+                ),
+          _showStatistics ? SizedBox(height: 20.0) : Container(),
+          _showStatistics
+              ? Categorical(_transactions.where((tx) => tx.isExpense).toList())
+              : Container(),
+          _showStatistics ? SizedBox(height: 20.0) : Container(),
+          _showStatistics
+              ? TopExpenses(
+                  _transactions.where((tx) => tx.isExpense).toList(),
+                  _transactions
+                      .where((tx) => !tx.isExpense)
+                      .fold(0.0, (a, b) => a + b.amount),
+                  _transactions
+                      .where((tx) => tx.isExpense)
+                      .fold(0.0, (a, b) => a + b.amount),
+                  _scrollController,
+                )
+              : Container(),
         ],
       );
     }
