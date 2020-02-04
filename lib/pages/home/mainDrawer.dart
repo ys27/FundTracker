@@ -35,16 +35,16 @@ class _MainDrawerState extends State<MainDrawer> {
     DatabaseWrapper(widget.user.uid).findUser().then((user) {
       setState(() => userInfo = user);
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final result = await InternetAddress.lookup('google.com');
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-          setState(() => isConnected = true);
-        }
-      } on SocketException catch (_) {
-        setState(() => isConnected = false);
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   try {
+    //     final result = await InternetAddress.lookup('google.com');
+    //     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    //       setState(() => isConnected = true);
+    //     }
+    //   } on SocketException catch (_) {
+    //     setState(() => isConnected = false);
+    //   }
+    // });
   }
 
   @override
@@ -60,7 +60,9 @@ class _MainDrawerState extends State<MainDrawer> {
               child: Text(
                 userInfo != null ? userInfo.fullname[0] : '',
                 style: TextStyle(
-                    fontSize: 40.0, color: Theme.of(context).primaryColor),
+                  fontSize: 40.0,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),
@@ -120,17 +122,17 @@ class _MainDrawerState extends State<MainDrawer> {
               }
             },
           ),
-          isConnected
-              ? ListTile(
-                  title: Text('Sync'),
-                  leading: Icon(Icons.sync),
-                  onTap: () => SyncService(widget.user.uid).syncToCloud(),
-                )
-              : ListTile(
-                  title: Text('Sync Unavailable'),
-                  leading: Icon(Icons.sync_problem),
-                  onTap: () {},
-                ),
+          // isConnected
+          //     ? ListTile(
+          //         title: Text('Sync'),
+          //         leading: Icon(Icons.sync),
+          //         onTap: () => SyncService(widget.user.uid).syncToCloud(),
+          //       )
+          //     : ListTile(
+          //         title: Text('Sync Unavailable'),
+          //         leading: Icon(Icons.sync_problem),
+          //         onTap: () {},
+          //       ),
         ],
       ),
     );
