@@ -63,23 +63,11 @@ class _PeriodFormState extends State<PeriodForm> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
-                    FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Start Date:                         '),
-                          Text(
-                            '${getDateStr(_startDate ?? widget.period.startDate)}',
-                          ),
-                          Icon(Icons.date_range),
-                        ],
-                      ),
-                      onPressed: () async {
-                        DateTime startDate = await openDatePicker(context);
-                        if (startDate != null) {
-                          setState(() => _startDate = startDate);
-                        }
-                      },
+                    datePicker(
+                      context,
+                      'Start Date:                         ',
+                      '${getDateStr(_startDate ?? widget.period.startDate)}',
+                      (date) => setState(() => _startDate = date),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(

@@ -93,6 +93,30 @@ Future<DateTime> openDatePicker(BuildContext context) {
   );
 }
 
+Widget datePicker(
+  BuildContext context,
+  String leading,
+  String trailing,
+  Function updateDateState,
+) {
+  return FlatButton(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(leading),
+        Text(trailing),
+        Icon(Icons.date_range),
+      ],
+    ),
+    onPressed: () async {
+      DateTime date = await openDatePicker(context);
+      if (date != null) {
+        updateDateState(date);
+      }
+    },
+  );
+}
+
 Widget addFloatingButton(BuildContext context, Widget page) {
   return FloatingActionButton(
     backgroundColor: Theme.of(context).primaryColor,

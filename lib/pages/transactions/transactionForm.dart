@@ -68,63 +68,21 @@ class _TransactionFormState extends State<TransactionForm> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Expanded(
-                          child: FlatButton(
-                            padding: EdgeInsets.all(15.0),
-                            color: (_isExpense ?? widget.tx.isExpense)
-                                ? Colors.grey[100]
-                                : Theme.of(context).primaryColor,
-                            child: Text(
-                              'Income',
-                              style: TextStyle(
-                                  fontWeight:
-                                      (_isExpense ?? widget.tx.isExpense)
-                                          ? FontWeight.normal
-                                          : FontWeight.bold,
-                                  color: (_isExpense ?? widget.tx.isExpense)
-                                      ? Colors.black
-                                      : Colors.white),
-                            ),
-                            onPressed: () => setState(() => _isExpense = false),
-                          ),
+                        selector(
+                          _isExpense != null
+                              ? !_isExpense
+                              : !widget.tx.isExpense,
+                          'Income',
                         ),
-                        Expanded(
-                          child: FlatButton(
-                            padding: EdgeInsets.all(15.0),
-                            color: (_isExpense ?? widget.tx.isExpense)
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey[100],
-                            child: Text(
-                              'Expense',
-                              style: TextStyle(
-                                fontWeight: (_isExpense ?? widget.tx.isExpense)
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: (_isExpense ?? widget.tx.isExpense)
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                            onPressed: () => setState(() => _isExpense = true),
-                          ),
-                        )
+                        selector(_isExpense ?? widget.tx.isExpense, 'Expense'),
                       ],
                     ),
                     SizedBox(height: 20.0),
-                    FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(getDateStr(_date ?? widget.tx.date)),
-                          Icon(Icons.date_range),
-                        ],
-                      ),
-                      onPressed: () async {
-                        DateTime date = await openDatePicker(context);
-                        if (date != null) {
-                          setState(() => _date = date);
-                        }
-                      },
+                    datePicker(
+                      context,
+                      getDateStr(_date ?? widget.tx.date),
+                      '',
+                      (date) => setState(() => _date = date),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -268,6 +226,24 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             )
           : Loader(),
+    );
+  }
+
+  Widget selector(bool isExpense, String title) {
+    return Expanded(
+      child: FlatButton(
+        padding: EdgeInsets.all(15.0),
+        color: isExpense ? Theme.of(context).primaryColor : Colors.grey[100],
+        child: Text(
+          title,
+          style: TextStyle(
+              fontWeight: isExpense ? FontWeight.bold : FontWeight.normal,
+              color: isExpense ? Colors.white : Colors.black),
+        ),
+        onPressed: () {
+          setState(() => _isExpense = title == 'Expense');
+        },
+      ),
     );
   }
 }

@@ -135,21 +135,11 @@ class _PreferencesFormState extends State<PreferencesForm> {
                   ? Column(
                       children: <Widget>[
                         SizedBox(height: 20.0),
-                        FlatButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(getDateStr(
-                                  _limitByDate ?? _prefs.limitByDate)),
-                              Icon(Icons.date_range),
-                            ],
-                          ),
-                          onPressed: () async {
-                            DateTime date = await openDatePicker(context);
-                            if (date != null) {
-                              setState(() => _limitByDate = date);
-                            }
-                          },
+                        datePicker(
+                          context,
+                          getDateStr(_limitByDate ?? _prefs.limitByDate),
+                          '',
+                          (date) => setState(() => _limitByDate = date),
                         ),
                       ],
                     )

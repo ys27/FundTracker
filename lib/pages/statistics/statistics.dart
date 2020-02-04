@@ -30,6 +30,8 @@ class _StatisticsState extends State<Statistics> {
     child: Text('No statistics available. Requires at least one transaction.'),
   );
 
+  Widget _limitCustomizer = SizedBox(height: 20.0);
+
   List<Transaction> _transactions;
   List<Transaction> _prevTransactions = [];
   List<Map<String, dynamic>> _dividedTransactions = [];
@@ -71,6 +73,7 @@ class _StatisticsState extends State<Statistics> {
               .expand((x) => x)
               .toList();
         }
+        // _limitCustomizer = openDatePicker(context);
       }
 
       if (_showPeriodStats) {
@@ -93,6 +96,7 @@ class _StatisticsState extends State<Statistics> {
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
+          _limitCustomizer,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
