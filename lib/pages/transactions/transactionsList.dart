@@ -17,7 +17,7 @@ class TransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (transactions == null) {
+    if (transactions == null || currentPeriod == null || prefs == null) {
       return Loader();
     }
     if (transactions.length == 0) {
