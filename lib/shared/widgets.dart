@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-Widget statTitle({title, alignment = MainAxisAlignment.start, appendWidget}) {
+Widget statTitle(title) {
   return Row(
-    mainAxisAlignment: alignment,
+    mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Text(
         title,
         style: TextStyle(fontSize: 30.0),
       ),
-      appendWidget ?? Container(),
     ],
   );
 }

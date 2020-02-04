@@ -25,35 +25,14 @@ class Balance extends StatelessWidget {
         filterOnlyExpenses: true,
       ),
     };
-    final Map<String, double> prevBalancesList = {
-      'income': filterAndGetTotalAmounts(
-        prevTransactions,
-        filterOnlyExpenses: false,
-      ),
-      'expenses': filterAndGetTotalAmounts(
-        prevTransactions,
-        filterOnlyExpenses: true,
-      ),
-    };
     final double balance = balancesList['income'] - balancesList['expenses'];
-    final double prevBalance =
-        prevBalancesList['income'] - prevBalancesList['expenses'];
 
     final Map<String, dynamic> relativePercentages =
         getRelativePercentages(balancesList);
 
     return Column(
       children: <Widget>[
-        statTitle(
-          title: 'Balance',
-          alignment: MainAxisAlignment.spaceBetween,
-          appendWidget: showPeriodStats
-              ? Text(
-                  getPrevStr(balance, prevBalance),
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                )
-              : null,
-        ),
+        statTitle('Balance'),
         Center(
           child: Text(
             getAmountStr(balance),
@@ -75,21 +54,12 @@ class Balance extends StatelessWidget {
         BarTile(
           title: 'Income',
           amount: balancesList['income'],
-          midLine: showPeriodStats
-              ? getPrevStr(balancesList['income'], prevBalancesList['income'])
-              : null,
           percentage: relativePercentages['income'],
           color: Colors.green[800],
         ),
         BarTile(
           title: 'Expenses',
           amount: balancesList['expenses'],
-          midLine: showPeriodStats
-              ? getPrevStr(
-                  balancesList['expenses'],
-                  prevBalancesList['expenses'],
-                )
-              : null,
           percentage: relativePercentages['expenses'],
           color: Colors.red[800],
         ),

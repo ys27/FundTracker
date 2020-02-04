@@ -25,7 +25,7 @@ class Categorical extends StatelessWidget {
     }
 
     return Column(
-      children: <Widget>[statTitle(title: 'Categories')] +
+      children: <Widget>[statTitle('Categories')] +
           ((transactions.length > 0)
               ? _individualPercentages
                   .map((categorical) => [

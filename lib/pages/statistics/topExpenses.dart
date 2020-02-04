@@ -89,7 +89,7 @@ class _TopExpensesState extends State<TopExpenses> {
     }
 
     return Column(
-      children: <Widget>[statTitle(title: 'Top Expenses')] + _columnContent,
+      children: <Widget>[statTitle('Top Expenses')] + _columnContent,
     );
   }
 }

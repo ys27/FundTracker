@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class BarTile extends StatelessWidget {
   final String title;
   final String subtitle;
-  final String midLine;
   final double amount;
   final double percentage;
   final Color color;
@@ -11,7 +10,6 @@ class BarTile extends StatelessWidget {
   BarTile({
     this.title,
     this.subtitle,
-    this.midLine,
     this.amount,
     this.percentage,
     this.color,
@@ -31,12 +29,6 @@ class BarTile extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            midLine != null
-                ? Text(
-                    midLine,
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  )
-                : Container(),
             Text('\$${amount.toStringAsFixed(2)}'),
           ],
         ),
