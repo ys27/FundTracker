@@ -74,7 +74,6 @@ class _StatisticsState extends State<Statistics> {
             customPrefs =
                 widget.prefs.setPreference('limitByDate', _customLimitByDate);
           }
-          print(widget.prefs.limitByDate);
           _transactions =
               filterTransactionsByLimit(widget.allTransactions, customPrefs);
         } else {
@@ -88,7 +87,7 @@ class _StatisticsState extends State<Statistics> {
           context,
           getDateStr(widget.prefs.limitByDate),
           '',
-          (date) => _customLimitByDate = getDateNotTime(date),
+          (date) => setState(() => _customLimitByDate = getDateNotTime(date)),
           widget.prefs.limitByDate,
         );
         if (_customLimitByDate != null &&
