@@ -69,10 +69,18 @@ class _StatisticsState extends State<Statistics> {
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
             widget.prefs.isLimitByDateEnabled) {
-          Preferences customPrefs = widget.prefs;
+          Preferences customPrefs = Preferences(
+            pid: widget.prefs.pid,
+            limitDays: widget.prefs.limitDays,
+            isLimitDaysEnabled: widget.prefs.isLimitDaysEnabled,
+            limitPeriods: widget.prefs.limitPeriods,
+            isLimitPeriodsEnabled: widget.prefs.isLimitPeriodsEnabled,
+            limitByDate: widget.prefs.limitByDate,
+            isLimitByDateEnabled: widget.prefs.isLimitByDateEnabled,
+          );
           if (_customLimitByDate != null) {
             customPrefs =
-                widget.prefs.setPreference('limitByDate', _customLimitByDate);
+                customPrefs.setPreference('limitByDate', _customLimitByDate);
           }
           _transactions =
               filterTransactionsByLimit(widget.allTransactions, customPrefs);
