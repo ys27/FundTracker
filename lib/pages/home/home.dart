@@ -13,6 +13,10 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
+  final FirebaseUser user;
+
+  Home(this.user);
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -24,22 +28,29 @@ class _HomeState extends State<Home> {
   Preferences _prefs;
 
   @override
-  Widget build(BuildContext context) {
-    FirebaseUser _user = Provider.of<FirebaseUser>(context);
-    getTransactions(_user.uid);
-    getDefaultPeriod(_user.uid);
-    getPreferences(_user.uid);
+  void initState() {
+    super.initState();
+    retrieveNewData(widget.user.uid);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
-        'widget': TransactionsList(_transactions, _currentPeriod, _prefs),
+        'widget': TransactionsList(
+          _transactions,
+          _currentPeriod,
+          _prefs,
+          () => retrieveNewData(widget.user.uid),
+        ),
         'addButton': addFloatingButton(
           context,
           StreamProvider<List<Category>>(
-            create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
             child: TransactionForm(Transaction.empty()),
           ),
+          () => retrieveNewData(widget.user.uid),
         ),
       },
       {
@@ -49,7 +60,7 @@ class _HomeState extends State<Home> {
     ];
 
     return Scaffold(
-      drawer: MainDrawer(_user),
+      drawer: MainDrawer(widget.user),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
       ),
@@ -78,21 +89,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  getTransactions(String uid) {
+  void retrieveNewData(String uid) {
     DatabaseWrapper(uid)
         .getTransactions()
         .first
         .then((transactions) => setState(() => _transactions = transactions));
-  }
 
-  getDefaultPeriod(String uid) {
     DatabaseWrapper(uid)
         .getDefaultPeriod()
         .first
         .then((period) => setState(() => _currentPeriod = period));
-  }
 
-  getPreferences(String uid) {
     DatabaseWrapper(uid)
         .getPreferences()
         .first

@@ -80,10 +80,10 @@ Widget deleteIcon(
   );
 }
 
-Future<DateTime> openDatePicker(BuildContext context) {
+Future<DateTime> openDatePicker(BuildContext context, DateTime openDate) {
   return showDatePicker(
     context: context,
-    initialDate: DateTime.now(),
+    initialDate: openDate ?? DateTime.now(),
     firstDate: DateTime.now().subtract(
       Duration(days: 365),
     ),
@@ -98,6 +98,7 @@ Widget datePicker(
   String leading,
   String trailing,
   Function updateDateState,
+  DateTime limitByDate,
 ) {
   return FlatButton(
     child: Row(
@@ -109,7 +110,7 @@ Widget datePicker(
       ],
     ),
     onPressed: () async {
-      DateTime date = await openDatePicker(context);
+      DateTime date = await openDatePicker(context, limitByDate);
       if (date != null) {
         updateDateState(date);
       }
@@ -117,13 +118,16 @@ Widget datePicker(
   );
 }
 
-Widget addFloatingButton(BuildContext context, Widget page) {
+Widget addFloatingButton(BuildContext context, Widget page, Function callback) {
   return FloatingActionButton(
     backgroundColor: Theme.of(context).primaryColor,
-    onPressed: () => showDialog(
-      context: context,
-      builder: (context) => page,
-    ),
+    onPressed: () async {
+      await showDialog(
+        context: context,
+        builder: (context) => page,
+      );
+      callback();
+    },
     child: Icon(Icons.add),
   );
 }

@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
+  final Function callback;
 
-  TransactionTile({this.transaction});
+  TransactionTile(this.transaction, this.callback);
 
   @override
   Widget build(BuildContext context) {
@@ -25,25 +26,28 @@ class TransactionTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
         child: ListTile(
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) {
-              return StreamProvider<List<Category>>(
-                create: (_) => DatabaseWrapper(_user.uid).getCategories(),
-                child: TransactionForm(
-                  Transaction(
-                    tid: transaction.tid,
-                    date: transaction.date,
-                    isExpense: transaction.isExpense,
-                    payee: transaction.payee,
-                    amount: transaction.amount,
-                    category: transaction.category,
-                    uid: _user.uid,
+          onTap: () async {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return StreamProvider<List<Category>>(
+                  create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+                  child: TransactionForm(
+                    Transaction(
+                      tid: transaction.tid,
+                      date: transaction.date,
+                      isExpense: transaction.isExpense,
+                      payee: transaction.payee,
+                      amount: transaction.amount,
+                      category: transaction.category,
+                      uid: _user.uid,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            );
+            callback();
+          },
           leading: CircleAvatar(
             radius: 25.0,
             backgroundColor: Theme.of(context).backgroundColor,

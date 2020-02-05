@@ -83,6 +83,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       getDateStr(_date ?? widget.tx.date),
                       '',
                       (date) => setState(() => _date = date),
+                      DateTime.now(),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(

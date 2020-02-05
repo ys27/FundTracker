@@ -42,6 +42,7 @@ class Periods extends StatelessWidget {
       floatingActionButton: addFloatingButton(
         context,
         PeriodForm(Period.empty()),
+        () {},
       ),
     );
   }

@@ -68,6 +68,7 @@ class _PeriodFormState extends State<PeriodForm> {
                       'Start Date:                         ',
                       '${getDateStr(_startDate ?? widget.period.startDate)}',
                       (date) => setState(() => _startDate = date),
+                      DateTime.now(),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(

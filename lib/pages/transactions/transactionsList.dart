@@ -12,8 +12,14 @@ class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
   final Period currentPeriod;
   final Preferences prefs;
+  final Function callback;
 
-  TransactionsList(this.transactions, this.currentPeriod, this.prefs);
+  TransactionsList(
+    this.transactions,
+    this.currentPeriod,
+    this.prefs,
+    this.callback,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +49,7 @@ class TransactionsList extends StatelessWidget {
             ),
             content: Column(
               children: period['transactions']
-                  .map<Widget>((tx) => TransactionTile(transaction: tx))
+                  .map<Widget>((tx) => TransactionTile(tx, callback))
                   .toList(),
             ),
           );

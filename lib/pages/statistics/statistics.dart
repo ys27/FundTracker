@@ -69,13 +69,12 @@ class _StatisticsState extends State<Statistics> {
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
             widget.prefs.isLimitByDateEnabled) {
-          Preferences customPrefs;
+          Preferences customPrefs = widget.prefs;
           if (_customLimitByDate != null) {
             customPrefs =
                 widget.prefs.setPreference('limitByDate', _customLimitByDate);
-          } else {
-            customPrefs = widget.prefs;
           }
+          print(widget.prefs.limitByDate);
           _transactions =
               filterTransactionsByLimit(widget.allTransactions, customPrefs);
         } else {
@@ -90,6 +89,7 @@ class _StatisticsState extends State<Statistics> {
           getDateStr(widget.prefs.limitByDate),
           '',
           (date) => _customLimitByDate = getDateNotTime(date),
+          widget.prefs.limitByDate,
         );
         if (_customLimitByDate != null &&
             _customLimitByDate.isAfter(widget.allTransactions.first.date)) {
