@@ -146,7 +146,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                             cat['name'] ==
                                             category.name)['color'],
                                   ),
-                                  SizedBox(width: 10),
+                                  SizedBox(width: 10.0),
                                   Text(
                                     category.name,
                                   ),
@@ -175,7 +175,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                                     cat['name'] ==
                                                     widget
                                                         .tx.category)['color']),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: 10.0),
                                         Text(
                                           widget.tx.category,
                                         ),

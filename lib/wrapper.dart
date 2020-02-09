@@ -10,9 +10,9 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     dynamic _user = Provider.of<FirebaseUser>(context) ?? -1;
 
-    if (_user == null) {
+    if (_user == -1) {
       return Loader();
-    } else if (_user == -1) {
+    } else if (_user == null) {
       return AuthWrapper();
     } else {
       return Home(_user);

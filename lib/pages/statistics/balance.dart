@@ -11,6 +11,8 @@ class Balance extends StatelessWidget {
 
   Balance(this.transactions, this.showPeriodStats, this.daysLeft);
 
+  final Widget remainingStatsHeight = SizedBox(height: 23.0);
+
   @override
   Widget build(BuildContext context) {
     final Map<String, double> balancesList = {
@@ -24,18 +26,16 @@ class Balance extends StatelessWidget {
       ),
     };
     final double balance = balancesList['income'] - balancesList['expenses'];
-
     final Map<String, dynamic> relativePercentages =
         getRelativePercentages(balancesList);
+    final String remainingPerDay =
+        balance < 0 ? '0.00' : (balance / daysLeft).toStringAsFixed(2);
 
     return Column(
       children: <Widget>[
         statTitle('Balance'),
         Center(
-          child: Text(
-            getAmountStr(balance),
-            style: TextStyle(fontSize: 25.0),
-          ),
+          child: Text(getAmountStr(balance), style: TextStyle(fontSize: 25.0)),
         ),
         showPeriodStats
             ? Row(
@@ -43,11 +43,11 @@ class Balance extends StatelessWidget {
                 children: <Widget>[
                   Text('$daysLeft days remaining'),
                   Text(
-                    '\$${(balance / daysLeft).toStringAsFixed(2)} / day left',
+                    '\$$remainingPerDay / day left',
                   ),
                 ],
               )
-            : SizedBox(height: 23.0),
+            : remainingStatsHeight,
         SizedBox(height: 10.0),
         BarTile(
           title: 'Income',
