@@ -37,6 +37,7 @@ class _StatisticsState extends State<Statistics> {
   List<Map<String, dynamic>> _dividedTransactions = [];
   int _daysLeft;
   DateTime _customLimitByDate;
+  Map<String, dynamic> _customPeriod;
   bool _showStatistics = true;
 
   ScrollController _scrollController = ScrollController();
@@ -109,18 +110,45 @@ class _StatisticsState extends State<Statistics> {
       if (_showPeriodStats) {
         Map<String, dynamic> _currentPeriodTransactions =
             findCurrentPeriod(_dividedTransactions);
-        if (_currentPeriodTransactions.containsKey('transactions')) {
-          _daysLeft = _currentPeriodTransactions['endDate']
-              .difference(DateTime.now())
-              .inDays;
-          _transactions = _currentPeriodTransactions['transactions'];
-        } else {
-          _daysLeft = 0;
-          _transactions = [];
+        if (_customPeriod != null) {
+          _transactions = _customPeriod['transactions'];
+          if (_customPeriod['startDate'] ==
+              _currentPeriodTransactions['startDate']) {
+            _customPeriod = null;
+          }
         }
-        _limitCustomizer = Text('dropdown');
-      }
+        if (_customPeriod == null) {
+          if (_currentPeriodTransactions.containsKey('transactions')) {
+            _daysLeft = _currentPeriodTransactions['endDate']
+                .difference(DateTime.now())
+                .inDays;
+            _transactions = _currentPeriodTransactions['transactions'];
+          } else {
+            _daysLeft = 0;
+            _transactions = [];
+          }
+        }
 
+        _limitCustomizer = DropdownButton<Map<String, dynamic>>(
+          items: _dividedTransactions.map((map) {
+            return DropdownMenuItem<Map<String, dynamic>>(
+              value: map,
+              child: Text(
+                '${getDateStr(map['startDate'])} - ${getDateStr(map['endDate'])}',
+              ),
+            );
+          }).toList(),
+          onChanged: (val) {
+            setState(() => _customPeriod = val);
+          },
+          hint: Text(
+            _customPeriod != null
+                ? '${getDateStr(_customPeriod['startDate'])} - ${getDateStr(_customPeriod['endDate'])}'
+                : '${getDateStr(_currentPeriodTransactions['startDate'])} - ${getDateStr(_currentPeriodTransactions['endDate'])}',
+          ),
+          isExpanded: true,
+        );
+      }
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,
@@ -198,7 +226,7 @@ class _StatisticsState extends State<Statistics> {
           _showStatistics
               ? Balance(
                   _transactions,
-                  _showPeriodStats,
+                  _customPeriod == null ? _showPeriodStats : false,
                   _daysLeft,
                 )
               : Center(
