@@ -28,8 +28,9 @@ class Balance extends StatelessWidget {
     final double balance = balancesList['income'] - balancesList['expenses'];
     final Map<String, dynamic> relativePercentages =
         getRelativePercentages(balancesList);
-    final String remainingPerDay =
-        balance < 0 ? '0.00' : (balance / daysLeft).toStringAsFixed(2);
+    final String remainingPerDay = balance < 0
+        ? 'No remaining balance'
+        : '\$${(balance / daysLeft).toStringAsFixed(2)} / day left';
 
     return Column(
       children: <Widget>[
@@ -42,9 +43,7 @@ class Balance extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text('$daysLeft days remaining'),
-                  Text(
-                    '\$$remainingPerDay / day left',
-                  ),
+                  Text(remainingPerDay),
                 ],
               )
             : remainingStatsHeight,
