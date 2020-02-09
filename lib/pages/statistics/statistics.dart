@@ -133,18 +133,22 @@ class _StatisticsState extends State<Statistics> {
           items: _dividedTransactions.map((map) {
             return DropdownMenuItem<Map<String, dynamic>>(
               value: map,
-              child: Text(
-                '${getDateStr(map['startDate'])} - ${getDateStr(map['endDate'])}',
+              child: Center(
+                child: Text(
+                  '${getDateStr(map['startDate'])} - ${getDateStr(map['endDate'])}',
+                ),
               ),
             );
           }).toList(),
           onChanged: (val) {
             setState(() => _customPeriod = val);
           },
-          hint: Text(
-            _customPeriod != null
-                ? '${getDateStr(_customPeriod['startDate'])} - ${getDateStr(_customPeriod['endDate'])}'
-                : '${getDateStr(_currentPeriodTransactions['startDate'])} - ${getDateStr(_currentPeriodTransactions['endDate'])}',
+          hint: Center(
+            child: Text(
+              _customPeriod != null
+                  ? '${getDateStr(_customPeriod['startDate'])} - ${getDateStr(_customPeriod['endDate'])}'
+                  : '${getDateStr(_currentPeriodTransactions['startDate'])} - ${getDateStr(_currentPeriodTransactions['endDate'])}',
+            ),
           ),
           isExpanded: true,
         );
