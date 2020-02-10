@@ -1,3 +1,4 @@
+import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -12,35 +13,65 @@ class Categorical extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> _individualPercentages;
+    List<Map<String, dynamic>> _categoricalData;
+    List<Series<Map<String, dynamic>, dynamic>> seriesList;
 
     if (transactions.length > 0) {
-      _individualPercentages = getIndividualPercentages(
-        appendTotalCategorialAmounts(
-          divideTransactionsIntoCategories(transactions),
-        ),
-      );
-      _individualPercentages
-          .sort((a, b) => b['percentage'].compareTo(a['percentage']));
+      final List<Map<String, dynamic>> _transactionsInCategories =
+          divideTransactionsIntoCategories(transactions);
+      final List<Map<String, dynamic>> _categoriesWithTotalAmounts =
+          appendTotalCategorialAmounts(_transactionsInCategories);
+      final List<Map<String, dynamic>> _categoriesWithPercentages =
+          getIndividualPercentages(_categoriesWithTotalAmounts);
+      _categoricalData = combineSmallPercentages(_categoriesWithPercentages);
+      // _categoricalData
+      //     .sort((a, b) => b['percentage'].compareTo(a['percentage']));
+
+      seriesList = [
+        Series(
+          id: 'Categories',
+          domainFn: (Map<String, dynamic> category, _) => category['category'],
+          measureFn: (Map<String, dynamic> category, _) => category['amount'],
+          colorFn: (Map<String, dynamic> category, _) =>
+              ColorUtil.fromDartColor(categoriesRegistry.singleWhere(
+                  (registry) => registry['name'] == category['category'],
+                  orElse: () => {
+                        'color': Colors.black54,
+                      })['color']),
+          data: _categoricalData,
+          labelAccessorFn: (Map<String, dynamic> category, _) =>
+              '\$${category['amount'].toStringAsFixed(2)}',
+        )
+      ];
     }
 
     return Column(
-      children: <Widget>[statTitle('Categories')] +
+      children: <Widget>[
+            statTitle('Categories'),
+          ] +
           ((transactions.length > 0)
-              ? _individualPercentages
-                  .map((categorical) => [
-                        SizedBox(height: 10.0),
-                        BarTile(
-                          title: categorical['category'],
-                          amount: categorical['amount'],
-                          percentage: categorical['percentage'],
-                          color: categoriesRegistry.singleWhere((category) =>
-                              category['name'] ==
-                              categorical['category'])['color'],
-                        ),
-                      ])
-                  .expand((x) => x)
-                  .toList()
+              ? <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.width - 100,
+                    child: PieChart(
+                      seriesList,
+                      animate: true,
+                      defaultRenderer: ArcRendererConfig(
+                        arcRendererDecorators: [
+                          ArcLabelDecorator(
+                            labelPosition: ArcLabelPosition.outside,
+                          )
+                        ],
+                      ),
+                      behaviors: [
+                        DatumLegend(
+                          position: BehaviorPosition.bottom,
+                          desiredMaxColumns: 2,
+                        )
+                      ],
+                    ),
+                  ),
+                ]
               : <Widget>[
                   SizedBox(height: 35.0),
                   Center(
