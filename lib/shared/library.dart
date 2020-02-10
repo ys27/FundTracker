@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
 void openPage(BuildContext context, Widget page) {
@@ -219,7 +220,7 @@ List<Map<String, dynamic>> appendTotalCategorialAmounts(
     List<Map<String, dynamic>> dividedTransactions) {
   return dividedTransactions
       .map((map) => {
-            'category': map['category'],
+            ...map,
             'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
           })
       .toList();
@@ -229,20 +230,27 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
   List<Transaction> transactions,
 ) {
   List<Map<String, dynamic>> dividedTransactions = [];
+
   transactions.forEach((tx) {
     bool categoryFound =
         dividedTransactions.any((div) => div['category'] == tx.category);
     if (categoryFound) {
       dividedTransactions
-          .singleWhere((div) => div['category'] == tx.category)['transactions']
+          .singleWhere(
+            (div) => div['category'] == tx.category,
+          )['transactions']
           .add(tx);
     } else {
       dividedTransactions.add({
         'category': tx.category,
         'transactions': [tx],
+        'color': categoriesRegistry.singleWhere(
+          (registry) => registry['name'] == tx.category,
+        )['color'],
       });
     }
   });
+
   return dividedTransactions;
 }
 
@@ -261,6 +269,7 @@ List<Map<String, dynamic>> combineSmallPercentages(
     'category': 'Etc.',
     'amount': smallCategoriesAmount,
     'percentage': smallCategoriesPercentage,
+    'color': Colors.black54,
   });
 
   return bigCategories;

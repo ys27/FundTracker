@@ -1,8 +1,8 @@
-import 'package:charts_flutter/flutter.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
-import 'package:fund_tracker/pages/statistics/barTile.dart';
+import 'package:fund_tracker/pages/statistics/indicator.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
@@ -14,7 +14,7 @@ class Categorical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> _categoricalData;
-    List<Series<Map<String, dynamic>, dynamic>> seriesList;
+    List<PieChartSectionData> sectionData;
 
     if (transactions.length > 0) {
       final List<Map<String, dynamic>> _transactionsInCategories =
@@ -27,22 +27,21 @@ class Categorical extends StatelessWidget {
       // _categoricalData
       //     .sort((a, b) => b['percentage'].compareTo(a['percentage']));
 
-      seriesList = [
-        Series(
-          id: 'Categories',
-          domainFn: (Map<String, dynamic> category, _) => category['category'],
-          measureFn: (Map<String, dynamic> category, _) => category['amount'],
-          colorFn: (Map<String, dynamic> category, _) =>
-              ColorUtil.fromDartColor(categoriesRegistry.singleWhere(
-                  (registry) => registry['name'] == category['category'],
-                  orElse: () => {
-                        'color': Colors.black54,
-                      })['color']),
-          data: _categoricalData,
-          labelAccessorFn: (Map<String, dynamic> category, _) =>
-              '\$${category['amount'].toStringAsFixed(2)}',
-        )
-      ];
+      sectionData = _categoricalData
+          .map(
+            (category) => PieChartSectionData(
+              value: category['percentage'] * 100,
+              color: category['color'],
+              radius: 145,
+              title: '\$${category['amount'].toStringAsFixed(2)}',
+              titleStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+              titlePositionPercentageOffset: 0.8,
+            ),
+          )
+          .toList();
     }
 
     return Column(
@@ -51,25 +50,30 @@ class Categorical extends StatelessWidget {
           ] +
           ((transactions.length > 0)
               ? <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.width - 100,
-                    child: PieChart(
-                      seriesList,
-                      animate: true,
-                      defaultRenderer: ArcRendererConfig(
-                        arcRendererDecorators: [
-                          ArcLabelDecorator(
-                            labelPosition: ArcLabelPosition.outside,
-                          )
-                        ],
+                  PieChart(
+                    PieChartData(
+                      sections: sectionData,
+                      sectionsSpace: 1,
+                      borderData: FlBorderData(
+                        show: false,
                       ),
-                      behaviors: [
-                        DatumLegend(
-                          position: BehaviorPosition.bottom,
-                          desiredMaxColumns: 2,
-                        )
-                      ],
                     ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _categoricalData
+                        .map(
+                          (category) => Indicator(
+                            color: category['color'],
+                            text: category['category'],
+                            isSquare: false,
+                            size: 16,
+                            textColor: Colors.grey,
+                          ),
+                        )
+                        .toList(),
                   ),
                 ]
               : <Widget>[
