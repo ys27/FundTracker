@@ -40,26 +40,22 @@ class BarTile extends StatelessWidget {
                 ],
               )
             : Container(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 25.0,
-              width: percentage * (MediaQuery.of(context).size.width - 20),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: new BorderRadius.all(Radius.circular(5.0)),
-              ),
-            ),
-            // Expanded(
-            //   child: Container(
-            //     height: 25.0,
-            //     // width: (1 - percentage) *
-            //     //     (MediaQuery.of(context).size.width - 20),
-            //   ),
-            // ),
-          ],
-        ),
+        percentage != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 25.0,
+                    width:
+                        percentage * (MediaQuery.of(context).size.width - 20),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: new BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                  ),
+                ],
+              )
+            : Container(),
       ],
     );
   }

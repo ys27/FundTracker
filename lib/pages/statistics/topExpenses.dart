@@ -48,18 +48,13 @@ class _TopExpensesState extends State<TopExpenses> {
       _columnContent = sublist(_sortedTransactions, 0, _showCount)
               .map((tx) => <Widget>[
                     SizedBox(height: 10.0),
-                    Column(
-                      children: <Widget>[
-                        BarTile(
-                          title: tx['payee'],
-                          subtitle: tx['category'],
-                          amount: tx['amount'],
-                          percentage: tx['percentage'],
-                          color: categoriesRegistry.singleWhere((category) {
-                            return category['name'] == tx['category'];
-                          })['color'],
-                        ),
-                      ],
+                    BarTile(
+                      title: tx['payee'],
+                      subtitle: tx['category'],
+                      amount: tx['amount'],
+                      color: categoriesRegistry.singleWhere((category) {
+                        return category['name'] == tx['category'];
+                      })['color'],
                     ),
                   ])
               .expand((x) => x)

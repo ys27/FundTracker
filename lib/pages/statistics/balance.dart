@@ -30,7 +30,7 @@ class Balance extends StatelessWidget {
         getRelativePercentages(balancesList);
     final String remainingPerDay = balance < 0
         ? 'No remaining balance'
-        : '\$${(balance / daysLeft).toStringAsFixed(2)} / day left';
+        : '\$${(balance / daysLeft).toStringAsFixed(2)} / day';
 
     return Column(
       children: <Widget>[
