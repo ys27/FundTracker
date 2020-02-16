@@ -307,7 +307,7 @@ List<Map<String, dynamic>> getPercentagesOutOfTotalAmount(
       .toList();
 }
 
-List<Map<String, dynamic>> getIndividualPercentages(
+List<Map<String, dynamic>> appendIndividualPercentages(
     List<Map<String, dynamic>> values) {
   double sum = 0;
   values.forEach((e) {
