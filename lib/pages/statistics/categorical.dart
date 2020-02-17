@@ -15,7 +15,7 @@ class Categorical extends StatefulWidget {
 }
 
 class _CategoricalState extends State<Categorical> {
-  int touchedIndex;
+  int touchedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
