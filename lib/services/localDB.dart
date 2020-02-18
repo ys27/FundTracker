@@ -236,11 +236,14 @@ class LocalDBService {
   Stream<List<RecurringTransaction>> getRecurringTransactions(
       String uid) async* {
     StreamDatabase db = await this.db;
-    yield* db.createQuery(
-      'recurringTransactions',
-      where: 'uid = ?',
-      whereArgs: [uid],
-    ).mapToList((map) => RecurringTransaction.fromMap(map));
+    yield* db
+        .createQuery(
+          'recurringTransactions',
+          where: 'uid = ?',
+          whereArgs: [uid],
+          orderBy: 'nextDate ASC',
+        )
+        .mapToList((map) => RecurringTransaction.fromMap(map));
   }
 
   Future addRecurringTransactions(

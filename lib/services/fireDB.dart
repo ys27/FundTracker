@@ -198,8 +198,11 @@ class FireDBService {
 
   // Recurring Transactions
   Stream<List<RecurringTransaction>> getRecurringTransactions() {
-    return db.collection('recurringTransactions').snapshots().map((snapshot) =>
-        snapshot.documents
+    return db
+        .collection('recurringTransactions')
+        .orderBy('nextDate', descending: false)
+        .snapshots()
+        .map((snapshot) => snapshot.documents
             .map((map) => RecurringTransaction.fromMap(map.data))
             .toList());
   }
