@@ -139,6 +139,12 @@ class DatabaseWrapper {
         : await _localDBService.deletePeriods(periods);
   }
 
+  Future deleteAllPeriods() async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.deleteAllPeriods()
+        : await _localDBService.deleteAllPeriods(uid);
+  }
+
   // Recurring Transactions
   Stream<List<RecurringTransaction>> getRecurringTransactions() {
     return DATABASE_TYPE == DatabaseType.Firebase
@@ -172,6 +178,14 @@ class DatabaseWrapper {
             .deleteRecurringTransactions(recurringTransactions)
         : await _localDBService
             .deleteRecurringTransactions(recurringTransactions);
+  }
+
+  Future deleteAllRecurringTransactions(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.deleteAllRecurringTransactions()
+        : await _localDBService.deleteAllRecurringTransactions(uid);
   }
 
   // Preferences

@@ -48,21 +48,6 @@ class LocalDBService {
         .mapToList((map) => Transaction.fromMap(map));
   }
 
-  // Alternative
-  // Stream<List<Transaction>> getTransactions(String uid) async* {
-  //   Database db = await this.database;
-  //   yield* db
-  //       .query(
-  //         'transactions',
-  //         where: 'uid = ?',
-  //         whereArgs: [uid],
-  //         orderBy: 'datetime(date) DESC',
-  //       )
-  //       .asStream()
-  //       .map((transactions) =>
-  //           transactions.map((map) => Transaction.fromMap(map)).toList());
-  // }
-
   Future addTransactions(List<Transaction> transactions) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();

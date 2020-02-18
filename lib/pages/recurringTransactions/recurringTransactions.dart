@@ -68,7 +68,8 @@ class RecurringTransactions extends StatelessWidget {
           ),
         ),
         title: Text(
-            '${recurringTransaction.payee}: ${recurringTransaction.isExpense ? '-' : '+'}\$${recurringTransaction.amount.toStringAsFixed(2)}'),
+          '${recurringTransaction.payee}: ${recurringTransaction.isExpense ? '-' : '+'}\$${recurringTransaction.amount.toStringAsFixed(2)}',
+        ),
         subtitle: Text(
           'Every ${recurringTransaction.frequencyValue} ${recurringTransaction.frequencyUnit.toString().split('.')[1]}',
         ),
