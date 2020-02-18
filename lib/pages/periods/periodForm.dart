@@ -25,14 +25,10 @@ class _PeriodFormState extends State<PeriodForm> {
   String _name;
   DateTime _startDate;
   String _durationValue = '';
-  DurationUnit _durationUnit;
+  DateUnit _durationUnit;
   bool _isDefault;
 
   bool isLoading = false;
-
-  Widget title(bool isEditMode) {
-    return Text(isEditMode ? 'Edit Period' : 'Add Period');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +108,9 @@ class _PeriodFormState extends State<PeriodForm> {
                       },
                     ),
                     SizedBox(height: 20.0),
-                    DropdownButton<DurationUnit>(
-                      items: DurationUnit.values.map((unit) {
-                        return DropdownMenuItem<DurationUnit>(
+                    DropdownButton<DateUnit>(
+                      items: DateUnit.values.map((unit) {
+                        return DropdownMenuItem<DateUnit>(
                           value: unit,
                           child: Text(unit.toString().split('.')[1]),
                         );
@@ -173,5 +169,9 @@ class _PeriodFormState extends State<PeriodForm> {
               ),
             ),
     );
+  }
+
+  Widget title(bool isEditMode) {
+    return Text(isEditMode ? 'Edit Period' : 'Add Period');
   }
 }

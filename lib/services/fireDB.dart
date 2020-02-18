@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -189,6 +190,62 @@ class FireDBService {
 
   Future deleteAllPeriods() async {
     await db.collection('periods').getDocuments().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.documents) {
+        await doc.reference.delete();
+      }
+    });
+  }
+
+  // Recurring Transactions
+  Stream<List<RecurringTransaction>> getRecurringTransactions() {
+    return db.collection('recurringTransactions').snapshots().map((snapshot) =>
+        snapshot.documents
+            .map((map) => RecurringTransaction.fromMap(map.data))
+            .toList());
+  }
+
+  Future addRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.setData(
+          db
+              .collection('recurringTransactions')
+              .document(recurringTransaction.rid),
+          recurringTransaction.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future updateRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.updateData(
+          db
+              .collection('recurringTransactions')
+              .document(recurringTransaction.rid),
+          recurringTransaction.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future deleteRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.delete(db
+          .collection('recurringTransactions')
+          .document(recurringTransaction.rid));
+    });
+    await batch.commit();
+  }
+
+  Future deleteAllRecurringTransactions() async {
+    await db
+        .collection('recurringTransaction')
+        .getDocuments()
+        .then((snapshot) async {
       for (DocumentSnapshot doc in snapshot.documents) {
         await doc.reference.delete();
       }

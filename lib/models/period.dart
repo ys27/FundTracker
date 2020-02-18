@@ -6,7 +6,7 @@ class Period {
   String name;
   DateTime startDate;
   int durationValue;
-  DurationUnit durationUnit;
+  DateUnit durationUnit;
   bool isDefault;
   String uid;
 
@@ -26,7 +26,7 @@ class Period {
     name = null;
     startDate = getDateNotTime(now);
     durationValue = null;
-    durationUnit = DurationUnit.Weeks;
+    durationUnit = DateUnit.Weeks;
     isDefault = false;
     uid = null;
   }
@@ -38,7 +38,7 @@ class Period {
     name = 'Default Monthly';
     startDate = DateTime(now.year, now.month, 1);
     durationValue = 1;
-    durationUnit = DurationUnit.Months;
+    durationUnit = DateUnit.Months;
     isDefault = false;
     uid = '';
   }
@@ -48,7 +48,7 @@ class Period {
     name = '';
     startDate = DateTime.now();
     durationValue = 0;
-    durationUnit = DurationUnit.Weeks;
+    durationUnit = DateUnit.Weeks;
     isDefault = false;
     uid = '';
   }
@@ -58,7 +58,7 @@ class Period {
     this.name = map['name'];
     this.startDate = DateTime.parse(map['startDate']);
     this.durationValue = map['durationValue'];
-    this.durationUnit = DurationUnit.values[map['durationUnit']];
+    this.durationUnit = DateUnit.values[map['durationUnit']];
     this.isDefault = map['isDefault'] == 1;
     this.uid = map['uid'];
   }

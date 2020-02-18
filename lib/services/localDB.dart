@@ -1,6 +1,7 @@
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -246,6 +247,62 @@ class LocalDBService {
     await db.delete('periods', where: 'uid = ?', whereArgs: [uid]);
   }
 
+  // Recurring Transactions
+  Stream<List<RecurringTransaction>> getRecurringTransactions(
+      String uid) async* {
+    StreamDatabase db = await this.db;
+    yield* db.createQuery(
+      'recurringTransactions',
+      where: 'uid = ?',
+      whereArgs: [uid],
+    ).mapToList((map) => RecurringTransaction.fromMap(map));
+  }
+
+  Future addRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.insert('recurringTransactions', recurringTransaction.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future updateRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.update(
+        'recurringTransactions',
+        recurringTransaction.toMap(),
+        where: 'rid = ?',
+        whereArgs: [recurringTransaction.rid],
+      );
+    });
+    await batch.commit();
+  }
+
+  Future deleteRecurringTransactions(
+      List<RecurringTransaction> recurringTransactions) async {
+    StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.delete(
+        'recurringTransactions',
+        where: 'rid = ?',
+        whereArgs: [recurringTransaction.rid],
+      );
+    });
+    await batch.commit();
+  }
+
+  Future deleteAllRecurringTransactions(String uid) async {
+    StreamDatabase db = await this.db;
+    await db
+        .delete('recurringTransactions', where: 'uid = ?', whereArgs: [uid]);
+  }
+
   // Preferences
   Stream<Preferences> getPreferences(String pid) async* {
     StreamDatabase db = await this.db;
@@ -300,7 +357,7 @@ class LocalDBService {
       return 'TEXT';
     } else if (column is double) {
       return 'REAL';
-    } else if (column is DurationUnit) {
+    } else if (column is DateUnit) {
       return 'INTEGER';
     } else {
       return 'TEXT';
@@ -321,6 +378,7 @@ class LocalDBService {
       'users': User.example(),
       'periods': Period.example(),
       'preferences': Preferences.example(),
+      'recurringTransactions': RecurringTransaction.example(),
     };
 
     tables.forEach((tableName, model) async {

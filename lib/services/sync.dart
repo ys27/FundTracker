@@ -1,4 +1,5 @@
 import 'package:fund_tracker/models/period.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
@@ -55,6 +56,32 @@ class SyncService {
     _fireDBService.addPeriods(periodsOnlyInLocal);
   }
 
+  void syncRecurringTransactions() async {
+    List<RecurringTransaction> cloudRecurringTransactions =
+        await _fireDBService.getRecurringTransactions().first;
+    List<RecurringTransaction> localRecurringTransactions =
+        await _localDBService.getRecurringTransactions(uid).first;
+    List<RecurringTransaction> recurringTransactionsOnlyInCloud =
+        cloudRecurringTransactions
+            .where((cloud) =>
+                localRecurringTransactions
+                    .where((local) => local.equalTo(cloud))
+                    .length ==
+                0)
+            .toList();
+    List<RecurringTransaction> recurringTransactionsOnlyInLocal =
+        localRecurringTransactions
+            .where((local) =>
+                cloudRecurringTransactions
+                    .where((cloud) => cloud.equalTo(local))
+                    .length ==
+                0)
+            .toList();
+    _fireDBService
+        .deleteRecurringTransactions(recurringTransactionsOnlyInCloud);
+    _fireDBService.addRecurringTransactions(recurringTransactionsOnlyInLocal);
+  }
+
   void syncPreferences() async {
     await _fireDBService.deletePreferences();
     _localDBService
@@ -92,6 +119,16 @@ class SyncService {
             .getPeriods()
             .first
             .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods));
+      }
+    });
+    _localDBService
+        .getRecurringTransactions(uid)
+        .first
+        .then((localRecurringTransactions) {
+      if (localRecurringTransactions.length == 0) {
+        _fireDBService.getRecurringTransactions().first.then(
+            (cloudRecurringTransactions) => _localDBService
+                .addRecurringTransactions(cloudRecurringTransactions));
       }
     });
     _localDBService.getPreferences(uid).first.then((localPreferences) {

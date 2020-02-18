@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categories.dart';
 import 'package:fund_tracker/pages/periods/periods.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
+import 'package:fund_tracker/pages/recurringTransactions/recurringTransactions.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -87,6 +89,18 @@ class _MainDrawerState extends State<MainDrawer> {
               StreamProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
                 child: Periods(widget.user),
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text('Recurring Transactions'),
+            leading: Icon(Icons.history),
+            onTap: () => openPage(
+              context,
+              StreamProvider<List<RecurringTransaction>>(
+                create: (_) =>
+                    DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
+                child: RecurringTransactions(widget.user),
               ),
             ),
           ),

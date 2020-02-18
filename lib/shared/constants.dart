@@ -2,7 +2,7 @@ enum AuthMethod { SignIn, Register }
 
 enum DatabaseType { Firebase, Local }
 
-enum DurationUnit { Days, Weeks, Months, Years }
+enum DateUnit { Days, Weeks, Months, Years }
 
 enum MenuItems { Edit, Delete }
 

@@ -28,7 +28,7 @@ class Transaction {
   }
 
   Transaction.example() {
-    tid = 'null';
+    tid = '';
     date = DateTime.now();
     isExpense = true;
     payee = '';

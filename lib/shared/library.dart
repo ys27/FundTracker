@@ -24,7 +24,7 @@ DateTime findPrevPeriodStartDate(Period period) {
   int numDaysInPeriod;
 
   switch (period.durationUnit) {
-    case DurationUnit.Years:
+    case DateUnit.Years:
       {
         numDaysInPeriod = periodStartDate
             .difference(DateTime(
@@ -35,7 +35,7 @@ DateTime findPrevPeriodStartDate(Period period) {
             .inDays;
       }
       break;
-    case DurationUnit.Months:
+    case DateUnit.Months:
       {
         int prevDateTimeYear = periodStartDate.month - period.durationValue <= 0
             ? periodStartDate.year - 1
@@ -53,12 +53,12 @@ DateTime findPrevPeriodStartDate(Period period) {
             .inDays;
       }
       break;
-    case DurationUnit.Weeks:
+    case DateUnit.Weeks:
       {
         numDaysInPeriod = period.durationValue * 7;
       }
       break;
-    case DurationUnit.Days:
+    case DateUnit.Days:
       {
         numDaysInPeriod = period.durationValue;
       }
@@ -82,21 +82,21 @@ int findNumDaysInPeriod(Period period) {
   DateTime periodStartDate = period.startDate;
 
   switch (period.durationUnit) {
-    case DurationUnit.Years:
+    case DateUnit.Years:
       return DateTime(
         periodStartDate.year + period.durationValue,
         periodStartDate.month,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
       break;
-    case DurationUnit.Months:
+    case DateUnit.Months:
       return DateTime(
         periodStartDate.year,
         periodStartDate.month + period.durationValue,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
       break;
-    case DurationUnit.Weeks:
+    case DateUnit.Weeks:
       return period.durationValue * 7;
       break;
     default:

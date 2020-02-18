@@ -1,6 +1,7 @@
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/fireDB.dart';
@@ -136,6 +137,41 @@ class DatabaseWrapper {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.deletePeriods(periods)
         : await _localDBService.deletePeriods(periods);
+  }
+
+  // Recurring Transactions
+  Stream<List<RecurringTransaction>> getRecurringTransactions() {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.getRecurringTransactions()
+        : _localDBService.getRecurringTransactions(uid);
+  }
+
+  Future addRecurringTransactions(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.addRecurringTransactions(recurringTransactions)
+        : await _localDBService.addRecurringTransactions(recurringTransactions);
+  }
+
+  Future updateRecurringTransactions(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService
+            .updateRecurringTransactions(recurringTransactions)
+        : await _localDBService
+            .updateRecurringTransactions(recurringTransactions);
+  }
+
+  Future deleteRecurringTransactions(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService
+            .deleteRecurringTransactions(recurringTransactions)
+        : await _localDBService
+            .deleteRecurringTransactions(recurringTransactions);
   }
 
   // Preferences
