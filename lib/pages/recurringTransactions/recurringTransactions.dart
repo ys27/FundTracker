@@ -58,6 +58,7 @@ class RecurringTransactions extends StatelessWidget {
     RecurringTransaction recurringTransaction,
   ) {
     return Card(
+      color: recurringTransaction.isExpense ? Colors.red[50] : Colors.green[50],
       child: ListTile(
         onTap: () => showDialog(
           context: context,
@@ -67,7 +68,7 @@ class RecurringTransactions extends StatelessWidget {
           ),
         ),
         title: Text(
-            '${recurringTransaction.payee}: ${recurringTransaction.isExpense ? '-' : ''}\$${recurringTransaction.amount.toStringAsFixed(2)}'),
+            '${recurringTransaction.payee}: ${recurringTransaction.isExpense ? '-' : '+'}\$${recurringTransaction.amount.toStringAsFixed(2)}'),
         subtitle: Text(
           'Every ${recurringTransaction.frequencyValue} ${recurringTransaction.frequencyUnit.toString().split('.')[1]}',
         ),

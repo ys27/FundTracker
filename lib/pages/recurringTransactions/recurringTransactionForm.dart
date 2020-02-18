@@ -70,53 +70,32 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(height: 20.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        isExpenseSelector(
+                          context,
+                          _isExpense != null
+                              ? !_isExpense
+                              : !widget.recurringTransaction.isExpense,
+                          'Income',
+                          () => setState(() => _isExpense = false),
+                        ),
+                        isExpenseSelector(
+                          context,
+                          _isExpense ?? widget.recurringTransaction.isExpense,
+                          'Expense',
+                          () => setState(() => _isExpense = true),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.0),
                     datePicker(
                       context,
                       'Next Date:                         ',
                       '${getDateStr(_nextDate ?? widget.recurringTransaction.nextDate)}',
                       (date) => setState(() => _nextDate = date),
                       DateTime.now(),
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      initialValue:
-                          widget.recurringTransaction.frequencyValue != null
-                              ? widget.recurringTransaction.frequencyValue
-                                  .toString()
-                              : '',
-                      autovalidate: _frequencyValue.isNotEmpty,
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'Enter a value for the frequency.';
-                        } else if (val.contains('.')) {
-                          return 'This value must be an integer.';
-                        } else if (int.parse(val) <= 0) {
-                          return 'This value must be greater than 0';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Frequency',
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (val) {
-                        setState(() => _frequencyValue = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    DropdownButton<DateUnit>(
-                      items: DateUnit.values.map((unit) {
-                        return DropdownMenuItem<DateUnit>(
-                          value: unit,
-                          child: Text(unit.toString().split('.')[1]),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() => _frequencyUnit = val);
-                      },
-                      value: _frequencyUnit ??
-                          widget.recurringTransaction.frequencyUnit,
-                      isExpanded: true,
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -229,6 +208,47 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                             _enabledCategories.first.name,
                         isExpanded: true,
                       ),
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      initialValue:
+                          widget.recurringTransaction.frequencyValue != null
+                              ? widget.recurringTransaction.frequencyValue
+                                  .toString()
+                              : '',
+                      autovalidate: _frequencyValue.isNotEmpty,
+                      validator: (val) {
+                        if (val.isEmpty) {
+                          return 'Enter a value for the frequency.';
+                        } else if (val.contains('.')) {
+                          return 'This value must be an integer.';
+                        } else if (int.parse(val) <= 0) {
+                          return 'This value must be greater than 0';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Frequency',
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (val) {
+                        setState(() => _frequencyValue = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    DropdownButton<DateUnit>(
+                      items: DateUnit.values.map((unit) {
+                        return DropdownMenuItem<DateUnit>(
+                          value: unit,
+                          child: Text(unit.toString().split('.')[1]),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() => _frequencyUnit = val);
+                      },
+                      value: _frequencyUnit ??
+                          widget.recurringTransaction.frequencyUnit,
+                      isExpanded: true,
                     ),
                     SizedBox(height: 20.0),
                     RaisedButton(

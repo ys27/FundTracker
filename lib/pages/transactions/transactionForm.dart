@@ -68,13 +68,20 @@ class _TransactionFormState extends State<TransactionForm> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        selector(
+                        isExpenseSelector(
+                          context,
                           _isExpense != null
                               ? !_isExpense
                               : !widget.tx.isExpense,
                           'Income',
+                          () => setState(() => _isExpense = false),
                         ),
-                        selector(_isExpense ?? widget.tx.isExpense, 'Expense'),
+                        isExpenseSelector(
+                          context,
+                          _isExpense ?? widget.tx.isExpense,
+                          'Expense',
+                          () => setState(() => _isExpense = true),
+                        ),
                       ],
                     ),
                     SizedBox(height: 20.0),
@@ -227,24 +234,6 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             )
           : Loader(),
-    );
-  }
-
-  Widget selector(bool isExpense, String title) {
-    return Expanded(
-      child: FlatButton(
-        padding: EdgeInsets.all(15.0),
-        color: isExpense ? Theme.of(context).primaryColor : Colors.grey[100],
-        child: Text(
-          title,
-          style: TextStyle(
-              fontWeight: isExpense ? FontWeight.bold : FontWeight.normal,
-              color: isExpense ? Colors.white : Colors.black),
-        ),
-        onPressed: () {
-          setState(() => _isExpense = title == 'Expense');
-        },
-      ),
     );
   }
 }
