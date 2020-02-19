@@ -234,7 +234,8 @@ class LocalDBService {
 
   // Recurring Transactions
   Stream<List<RecurringTransaction>> getRecurringTransactions(
-      String uid) async* {
+    String uid,
+  ) async* {
     StreamDatabase db = await this.db;
     yield* db
         .createQuery(
@@ -247,7 +248,8 @@ class LocalDBService {
   }
 
   Future addRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
     recurringTransactions.forEach((recurringTransaction) {
@@ -257,7 +259,8 @@ class LocalDBService {
   }
 
   Future updateRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
     recurringTransactions.forEach((recurringTransaction) {
@@ -272,7 +275,8 @@ class LocalDBService {
   }
 
   Future deleteRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
     recurringTransactions.forEach((recurringTransaction) {
