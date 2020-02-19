@@ -100,42 +100,19 @@ class SyncService {
   Future syncToLocal() async {
     if (await _localDBService.findUser(uid) == null) {
       _fireDBService.findUser().then((user) => _localDBService.addUser(user));
+      _fireDBService.getTransactions().first.then((cloudTransactions) =>
+          _localDBService.addTransactions(cloudTransactions));
+      _fireDBService.getCategories().first.then(
+          (cloudCategories) => _localDBService.addCategories(cloudCategories));
+      _fireDBService
+          .getPeriods()
+          .first
+          .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods));
+      _fireDBService.getRecurringTransactions().first.then(
+          (cloudRecurringTransactions) => _localDBService
+              .addRecurringTransactions(cloudRecurringTransactions));
+      _fireDBService.getPreferences().first.then((cloudPreferences) =>
+          _localDBService.addPreferences(cloudPreferences));
     }
-    _localDBService.getTransactions(uid).first.then((localTransactions) {
-      if (localTransactions.length == 0) {
-        _fireDBService.getTransactions().first.then((cloudTransactions) =>
-            _localDBService.addTransactions(cloudTransactions));
-      }
-    });
-    _localDBService.getCategories(uid).first.then((localCategories) {
-      if (localCategories.length == 0) {
-        _fireDBService.getCategories().first.then((cloudCategories) =>
-            _localDBService.addCategories(cloudCategories));
-      }
-    });
-    _localDBService.getPeriods(uid).first.then((localPeriods) {
-      if (localPeriods.length == 0) {
-        _fireDBService
-            .getPeriods()
-            .first
-            .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods));
-      }
-    });
-    _localDBService
-        .getRecurringTransactions(uid)
-        .first
-        .then((localRecurringTransactions) {
-      if (localRecurringTransactions.length == 0) {
-        _fireDBService.getRecurringTransactions().first.then(
-            (cloudRecurringTransactions) => _localDBService
-                .addRecurringTransactions(cloudRecurringTransactions));
-      }
-    });
-    _localDBService.getPreferences(uid).first.then((localPreferences) {
-      if (localPreferences == null) {
-        _fireDBService.getPreferences().first.then((cloudPreferences) =>
-            _localDBService.addPreferences(cloudPreferences));
-      }
-    });
   }
 }
