@@ -27,23 +27,18 @@ class BackgroundService {
           stopOnTerminate: false,
         ), (String taskId) async {
       print('[BackgroundFetch] Event received $taskId');
-      DatabaseWrapper(uid)
-          .getRecurringTransactions()
-          .first
-          .then((recurringTransactions) {
-        for (RecurringTransaction recurringTransaction
-            in recurringTransactions) {
-          if (recurringTransaction.nextDate
-                  .difference(DateTime.now())
-                  .inMinutes <
-              20) {
-            DatabaseWrapper(uid)
-                .addTransactions([recurringTransaction.toTransaction()]);
-            DatabaseWrapper(uid)
-                .incrementRecurringTransactionsNextDate([recurringTransaction]);
+      DateTime now = DateTime.now();
+      if (now.hour == 0) {
+        DatabaseWrapper(uid).getRecurringTransactions().first.then((recTxs) {
+          for (RecurringTransaction recTx in recTxs) {
+            if (recTx.nextDate.difference(DateTime.now()).inMinutes < 20) {
+              DatabaseWrapper(uid).addTransactions([recTx.toTransaction()]);
+              DatabaseWrapper(uid)
+                  .incrementRecurringTransactionsNextDate([recTx]);
+            }
           }
-        }
-      });
+        });
+      }
       BackgroundFetch.finish(taskId);
     }).then((int status) {
       print('[BackgroundFetch] configure success: $status');

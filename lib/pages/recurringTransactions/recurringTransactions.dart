@@ -17,12 +17,12 @@ class RecurringTransactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<RecurringTransaction> _recurringTransactions =
+    final List<RecurringTransaction> _recTxs =
         Provider.of<List<RecurringTransaction>>(context);
     Widget _body = Loader();
 
-    if (_recurringTransactions != null) {
-      if (_recurringTransactions.length == 0) {
+    if (_recTxs != null) {
+      if (_recTxs.length == 0) {
         _body = Center(
           child: Text('Add a recurring transaction using the button below.'),
         );
@@ -30,9 +30,9 @@ class RecurringTransactions extends StatelessWidget {
         _body = Container(
           padding: bodyPadding,
           child: ListView.builder(
-            itemCount: _recurringTransactions.length,
-            itemBuilder: (context, index) => recurringTransactionCard(
-                context, _recurringTransactions[index]),
+            itemCount: _recTxs.length,
+            itemBuilder: (context, index) =>
+                recurringTransactionCard(context, _recTxs[index]),
           ),
         );
       }
@@ -55,26 +55,25 @@ class RecurringTransactions extends StatelessWidget {
 
   Widget recurringTransactionCard(
     BuildContext context,
-    RecurringTransaction recurringTransaction,
+    RecurringTransaction recTx,
   ) {
     return Card(
-      color: recurringTransaction.isExpense ? Colors.red[50] : Colors.green[50],
+      color: recTx.isExpense ? Colors.red[50] : Colors.green[50],
       child: ListTile(
         onTap: () => showDialog(
           context: context,
           builder: (context) => StreamProvider<List<Category>>(
             create: (_) => DatabaseWrapper(user.uid).getCategories(),
-            child: RecurringTransactionForm(recurringTransaction),
+            child: RecurringTransactionForm(recTx),
           ),
         ),
         title: Text(
-          '${recurringTransaction.payee}: ${recurringTransaction.isExpense ? '-' : '+'}\$${recurringTransaction.amount.toStringAsFixed(2)}',
+          '${recTx.payee}: ${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
         ),
         subtitle: Text(
-          'Every ${recurringTransaction.frequencyValue} ${recurringTransaction.frequencyUnit.toString().split('.')[1]}',
+          'Every ${recTx.frequencyValue} ${recTx.frequencyUnit.toString().split('.')[1]}',
         ),
-        trailing:
-            Text('Next Date: ${getDateStr(recurringTransaction.nextDate)}'),
+        trailing: Text('Next Date: ${getDateStr(recTx.nextDate)}'),
       ),
     );
   }

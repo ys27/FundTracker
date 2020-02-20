@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class RecurringTransactionForm extends StatefulWidget {
-  final RecurringTransaction recurringTransaction;
+  final RecurringTransaction recTx;
 
-  RecurringTransactionForm(this.recurringTransaction);
+  RecurringTransactionForm(this.recTx);
 
   @override
   _RecurringTransactionFormState createState() =>
@@ -38,8 +38,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    final isEditMode =
-        !widget.recurringTransaction.equalTo(RecurringTransaction.empty());
+    final isEditMode = !widget.recTx.equalTo(RecurringTransaction.empty());
     final List<Category> _categories = Provider.of<List<Category>>(context);
     final List<Category> _enabledCategories = _categories != null
         ? _categories.where((category) => category.enabled).toList()
@@ -53,8 +52,8 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                 deleteIcon(
                   context,
                   'recurring transaction',
-                  () => DatabaseWrapper(_user.uid).deleteRecurringTransactions(
-                      [widget.recurringTransaction]),
+                  () => DatabaseWrapper(_user.uid)
+                      .deleteRecurringTransactions([widget.recTx]),
                   () => SyncService(_user.uid).syncRecurringTransactions(),
                 )
               ]
@@ -77,13 +76,13 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                           context,
                           _isExpense != null
                               ? !_isExpense
-                              : !widget.recurringTransaction.isExpense,
+                              : !widget.recTx.isExpense,
                           'Income',
                           () => setState(() => _isExpense = false),
                         ),
                         isExpenseSelector(
                           context,
-                          _isExpense ?? widget.recurringTransaction.isExpense,
+                          _isExpense ?? widget.recTx.isExpense,
                           'Expense',
                           () => setState(() => _isExpense = true),
                         ),
@@ -93,7 +92,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                     datePicker(
                       context,
                       'Next Date:                         ',
-                      '${getDateStr(_nextDate ?? widget.recurringTransaction.nextDate)}',
+                      '${getDateStr(_nextDate ?? widget.recTx.nextDate)}',
                       (date) => setState(
                         () => _nextDate = getDateNotTime(date),
                       ),
@@ -101,7 +100,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: widget.recurringTransaction.payee,
+                      initialValue: widget.recTx.payee,
                       autovalidate: _payee != null,
                       validator: (val) {
                         if (val.isEmpty) {
@@ -121,9 +120,8 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue: widget.recurringTransaction.amount != null
-                          ? widget.recurringTransaction.amount
-                              .toStringAsFixed(2)
+                      initialValue: widget.recTx.amount != null
+                          ? widget.recTx.amount.toStringAsFixed(2)
                           : '',
                       autovalidate: _amount != null,
                       validator: (val) {
@@ -169,35 +167,32 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                               );
                             }).toList() +
                             (_enabledCategories.any((category) =>
-                                    widget.recurringTransaction.category ==
-                                        null ||
-                                    category.name ==
-                                        widget.recurringTransaction.category)
+                                    widget.recTx.category == null ||
+                                    category.name == widget.recTx.category)
                                 ? []
                                 : [
                                     DropdownMenuItem(
-                                      value:
-                                          widget.recurringTransaction.category,
+                                      value: widget.recTx.category,
                                       child: Row(children: <Widget>[
                                         Icon(
                                             IconData(
                                               _categories
-                                                  .singleWhere((cat) =>
-                                                      cat.name ==
-                                                      widget
-                                                          .recurringTransaction
-                                                          .category)
+                                                  .singleWhere(
+                                                    (cat) =>
+                                                        cat.name ==
+                                                        widget.recTx.category,
+                                                  )
                                                   .icon,
                                               fontFamily: 'MaterialIcons',
                                             ),
                                             color: categoriesRegistry
                                                 .singleWhere((cat) =>
                                                     cat['name'] ==
-                                                    widget.recurringTransaction
+                                                    widget.recTx
                                                         .category)['color']),
                                         SizedBox(width: 10.0),
                                         Text(
-                                          widget.recurringTransaction.category,
+                                          widget.recTx.category,
                                         ),
                                       ]),
                                     )
@@ -206,18 +201,16 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                           setState(() => _category = val);
                         },
                         value: _category ??
-                            widget.recurringTransaction.category ??
+                            widget.recTx.category ??
                             _enabledCategories.first.name,
                         isExpanded: true,
                       ),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      initialValue:
-                          widget.recurringTransaction.frequencyValue != null
-                              ? widget.recurringTransaction.frequencyValue
-                                  .toString()
-                              : '',
+                      initialValue: widget.recTx.frequencyValue != null
+                          ? widget.recTx.frequencyValue.toString()
+                          : '',
                       autovalidate: _frequencyValue.isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
@@ -248,8 +241,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                       onChanged: (val) {
                         setState(() => _frequencyUnit = val);
                       },
-                      value: _frequencyUnit ??
-                          widget.recurringTransaction.frequencyUnit,
+                      value: _frequencyUnit ?? widget.recTx.frequencyUnit,
                       isExpanded: true,
                     ),
                     SizedBox(height: 20.0),
@@ -261,23 +253,19 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
-                          RecurringTransaction recurringTransaction =
-                              RecurringTransaction(
-                            rid: widget.recurringTransaction.rid ?? Uuid().v1(),
-                            nextDate: _nextDate ??
-                                widget.recurringTransaction.nextDate,
+                          RecurringTransaction recTx = RecurringTransaction(
+                            rid: widget.recTx.rid ?? Uuid().v1(),
+                            nextDate: _nextDate ?? widget.recTx.nextDate,
                             frequencyValue: _frequencyValue != ''
                                 ? int.parse(_frequencyValue)
-                                : widget.recurringTransaction.frequencyValue,
-                            frequencyUnit: _frequencyUnit ??
-                                widget.recurringTransaction.frequencyUnit,
-                            isExpense: _isExpense ??
-                                widget.recurringTransaction.isExpense,
-                            payee: _payee ?? widget.recurringTransaction.payee,
-                            amount:
-                                _amount ?? widget.recurringTransaction.amount,
+                                : widget.recTx.frequencyValue,
+                            frequencyUnit:
+                                _frequencyUnit ?? widget.recTx.frequencyUnit,
+                            isExpense: _isExpense ?? widget.recTx.isExpense,
+                            payee: _payee ?? widget.recTx.payee,
+                            amount: _amount ?? widget.recTx.amount,
                             category: _category ??
-                                widget.recurringTransaction.category ??
+                                widget.recTx.category ??
                                 _enabledCategories.first.name,
                             uid: _user.uid,
                           );
@@ -285,11 +273,9 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                           setState(() => isLoading = true);
                           isEditMode
                               ? DatabaseWrapper(_user.uid)
-                                  .updateRecurringTransactions(
-                                      [recurringTransaction])
+                                  .updateRecurringTransactions([recTx])
                               : DatabaseWrapper(_user.uid)
-                                  .addRecurringTransactions(
-                                      [recurringTransaction]);
+                                  .addRecurringTransactions([recTx]);
                           SyncService(_user.uid).syncRecurringTransactions();
                           Navigator.pop(context);
                         }

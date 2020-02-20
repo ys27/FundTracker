@@ -77,16 +77,16 @@ class RecurringTransaction {
     };
   }
 
-  bool equalTo(RecurringTransaction recurringTransaction) {
-    return (this.rid == recurringTransaction.rid &&
-        this.nextDate == recurringTransaction.nextDate &&
-        this.frequencyValue == recurringTransaction.frequencyValue &&
-        this.frequencyUnit == recurringTransaction.frequencyUnit &&
-        this.isExpense == recurringTransaction.isExpense &&
-        this.payee == recurringTransaction.payee &&
-        this.amount == recurringTransaction.amount &&
-        this.category == recurringTransaction.category &&
-        this.uid == recurringTransaction.uid);
+  bool equalTo(RecurringTransaction recTx) {
+    return (this.rid == recTx.rid &&
+        this.nextDate == recTx.nextDate &&
+        this.frequencyValue == recTx.frequencyValue &&
+        this.frequencyUnit == recTx.frequencyUnit &&
+        this.isExpense == recTx.isExpense &&
+        this.payee == recTx.payee &&
+        this.amount == recTx.amount &&
+        this.category == recTx.category &&
+        this.uid == recTx.uid);
   }
 
   Transaction toTransaction() {

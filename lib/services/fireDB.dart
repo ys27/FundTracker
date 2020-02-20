@@ -215,54 +215,45 @@ class FireDBService {
         .then((snapshot) => RecurringTransaction.fromMap(snapshot.data));
   }
 
-  Future addRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+  Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
     WriteBatch batch = Firestore.instance.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.setData(
-          db
-              .collection('recurringTransactions')
-              .document(recurringTransaction.rid),
-          recurringTransaction.toMap());
+        db.collection('recurringTransactions').document(recTx.rid),
+        recTx.toMap(),
+      );
     });
     await batch.commit();
   }
 
-  Future updateRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
-  ) async {
+  Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
     WriteBatch batch = Firestore.instance.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.updateData(
-          db
-              .collection('recurringTransactions')
-              .document(recurringTransaction.rid),
-          recurringTransaction.toMap());
+        db.collection('recurringTransactions').document(recTx.rid),
+        recTx.toMap(),
+      );
     });
     await batch.commit();
   }
 
   Future incrementRecurringTransactionsNextDate(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     WriteBatch batch = Firestore.instance.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.updateData(
-          db
-              .collection('recurringTransactions')
-              .document(recurringTransaction.rid),
-          recurringTransaction.incrementNextDate().toMap());
+        db.collection('recurringTransactions').document(recTx.rid),
+        recTx.incrementNextDate().toMap(),
+      );
     });
     await batch.commit();
   }
 
-  Future deleteRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+  Future deleteRecurringTransactions(List<RecurringTransaction> recTxs) async {
     WriteBatch batch = Firestore.instance.batch();
-    recurringTransactions.forEach((recurringTransaction) {
-      batch.delete(db
-          .collection('recurringTransactions')
-          .document(recurringTransaction.rid));
+    recTxs.forEach((recTx) {
+      batch.delete(db.collection('recurringTransactions').document(recTx.rid));
     });
     await batch.commit();
   }

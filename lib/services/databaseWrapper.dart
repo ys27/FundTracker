@@ -161,46 +161,38 @@ class DatabaseWrapper {
   }
 
   Future addRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addRecurringTransactions(recurringTransactions)
-        : await _localDBService.addRecurringTransactions(recurringTransactions);
+        ? await _fireDBService.addRecurringTransactions(recTxs)
+        : await _localDBService.addRecurringTransactions(recTxs);
   }
 
   Future updateRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService
-            .updateRecurringTransactions(recurringTransactions)
-        : await _localDBService
-            .updateRecurringTransactions(recurringTransactions);
+        ? await _fireDBService.updateRecurringTransactions(recTxs)
+        : await _localDBService.updateRecurringTransactions(recTxs);
   }
 
   Future incrementRecurringTransactionsNextDate(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService
-            .incrementRecurringTransactionsNextDate(recurringTransactions)
-        : await _localDBService
-            .incrementRecurringTransactionsNextDate(recurringTransactions);
+        ? await _fireDBService.incrementRecurringTransactionsNextDate(recTxs)
+        : await _localDBService.incrementRecurringTransactionsNextDate(recTxs);
   }
 
   Future deleteRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService
-            .deleteRecurringTransactions(recurringTransactions)
-        : await _localDBService
-            .deleteRecurringTransactions(recurringTransactions);
+        ? await _fireDBService.deleteRecurringTransactions(recTxs)
+        : await _localDBService.deleteRecurringTransactions(recTxs);
   }
 
-  Future deleteAllRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
-  ) async {
+  Future deleteAllRecurringTransactions() async {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.deleteAllRecurringTransactions()
         : await _localDBService.deleteAllRecurringTransactions(uid);

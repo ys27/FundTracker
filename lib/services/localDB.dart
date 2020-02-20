@@ -256,59 +256,55 @@ class LocalDBService {
     ).then((map) => RecurringTransaction.fromMap(map[0] ?? {}));
   }
 
-  Future addRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
-  ) async {
+  Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
-    recurringTransactions.forEach((recurringTransaction) {
-      batch.insert('recurringTransactions', recurringTransaction.toMap());
+    recTxs.forEach((recTx) {
+      batch.insert('recurringTransactions', recTx.toMap());
     });
     await batch.commit();
   }
 
-  Future updateRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
-  ) async {
+  Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.update(
         'recurringTransactions',
-        recurringTransaction.toMap(),
+        recTx.toMap(),
         where: 'rid = ?',
-        whereArgs: [recurringTransaction.rid],
+        whereArgs: [recTx.rid],
       );
     });
     await batch.commit();
   }
 
   Future incrementRecurringTransactionsNextDate(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.update(
         'recurringTransactions',
-        recurringTransaction.incrementNextDate().toMap(),
+        recTx.incrementNextDate().toMap(),
         where: 'rid = ?',
-        whereArgs: [recurringTransaction.rid],
+        whereArgs: [recTx.rid],
       );
     });
     await batch.commit();
   }
 
   Future deleteRecurringTransactions(
-    List<RecurringTransaction> recurringTransactions,
+    List<RecurringTransaction> recTxs,
   ) async {
     StreamDatabase db = await this.db;
     StreamBatch batch = db.batch();
-    recurringTransactions.forEach((recurringTransaction) {
+    recTxs.forEach((recTx) {
       batch.delete(
         'recurringTransactions',
         where: 'rid = ?',
-        whereArgs: [recurringTransaction.rid],
+        whereArgs: [recTx.rid],
       );
     });
     await batch.commit();

@@ -57,29 +57,20 @@ class SyncService {
   }
 
   void syncRecurringTransactions() async {
-    List<RecurringTransaction> cloudRecurringTransactions =
+    List<RecurringTransaction> cloudRecTxs =
         await _fireDBService.getRecurringTransactions().first;
-    List<RecurringTransaction> localRecurringTransactions =
+    List<RecurringTransaction> localRecTxs =
         await _localDBService.getRecurringTransactions(uid).first;
-    List<RecurringTransaction> recurringTransactionsOnlyInCloud =
-        cloudRecurringTransactions
-            .where((cloud) =>
-                localRecurringTransactions
-                    .where((local) => local.equalTo(cloud))
-                    .length ==
-                0)
-            .toList();
-    List<RecurringTransaction> recurringTransactionsOnlyInLocal =
-        localRecurringTransactions
-            .where((local) =>
-                cloudRecurringTransactions
-                    .where((cloud) => cloud.equalTo(local))
-                    .length ==
-                0)
-            .toList();
-    _fireDBService
-        .deleteRecurringTransactions(recurringTransactionsOnlyInCloud);
-    _fireDBService.addRecurringTransactions(recurringTransactionsOnlyInLocal);
+    List<RecurringTransaction> recTxsOnlyInCloud = cloudRecTxs
+        .where((cloud) =>
+            localRecTxs.where((local) => local.equalTo(cloud)).length == 0)
+        .toList();
+    List<RecurringTransaction> recTxsOnlyInLocal = localRecTxs
+        .where((local) =>
+            cloudRecTxs.where((cloud) => cloud.equalTo(local)).length == 0)
+        .toList();
+    _fireDBService.deleteRecurringTransactions(recTxsOnlyInCloud);
+    _fireDBService.addRecurringTransactions(recTxsOnlyInLocal);
   }
 
   void syncPreferences() async {
