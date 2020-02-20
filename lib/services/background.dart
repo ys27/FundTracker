@@ -1,7 +1,6 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/shared/library.dart';
 
 class BackgroundService {
   final String uid;

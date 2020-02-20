@@ -4,8 +4,6 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/recurringTransactions/recurringTransactions.dart';
-import 'package:fund_tracker/services/background.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/config.dart';
