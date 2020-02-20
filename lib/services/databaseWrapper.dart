@@ -4,6 +4,8 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
+import 'package:fund_tracker/pages/recurringTransactions/recurringTransactions.dart';
+import 'package:fund_tracker/services/background.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/config.dart';
@@ -91,10 +93,10 @@ class DatabaseWrapper {
   }
 
   // User Info
-  Future<User> findUser() {
+  Future<User> getUser() {
     return DATABASE_TYPE == DatabaseType.Firebase
-        ? _fireDBService.findUser()
-        : _localDBService.findUser(uid);
+        ? _fireDBService.getUser()
+        : _localDBService.getUser(uid);
   }
 
   Future addUser(User user) async {
@@ -152,22 +154,50 @@ class DatabaseWrapper {
         : _localDBService.getRecurringTransactions(uid);
   }
 
+  Future<RecurringTransaction> getRecurringTransaction(String rid) {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.getRecurringTransaction(rid)
+        : _localDBService.getRecurringTransaction(rid);
+  }
+
   Future addRecurringTransactions(
     List<RecurringTransaction> recurringTransactions,
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.addRecurringTransactions(recurringTransactions)
         : await _localDBService.addRecurringTransactions(recurringTransactions);
+
+    for (RecurringTransaction recurringTransaction in recurringTransactions) {
+      BackgroundService.scheduleRecurringTransaction(recurringTransaction, uid);
+    }
   }
 
   Future updateRecurringTransactions(
     List<RecurringTransaction> recurringTransactions,
   ) async {
+    for (RecurringTransaction recurringTransaction in recurringTransactions) {
+      recurringTransaction = recurringTransaction.withNewId();
+    }
+
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService
             .updateRecurringTransactions(recurringTransactions)
         : await _localDBService
             .updateRecurringTransactions(recurringTransactions);
+
+    for (RecurringTransaction recurringTransaction in recurringTransactions) {
+      BackgroundService.scheduleRecurringTransaction(recurringTransaction, uid);
+    }
+  }
+
+  Future incrementRecurringTransactionsNextDate(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService
+            .incrementRecurringTransactionsNextDate(recurringTransactions)
+        : await _localDBService
+            .incrementRecurringTransactionsNextDate(recurringTransactions);
   }
 
   Future deleteRecurringTransactions(

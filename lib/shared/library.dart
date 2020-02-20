@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/constants.dart';
@@ -78,13 +79,15 @@ DateTime findFirstPeriodDate(Transaction firstTx, Period period) {
   return iteratingDate;
 }
 
-int findNumDaysInPeriod(Period period) {
-  DateTime periodStartDate = period.startDate;
-
-  switch (period.durationUnit) {
+int findNumDaysInPeriod(
+  DateTime periodStartDate,
+  int durationValue,
+  DateUnit durationUnit,
+) {
+  switch (durationUnit) {
     case DateUnit.Years:
       return DateTime(
-        periodStartDate.year + period.durationValue,
+        periodStartDate.year + durationValue,
         periodStartDate.month,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
@@ -92,15 +95,15 @@ int findNumDaysInPeriod(Period period) {
     case DateUnit.Months:
       return DateTime(
         periodStartDate.year,
-        periodStartDate.month + period.durationValue,
+        periodStartDate.month + durationValue,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
       break;
     case DateUnit.Weeks:
-      return period.durationValue * 7;
+      return durationValue * 7;
       break;
     default:
-      return period.durationValue;
+      return durationValue;
       break;
   }
 }
@@ -127,8 +130,13 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
     while (currentPeriodStartDate.isBefore(
       transactions.first.date.add(Duration(milliseconds: 1)),
     )) {
-      int numDaysInPeriod =
-          findNumDaysInPeriod(period.setStartDate(currentPeriodStartDate));
+      Period periodWithNewStartDate =
+          period.setStartDate(currentPeriodStartDate);
+      int numDaysInPeriod = findNumDaysInPeriod(
+        periodWithNewStartDate.startDate,
+        periodWithNewStartDate.durationValue,
+        periodWithNewStartDate.durationUnit,
+      );
       DateTime nextPeriodStartDate = getDateNotTime(
         currentPeriodStartDate.add(Duration(days: numDaysInPeriod)),
       );
@@ -325,6 +333,10 @@ String getAmountStr(double amount) {
   return amount < 0
       ? '-\$${abs(amount).toStringAsFixed(2)}'
       : '\$${amount.toStringAsFixed(2)}';
+}
+
+int getMilliSecondsUntilNextDate(DateTime nextDate) {
+  return nextDate.difference(DateTime.now()).inMilliseconds;
 }
 
 double abs(double value) {

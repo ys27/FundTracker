@@ -98,8 +98,8 @@ class SyncService {
   }
 
   Future syncToLocal() async {
-    if (await _localDBService.findUser(uid) == null) {
-      _fireDBService.findUser().then((user) => _localDBService.addUser(user));
+    if (await _localDBService.getUser(uid) == null) {
+      _fireDBService.getUser().then((user) => _localDBService.addUser(user));
       _fireDBService.getTransactions().first.then((cloudTransactions) =>
           _localDBService.addTransactions(cloudTransactions));
       _fireDBService.getCategories().first.then(

@@ -1,5 +1,7 @@
+import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
+import 'package:uuid/uuid.dart';
 
 class RecurringTransaction {
   String rid;
@@ -85,5 +87,32 @@ class RecurringTransaction {
         this.amount == recurringTransaction.amount &&
         this.category == recurringTransaction.category &&
         this.uid == recurringTransaction.uid);
+  }
+
+  Transaction toTransaction() {
+    return Transaction(
+      tid: Uuid().v1(),
+      date: nextDate,
+      isExpense: isExpense,
+      payee: payee,
+      amount: amount,
+      category: category,
+      uid: uid,
+    );
+  }
+
+  RecurringTransaction incrementNextDate() {
+    int numDaysUntilNextDate = findNumDaysInPeriod(
+      this.nextDate,
+      this.frequencyValue,
+      this.frequencyUnit,
+    );
+    this.nextDate = nextDate.add(Duration(days: numDaysUntilNextDate));
+    return this;
+  }
+
+  RecurringTransaction withNewId() {
+    this.rid = Uuid().v1();
+    return this;
   }
 }

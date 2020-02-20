@@ -31,7 +31,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    DatabaseWrapper(widget.user.uid).findUser().then((user) {
+    DatabaseWrapper(widget.user.uid).getUser().then((user) {
       setState(() => userInfo = user);
     });
     // WidgetsBinding.instance.addPostFrameCallback((_) async {

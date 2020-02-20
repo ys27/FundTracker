@@ -144,7 +144,7 @@ class LocalDBService {
   }
 
   // User
-  Future<User> findUser(String uid) async {
+  Future<User> getUser(String uid) async {
     Database db = await this.database;
     return db.query(
       'users',
@@ -247,6 +247,15 @@ class LocalDBService {
         .mapToList((map) => RecurringTransaction.fromMap(map));
   }
 
+  Future<RecurringTransaction> getRecurringTransaction(String rid) async {
+    Database db = await this.database;
+    return db.query(
+      'recurringTransactions',
+      where: 'rid = ?',
+      whereArgs: [rid],
+    ).then((map) => RecurringTransaction.fromMap(map[0] ?? {}));
+  }
+
   Future addRecurringTransactions(
     List<RecurringTransaction> recurringTransactions,
   ) async {
@@ -267,6 +276,22 @@ class LocalDBService {
       batch.update(
         'recurringTransactions',
         recurringTransaction.toMap(),
+        where: 'rid = ?',
+        whereArgs: [recurringTransaction.rid],
+      );
+    });
+    await batch.commit();
+  }
+
+  Future incrementRecurringTransactionsNextDate(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.update(
+        'recurringTransactions',
+        recurringTransaction.incrementNextDate().toMap(),
         where: 'rid = ?',
         whereArgs: [recurringTransaction.rid],
       );

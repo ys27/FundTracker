@@ -115,7 +115,7 @@ class FireDBService {
   }
 
   // User Info
-  Future<User> findUser() {
+  Future<User> getUser() {
     return db
         .collection('user')
         .document(uid)
@@ -207,6 +207,14 @@ class FireDBService {
             .toList());
   }
 
+  Future<RecurringTransaction> getRecurringTransaction(String rid) {
+    return db
+        .collection('recurringTransactions')
+        .document(rid)
+        .get()
+        .then((snapshot) => RecurringTransaction.fromMap(snapshot.data));
+  }
+
   Future addRecurringTransactions(
       List<RecurringTransaction> recurringTransactions) async {
     WriteBatch batch = Firestore.instance.batch();
@@ -221,7 +229,8 @@ class FireDBService {
   }
 
   Future updateRecurringTransactions(
-      List<RecurringTransaction> recurringTransactions) async {
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
     WriteBatch batch = Firestore.instance.batch();
     recurringTransactions.forEach((recurringTransaction) {
       batch.updateData(
@@ -229,6 +238,20 @@ class FireDBService {
               .collection('recurringTransactions')
               .document(recurringTransaction.rid),
           recurringTransaction.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future incrementRecurringTransactionsNextDate(
+    List<RecurringTransaction> recurringTransactions,
+  ) async {
+    WriteBatch batch = Firestore.instance.batch();
+    recurringTransactions.forEach((recurringTransaction) {
+      batch.updateData(
+          db
+              .collection('recurringTransactions')
+              .document(recurringTransaction.rid),
+          recurringTransaction.incrementNextDate().toMap());
     });
     await batch.commit();
   }
