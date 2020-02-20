@@ -94,7 +94,9 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                       context,
                       'Next Date:                         ',
                       '${getDateStr(_nextDate ?? widget.recurringTransaction.nextDate)}',
-                      (date) => setState(() => _nextDate = date),
+                      (date) => setState(
+                        () => _nextDate = getDateNotTime(date),
+                      ),
                       DateTime.now(),
                     ),
                     SizedBox(height: 20.0),

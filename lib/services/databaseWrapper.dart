@@ -166,28 +166,16 @@ class DatabaseWrapper {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.addRecurringTransactions(recurringTransactions)
         : await _localDBService.addRecurringTransactions(recurringTransactions);
-
-    for (RecurringTransaction recurringTransaction in recurringTransactions) {
-      BackgroundService.scheduleRecurringTransaction(recurringTransaction, uid);
-    }
   }
 
   Future updateRecurringTransactions(
     List<RecurringTransaction> recurringTransactions,
   ) async {
-    for (RecurringTransaction recurringTransaction in recurringTransactions) {
-      recurringTransaction = recurringTransaction.withNewId();
-    }
-
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService
             .updateRecurringTransactions(recurringTransactions)
         : await _localDBService
             .updateRecurringTransactions(recurringTransactions);
-
-    for (RecurringTransaction recurringTransaction in recurringTransactions) {
-      BackgroundService.scheduleRecurringTransaction(recurringTransaction, uid);
-    }
   }
 
   Future incrementRecurringTransactionsNextDate(

@@ -7,6 +7,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
+import 'package:fund_tracker/services/background.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/shared/widgets.dart';
@@ -31,6 +32,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     retrieveNewData(widget.user.uid);
+    BackgroundService.initBackgroundService(widget.user.uid);
   }
 
   @override

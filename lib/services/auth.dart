@@ -1,3 +1,4 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -29,6 +30,7 @@ class AuthService {
 
   Future signOut() async {
     try {
+      BackgroundFetch.stop();
       return await _auth.signOut();
     } catch (e) {
       return e.message;

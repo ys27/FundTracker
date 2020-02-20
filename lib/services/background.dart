@@ -13,7 +13,7 @@ class BackgroundService {
     BackgroundFetch.finish(taskId);
   }
 
-  static Future<void> initBackgroundService() async {
+  static Future<void> initBackgroundService(String uid) async {
     BackgroundFetch.configure(
         BackgroundFetchConfig(
           minimumFetchInterval: 15,
@@ -27,36 +27,28 @@ class BackgroundService {
           stopOnTerminate: false,
         ), (String taskId) async {
       print('[BackgroundFetch] Event received $taskId');
-      final String uid = taskId.split('::')[0];
-      final String rid = taskId.split('::')[1];
-      final RecurringTransaction recurringTransaction =
-          await DatabaseWrapper(uid).getRecurringTransaction(rid);
-      if (recurringTransaction != null) {
-        DatabaseWrapper(uid)
-            .addTransactions([recurringTransaction.toTransaction()]);
-        DatabaseWrapper(uid)
-            .incrementRecurringTransactionsNextDate([recurringTransaction]);
-        final RecurringTransaction updatedRecurringTransaction =
-            await DatabaseWrapper(uid).getRecurringTransaction(rid);
-        scheduleRecurringTransaction(updatedRecurringTransaction, uid);
-      }
+      DatabaseWrapper(uid)
+          .getRecurringTransactions()
+          .first
+          .then((recurringTransactions) {
+        for (RecurringTransaction recurringTransaction
+            in recurringTransactions) {
+          if (recurringTransaction.nextDate
+                  .difference(DateTime.now())
+                  .inMinutes <
+              20) {
+            DatabaseWrapper(uid)
+                .addTransactions([recurringTransaction.toTransaction()]);
+            DatabaseWrapper(uid)
+                .incrementRecurringTransactionsNextDate([recurringTransaction]);
+          }
+        }
+      });
       BackgroundFetch.finish(taskId);
     }).then((int status) {
       print('[BackgroundFetch] configure success: $status');
     }).catchError((e) {
       print('[BackgroundFetch] configure ERROR: $e');
     });
-  }
-
-  static scheduleRecurringTransaction(
-    RecurringTransaction recurringTransaction,
-    String uid,
-  ) {
-    int msUntilNextDate =
-        getMilliSecondsUntilNextDate(recurringTransaction.nextDate);
-    BackgroundFetch.scheduleTask(TaskConfig(
-      taskId: '$uid::${recurringTransaction.rid}',
-      delay: msUntilNextDate,
-    ));
   }
 }
