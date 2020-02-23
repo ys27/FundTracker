@@ -265,21 +265,23 @@ List<Map<String, dynamic>> combineSmallPercentages(
     List<Map<String, dynamic>> categories) {
   final List<Map<String, dynamic>> smallCategories =
       categories.where((category) => category['percentage'] <= 0.05).toList();
-  final double smallCategoriesPercentage =
-      smallCategories.fold(0, (prev, curr) => prev + curr['percentage']);
-  final double smallCategoriesAmount =
-      smallCategories.fold(0, (prev, curr) => prev + curr['amount']);
-  List<Map<String, dynamic>> bigCategories =
-      categories.where((category) => category['percentage'] > 0.05).toList();
+  if (smallCategories.length > 0) {
+    final double smallCategoriesPercentage =
+        smallCategories.fold(0, (prev, curr) => prev + curr['percentage']);
+    final double smallCategoriesAmount =
+        smallCategories.fold(0, (prev, curr) => prev + curr['amount']);
+    List<Map<String, dynamic>> bigCategories =
+        categories.where((category) => category['percentage'] > 0.05).toList();
 
-  bigCategories.add({
-    'category': 'Etc.',
-    'amount': smallCategoriesAmount,
-    'percentage': smallCategoriesPercentage,
-    'color': Colors.black54,
-  });
-
-  return bigCategories;
+    bigCategories.add({
+      'category': 'Etc.',
+      'amount': smallCategoriesAmount,
+      'percentage': smallCategoriesPercentage,
+      'color': Colors.black54,
+    });
+    return bigCategories;
+  }
+  return categories;
 }
 
 double filterAndGetTotalAmounts(
