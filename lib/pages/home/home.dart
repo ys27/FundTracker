@@ -7,9 +7,9 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
-import 'package:fund_tracker/services/background.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
+import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +32,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     retrieveNewData(widget.user.uid);
-    BackgroundService.initBackgroundService(widget.user.uid);
   }
 
   @override
@@ -92,6 +91,8 @@ class _HomeState extends State<Home> {
   }
 
   void retrieveNewData(String uid) {
+    RecurringTransactionsService.checkRecurringTransactions(widget.user.uid);
+
     DatabaseWrapper(uid)
         .getTransactions()
         .first

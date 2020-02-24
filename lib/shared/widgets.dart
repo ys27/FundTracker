@@ -80,16 +80,19 @@ Widget deleteIcon(
   );
 }
 
-Future<DateTime> openDatePicker(BuildContext context, DateTime openDate) {
+Future<DateTime> openDatePicker(BuildContext context, DateTime openDate,
+    {DateTime firstDate, DateTime lastDate}) {
   return showDatePicker(
     context: context,
     initialDate: openDate ?? DateTime.now(),
-    firstDate: DateTime.now().subtract(
-      Duration(days: 365),
-    ),
-    lastDate: DateTime.now().add(
-      Duration(days: 365),
-    ),
+    firstDate: firstDate ??
+        DateTime.now().subtract(
+          Duration(days: 365),
+        ),
+    lastDate: lastDate ??
+        DateTime.now().add(
+          Duration(days: 365),
+        ),
   );
 }
 
@@ -98,8 +101,10 @@ Widget datePicker(
   String leading,
   String trailing,
   Function updateDateState,
-  DateTime limitByDate,
-) {
+  DateTime limitByDate, {
+  DateTime firstDate,
+  DateTime lastDate,
+}) {
   return FlatButton(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,7 +115,12 @@ Widget datePicker(
       ],
     ),
     onPressed: () async {
-      DateTime date = await openDatePicker(context, limitByDate);
+      DateTime date = await openDatePicker(
+        context,
+        limitByDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+      );
       if (date != null) {
         updateDateState(date);
       }

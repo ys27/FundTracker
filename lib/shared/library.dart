@@ -336,10 +336,6 @@ String getAmountStr(double amount) {
       : '\$${amount.toStringAsFixed(2)}';
 }
 
-int getMilliSecondsUntilNextDate(DateTime nextDate) {
-  return nextDate.difference(DateTime.now()).inMilliseconds;
-}
-
 double abs(double value) {
   if (value < 0) {
     return -1 * value;

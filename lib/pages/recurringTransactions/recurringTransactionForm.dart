@@ -4,6 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -97,6 +98,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                         () => _nextDate = getDateNotTime(date),
                       ),
                       DateTime.now(),
+                      firstDate: getDateNotTime(DateTime.now()),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -276,6 +278,8 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                                   .updateRecurringTransactions([recTx])
                               : DatabaseWrapper(_user.uid)
                                   .addRecurringTransactions([recTx]);
+                          RecurringTransactionsService
+                              .checkRecurringTransactions(_user.uid);
                           SyncService(_user.uid).syncRecurringTransactions();
                           Navigator.pop(context);
                         }
