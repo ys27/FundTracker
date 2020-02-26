@@ -34,16 +34,6 @@ class _MainDrawerState extends State<MainDrawer> {
     DatabaseWrapper(widget.user.uid).getUser().then((user) {
       setState(() => userInfo = user);
     });
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   try {
-    //     final result = await InternetAddress.lookup('google.com');
-    //     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-    //       setState(() => isConnected = true);
-    //     }
-    //   } on SocketException catch (_) {
-    //     setState(() => isConnected = false);
-    //   }
-    // });
   }
 
   @override
@@ -68,10 +58,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Home'),
             leading: Icon(Icons.home),
-            onTap: () => Navigator.popUntil(
-              context,
-              ModalRoute.withName(Navigator.defaultRouteName),
-            ),
+            onTap: () => goHome(context),
           ),
           ListTile(
             title: Text('Categories'),
@@ -133,17 +120,6 @@ class _MainDrawerState extends State<MainDrawer> {
               }
             },
           ),
-          // isConnected
-          //     ? ListTile(
-          //         title: Text('Sync'),
-          //         leading: Icon(Icons.sync),
-          //         onTap: () => SyncService(widget.user.uid).syncToCloud(),
-          //       )
-          //     : ListTile(
-          //         title: Text('Sync Unavailable'),
-          //         leading: Icon(Icons.sync_problem),
-          //         onTap: () {},
-          //       ),
         ],
       ),
     );
