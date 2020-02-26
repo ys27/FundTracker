@@ -46,7 +46,12 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.search),
             onPressed: () => showSearch(
               context: context,
-              delegate: SearchService(),
+              delegate: SearchService(
+                _transactions,
+                _currentPeriod,
+                _prefs,
+                retrieveNewData,
+              ),
             ),
           ),
         ],
