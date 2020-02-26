@@ -41,13 +41,15 @@ class _HomeState extends State<Home> {
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
-        'actions': IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () => showSearch(
-            context: context,
-            delegate: SearchService(),
+        'actions': <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => showSearch(
+              context: context,
+              delegate: SearchService(),
+            ),
           ),
-        ),
+        ],
         'widget': TransactionsList(
           _transactions,
           _currentPeriod,
@@ -73,7 +75,7 @@ class _HomeState extends State<Home> {
       drawer: MainDrawer(widget.user, openPage),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
-        actions: <Widget>[_pages[_selectedIndex]['actions']],
+        actions: _pages[_selectedIndex]['actions'],
       ),
       body: _pages[_selectedIndex]['widget'],
       floatingActionButton: _pages[_selectedIndex]['addButton'],
