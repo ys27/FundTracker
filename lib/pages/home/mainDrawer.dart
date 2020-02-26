@@ -65,7 +65,6 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: Icon(Icons.category),
             onTap: () => widget.openPage(
               Categories(widget.user, widget.openPage),
-              widget.user.uid,
             ),
           ),
           ListTile(
@@ -76,7 +75,6 @@ class _MainDrawerState extends State<MainDrawer> {
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
                 child: Periods(widget.user, widget.openPage),
               ),
-              widget.user.uid,
             ),
           ),
           ListTile(
@@ -88,7 +86,6 @@ class _MainDrawerState extends State<MainDrawer> {
                     DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
                 child: RecurringTransactions(widget.user, widget.openPage),
               ),
-              widget.user.uid,
             ),
           ),
           ListTile(
@@ -100,7 +97,6 @@ class _MainDrawerState extends State<MainDrawer> {
                     DatabaseWrapper(widget.user.uid).getPreferences(),
                 child: PreferencesForm(widget.user, widget.openPage),
               ),
-              widget.user.uid,
             ),
           ),
           ListTile(

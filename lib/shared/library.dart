@@ -5,10 +5,6 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
-// void openPage(BuildContext context, Widget page) {
-//   goHome(context);
-// }
-
 void goHome(BuildContext context) {
   Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
 }

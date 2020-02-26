@@ -110,7 +110,7 @@ class _HomeState extends State<Home> {
         .then((prefs) => setState(() => _prefs = prefs));
   }
 
-  void openPage(Widget page, String uid) async {
+  void openPage(Widget page) async {
     goHome(context);
     await showDialog(
       context: context,
@@ -118,6 +118,6 @@ class _HomeState extends State<Home> {
         return page;
       },
     );
-    retrieveNewData(uid);
+    retrieveNewData(widget.user.uid);
   }
 }
