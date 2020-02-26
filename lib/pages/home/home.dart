@@ -10,6 +10,7 @@ import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
+import 'package:fund_tracker/services/search.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,13 @@ class _HomeState extends State<Home> {
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
+        'actions': IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () => showSearch(
+            context: context,
+            delegate: SearchService(),
+          ),
+        ),
         'widget': TransactionsList(
           _transactions,
           _currentPeriod,
@@ -65,6 +73,7 @@ class _HomeState extends State<Home> {
       drawer: MainDrawer(widget.user, openPage),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
+        actions: <Widget>[_pages[_selectedIndex]['actions']],
       ),
       body: _pages[_selectedIndex]['widget'],
       floatingActionButton: _pages[_selectedIndex]['addButton'],

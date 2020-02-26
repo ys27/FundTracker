@@ -61,9 +61,8 @@ Widget deleteIcon(
   Function deleteFunction,
   Function syncFunction,
 ) {
-  return FlatButton(
-    textColor: Colors.white,
-    child: Icon(Icons.delete),
+  return IconButton(
+    icon: Icon(Icons.delete),
     onPressed: () async {
       bool hasBeenConfirmed = await showDialog(
             context: context,

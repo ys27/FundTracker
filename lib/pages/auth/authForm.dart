@@ -48,8 +48,8 @@ class _AuthFormState extends State<AuthForm> {
       labelText: label,
       suffix: ButtonTheme(
         minWidth: 10.0,
-        child: FlatButton(
-          child: _obscurePassword
+        child: IconButton(
+          icon: _obscurePassword
               ? Icon(Icons.visibility_off)
               : Icon(Icons.visibility),
           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
