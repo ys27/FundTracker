@@ -26,7 +26,6 @@ class MainDrawer extends StatefulWidget {
 class _MainDrawerState extends State<MainDrawer> {
   final AuthService _auth = AuthService();
   User userInfo;
-  bool isConnected = false;
 
   @override
   void initState() {
