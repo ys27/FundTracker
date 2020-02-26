@@ -12,8 +12,9 @@ import 'package:provider/provider.dart';
 
 class RecurringTransactions extends StatelessWidget {
   final FirebaseUser user;
+  final Function openPage;
 
-  RecurringTransactions(this.user);
+  RecurringTransactions(this.user, this.openPage);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class RecurringTransactions extends StatelessWidget {
     }
 
     return Scaffold(
-      drawer: MainDrawer(user),
+      drawer: MainDrawer(user, openPage),
       appBar: AppBar(title: Text('Recurring Transactions')),
       body: _body,
       floatingActionButton: addFloatingButton(

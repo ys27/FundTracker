@@ -16,8 +16,9 @@ import 'package:provider/provider.dart';
 
 class MainDrawer extends StatefulWidget {
   final FirebaseUser user;
+  final Function openPage;
 
-  MainDrawer(this.user);
+  MainDrawer(this.user, this.openPage);
 
   @override
   _MainDrawerState createState() => _MainDrawerState();
@@ -62,44 +63,44 @@ class _MainDrawerState extends State<MainDrawer> {
           ListTile(
             title: Text('Categories'),
             leading: Icon(Icons.category),
-            onTap: () => openPage(
-              context,
-              Categories(widget.user),
+            onTap: () => widget.openPage(
+              Categories(widget.user, widget.openPage),
+              widget.user.uid,
             ),
           ),
           ListTile(
             title: Text('Periods'),
             leading: Icon(Icons.date_range),
-            onTap: () => openPage(
-              context,
+            onTap: () => widget.openPage(
               StreamProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
-                child: Periods(widget.user),
+                child: Periods(widget.user, widget.openPage),
               ),
+              widget.user.uid,
             ),
           ),
           ListTile(
             title: Text('Recurring Transactions'),
             leading: Icon(Icons.history),
-            onTap: () => openPage(
-              context,
+            onTap: () => widget.openPage(
               StreamProvider<List<RecurringTransaction>>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
-                child: RecurringTransactions(widget.user),
+                child: RecurringTransactions(widget.user, widget.openPage),
               ),
+              widget.user.uid,
             ),
           ),
           ListTile(
             title: Text('Preferences'),
             leading: Icon(Icons.tune),
-            onTap: () => openPage(
-              context,
+            onTap: () => widget.openPage(
               StreamProvider<Preferences>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getPreferences(),
-                child: PreferencesForm(widget.user),
+                child: PreferencesForm(widget.user, widget.openPage),
               ),
+              widget.user.uid,
             ),
           ),
           ListTile(

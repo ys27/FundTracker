@@ -10,6 +10,7 @@ import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +62,7 @@ class _HomeState extends State<Home> {
     ];
 
     return Scaffold(
-      drawer: MainDrawer(widget.user),
+      drawer: MainDrawer(widget.user, openPage),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
       ),
@@ -107,5 +108,16 @@ class _HomeState extends State<Home> {
         .getPreferences()
         .first
         .then((prefs) => setState(() => _prefs = prefs));
+  }
+
+  void openPage(Widget page, String uid) async {
+    goHome(context);
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return page;
+      },
+    );
+    retrieveNewData(uid);
   }
 }

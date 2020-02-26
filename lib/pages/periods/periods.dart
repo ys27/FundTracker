@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 
 class Periods extends StatelessWidget {
   final FirebaseUser user;
+  final Function openPage;
 
-  Periods(this.user);
+  Periods(this.user, this.openPage);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class Periods extends StatelessWidget {
     }
 
     return Scaffold(
-      drawer: MainDrawer(user),
+      drawer: MainDrawer(user, openPage),
       appBar: AppBar(title: Text('Periods')),
       body: _body,
       floatingActionButton: addFloatingButton(

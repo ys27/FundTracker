@@ -11,8 +11,9 @@ import 'package:provider/provider.dart';
 
 class PreferencesForm extends StatefulWidget {
   final FirebaseUser user;
+  final Function openPage;
 
-  PreferencesForm(this.user);
+  PreferencesForm(this.user, this.openPage);
 
   @override
   _PreferencesFormState createState() => _PreferencesFormState();
@@ -245,7 +246,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user),
+      drawer: MainDrawer(widget.user, widget.openPage),
       appBar: AppBar(title: Text('Preferences')),
       body: _body,
     );

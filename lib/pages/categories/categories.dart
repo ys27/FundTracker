@@ -10,8 +10,9 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class Categories extends StatefulWidget {
   final FirebaseUser user;
+  final Function openPage;
 
-  Categories(this.user);
+  Categories(this.user, this.openPage);
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -60,7 +61,7 @@ class _CategoriesState extends State<Categories> {
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user),
+      drawer: MainDrawer(widget.user, widget.openPage),
       appBar: AppBar(title: Text('Categories')),
       body: _body,
     );
