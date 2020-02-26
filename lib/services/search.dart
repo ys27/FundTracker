@@ -17,8 +17,8 @@ class SearchService extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.close),
-        onPressed: () => close(context, true),
+        icon: Icon(Icons.clear),
+        onPressed: () => query = '',
       )
     ];
   }
