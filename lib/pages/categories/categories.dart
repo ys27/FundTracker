@@ -11,8 +11,9 @@ import 'package:fund_tracker/shared/widgets.dart';
 class Categories extends StatefulWidget {
   final FirebaseUser user;
   final Function openPage;
+  final bool filterMode;
 
-  Categories(this.user, this.openPage);
+  Categories(this.user, this.openPage, {this.filterMode: false});
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -31,7 +32,9 @@ class _CategoriesState extends State<Categories> {
 
   @override
   void dispose() {
-    SyncService(widget.user.uid).syncCategories();
+    if (!widget.filterMode) {
+      SyncService(widget.user.uid).syncCategories();
+    }
     super.dispose();
   }
 
@@ -41,28 +44,56 @@ class _CategoriesState extends State<Categories> {
     if (_categories != null) {
       _body = Container(
         padding: bodyPadding,
-        child: ReorderableListView(
-          header: Column(
-            children: <Widget>[
-              Center(
-                child: Text(
-                  'Hold and drag on a category to a different order.',
-                  style: TextStyle(fontSize: 16.0),
+        child: widget.filterMode
+            ? ListView(
+                children: <Widget>[
+                      Center(
+                        child: FlatButton(
+                          textColor: Colors.white,
+                          color: Theme.of(context).primaryColor,
+                          child: Text('Reset Filter'),
+                          onPressed: () async {
+                            setState(() => _categories
+                                .forEach((cat) => cat.unfiltered = true));
+                            final List<Category> allUnfilteredCategories =
+                                _categories
+                                    .map((cat) => cat.setUnfiltered(true))
+                                    .toList();
+                            await DatabaseWrapper(widget.user.uid)
+                                .updateCategories(allUnfilteredCategories);
+                          },
+                        ),
+                      )
+                    ] +
+                    _categories
+                        .map((category) => categoryTile(category))
+                        .toList(),
+              )
+            : ReorderableListView(
+                header: Column(
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        'Hold and drag on a category to a different order.',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                  ],
                 ),
+                onReorder: _onReorder,
+                children: _categories
+                    .map((category) => categoryTile(category))
+                    .toList(),
               ),
-              SizedBox(height: 20.0),
-            ],
-          ),
-          onReorder: _onReorder,
-          children:
-              _categories.map((category) => categoryTile(category)).toList(),
-        ),
       );
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user, widget.openPage),
-      appBar: AppBar(title: Text('Categories')),
+      drawer:
+          widget.filterMode ? null : MainDrawer(widget.user, widget.openPage),
+      appBar: AppBar(
+          title: Text(widget.filterMode ? 'Filter Categories' : 'Categories')),
       body: _body,
     );
   }
@@ -71,10 +102,10 @@ class _CategoriesState extends State<Categories> {
     return CheckboxListTile(
       key: Key(category.orderIndex.toString()),
       title: Text(category.name),
-      value: category.enabled,
-      activeColor: category.name == 'Others'
+      value: widget.filterMode ? category.unfiltered : category.enabled,
+      activeColor: (category.name == 'Others' && !widget.filterMode
           ? Colors.grey
-          : Theme.of(context).primaryColor,
+          : Theme.of(context).primaryColor),
       secondary: Icon(
         IconData(
           category.icon,
@@ -85,10 +116,14 @@ class _CategoriesState extends State<Categories> {
         })['color'],
       ),
       onChanged: (val) {
-        if (category.name != 'Others') {
+        if (!widget.filterMode && category.name != 'Others') {
           setState(() => category.enabled = val);
           DatabaseWrapper(widget.user.uid)
               .updateCategories([category.setEnabled(val)]);
+        } else if (widget.filterMode) {
+          setState(() => category.unfiltered = val);
+          DatabaseWrapper(widget.user.uid)
+              .updateCategories([category.setUnfiltered(val)]);
         }
       },
     );

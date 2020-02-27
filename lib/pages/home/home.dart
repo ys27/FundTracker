@@ -4,6 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/categories/categories.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
@@ -25,10 +26,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
   List<Transaction> _transactions;
+  List<Category> _categories;
   Period _currentPeriod;
   Preferences _prefs;
+
+  int _selectedIndex = 0;
+  List<String> categoriesFiltered = [];
+  bool anyCategoryFiltered = false;
 
   @override
   void initState() {
@@ -38,22 +43,23 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (_categories != null) {
+      categoriesFiltered = _categories
+          .where((cat) => !cat.unfiltered)
+          .map((cat) => cat.name)
+          .toList();
+      anyCategoryFiltered = categoriesFiltered.length > 0;
+      _transactions = _transactions
+          .where((tx) => !categoriesFiltered.contains(tx.category))
+          .toList();
+    }
+
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
         'actions': <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () => showSearch(
-              context: context,
-              delegate: SearchService(
-                _transactions,
-                _currentPeriod,
-                _prefs,
-                retrieveNewData,
-              ),
-            ),
-          ),
+          searchButton(),
+          filterCategoriesButton(),
         ],
         'widget': TransactionsList(
           _transactions,
@@ -72,6 +78,9 @@ class _HomeState extends State<Home> {
       },
       {
         'name': 'Statistics',
+        'actions': <Widget>[
+          filterCategoriesButton(),
+        ],
         'widget': Statistics(_transactions, _currentPeriod, _prefs),
       }
     ];
@@ -85,6 +94,36 @@ class _HomeState extends State<Home> {
       body: _pages[_selectedIndex]['widget'],
       floatingActionButton: _pages[_selectedIndex]['addButton'],
       bottomNavigationBar: transactionsAndStatistics(),
+    );
+  }
+
+  Widget searchButton() {
+    return IconButton(
+      icon: Icon(Icons.search),
+      onPressed: () => showSearch(
+        context: context,
+        delegate: SearchService(
+          _transactions,
+          _currentPeriod,
+          _prefs,
+          retrieveNewData,
+        ),
+      ),
+    );
+  }
+
+  Widget filterCategoriesButton() {
+    return IconButton(
+      icon: Icon(anyCategoryFiltered ? Icons.blur_off : Icons.blur_on),
+      onPressed: () async {
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return Categories(widget.user, openPage, filterMode: true);
+          },
+        );
+        retrieveNewData(widget.user.uid);
+      },
     );
   }
 
@@ -114,6 +153,11 @@ class _HomeState extends State<Home> {
         .getTransactions()
         .first
         .then((transactions) => setState(() => _transactions = transactions));
+
+    DatabaseWrapper(uid)
+        .getCategories()
+        .first
+        .then((categories) => setState(() => _categories = categories));
 
     DatabaseWrapper(uid)
         .getDefaultPeriod()

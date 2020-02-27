@@ -108,6 +108,7 @@ class LocalDBService {
           name: category['name'],
           icon: category['icon'],
           enabled: true,
+          unfiltered: true,
           orderIndex: index,
           uid: uid,
         ).toMap(),
