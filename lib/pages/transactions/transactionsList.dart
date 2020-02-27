@@ -81,7 +81,7 @@ class TransactionsList extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
           ),
           Text(
-            '\u2211${transactions.fold(0.0, (a, b) => a + b.amount).toString()}',
+            '\u2211 ${transactions.fold(0.0, (a, b) => a + (b.isExpense ? -1 * b.amount : b.amount)).toStringAsFixed(2)}',
             style: const TextStyle(color: Colors.white),
           ),
         ],
