@@ -46,6 +46,7 @@ class TransactionsList extends StatelessWidget {
               currentPeriod.name == 'Default Monthly',
               period['startDate'],
               period['endDate'],
+              period['transactions'],
             ),
             content: Column(
               children: period['transactions']
@@ -60,17 +61,30 @@ class TransactionsList extends StatelessWidget {
   }
 
   Widget transactionsPeriodHeader(
-      bool isDefault, DateTime startDate, DateTime endDate) {
+    bool isDefault,
+    DateTime startDate,
+    DateTime endDate,
+    List<Transaction> transactions,
+  ) {
     return Container(
       height: 50.0,
       color: Colors.grey,
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       alignment: Alignment.centerLeft,
-      child: Text(
-        isDefault
-            ? '${Months[startDate.month.toString()]} ${startDate.year}'
-            : '${getDateStr(startDate)} - ${getDateStr(endDate)}',
-        style: const TextStyle(color: Colors.white),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            isDefault
+                ? '${Months[startDate.month.toString()]} ${startDate.year}'
+                : '${getDateStr(startDate)} - ${getDateStr(endDate)}',
+            style: const TextStyle(color: Colors.white),
+          ),
+          Text(
+            '\u2211${transactions.fold(0.0, (a, b) => a + b.amount).toString()}',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }
