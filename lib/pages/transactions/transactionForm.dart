@@ -127,12 +127,13 @@ class _TransactionFormState extends State<TransactionForm> {
                         if (query == '') {
                           return null;
                         } else {
-                          final List<Transaction> suggestions = _transactions
+                          final List<String> suggestions = _transactions
                               .where(
                                 (tx) => tx.payee
                                     .toLowerCase()
                                     .startsWith(query.toLowerCase()),
                               )
+                              .map((tx) => '${tx.payee}::${tx.category}')
                               .toSet()
                               .toList();
                           if (suggestions.length > 0) {
@@ -143,9 +144,14 @@ class _TransactionFormState extends State<TransactionForm> {
                         }
                       },
                       itemBuilder: (context, suggestion) {
+                        final List<String> splitSuggestion =
+                            suggestion.split('::');
+                        final String suggestionPayee = splitSuggestion[0];
+                        final String suggestionCategory = splitSuggestion[1];
+
                         final Map<String, dynamic> category =
                             categoriesRegistry.singleWhere(
-                                (cat) => cat['name'] == suggestion.category);
+                                (cat) => cat['name'] == suggestionCategory);
                         return ListTile(
                           leading: Icon(
                             IconData(
@@ -154,15 +160,20 @@ class _TransactionFormState extends State<TransactionForm> {
                             ),
                             color: category['color'],
                           ),
-                          title: Text(suggestion.payee),
-                          subtitle: Text(suggestion.category),
+                          title: Text(suggestionPayee),
+                          subtitle: Text(suggestionCategory),
                         );
                       },
                       onSuggestionSelected: (suggestion) {
-                        _typeAheadController.text = suggestion.payee;
+                        final List<String> splitSuggestion =
+                            suggestion.split('::');
+                        final String suggestionPayee = splitSuggestion[0];
+                        final String suggestionCategory = splitSuggestion[1];
+
+                        _typeAheadController.text = suggestionPayee;
                         setState(() {
-                          _payee = suggestion.payee;
-                          _category = suggestion.category;
+                          _payee = suggestionPayee;
+                          _category = suggestionCategory;
                         });
                       },
                     ),
