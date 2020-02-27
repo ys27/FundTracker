@@ -30,8 +30,13 @@ class TransactionTile extends StatelessWidget {
             await showDialog(
               context: context,
               builder: (context) {
-                return StreamProvider<List<Category>>(
-                  create: (_) => DatabaseWrapper(_user.uid).getCategories(),
+                return MultiProvider(
+                  providers: [
+                    StreamProvider<List<Transaction>>.value(
+                        value: DatabaseWrapper(_user.uid).getTransactions()),
+                    StreamProvider<List<Category>>.value(
+                        value: DatabaseWrapper(_user.uid).getCategories()),
+                  ],
                   child: TransactionForm(
                     Transaction(
                       tid: transaction.tid,

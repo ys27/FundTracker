@@ -69,8 +69,13 @@ class _HomeState extends State<Home> {
         ),
         'addButton': addFloatingButton(
           context,
-          StreamProvider<List<Category>>(
-            create: (_) => DatabaseWrapper(widget.user.uid).getCategories(),
+          MultiProvider(
+            providers: [
+              StreamProvider<List<Transaction>>.value(
+                  value: DatabaseWrapper(widget.user.uid).getTransactions()),
+              StreamProvider<List<Category>>.value(
+                  value: DatabaseWrapper(widget.user.uid).getCategories()),
+            ],
             child: TransactionForm(Transaction.empty()),
           ),
           () => retrieveNewData(widget.user.uid),

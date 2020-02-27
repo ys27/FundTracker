@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -22,6 +23,7 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _typeAheadController = TextEditingController();
 
   DateTime _date;
   bool _isExpense;
@@ -32,9 +34,17 @@ class _TransactionFormState extends State<TransactionForm> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    _typeAheadController.text = widget.tx.payee;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode = widget.tx.tid != null;
+    final List<Transaction> _transactions =
+        Provider.of<List<Transaction>>(context);
     final List<Category> _categories = Provider.of<List<Category>>(context);
     final List<Category> _enabledCategories = _categories != null
         ? _categories.where((category) => category.enabled).toList()
@@ -93,8 +103,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       DateTime.now(),
                     ),
                     SizedBox(height: 20.0),
-                    TextFormField(
-                      initialValue: widget.tx.payee,
+                    TypeAheadFormField(
                       autovalidate: _payee != null,
                       validator: (val) {
                         if (val.isEmpty) {
@@ -104,12 +113,44 @@ class _TransactionFormState extends State<TransactionForm> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        labelText: 'Payee',
+                      textFieldConfiguration: TextFieldConfiguration(
+                        controller: _typeAheadController,
+                        decoration: InputDecoration(
+                          labelText: 'Payee',
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        onChanged: (val) {
+                          setState(() => _payee = val);
+                        },
                       ),
-                      textCapitalization: TextCapitalization.words,
-                      onChanged: (val) {
-                        setState(() => _payee = val);
+                      suggestionsCallback: (query) {
+                        if (query == '') {
+                          return null;
+                        } else {
+                          final List<String> suggestions = _transactions
+                              .where(
+                                (tx) => tx.payee
+                                    .toLowerCase()
+                                    .startsWith(query.toLowerCase()),
+                              )
+                              .map((tx) => tx.payee)
+                              .toSet()
+                              .toList();
+                          if (suggestions.length > 0) {
+                            return suggestions;
+                          } else {
+                            return null;
+                          }
+                        }
+                      },
+                      itemBuilder: (context, suggestion) {
+                        return ListTile(
+                          title: Text(suggestion),
+                        );
+                      },
+                      onSuggestionSelected: (suggestion) {
+                        _typeAheadController.text = suggestion;
+                        setState(() => _payee = suggestion);
                       },
                     ),
                     SizedBox(height: 20.0),
