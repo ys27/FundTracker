@@ -81,11 +81,19 @@ class TransactionsList extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
           ),
           Text(
-            '\u2211 ${transactions.fold(0.0, (a, b) => a + (b.isExpense ? -1 * b.amount : b.amount)).toStringAsFixed(2)}',
+            getTransactionsSumStr(transactions),
             style: const TextStyle(color: Colors.white),
           ),
         ],
       ),
     );
+  }
+
+  String getTransactionsSumStr(List<Transaction> transactions) {
+    final double sum = transactions.fold(0.0, (a, b) {
+      final double nextAmount = b.isExpense ? -1 * b.amount : b.amount;
+      return a + nextAmount;
+    });
+    return '\u2211 ${sum < 0 ? '-' : ''}\$${abs(sum).toStringAsFixed(2)}';
   }
 }
