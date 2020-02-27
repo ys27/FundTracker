@@ -127,13 +127,12 @@ class _TransactionFormState extends State<TransactionForm> {
                         if (query == '') {
                           return null;
                         } else {
-                          final List<String> suggestions = _transactions
+                          final List<Transaction> suggestions = _transactions
                               .where(
                                 (tx) => tx.payee
                                     .toLowerCase()
                                     .startsWith(query.toLowerCase()),
                               )
-                              .map((tx) => tx.payee)
                               .toSet()
                               .toList();
                           if (suggestions.length > 0) {
@@ -144,13 +143,27 @@ class _TransactionFormState extends State<TransactionForm> {
                         }
                       },
                       itemBuilder: (context, suggestion) {
+                        final Map<String, dynamic> category =
+                            categoriesRegistry.singleWhere(
+                                (cat) => cat['name'] == suggestion.category);
                         return ListTile(
-                          title: Text(suggestion),
+                          leading: Icon(
+                            IconData(
+                              category['icon'],
+                              fontFamily: 'MaterialIcons',
+                            ),
+                            color: category['color'],
+                          ),
+                          title: Text(suggestion.payee),
+                          subtitle: Text(suggestion.category),
                         );
                       },
                       onSuggestionSelected: (suggestion) {
-                        _typeAheadController.text = suggestion;
-                        setState(() => _payee = suggestion);
+                        _typeAheadController.text = suggestion.payee;
+                        setState(() {
+                          _payee = suggestion.payee;
+                          _category = suggestion.category;
+                        });
                       },
                     ),
                     SizedBox(height: 20.0),
