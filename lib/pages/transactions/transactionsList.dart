@@ -56,6 +56,7 @@ class TransactionsList extends StatelessWidget {
           );
         },
         itemCount: _dividedTransactions.length,
+        // physics: const AlwaysScrollableScrollPhysics(),
       );
     }
   }
