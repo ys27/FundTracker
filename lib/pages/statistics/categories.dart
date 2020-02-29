@@ -40,9 +40,8 @@ class _CategoriesState extends State<Categories> {
               index,
               PieChartSectionData(
                 value: category['percentage'] * 100,
-                color: category['color']
-                    .withOpacity(touchedIndex == index ? 1.0 : 0.7),
-                radius: 145,
+                color: category['color'],
+                radius: touchedIndex == index ? 145 : 140,
                 title: '\$${category['amount'].toStringAsFixed(2)}',
                 titleStyle: TextStyle(
                   color: category['percentage'] < 0.05 || touchedIndex == index
@@ -53,7 +52,7 @@ class _CategoriesState extends State<Categories> {
                 titlePositionPercentageOffset:
                     category['percentage'] < 0.05 || touchedIndex == index
                         ? 1.2
-                        : 0.65,
+                        : (index % 2 == 0 ? 0.825 : 0.675),
               ),
             );
           })
@@ -67,7 +66,7 @@ class _CategoriesState extends State<Categories> {
           ] +
           ((widget.transactions.length > 0)
               ? <Widget>[
-                  SizedBox(height: 30.0),
+                  SizedBox(height: 35.0),
                   PieChart(
                     PieChartData(
                       sections: sectionData,
