@@ -15,7 +15,7 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  int touchedIndex = 0;
+  int touchedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +45,15 @@ class _CategoriesState extends State<Categories> {
                 radius: 145,
                 title: '\$${category['amount'].toStringAsFixed(2)}',
                 titleStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
+                  color: category['percentage'] < 0.05 || touchedIndex == index
+                      ? Colors.black
+                      : Colors.white,
+                  fontSize: 16,
                 ),
-                titlePositionPercentageOffset: 0.8,
+                titlePositionPercentageOffset:
+                    category['percentage'] < 0.05 || touchedIndex == index
+                        ? 1.2
+                        : 0.65,
               ),
             );
           })
@@ -62,7 +67,7 @@ class _CategoriesState extends State<Categories> {
           ] +
           ((widget.transactions.length > 0)
               ? <Widget>[
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 30.0),
                   PieChart(
                     PieChartData(
                       sections: sectionData,
@@ -72,11 +77,12 @@ class _CategoriesState extends State<Categories> {
                       ),
                       pieTouchData: PieTouchData(
                         touchCallback: (pieTouchResponse) => setState(() {
-                          touchedIndex =
-                              (pieTouchResponse.touchInput is FlLongPressEnd ||
-                                      pieTouchResponse.touchInput is FlPanEnd)
-                                  ? touchedIndex
-                                  : pieTouchResponse.touchedSectionIndex;
+                          touchedIndex = (pieTouchResponse.touchInput
+                                      is FlLongPressEnd ||
+                                  pieTouchResponse.touchInput is FlPanEnd ||
+                                  pieTouchResponse.touchedSectionIndex == null)
+                              ? touchedIndex
+                              : pieTouchResponse.touchedSectionIndex;
                         }),
                       ),
                     ),
