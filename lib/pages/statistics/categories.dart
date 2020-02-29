@@ -5,16 +5,16 @@ import 'package:fund_tracker/pages/statistics/indicator.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
-class Categorical extends StatefulWidget {
+class Categories extends StatefulWidget {
   final List<Transaction> transactions;
 
-  Categorical(this.transactions);
+  Categories(this.transactions);
 
   @override
-  _CategoricalState createState() => _CategoricalState();
+  _CategoriesState createState() => _CategoriesState();
 }
 
-class _CategoricalState extends State<Categorical> {
+class _CategoriesState extends State<Categories> {
   int touchedIndex = 0;
 
   @override

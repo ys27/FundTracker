@@ -3,7 +3,7 @@ import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/balance.dart';
-import 'package:fund_tracker/pages/statistics/categorical.dart';
+import 'package:fund_tracker/pages/statistics/categories.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
@@ -238,7 +238,7 @@ class _StatisticsState extends State<Statistics> {
                 ),
           _showStatistics ? SizedBox(height: 20.0) : Container(),
           _showStatistics
-              ? Categorical(_transactions.where((tx) => tx.isExpense).toList())
+              ? Categories(_transactions.where((tx) => tx.isExpense).toList())
               : Container(),
           _showStatistics ? SizedBox(height: 20.0) : Container(),
           _showStatistics

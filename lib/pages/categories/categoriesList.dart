@@ -8,18 +8,18 @@ import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 
-class Categories extends StatefulWidget {
+class CategoriesList extends StatefulWidget {
   final FirebaseUser user;
   final Function openPage;
   final bool filterMode;
 
-  Categories(this.user, this.openPage, {this.filterMode: false});
+  CategoriesList(this.user, this.openPage, {this.filterMode: false});
 
   @override
-  _CategoriesState createState() => _CategoriesState();
+  _CategoriesListState createState() => _CategoriesListState();
 }
 
-class _CategoriesState extends State<Categories> {
+class _CategoriesListState extends State<CategoriesList> {
   List<Category> _categories;
 
   @override

@@ -4,10 +4,10 @@ import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/categories/categories.dart';
-import 'package:fund_tracker/pages/periods/periods.dart';
+import 'package:fund_tracker/pages/categories/categoriesList.dart';
+import 'package:fund_tracker/pages/periods/periodsList.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
-import 'package:fund_tracker/pages/recurringTransactions/recurringTransactions.dart';
+import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionsList.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -64,7 +64,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Categories'),
             leading: Icon(Icons.category),
             onTap: () => widget.openPage(
-              Categories(widget.user, widget.openPage),
+              CategoriesList(widget.user, widget.openPage),
             ),
           ),
           ListTile(
@@ -73,7 +73,7 @@ class _MainDrawerState extends State<MainDrawer> {
             onTap: () => widget.openPage(
               StreamProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
-                child: Periods(widget.user, widget.openPage),
+                child: PeriodsList(widget.user, widget.openPage),
               ),
             ),
           ),
@@ -84,7 +84,7 @@ class _MainDrawerState extends State<MainDrawer> {
               StreamProvider<List<RecurringTransaction>>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
-                child: RecurringTransactions(widget.user, widget.openPage),
+                child: RecurringTransactionsList(widget.user, widget.openPage),
               ),
             ),
           ),

@@ -8,11 +8,11 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
-class Periods extends StatelessWidget {
+class PeriodsList extends StatelessWidget {
   final FirebaseUser user;
   final Function openPage;
 
-  Periods(this.user, this.openPage);
+  PeriodsList(this.user, this.openPage);
 
   @override
   Widget build(BuildContext context) {
