@@ -120,6 +120,15 @@ Widget datePicker(
         firstDate: firstDate,
         lastDate: lastDate,
       );
+      DateTime now = DateTime.now();
+      date = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        now.hour,
+        now.minute,
+        now.second,
+      );
       if (date != null) {
         updateDateState(date);
       }
