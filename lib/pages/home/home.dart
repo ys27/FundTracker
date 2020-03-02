@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
 
   Widget searchButton() {
     return IconButton(
-      icon: Icon(CommunityMaterialIcons.magnify),
+      icon: Icon(Icons.search),
       onPressed: () => showSearch(
         context: context,
         delegate: SearchService(
