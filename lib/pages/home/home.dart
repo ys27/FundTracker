@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -104,7 +105,7 @@ class _HomeState extends State<Home> {
 
   Widget searchButton() {
     return IconButton(
-      icon: Icon(Icons.search),
+      icon: Icon(CommunityMaterialIcons.magnify),
       onPressed: () => showSearch(
         context: context,
         delegate: SearchService(
@@ -119,7 +120,9 @@ class _HomeState extends State<Home> {
 
   Widget filterCategoriesButton() {
     return IconButton(
-      icon: Icon(anyCategoryFiltered ? Icons.blur_off : Icons.blur_on),
+      icon: Icon(anyCategoryFiltered
+          ? CommunityMaterialIcons.filter
+          : CommunityMaterialIcons.filter_outline),
       onPressed: () async {
         await showDialog(
           context: context,

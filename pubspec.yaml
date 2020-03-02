@@ -33,6 +33,7 @@ dependencies:
   sticky_headers: ^0.1.8+1
   fl_chart: ^0.8.1
   flutter_typeahead: ^1.8.0
+  community_material_icon: ^3.5.95
 
 dev_dependencies:
   flutter_launcher_icons: ^0.7.4
