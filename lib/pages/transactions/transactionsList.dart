@@ -95,6 +95,6 @@ class TransactionsList extends StatelessWidget {
       final double nextAmount = b.isExpense ? -1 * b.amount : b.amount;
       return a + nextAmount;
     });
-    return '\u2211 ${sum < 0 ? '-' : ''}\$${abs(sum).toStringAsFixed(2)}';
+    return '${sum < 0 ? '-' : ''}\$${abs(sum).toStringAsFixed(2)}';
   }
 }
