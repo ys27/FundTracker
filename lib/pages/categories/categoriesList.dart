@@ -115,14 +115,14 @@ class _CategoriesListState extends State<CategoriesList> {
           return cat['name'] == category.name;
         })['color'],
       ),
-      onChanged: (val) {
+      onChanged: (val) async {
         if (!widget.filterMode && category.name != 'Others') {
           setState(() => category.enabled = val);
-          DatabaseWrapper(widget.user.uid)
+          await DatabaseWrapper(widget.user.uid)
               .updateCategories([category.setEnabled(val)]);
         } else if (widget.filterMode) {
           setState(() => category.unfiltered = val);
-          DatabaseWrapper(widget.user.uid)
+          await DatabaseWrapper(widget.user.uid)
               .updateCategories([category.setUnfiltered(val)]);
         }
       },
