@@ -44,6 +44,8 @@ class SyncService {
   void syncPeriods() async {
     List<Period> cloudPeriods = await _fireDBService.getPeriods().first;
     List<Period> localPeriods = await _localDBService.getPeriods(uid).first;
+    localPeriods = await _localDBService.getPeriods(uid).first;
+
     List<Period> periodsOnlyInCloud = cloudPeriods
         .where((cloud) =>
             localPeriods.where((local) => local.equalTo(cloud)).length == 0)
@@ -52,6 +54,7 @@ class SyncService {
         .where((local) =>
             cloudPeriods.where((cloud) => cloud.equalTo(local)).length == 0)
         .toList();
+
     _fireDBService.deletePeriods(periodsOnlyInCloud);
     _fireDBService.addPeriods(periodsOnlyInLocal);
   }

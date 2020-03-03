@@ -149,12 +149,12 @@ class _PeriodFormState extends State<PeriodForm> {
                             isDefault: _isDefault ?? widget.period.isDefault,
                             uid: _user.uid,
                           );
-
                           setState(() => isLoading = true);
                           isEditMode
-                              ? DatabaseWrapper(_user.uid)
+                              ? await DatabaseWrapper(_user.uid)
                                   .updatePeriods([period])
-                              : DatabaseWrapper(_user.uid).addPeriods([period]);
+                              : await DatabaseWrapper(_user.uid)
+                                  .addPeriods([period]);
                           SyncService(_user.uid).syncPeriods();
                           if (period.isDefault) {
                             DatabaseWrapper(_user.uid)
