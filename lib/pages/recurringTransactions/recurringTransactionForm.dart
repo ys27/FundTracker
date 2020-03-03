@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/services/sync.dart';
@@ -156,10 +155,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                                       category.icon,
                                       fontFamily: 'MaterialIcons',
                                     ),
-                                    color: categoriesRegistry.singleWhere(
-                                        (cat) =>
-                                            cat['name'] ==
-                                            category.name)['color'],
+                                    color: category.iconColor,
                                   ),
                                   SizedBox(width: 10.0),
                                   Text(
@@ -176,22 +172,21 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                                     DropdownMenuItem(
                                       value: widget.recTx.category,
                                       child: Row(children: <Widget>[
-                                        Icon(
+                                        () {
+                                          Category _hiddenCategory =
+                                              _categories.singleWhere(
+                                            (cat) =>
+                                                cat.name ==
+                                                widget.recTx.category,
+                                          );
+                                          return Icon(
                                             IconData(
-                                              _categories
-                                                  .singleWhere(
-                                                    (cat) =>
-                                                        cat.name ==
-                                                        widget.recTx.category,
-                                                  )
-                                                  .icon,
+                                              _hiddenCategory.icon,
                                               fontFamily: 'MaterialIcons',
                                             ),
-                                            color: categoriesRegistry
-                                                .singleWhere((cat) =>
-                                                    cat['name'] ==
-                                                    widget.recTx
-                                                        .category)['color']),
+                                            color: _hiddenCategory.iconColor,
+                                          );
+                                        }(),
                                         SizedBox(width: 10.0),
                                         Text(
                                           widget.recTx.category,

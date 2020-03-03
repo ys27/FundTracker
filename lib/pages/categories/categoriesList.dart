@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
@@ -111,9 +110,7 @@ class _CategoriesListState extends State<CategoriesList> {
           category.icon,
           fontFamily: 'MaterialIcons',
         ),
-        color: categoriesRegistry.singleWhere((cat) {
-          return cat['name'] == category.name;
-        })['color'],
+        color: category.iconColor,
       ),
       onChanged: (val) async {
         if (!widget.filterMode && category.name != 'Others') {

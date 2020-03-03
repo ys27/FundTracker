@@ -76,6 +76,7 @@ class FireDBService {
               cid: cid,
               name: category['name'],
               icon: category['icon'],
+              iconColor: category['color'],
               enabled: true,
               unfiltered: true,
               orderIndex: index,

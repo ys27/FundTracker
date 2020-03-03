@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
@@ -107,6 +108,7 @@ class LocalDBService {
           cid: Uuid().v1(),
           name: category['name'],
           icon: category['icon'],
+          iconColor: category['color'],
           enabled: true,
           unfiltered: true,
           orderIndex: index,
@@ -373,6 +375,8 @@ class LocalDBService {
       return 'REAL';
     } else if (column is DateUnit) {
       return 'INTEGER';
+    } else if (column is Color) {
+      return 'TEXT';
     } else {
       return 'TEXT';
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
@@ -11,10 +12,16 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class Statistics extends StatefulWidget {
   final List<Transaction> allTransactions;
+  final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
 
-  Statistics(this.allTransactions, this.currentPeriod, this.prefs);
+  Statistics(
+    this.allTransactions,
+    this.categories,
+    this.currentPeriod,
+    this.prefs,
+  );
 
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -238,7 +245,10 @@ class _StatisticsState extends State<Statistics> {
                 ),
           _showStatistics ? SizedBox(height: 20.0) : Container(),
           _showStatistics
-              ? Categories(_transactions.where((tx) => tx.isExpense).toList())
+              ? Categories(
+                  _transactions.where((tx) => tx.isExpense).toList(),
+                  widget.categories,
+                )
               : Container(),
           _showStatistics ? SizedBox(height: 20.0) : Container(),
           _showStatistics

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
@@ -10,12 +11,14 @@ import 'package:sticky_headers/sticky_headers.dart';
 
 class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
+  final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
   final Function callback;
 
   TransactionsList(
     this.transactions,
+    this.categories,
     this.currentPeriod,
     this.prefs,
     this.callback,
@@ -49,9 +52,11 @@ class TransactionsList extends StatelessWidget {
               period['transactions'],
             ),
             content: Column(
-              children: period['transactions']
-                  .map<Widget>((tx) => TransactionTile(tx, callback))
-                  .toList(),
+              children: period['transactions'].map<Widget>((tx) {
+                Category category =
+                    categories.singleWhere((cat) => cat.name == tx.category);
+                return TransactionTile(tx, category, callback);
+              }).toList(),
             ),
           );
         },

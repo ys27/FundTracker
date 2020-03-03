@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -10,16 +9,14 @@ import 'package:provider/provider.dart';
 
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
+  final Category category;
   final Function callback;
 
-  TransactionTile(this.transaction, this.callback);
+  TransactionTile(this.transaction, this.category, this.callback);
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-
-    Map<String, dynamic> _category = categoriesRegistry
-        .singleWhere((category) => category['name'] == transaction.category);
 
     return Padding(
       padding: EdgeInsets.only(top: 5.0),
@@ -58,10 +55,10 @@ class TransactionTile extends StatelessWidget {
             backgroundColor: Theme.of(context).backgroundColor,
             child: Icon(
               IconData(
-                _category['icon'],
+                category.icon,
                 fontFamily: 'MaterialIcons',
               ),
-              color: _category['color'],
+              color: category.iconColor,
             ),
           ),
           title: Text(transaction.payee),

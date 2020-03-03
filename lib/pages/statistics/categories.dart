@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/indicator.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -7,8 +8,9 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class Categories extends StatefulWidget {
   final List<Transaction> transactions;
+  final List<Category> categories;
 
-  Categories(this.transactions);
+  Categories(this.transactions, this.categories);
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -24,7 +26,8 @@ class _CategoriesState extends State<Categories> {
 
     if (widget.transactions.length > 0) {
       final List<Map<String, dynamic>> _transactionsInCategories =
-          divideTransactionsIntoCategories(widget.transactions);
+          divideTransactionsIntoCategories(
+              widget.transactions, widget.categories);
       final List<Map<String, dynamic>> _categoriesWithTotalAmounts =
           appendTotalCategorialAmounts(_transactionsInCategories);
       final List<Map<String, dynamic>> _categoriesWithPercentages =
@@ -32,7 +35,6 @@ class _CategoriesState extends State<Categories> {
       _categoricalData = combineSmallPercentages(_categoriesWithPercentages);
       _categoricalData
           .sort((a, b) => b['percentage'].compareTo(a['percentage']));
-
       sectionData = _categoricalData
           .asMap()
           .map((index, category) {
@@ -40,7 +42,7 @@ class _CategoriesState extends State<Categories> {
               index,
               PieChartSectionData(
                 value: category['percentage'] * 100,
-                color: category['color'],
+                color: category['iconColor'],
                 radius: touchedIndex == index ? 145 : 140,
                 title: '\$${category['amount'].toStringAsFixed(2)}',
                 titleStyle: TextStyle(
@@ -96,7 +98,7 @@ class _CategoriesState extends State<Categories> {
                           (index, category) => MapEntry(
                             index,
                             Indicator(
-                              color: category['color'],
+                              color: category['iconColor'],
                               text:
                                   '${category['category']} - ${(category['percentage'] * 100).toStringAsFixed(0)}%',
                               isSquare: false,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
@@ -6,12 +7,18 @@ import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 
 class SearchService extends SearchDelegate {
   final List<Transaction> transactions;
+  final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
   final Function retrieveNewData;
 
   SearchService(
-      this.transactions, this.currentPeriod, this.prefs, this.retrieveNewData);
+    this.transactions,
+    this.categories,
+    this.currentPeriod,
+    this.prefs,
+    this.retrieveNewData,
+  );
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -43,6 +50,7 @@ class SearchService extends SearchDelegate {
           .toList();
       return TransactionsList(
         searchedTransactions,
+        categories,
         currentPeriod,
         prefs,
         retrieveNewData,

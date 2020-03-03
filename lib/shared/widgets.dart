@@ -121,6 +121,7 @@ Widget datePicker(
         lastDate: lastDate,
       );
       DateTime now = DateTime.now();
+
       DateTime dateWithCurrentTime = DateTime(
         date.year,
         date.month,
@@ -129,6 +130,7 @@ Widget datePicker(
         now.minute,
         now.second,
       );
+
       if (dateWithCurrentTime != null) {
         updateDateState(dateWithCurrentTime);
       }

@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
+
 class Category {
   String cid;
   String name;
   int icon;
+  Color iconColor;
   bool enabled;
   bool unfiltered;
   int orderIndex;
@@ -11,6 +14,7 @@ class Category {
     this.cid,
     this.name,
     this.icon,
+    this.iconColor,
     this.enabled,
     this.unfiltered,
     this.orderIndex,
@@ -21,6 +25,7 @@ class Category {
     cid = '';
     name = '';
     icon = 0;
+    iconColor = Colors.black;
     enabled = true;
     unfiltered = false;
     orderIndex = 0;
@@ -31,6 +36,9 @@ class Category {
     this.cid = map['cid'];
     this.name = map['name'];
     this.icon = map['icon'];
+    this.iconColor = map['iconColor'] is String
+        ? Color(int.parse(map['iconColor']))
+        : map['iconColor'];
     this.enabled = map['enabled'] == 1;
     this.unfiltered = map['unfiltered'] == 1;
     this.orderIndex = map['orderIndex'];
@@ -42,6 +50,7 @@ class Category {
       'cid': cid,
       'name': name,
       'icon': icon,
+      'iconColor': '0X${iconColor.value.toRadixString(16).toUpperCase()}',
       'enabled': enabled ? 1 : 0,
       'unfiltered': unfiltered ? 1 : 0,
       'orderIndex': orderIndex,

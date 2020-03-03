@@ -85,6 +85,7 @@ class SyncService {
     syncTransactions();
     syncCategories();
     syncPeriods();
+    syncRecurringTransactions();
     syncPreferences();
   }
 

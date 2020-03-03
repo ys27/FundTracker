@@ -64,6 +64,7 @@ class _HomeState extends State<Home> {
         ],
         'widget': TransactionsList(
           _transactions,
+          _categories,
           _currentPeriod,
           _prefs,
           () => retrieveNewData(widget.user.uid),
@@ -87,7 +88,8 @@ class _HomeState extends State<Home> {
         'actions': <Widget>[
           filterCategoriesButton(),
         ],
-        'widget': Statistics(_transactions, _currentPeriod, _prefs),
+        'widget':
+            Statistics(_transactions, _categories, _currentPeriod, _prefs),
       }
     ];
 
@@ -110,6 +112,7 @@ class _HomeState extends State<Home> {
         context: context,
         delegate: SearchService(
           _transactions,
+          _categories,
           _currentPeriod,
           _prefs,
           retrieveNewData,

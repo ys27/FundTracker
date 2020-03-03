@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
@@ -225,6 +226,7 @@ List<Map<String, dynamic>> appendTotalCategorialAmounts(
 
 List<Map<String, dynamic>> divideTransactionsIntoCategories(
   List<Transaction> transactions,
+  List<Category> categories,
 ) {
   List<Map<String, dynamic>> dividedTransactions = [];
 
@@ -241,7 +243,7 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
       dividedTransactions.add({
         'category': tx.category,
         'transactions': [tx],
-        'color': categoriesRegistry.singleWhere(
+        'iconColor': categoriesRegistry.singleWhere(
           (registry) => registry['name'] == tx.category,
         )['color'],
       });
@@ -267,7 +269,7 @@ List<Map<String, dynamic>> combineSmallPercentages(
       'category': 'Etc.',
       'amount': smallCategoriesAmount,
       'percentage': smallCategoriesPercentage,
-      'color': Colors.black54,
+      'iconColor': Colors.black54,
     });
     return bigCategories;
   }

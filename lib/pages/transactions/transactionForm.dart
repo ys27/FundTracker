@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -148,17 +147,15 @@ class _TransactionFormState extends State<TransactionForm> {
                             suggestion.split('::');
                         final String suggestionPayee = splitSuggestion[0];
                         final String suggestionCategory = splitSuggestion[1];
-
-                        final Map<String, dynamic> category =
-                            categoriesRegistry.singleWhere(
-                                (cat) => cat['name'] == suggestionCategory);
+                        final Category category = _categories.singleWhere(
+                            (cat) => cat.name == suggestionCategory);
                         return ListTile(
                           leading: Icon(
                             IconData(
-                              category['icon'],
+                              category.icon,
                               fontFamily: 'MaterialIcons',
                             ),
-                            color: category['color'],
+                            color: category.iconColor,
                           ),
                           title: Text(suggestionPayee),
                           subtitle: Text(suggestionCategory),
@@ -213,10 +210,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                       category.icon,
                                       fontFamily: 'MaterialIcons',
                                     ),
-                                    color: categoriesRegistry.singleWhere(
-                                        (cat) =>
-                                            cat['name'] ==
-                                            category.name)['color'],
+                                    color: category.iconColor,
                                   ),
                                   SizedBox(width: 10.0),
                                   Text(
@@ -233,20 +227,20 @@ class _TransactionFormState extends State<TransactionForm> {
                                     DropdownMenuItem(
                                       value: widget.tx.category,
                                       child: Row(children: <Widget>[
-                                        Icon(
+                                        () {
+                                          Category _hiddenCategory =
+                                              _categories.singleWhere(
+                                            (cat) =>
+                                                cat.name == widget.tx.category,
+                                          );
+                                          return Icon(
                                             IconData(
-                                              _categories
-                                                  .singleWhere((cat) =>
-                                                      cat.name ==
-                                                      widget.tx.category)
-                                                  .icon,
+                                              _hiddenCategory.icon,
                                               fontFamily: 'MaterialIcons',
                                             ),
-                                            color: categoriesRegistry
-                                                .singleWhere((cat) =>
-                                                    cat['name'] ==
-                                                    widget
-                                                        .tx.category)['color']),
+                                            color: _hiddenCategory.iconColor,
+                                          );
+                                        }(),
                                         SizedBox(width: 10.0),
                                         Text(
                                           widget.tx.category,
