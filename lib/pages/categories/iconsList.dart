@@ -14,15 +14,18 @@ class _IconsListState extends State<IconsList> {
       appBar: AppBar(
         title: Text('Icon Picker'),
       ),
-      body: Container(
-        padding: formPadding,
-        child: ListView.builder(
-          itemBuilder: (context, index) => IconButton(
-            icon: Icon(iconsRegistry[index]),
-            onPressed: () {},
-          ),
-          itemCount: iconsRegistry.length,
-        ),
+      body: ListView(
+        padding: bodyPadding,
+        children: <Widget>[
+          Wrap(
+            children: iconsRegistry
+                .map((icon) => IconButton(
+                      icon: Icon(icon),
+                      onPressed: () {},
+                    ))
+                .toList(),
+          )
+        ],
       ),
     );
   }
