@@ -153,7 +153,8 @@ class _TransactionFormState extends State<TransactionForm> {
                           leading: Icon(
                             IconData(
                               category.icon,
-                              fontFamily: 'MaterialIcons',
+                              fontFamily: 'MaterialDesignIconFont',
+                              fontPackage: 'community_material_icon',
                             ),
                             color: category.iconColor,
                           ),
@@ -208,7 +209,8 @@ class _TransactionFormState extends State<TransactionForm> {
                                   Icon(
                                     IconData(
                                       category.icon,
-                                      fontFamily: 'MaterialIcons',
+                                      fontFamily: 'MaterialDesignIconFont',
+                                      fontPackage: 'community_material_icon',
                                     ),
                                     color: category.iconColor,
                                   ),
@@ -236,7 +238,10 @@ class _TransactionFormState extends State<TransactionForm> {
                                           return Icon(
                                             IconData(
                                               _hiddenCategory.icon,
-                                              fontFamily: 'MaterialIcons',
+                                              fontFamily:
+                                                  'MaterialDesignIconFont',
+                                              fontPackage:
+                                                  'community_material_icon',
                                             ),
                                             color: _hiddenCategory.iconColor,
                                           );

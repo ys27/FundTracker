@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -62,7 +63,7 @@ Widget deleteIcon(
   Function syncFunction,
 ) {
   return IconButton(
-    icon: Icon(Icons.delete),
+    icon: Icon(CommunityMaterialIcons.delete),
     onPressed: () async {
       bool hasBeenConfirmed = await showDialog(
             context: context,
@@ -110,7 +111,7 @@ Widget datePicker(
       children: <Widget>[
         Text(leading),
         Text(trailing),
-        Icon(Icons.date_range),
+        Icon(CommunityMaterialIcons.calendar_range),
       ],
     ),
     onPressed: () async {
@@ -148,7 +149,7 @@ Widget addFloatingButton(BuildContext context, Widget page, Function callback) {
       );
       callback();
     },
-    child: Icon(Icons.add),
+    child: Icon(CommunityMaterialIcons.plus),
   );
 }
 

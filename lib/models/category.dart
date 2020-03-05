@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 
 class Category {
@@ -24,7 +25,7 @@ class Category {
   Category.empty(int numExistingCategories) {
     cid = null;
     name = null;
-    icon = Icons.crop_original.codePoint;
+    icon = CommunityMaterialIcons.image.codePoint;
     iconColor = Colors.black;
     enabled = true;
     unfiltered = true;

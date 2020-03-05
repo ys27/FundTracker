@@ -153,7 +153,8 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                                   Icon(
                                     IconData(
                                       category.icon,
-                                      fontFamily: 'MaterialIcons',
+                                      fontFamily: 'MaterialDesignIconFont',
+                                      fontPackage: 'community_material_icon',
                                     ),
                                     color: category.iconColor,
                                   ),
@@ -182,7 +183,10 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                                           return Icon(
                                             IconData(
                                               _hiddenCategory.icon,
-                                              fontFamily: 'MaterialIcons',
+                                              fontFamily:
+                                                  'MaterialDesignIconFont',
+                                              fontPackage:
+                                                  'community_material_icon',
                                             ),
                                             color: _hiddenCategory.iconColor,
                                           );

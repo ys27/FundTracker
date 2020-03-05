@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
@@ -57,19 +58,19 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           ListTile(
             title: Text('Home'),
-            leading: Icon(Icons.home),
+            leading: Icon(CommunityMaterialIcons.home),
             onTap: () => goHome(context),
           ),
           ListTile(
             title: Text('Categories'),
-            leading: Icon(Icons.category),
+            leading: Icon(CommunityMaterialIcons.shape),
             onTap: () => widget.openPage(
               CategoriesList(widget.user, widget.openPage),
             ),
           ),
           ListTile(
             title: Text('Periods'),
-            leading: Icon(Icons.date_range),
+            leading: Icon(CommunityMaterialIcons.calendar_range),
             onTap: () => widget.openPage(
               StreamProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
@@ -79,7 +80,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           ListTile(
             title: Text('Recurring Transactions'),
-            leading: Icon(Icons.history),
+            leading: Icon(CommunityMaterialIcons.history),
             onTap: () => widget.openPage(
               StreamProvider<List<RecurringTransaction>>(
                 create: (_) =>
@@ -90,7 +91,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           ListTile(
             title: Text('Preferences'),
-            leading: Icon(Icons.tune),
+            leading: Icon(CommunityMaterialIcons.tune),
             onTap: () => widget.openPage(
               StreamProvider<Preferences>(
                 create: (_) =>
@@ -101,7 +102,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           ListTile(
             title: Text('Sign Out'),
-            leading: Icon(Icons.person),
+            leading: Icon(CommunityMaterialIcons.logout),
             onTap: () async {
               bool hasBeenConfirmed = await showDialog(
                     context: context,

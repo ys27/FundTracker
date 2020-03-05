@@ -30,7 +30,8 @@ class _CategoryTileState extends State<CategoryTile> {
             Icon(
               IconData(
                 widget.category.icon,
-                fontFamily: 'MaterialIcons',
+                fontFamily: 'MaterialDesignIconFont',
+                fontPackage: 'community_material_icon',
               ),
               color: widget.category.iconColor,
             ),

@@ -46,7 +46,8 @@ class TransactionTile extends StatelessWidget {
             child: Icon(
               IconData(
                 category.icon,
-                fontFamily: 'MaterialIcons',
+                fontFamily: 'MaterialDesignIconFont',
+                fontPackage: 'community_material_icon',
               ),
               color: category.iconColor,
             ),

@@ -29,7 +29,8 @@ class _FilterCategoryTileState extends State<FilterCategoryTile> {
           Icon(
             IconData(
               widget.category.icon,
-              fontFamily: 'MaterialIcons',
+              fontFamily: 'MaterialDesignIconFont',
+              fontPackage: 'community_material_icon',
             ),
             color: widget.category.iconColor,
           ),

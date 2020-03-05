@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -84,7 +85,8 @@ class _CategoryFormState extends State<CategoryForm> {
                           Icon(
                             IconData(
                               widget.category.icon,
-                              fontFamily: 'MaterialIcons',
+                              fontFamily: 'MaterialDesignIconFont',
+                              fontPackage: 'community_material_icon',
                             ),
                           ),
                         ],
@@ -93,7 +95,8 @@ class _CategoryFormState extends State<CategoryForm> {
                         showDialog(
                           context: context,
                           builder: (context) {
-                            return IconsList();
+                            return IconsList(
+                                (val) => setState(() => _icon = val));
                           },
                         );
                       },
@@ -105,7 +108,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         children: <Widget>[
                           Text('Icon Color'),
                           Icon(
-                            Icons.brightness_1,
+                            CommunityMaterialIcons.circle,
                             color: _iconColor ?? widget.category.iconColor,
                           ),
                         ],
@@ -127,7 +130,8 @@ class _CategoryFormState extends State<CategoryForm> {
                     Icon(
                       IconData(
                         widget.category.icon,
-                        fontFamily: 'MaterialIcons',
+                        fontFamily: 'MaterialDesignIconFont',
+                        fontPackage: 'community_material_icon',
                       ),
                       color: _iconColor ?? widget.category.iconColor,
                     ),

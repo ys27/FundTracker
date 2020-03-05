@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
@@ -24,7 +25,7 @@ class SearchService extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: Icon(CommunityMaterialIcons.close),
         onPressed: () => query = '',
       )
     ];

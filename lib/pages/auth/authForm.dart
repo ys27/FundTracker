@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
@@ -50,8 +51,8 @@ class _AuthFormState extends State<AuthForm> {
         minWidth: 10.0,
         child: IconButton(
           icon: _obscurePassword
-              ? Icon(Icons.visibility_off)
-              : Icon(Icons.visibility),
+              ? Icon(CommunityMaterialIcons.eye_off)
+              : Icon(CommunityMaterialIcons.eye),
           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
         ),
       ),

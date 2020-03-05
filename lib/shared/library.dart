@@ -3,7 +3,6 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
 void goHome(BuildContext context) {
@@ -243,9 +242,11 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
       dividedTransactions.add({
         'category': tx.category,
         'transactions': [tx],
-        'iconColor': categoriesRegistry.singleWhere(
-          (registry) => registry['name'] == tx.category,
-        )['color'],
+        'iconColor': categories
+            .singleWhere(
+              (registry) => registry.name == tx.category,
+            )
+            .iconColor,
       });
     }
   });

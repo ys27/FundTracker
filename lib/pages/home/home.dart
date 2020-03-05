@@ -142,11 +142,11 @@ class _HomeState extends State<Home> {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.receipt),
+          icon: Icon(CommunityMaterialIcons.file_document),
           title: Text('Records'),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.equalizer),
+          icon: Icon(CommunityMaterialIcons.chart_pie),
           title: Text('Statistics'),
         )
       ],
