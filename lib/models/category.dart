@@ -21,6 +21,17 @@ class Category {
     this.uid,
   });
 
+  Category.empty(int numExistingCategories) {
+    cid = null;
+    name = null;
+    icon = Icons.crop_original.codePoint;
+    iconColor = Colors.black;
+    enabled = true;
+    unfiltered = true;
+    orderIndex = numExistingCategories;
+    uid = null;
+  }
+
   Category.example() {
     cid = '';
     name = '';
@@ -71,5 +82,14 @@ class Category {
   Category setOrder(int orderIndex) {
     this.orderIndex = orderIndex;
     return this;
+  }
+
+  bool equalTo(Category category) {
+    return (this.cid == category.cid &&
+        this.name == category.name &&
+        this.icon == category.icon &&
+        this.iconColor == category.iconColor &&
+        this.orderIndex == category.orderIndex &&
+        this.uid == category.uid);
   }
 }

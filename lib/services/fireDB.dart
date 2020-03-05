@@ -108,6 +108,14 @@ class FireDBService {
     await batch.commit();
   }
 
+  Future deleteCategories(List<Category> categories) async {
+    WriteBatch batch = Firestore.instance.batch();
+    categories.forEach((category) {
+      batch.delete(db.collection('categories').document(category.cid));
+    });
+    await batch.commit();
+  }
+
   Future deleteAllCategories() async {
     await db.collection('categories').getDocuments().then((snapshot) async {
       for (DocumentSnapshot doc in snapshot.documents) {

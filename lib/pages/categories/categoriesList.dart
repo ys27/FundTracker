@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/pages/categories/categoryForm.dart';
+import 'package:fund_tracker/pages/categories/categoryTile.dart';
+import 'package:fund_tracker/pages/categories/filterCategoryTile.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
@@ -39,7 +42,8 @@ class _CategoriesListState extends State<CategoriesList> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _body = Loader();
+    Widget _body;
+
     if (_categories != null) {
       _body = Container(
         padding: bodyPadding,
@@ -65,7 +69,10 @@ class _CategoriesListState extends State<CategoriesList> {
                       )
                     ] +
                     _categories
-                        .map((category) => categoryTile(category))
+                        .map((category) => FilterCategoryTile(
+                              category,
+                              numCategories: _categories.length,
+                            ))
                         .toList(),
               )
             : ReorderableListView(
@@ -82,48 +89,38 @@ class _CategoriesListState extends State<CategoriesList> {
                 ),
                 onReorder: _onReorder,
                 children: _categories
-                    .map((category) => categoryTile(category))
+                    .map((category) => Container(
+                        key: Key(category.orderIndex.toString()),
+                        child: CategoryTile(
+                          category,
+                          numCategories: _categories.length,
+                        )))
                     .toList(),
               ),
       );
     }
 
-    return Scaffold(
-      drawer:
-          widget.filterMode ? null : MainDrawer(widget.user, widget.openPage),
-      appBar: AppBar(
-          title: Text(widget.filterMode ? 'Filter Categories' : 'Categories')),
-      body: _body,
-    );
-  }
-
-  Widget categoryTile(category) {
-    return CheckboxListTile(
-      key: Key(category.orderIndex.toString()),
-      title: Text(category.name),
-      value: widget.filterMode ? category.unfiltered : category.enabled,
-      activeColor: (category.name == 'Others' && !widget.filterMode
-          ? Colors.grey
-          : Theme.of(context).primaryColor),
-      secondary: Icon(
-        IconData(
-          category.icon,
-          fontFamily: 'MaterialIcons',
-        ),
-        color: category.iconColor,
-      ),
-      onChanged: (val) async {
-        if (!widget.filterMode && category.name != 'Others') {
-          setState(() => category.enabled = val);
-          await DatabaseWrapper(widget.user.uid)
-              .updateCategories([category.setEnabled(val)]);
-        } else if (widget.filterMode) {
-          setState(() => category.unfiltered = val);
-          await DatabaseWrapper(widget.user.uid)
-              .updateCategories([category.setUnfiltered(val)]);
-        }
-      },
-    );
+    return _categories != null
+        ? Scaffold(
+            drawer: widget.filterMode
+                ? null
+                : MainDrawer(widget.user, widget.openPage),
+            appBar: AppBar(
+              title: Text(
+                widget.filterMode ? 'Filter Categories' : 'Categories',
+              ),
+            ),
+            body: _body,
+            floatingActionButton: addFloatingButton(
+              context,
+              CategoryForm(
+                Category.empty(_categories.length),
+                _categories.length,
+              ),
+              () {},
+            ),
+          )
+        : Loader();
   }
 
   void _onReorder(oldIndex, newIndex) {

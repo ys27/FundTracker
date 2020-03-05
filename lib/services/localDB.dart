@@ -141,6 +141,19 @@ class LocalDBService {
     await batch.commit();
   }
 
+  Future deleteCategories(List<Category> categories) async {
+    StreamDatabase db = await this.db;
+    StreamBatch batch = db.batch();
+    categories.forEach((category) {
+      batch.delete(
+        'categories',
+        where: 'cid = ?',
+        whereArgs: [category.cid],
+      );
+    });
+    await batch.commit();
+  }
+
   Future deleteAllCategories(String uid) async {
     StreamDatabase db = await this.db;
     await db.delete('categories', where: 'uid = ?', whereArgs: [uid]);

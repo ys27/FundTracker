@@ -74,6 +74,12 @@ class DatabaseWrapper {
         : await _localDBService.updateCategories(categories);
   }
 
+  Future deleteCategories(List<Category> categories) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.deleteCategories(categories)
+        : await _localDBService.deleteCategories(categories);
+  }
+
   Future deleteAllCategories() async {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.deleteAllCategories()
