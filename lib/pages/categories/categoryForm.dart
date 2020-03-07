@@ -84,21 +84,22 @@ class _CategoryFormState extends State<CategoryForm> {
                           Text('Icon'),
                           Icon(
                             IconData(
-                              widget.category.icon,
+                              _icon ?? widget.category.icon,
                               fontFamily: 'MaterialDesignIconFont',
                               fontPackage: 'community_material_icon',
                             ),
                           ),
                         ],
                       ),
-                      onPressed: () {
-                        showDialog(
+                      onPressed: () async {
+                        int icon = await showDialog(
                           context: context,
                           builder: (context) {
-                            return IconsList(
-                                (val) => setState(() => _icon = val));
+                            return IconsList();
                           },
                         );
+                        print(icon);
+                        setState(() => _icon = icon);
                       },
                     ),
                     SizedBox(height: 20.0),
@@ -113,23 +114,23 @@ class _CategoryFormState extends State<CategoryForm> {
                           ),
                         ],
                       ),
-                      onPressed: () {
-                        showDialog(
+                      onPressed: () async {
+                        Color color = await showDialog(
                           context: context,
                           builder: (context) {
                             return categoryColorPicker(
+                              context,
                               _iconColor ?? widget.category.iconColor,
-                              callback: (val) =>
-                                  setState(() => _iconColor = val),
                             );
                           },
                         );
+                        setState(() => _iconColor = color);
                       },
                     ),
                     SizedBox(height: 20.0),
                     Icon(
                       IconData(
-                        widget.category.icon,
+                        _icon ?? widget.category.icon,
                         fontFamily: 'MaterialDesignIconFont',
                         fontPackage: 'community_material_icon',
                       ),
@@ -178,17 +179,31 @@ class _CategoryFormState extends State<CategoryForm> {
   }
 }
 
-Widget categoryColorPicker(Color currentColor, {Function callback}) {
+Widget categoryColorPicker(BuildContext context, Color currentColor) {
+  Color pickerColor;
+
   return Scaffold(
     appBar: AppBar(
       title: Text('Icon Color Picker'),
     ),
     body: Container(
       padding: formPadding,
-      child: ColorPicker(
-        pickerColor: currentColor,
-        onColorChanged: (val) => callback(val),
-        showLabel: true,
+      child: Column(
+        children: <Widget>[
+          ColorPicker(
+            pickerColor: currentColor,
+            onColorChanged: (val) => pickerColor = val,
+            showLabel: true,
+          ),
+          RaisedButton(
+            color: Theme.of(context).primaryColor,
+            child: Text(
+              'Select',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => Navigator.of(context).pop(pickerColor),
+          )
+        ],
       ),
     ),
   );

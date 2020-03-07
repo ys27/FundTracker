@@ -14,14 +14,14 @@ class TransactionsList extends StatelessWidget {
   final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
-  final Function callback;
+  final Function refreshList;
 
   TransactionsList(
     this.transactions,
     this.categories,
     this.currentPeriod,
     this.prefs,
-    this.callback,
+    this.refreshList,
   );
 
   @override
@@ -55,7 +55,7 @@ class TransactionsList extends StatelessWidget {
               children: period['transactions'].map<Widget>((tx) {
                 Category category =
                     categories.singleWhere((cat) => cat.name == tx.category);
-                return TransactionTile(tx, category, callback);
+                return TransactionTile(tx, category, refreshList);
               }).toList(),
             ),
           );

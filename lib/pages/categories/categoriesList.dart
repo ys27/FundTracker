@@ -27,9 +27,7 @@ class _CategoriesListState extends State<CategoriesList> {
   @override
   void initState() {
     super.initState();
-    DatabaseWrapper(widget.user.uid).getCategories().first.then((categories) {
-      setState(() => _categories = List<Category>.from(categories));
-    });
+    retrieveNewData(widget.user.uid);
   }
 
   @override
@@ -69,10 +67,12 @@ class _CategoriesListState extends State<CategoriesList> {
                       )
                     ] +
                     _categories
-                        .map((category) => FilterCategoryTile(
-                              category,
-                              numCategories: _categories.length,
-                            ))
+                        .map(
+                          (category) => FilterCategoryTile(
+                            category,
+                            _categories.length,
+                          ),
+                        )
                         .toList(),
               )
             : ReorderableListView(
@@ -89,12 +89,16 @@ class _CategoriesListState extends State<CategoriesList> {
                 ),
                 onReorder: _onReorder,
                 children: _categories
-                    .map((category) => Container(
+                    .map(
+                      (category) => Container(
                         key: Key(category.orderIndex.toString()),
                         child: CategoryTile(
                           category,
-                          numCategories: _categories.length,
-                        )))
+                          _categories.length,
+                          () => retrieveNewData(widget.user.uid),
+                        ),
+                      ),
+                    )
                     .toList(),
               ),
       );
@@ -117,7 +121,7 @@ class _CategoriesListState extends State<CategoriesList> {
                 Category.empty(_categories.length),
                 _categories.length,
               ),
-              () {},
+              () => retrieveNewData(widget.user.uid),
             ),
           )
         : Loader();
@@ -140,6 +144,12 @@ class _CategoriesListState extends State<CategoriesList> {
       }
       Category item = _categories.removeAt(oldIndex);
       _categories.insert(newIndex, item);
+    });
+  }
+
+  void retrieveNewData(String uid) {
+    DatabaseWrapper(uid).getCategories().first.then((categories) {
+      setState(() => _categories = List<Category>.from(categories));
     });
   }
 }

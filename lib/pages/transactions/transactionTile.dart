@@ -10,9 +10,9 @@ import 'package:provider/provider.dart';
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
   final Category category;
-  final Function callback;
+  final Function refreshList;
 
-  TransactionTile(this.transaction, this.category, this.callback);
+  TransactionTile(this.transaction, this.category, this.refreshList);
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class TransactionTile extends StatelessWidget {
                 );
               },
             );
-            callback();
+            refreshList();
           },
           leading: CircleAvatar(
             radius: 25.0,

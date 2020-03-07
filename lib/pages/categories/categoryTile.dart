@@ -8,11 +8,9 @@ import 'package:provider/provider.dart';
 class CategoryTile extends StatefulWidget {
   final Category category;
   final int numCategories;
+  final Function refreshList;
 
-  CategoryTile(
-    this.category, {
-    this.numCategories,
-  });
+  CategoryTile(this.category, this.numCategories, this.refreshList);
 
   @override
   _CategoryTileState createState() => _CategoryTileState();
@@ -39,13 +37,14 @@ class _CategoryTileState extends State<CategoryTile> {
             Text(widget.category.name),
           ],
         ),
-        onTap: () {
-          showDialog(
+        onTap: () async {
+          await showDialog(
             context: context,
             builder: (context) {
               return CategoryForm(widget.category, widget.numCategories);
             },
           );
+          widget.refreshList();
         },
       ),
       value: widget.category.enabled,
