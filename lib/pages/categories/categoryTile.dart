@@ -62,7 +62,11 @@ class _CategoryTileState extends State<CategoryTile> {
             await showDialog(
               context: context,
               builder: (context) {
-                return CategoryForm(widget.category, widget.numCategories);
+                return CategoryForm(
+                  widget.category,
+                  widget.numCategories,
+                  uid: _user.uid,
+                );
               },
             );
             widget.refreshList();

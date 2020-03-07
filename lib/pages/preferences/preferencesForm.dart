@@ -203,22 +203,22 @@ class _PreferencesFormState extends State<PreferencesForm> {
               SizedBox(height: 20.0),
               _wasUpdated ? Center(child: Text('Updated!')) : Container(),
               SizedBox(height: 60.0),
-              RaisedButton(
-                child: Text('Reset Categories'),
-                onPressed: () async {
-                  bool hasBeenConfirmed = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Alert('This will reset your categories.');
-                        },
-                      ) ??
-                      false;
-                  if (hasBeenConfirmed) {
-                    DatabaseWrapper(widget.user.uid).resetCategories();
-                  }
-                },
-              ),
-              SizedBox(height: 20.0),
+              // RaisedButton(
+              //   child: Text('Reset Categories'),
+              //   onPressed: () async {
+              //     bool hasBeenConfirmed = await showDialog(
+              //           context: context,
+              //           builder: (BuildContext context) {
+              //             return Alert('This will reset your categories.');
+              //           },
+              //         ) ??
+              //         false;
+              //     if (hasBeenConfirmed) {
+              //       DatabaseWrapper(widget.user.uid).resetCategories();
+              //     }
+              //   },
+              // ),
+              // SizedBox(height: 20.0),
               RaisedButton(
                 child: Text('Reset Preferences'),
                 onPressed: () async {

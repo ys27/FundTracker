@@ -14,8 +14,9 @@ import 'package:uuid/uuid.dart';
 class CategoryForm extends StatefulWidget {
   final Category category;
   final int numExistingCategories;
+  final String uid;
 
-  CategoryForm(this.category, this.numExistingCategories);
+  CategoryForm(this.category, this.numExistingCategories, {this.uid});
 
   @override
   _CategoryFormState createState() => _CategoryFormState();
@@ -27,8 +28,20 @@ class _CategoryFormState extends State<CategoryForm> {
   String _name;
   int _icon;
   Color _iconColor;
+  bool _categoryInUse;
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.uid != null) {
+      DatabaseWrapper(widget.uid).getTransactions().first.then((transactions) {
+        setState(() => _categoryInUse =
+            transactions.any((tx) => tx.category == widget.category.name));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +52,7 @@ class _CategoryFormState extends State<CategoryForm> {
     return Scaffold(
       appBar: AppBar(
         title: title(isEditMode),
-        actions: isEditMode
+        actions: isEditMode && !_categoryInUse
             ? <Widget>[
                 deleteIcon(
                   context,

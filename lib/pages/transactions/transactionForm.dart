@@ -34,8 +34,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   void initState() {
-    _typeAheadController.text = widget.tx.payee;
     super.initState();
+    _typeAheadController.text = widget.tx.payee;
   }
 
   @override
