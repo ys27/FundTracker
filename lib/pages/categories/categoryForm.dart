@@ -111,7 +111,6 @@ class _CategoryFormState extends State<CategoryForm> {
                             return IconsList();
                           },
                         );
-                        print(icon);
                         setState(() => _icon = icon);
                       },
                     ),
