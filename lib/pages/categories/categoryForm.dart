@@ -43,7 +43,7 @@ class _CategoryFormState extends State<CategoryForm> {
             ? <Widget>[
                 deleteIcon(
                   context,
-                  'custom category',
+                  'category',
                   () => DatabaseWrapper(_user.uid)
                       .deleteCategories([widget.category]),
                   () => SyncService(_user.uid).syncCategories(),

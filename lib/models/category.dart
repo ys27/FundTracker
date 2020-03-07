@@ -93,4 +93,12 @@ class Category {
         this.orderIndex == category.orderIndex &&
         this.uid == category.uid);
   }
+
+  bool isOthers() {
+    return (this.name == 'Others' &&
+        this.icon == 62229 &&
+        this.iconColor == Color(0xff000000) &&
+        this.enabled &&
+        this.unfiltered);
+  }
 }

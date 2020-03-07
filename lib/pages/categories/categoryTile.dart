@@ -38,21 +38,23 @@ class _CategoryTileState extends State<CategoryTile> {
           ],
         ),
         onTap: () async {
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return CategoryForm(widget.category, widget.numCategories);
-            },
-          );
-          widget.refreshList();
+          if (!widget.category.isOthers()) {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return CategoryForm(widget.category, widget.numCategories);
+              },
+            );
+            widget.refreshList();
+          }
         },
       ),
       value: widget.category.enabled,
-      activeColor: (widget.category.name == 'Others'
+      activeColor: (widget.category.isOthers()
           ? Colors.grey
           : Theme.of(context).primaryColor),
       onChanged: (val) async {
-        if (widget.category.name != 'Others') {
+        if (!widget.category.isOthers()) {
           setState(() => widget.category.enabled = val);
           await DatabaseWrapper(_user.uid)
               .updateCategories([widget.category.setEnabled(val)]);
