@@ -21,9 +21,10 @@ class _CategoryTileState extends State<CategoryTile> {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
 
-    return CheckboxListTile(
-      title: GestureDetector(
+    return ListTile(
+      title: InkWell(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Icon(
               IconData(
@@ -33,8 +34,27 @@ class _CategoryTileState extends State<CategoryTile> {
               ),
               color: widget.category.iconColor,
             ),
-            SizedBox(width: 25.0),
-            Text(widget.category.name),
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  SizedBox(width: 25.0),
+                  Text(widget.category.name),
+                ],
+              ),
+            ),
+            Checkbox(
+              value: widget.category.enabled,
+              activeColor: (widget.category.isOthers()
+                  ? Colors.grey
+                  : Theme.of(context).primaryColor),
+              onChanged: (val) async {
+                if (!widget.category.isOthers()) {
+                  setState(() => widget.category.enabled = val);
+                  await DatabaseWrapper(_user.uid)
+                      .updateCategories([widget.category.setEnabled(val)]);
+                }
+              },
+            ),
           ],
         ),
         onTap: () async {
@@ -49,17 +69,6 @@ class _CategoryTileState extends State<CategoryTile> {
           }
         },
       ),
-      value: widget.category.enabled,
-      activeColor: (widget.category.isOthers()
-          ? Colors.grey
-          : Theme.of(context).primaryColor),
-      onChanged: (val) async {
-        if (!widget.category.isOthers()) {
-          setState(() => widget.category.enabled = val);
-          await DatabaseWrapper(_user.uid)
-              .updateCategories([widget.category.setEnabled(val)]);
-        }
-      },
     );
   }
 }
