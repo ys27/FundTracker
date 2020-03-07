@@ -40,7 +40,6 @@ class TransactionsList extends StatelessWidget {
         prefs,
         currentPeriod,
       );
-
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
@@ -54,7 +53,7 @@ class TransactionsList extends StatelessWidget {
             content: Column(
               children: period['transactions'].map<Widget>((tx) {
                 Category category =
-                    categories.singleWhere((cat) => cat.name == tx.category);
+                    categories.singleWhere((cat) => cat.cid == tx.cid);
                 return TransactionTile(tx, category, refreshList);
               }).toList(),
             ),

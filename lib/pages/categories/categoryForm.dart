@@ -38,7 +38,7 @@ class _CategoryFormState extends State<CategoryForm> {
     if (widget.uid != null) {
       DatabaseWrapper(widget.uid).getTransactions().first.then((transactions) {
         setState(() => _categoryInUse =
-            transactions.any((tx) => tx.category == widget.category.name));
+            transactions.any((tx) => tx.cid == widget.category.cid));
       });
     }
   }

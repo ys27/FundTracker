@@ -4,7 +4,7 @@ class Transaction {
   bool isExpense;
   String payee;
   double amount;
-  String category;
+  String cid;
   String uid;
 
   Transaction({
@@ -13,7 +13,7 @@ class Transaction {
     this.isExpense,
     this.payee,
     this.amount,
-    this.category,
+    this.cid,
     this.uid,
   });
 
@@ -23,7 +23,7 @@ class Transaction {
     isExpense = true;
     payee = '';
     amount = null;
-    category = null;
+    cid = null;
     uid = null;
   }
 
@@ -33,7 +33,7 @@ class Transaction {
     isExpense = true;
     payee = '';
     amount = 0.0;
-    category = '';
+    cid = '';
     uid = '';
   }
 
@@ -43,7 +43,7 @@ class Transaction {
     this.isExpense = map['isExpense'] == 1;
     this.payee = map['payee'];
     this.amount = map['amount'];
-    this.category = map['category'];
+    this.cid = map['cid'];
     this.uid = map['uid'];
   }
 
@@ -54,7 +54,7 @@ class Transaction {
       'isExpense': isExpense ? 1 : 0,
       'payee': payee,
       'amount': amount,
-      'category': category,
+      'cid': cid,
       'uid': uid,
     };
   }
@@ -65,7 +65,7 @@ class Transaction {
         this.isExpense == tx.isExpense &&
         this.payee == tx.payee &&
         this.amount == tx.amount &&
-        this.category == tx.category &&
+        this.cid == tx.cid &&
         this.uid == tx.uid);
   }
 }

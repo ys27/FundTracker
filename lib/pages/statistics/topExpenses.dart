@@ -38,7 +38,7 @@ class _TopExpensesState extends State<TopExpenses> {
       _sortedTransactions = sortByAmountDescending(widget.transactions)
           .map((tx) => {
                 'payee': tx.payee,
-                'category': tx.category,
+                'cid': tx.cid,
                 'amount': tx.amount,
               })
           .toList();
@@ -49,7 +49,7 @@ class _TopExpensesState extends State<TopExpenses> {
                     SizedBox(height: 10.0),
                     BarTile(
                       title: tx['payee'],
-                      subtitle: tx['category'],
+                      subtitle: tx['cid'],
                       amount: tx['amount'],
                     ),
                   ])

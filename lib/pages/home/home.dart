@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
 
   int _selectedIndex = 0;
   List<String> categoriesFiltered = [];
-  bool anyCategoryFiltered = false;
+  bool isAnyCategoryFiltered = false;
 
   @override
   void initState() {
@@ -47,11 +47,11 @@ class _HomeState extends State<Home> {
     if (_categories != null) {
       categoriesFiltered = _categories
           .where((cat) => !cat.unfiltered)
-          .map((cat) => cat.name)
+          .map((cat) => cat.cid)
           .toList();
-      anyCategoryFiltered = categoriesFiltered.length > 0;
+      isAnyCategoryFiltered = categoriesFiltered.length > 0;
       _transactions = _transactions
-          .where((tx) => !categoriesFiltered.contains(tx.category))
+          .where((tx) => !categoriesFiltered.contains(tx.cid))
           .toList();
     }
 
@@ -123,7 +123,7 @@ class _HomeState extends State<Home> {
 
   Widget filterCategoriesButton() {
     return IconButton(
-      icon: Icon(anyCategoryFiltered
+      icon: Icon(isAnyCategoryFiltered
           ? CommunityMaterialIcons.filter
           : CommunityMaterialIcons.filter_outline),
       onPressed: () async {

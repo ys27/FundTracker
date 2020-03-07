@@ -83,7 +83,7 @@ List<Map<String, dynamic>> categoriesRegistry = [
     'color': Colors.blue[100],
   },
   {
-    'name': 'Health & Hospital',
+    'name': 'Health & Beauty',
     'icon': CommunityMaterialIcons.hospital_building.codePoint,
     'color': Colors.orange,
   },

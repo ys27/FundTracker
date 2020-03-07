@@ -230,23 +230,17 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
   List<Map<String, dynamic>> dividedTransactions = [];
 
   transactions.forEach((tx) {
-    bool categoryFound =
-        dividedTransactions.any((div) => div['category'] == tx.category);
+    bool categoryFound = dividedTransactions.any((div) => div['cid'] == tx.cid);
     if (categoryFound) {
       dividedTransactions
-          .singleWhere(
-            (div) => div['category'] == tx.category,
-          )['transactions']
+          .singleWhere((div) => div['cid'] == tx.cid)['transactions']
           .add(tx);
     } else {
       dividedTransactions.add({
-        'category': tx.category,
+        'cid': tx.cid,
         'transactions': [tx],
-        'iconColor': categories
-            .singleWhere(
-              (registry) => registry.name == tx.category,
-            )
-            .iconColor,
+        'iconColor':
+            categories.singleWhere((cat) => cat.cid == tx.cid).iconColor,
       });
     }
   });

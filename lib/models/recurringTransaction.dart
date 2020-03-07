@@ -11,7 +11,7 @@ class RecurringTransaction {
   bool isExpense;
   String payee;
   double amount;
-  String category;
+  String cid;
   String uid;
 
   RecurringTransaction({
@@ -22,7 +22,7 @@ class RecurringTransaction {
     this.isExpense,
     this.payee,
     this.amount,
-    this.category,
+    this.cid,
     this.uid,
   });
 
@@ -35,7 +35,7 @@ class RecurringTransaction {
     isExpense = true;
     payee = '';
     amount = null;
-    category = null;
+    cid = null;
     uid = null;
   }
 
@@ -47,7 +47,7 @@ class RecurringTransaction {
     isExpense = true;
     payee = '';
     amount = 0.0;
-    category = '';
+    cid = '';
     uid = '';
   }
 
@@ -59,7 +59,7 @@ class RecurringTransaction {
     this.isExpense = map['isExpense'] == 1;
     this.payee = map['payee'];
     this.amount = map['amount'];
-    this.category = map['category'];
+    this.cid = map['cid'];
     this.uid = map['uid'];
   }
 
@@ -72,7 +72,7 @@ class RecurringTransaction {
       'isExpense': isExpense ? 1 : 0,
       'payee': payee,
       'amount': amount,
-      'category': category,
+      'cid': cid,
       'uid': uid,
     };
   }
@@ -85,7 +85,7 @@ class RecurringTransaction {
         this.isExpense == recTx.isExpense &&
         this.payee == recTx.payee &&
         this.amount == recTx.amount &&
-        this.category == recTx.category &&
+        this.cid == recTx.cid &&
         this.uid == recTx.uid);
   }
 
@@ -96,7 +96,7 @@ class RecurringTransaction {
       isExpense: isExpense,
       payee: payee,
       amount: amount,
-      category: category,
+      cid: cid,
       uid: uid,
     );
   }

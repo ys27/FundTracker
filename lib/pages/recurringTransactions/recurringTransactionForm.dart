@@ -31,7 +31,7 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
   bool _isExpense;
   String _payee;
   double _amount;
-  String _category;
+  String _cid;
 
   bool isLoading = false;
 
@@ -43,6 +43,8 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
     final List<Category> _enabledCategories = _categories != null
         ? _categories.where((category) => category.enabled).toList()
         : [];
+    final Category _correspondingCategory =
+        _categories.singleWhere((cat) => cat.cid == widget.recTx.cid);
 
     return Scaffold(
       appBar: AppBar(
@@ -166,44 +168,41 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                               );
                             }).toList() +
                             (_enabledCategories.any((category) =>
-                                    widget.recTx.category == null ||
-                                    category.name == widget.recTx.category)
+                                    _correspondingCategory == null ||
+                                    category.cid == _correspondingCategory.cid)
                                 ? []
                                 : [
                                     DropdownMenuItem(
-                                      value: widget.recTx.category,
-                                      child: Row(children: <Widget>[
-                                        () {
-                                          Category _hiddenCategory =
-                                              _categories.singleWhere(
-                                            (cat) =>
-                                                cat.name ==
-                                                widget.recTx.category,
-                                          );
-                                          return Icon(
-                                            IconData(
-                                              _hiddenCategory.icon,
-                                              fontFamily:
-                                                  'MaterialDesignIconFont',
-                                              fontPackage:
-                                                  'community_material_icon',
-                                            ),
-                                            color: _hiddenCategory.iconColor,
-                                          );
-                                        }(),
-                                        SizedBox(width: 10.0),
-                                        Text(
-                                          widget.recTx.category,
-                                        ),
-                                      ]),
+                                      value: _correspondingCategory.cid,
+                                      child: Row(
+                                        children: <Widget>[
+                                          () {
+                                            return Icon(
+                                              IconData(
+                                                _correspondingCategory.icon,
+                                                fontFamily:
+                                                    'MaterialDesignIconFont',
+                                                fontPackage:
+                                                    'community_material_icon',
+                                              ),
+                                              color: _correspondingCategory
+                                                  .iconColor,
+                                            );
+                                          }(),
+                                          SizedBox(width: 10.0),
+                                          Text(_correspondingCategory.name),
+                                        ],
+                                      ),
                                     )
                                   ]),
                         onChanged: (val) {
-                          setState(() => _category = val);
+                          setState(() => _cid = val);
                         },
-                        value: _category ??
-                            widget.recTx.category ??
-                            _enabledCategories.first.name,
+                        value: _categories
+                                .singleWhere((cat) => cat.cid == _cid)
+                                .name ??
+                            _correspondingCategory.name ??
+                            _enabledCategories.first.cid,
                         isExpanded: true,
                       ),
                     ),
@@ -265,9 +264,9 @@ class _RecurringTransactionFormState extends State<RecurringTransactionForm> {
                             isExpense: _isExpense ?? widget.recTx.isExpense,
                             payee: _payee ?? widget.recTx.payee,
                             amount: _amount ?? widget.recTx.amount,
-                            category: _category ??
-                                widget.recTx.category ??
-                                _enabledCategories.first.name,
+                            cid: _cid ??
+                                _correspondingCategory.cid ??
+                                _enabledCategories.first.cid,
                             uid: _user.uid,
                           );
 

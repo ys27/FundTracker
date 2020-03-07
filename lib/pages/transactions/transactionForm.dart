@@ -28,7 +28,7 @@ class _TransactionFormState extends State<TransactionForm> {
   bool _isExpense;
   String _payee;
   double _amount;
-  String _category;
+  String _cid;
 
   bool isLoading = false;
 
@@ -48,6 +48,8 @@ class _TransactionFormState extends State<TransactionForm> {
     final List<Category> _enabledCategories = _categories != null
         ? _categories.where((category) => category.enabled).toList()
         : [];
+    final Category _correspondingCategory =
+        _categories.singleWhere((cat) => cat.cid == widget.tx.cid);
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +134,8 @@ class _TransactionFormState extends State<TransactionForm> {
                                     .toLowerCase()
                                     .startsWith(query.toLowerCase()),
                               )
-                              .map((tx) => '${tx.payee}::${tx.category}')
+                              .map((tx) =>
+                                  '${tx.payee}::${_correspondingCategory.cid}')
                               .toSet()
                               .toList();
                           if (suggestions.length > 0) {
@@ -146,9 +149,9 @@ class _TransactionFormState extends State<TransactionForm> {
                         final List<String> splitSuggestion =
                             suggestion.split('::');
                         final String suggestionPayee = splitSuggestion[0];
-                        final String suggestionCategory = splitSuggestion[1];
-                        final Category category = _categories.singleWhere(
-                            (cat) => cat.name == suggestionCategory);
+                        final String suggestionCid = splitSuggestion[1];
+                        final Category category = _categories
+                            .singleWhere((cat) => cat.cid == suggestionCid);
                         return ListTile(
                           leading: Icon(
                             IconData(
@@ -159,19 +162,19 @@ class _TransactionFormState extends State<TransactionForm> {
                             color: category.iconColor,
                           ),
                           title: Text(suggestionPayee),
-                          subtitle: Text(suggestionCategory),
+                          subtitle: Text(category.name),
                         );
                       },
                       onSuggestionSelected: (suggestion) {
                         final List<String> splitSuggestion =
                             suggestion.split('::');
                         final String suggestionPayee = splitSuggestion[0];
-                        final String suggestionCategory = splitSuggestion[1];
+                        final String suggestionCid = splitSuggestion[1];
 
                         _typeAheadController.text = suggestionPayee;
                         setState(() {
                           _payee = suggestionPayee;
-                          _category = suggestionCategory;
+                          _cid = suggestionCid;
                         });
                       },
                     ),
@@ -222,43 +225,37 @@ class _TransactionFormState extends State<TransactionForm> {
                               );
                             }).toList() +
                             (_enabledCategories.any((category) =>
-                                    widget.tx.category == null ||
-                                    category.name == widget.tx.category)
+                                    _correspondingCategory == null ||
+                                    category.cid == _correspondingCategory.cid)
                                 ? []
                                 : [
                                     DropdownMenuItem(
-                                      value: widget.tx.category,
+                                      value: _correspondingCategory.cid,
                                       child: Row(children: <Widget>[
                                         () {
-                                          Category _hiddenCategory =
-                                              _categories.singleWhere(
-                                            (cat) =>
-                                                cat.name == widget.tx.category,
-                                          );
                                           return Icon(
                                             IconData(
-                                              _hiddenCategory.icon,
+                                              _correspondingCategory.icon,
                                               fontFamily:
                                                   'MaterialDesignIconFont',
                                               fontPackage:
                                                   'community_material_icon',
                                             ),
-                                            color: _hiddenCategory.iconColor,
+                                            color: _correspondingCategory
+                                                .iconColor,
                                           );
                                         }(),
                                         SizedBox(width: 10.0),
-                                        Text(
-                                          widget.tx.category,
-                                        ),
+                                        Text(_correspondingCategory.name),
                                       ]),
                                     )
                                   ]),
                         onChanged: (val) {
-                          setState(() => _category = val);
+                          setState(() => _cid = val);
                         },
-                        value: _category ??
-                            widget.tx.category ??
-                            _enabledCategories.first.name,
+                        value: _cid ??
+                            _correspondingCategory.cid ??
+                            _enabledCategories.first.cid,
                         isExpanded: true,
                       ),
                     ),
@@ -277,9 +274,9 @@ class _TransactionFormState extends State<TransactionForm> {
                             isExpense: _isExpense ?? widget.tx.isExpense,
                             payee: _payee ?? widget.tx.payee,
                             amount: _amount ?? widget.tx.amount,
-                            category: _category ??
-                                widget.tx.category ??
-                                _enabledCategories.first.name,
+                            cid: _cid ??
+                                _correspondingCategory.cid ??
+                                _enabledCategories.first.cid,
                             uid: _user.uid,
                           );
                           setState(() => isLoading = true);

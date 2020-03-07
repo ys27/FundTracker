@@ -53,7 +53,7 @@ class TransactionTile extends StatelessWidget {
             ),
           ),
           title: Text(transaction.payee),
-          subtitle: Text(transaction.category),
+          subtitle: Text(category.name),
           trailing: Column(
             children: <Widget>[
               Text(
