@@ -100,7 +100,7 @@ class _CategoriesState extends State<Categories> {
                             Indicator(
                               color: category['iconColor'],
                               text:
-                                  '${category['category']} - ${(category['percentage'] * 100).toStringAsFixed(0)}%',
+                                  '${category['name']} - ${(category['percentage'] * 100).toStringAsFixed(0)}%',
                               isSquare: false,
                               size: touchedIndex == index ? 18 : 16,
                               textColor: touchedIndex == index

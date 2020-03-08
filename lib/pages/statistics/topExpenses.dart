@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -6,12 +7,14 @@ import 'package:fund_tracker/shared/widgets.dart';
 
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
+  final List<Category> categories;
   final double totalIncome;
   final double totalExpenses;
   final ScrollController scrollController;
 
   TopExpenses(
     this.transactions,
+    this.categories,
     this.totalIncome,
     this.totalExpenses,
     this.scrollController,
@@ -49,7 +52,9 @@ class _TopExpensesState extends State<TopExpenses> {
                     SizedBox(height: 10.0),
                     BarTile(
                       title: tx['payee'],
-                      subtitle: tx['cid'],
+                      subtitle: widget.categories
+                          .singleWhere((cat) => cat.cid == tx['cid'])
+                          .name,
                       amount: tx['amount'],
                     ),
                   ])

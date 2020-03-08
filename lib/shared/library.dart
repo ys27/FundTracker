@@ -230,17 +230,18 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
   List<Map<String, dynamic>> dividedTransactions = [];
 
   transactions.forEach((tx) {
-    bool categoryFound = dividedTransactions.any((div) => div['cid'] == tx.cid);
+    Category category = categories.singleWhere((cat) => cat.cid == tx.cid);
+    bool categoryFound =
+        dividedTransactions.any((div) => div['name'] == category.name);
     if (categoryFound) {
       dividedTransactions
-          .singleWhere((div) => div['cid'] == tx.cid)['transactions']
+          .singleWhere((div) => div['name'] == category.name)['transactions']
           .add(tx);
     } else {
       dividedTransactions.add({
-        'cid': tx.cid,
+        'name': category.name,
         'transactions': [tx],
-        'iconColor':
-            categories.singleWhere((cat) => cat.cid == tx.cid).iconColor,
+        'iconColor': category.iconColor,
       });
     }
   });
@@ -261,7 +262,7 @@ List<Map<String, dynamic>> combineSmallPercentages(
         categories.where((category) => category['percentage'] > 0.05).toList();
 
     bigCategories.add({
-      'category': 'Etc.',
+      'name': 'Etc.',
       'amount': smallCategoriesAmount,
       'percentage': smallCategoriesPercentage,
       'iconColor': Colors.black54,
@@ -321,6 +322,10 @@ String getAmountStr(double amount) {
   return amount < 0
       ? '-\$${abs(amount).toStringAsFixed(2)}'
       : '\$${amount.toStringAsFixed(2)}';
+}
+
+Category getCategory(List<Category> categories, String cid) {
+  return categories.singleWhere((cat) => cat.cid == cid, orElse: () => null);
 }
 
 double abs(double value) {

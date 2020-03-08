@@ -254,6 +254,7 @@ class _StatisticsState extends State<Statistics> {
           _showStatistics
               ? TopExpenses(
                   _transactions.where((tx) => tx.isExpense).toList(),
+                  widget.categories,
                   _transactions
                       .where((tx) => !tx.isExpense)
                       .fold(0.0, (a, b) => a + b.amount),
