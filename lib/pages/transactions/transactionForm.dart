@@ -345,8 +345,9 @@ class _TransactionFormState extends State<TransactionForm> {
                             payee: _payee ?? widget.recTx.payee,
                             amount: _amount ?? widget.recTx.amount,
                             cid: _cid ??
-                                _correspondingCategory.cid ??
-                                _enabledCategories.first.cid,
+                                (_correspondingCategory != null
+                                    ? _correspondingCategory.cid
+                                    : _enabledCategories.first.cid),
                             uid: _user.uid,
                           );
                           isEditMode
@@ -365,8 +366,9 @@ class _TransactionFormState extends State<TransactionForm> {
                             payee: _payee ?? widget.tx.payee,
                             amount: _amount ?? widget.tx.amount,
                             cid: _cid ??
-                                _correspondingCategory.cid ??
-                                _enabledCategories.first.cid,
+                                (_correspondingCategory != null
+                                    ? _correspondingCategory.cid
+                                    : _enabledCategories.first.cid),
                             uid: _user.uid,
                           );
                           isEditMode
