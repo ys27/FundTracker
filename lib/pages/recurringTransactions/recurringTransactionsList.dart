@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
-import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionForm.dart';
+import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
@@ -45,9 +46,14 @@ class RecurringTransactionsList extends StatelessWidget {
       body: _body,
       floatingActionButton: addFloatingButton(
         context,
-        StreamProvider<List<Category>>(
-          create: (_) => DatabaseWrapper(user.uid).getCategories(),
-          child: RecurringTransactionForm(RecurringTransaction.empty()),
+        MultiProvider(
+          providers: [
+            StreamProvider<List<Transaction>>.value(
+                value: DatabaseWrapper(user.uid).getTransactions()),
+            StreamProvider<List<Category>>.value(
+                value: DatabaseWrapper(user.uid).getCategories()),
+          ],
+          child: TransactionForm(recTx: RecurringTransaction.empty()),
         ),
         () {},
       ),
@@ -63,9 +69,14 @@ class RecurringTransactionsList extends StatelessWidget {
       child: ListTile(
         onTap: () => showDialog(
           context: context,
-          builder: (context) => StreamProvider<List<Category>>(
-            create: (_) => DatabaseWrapper(user.uid).getCategories(),
-            child: RecurringTransactionForm(recTx),
+          builder: (context) => MultiProvider(
+            providers: [
+              StreamProvider<List<Transaction>>.value(
+                  value: DatabaseWrapper(user.uid).getTransactions()),
+              StreamProvider<List<Category>>.value(
+                  value: DatabaseWrapper(user.uid).getCategories()),
+            ],
+            child: TransactionForm(recTx: recTx),
           ),
         ),
         title: Text(

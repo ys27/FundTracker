@@ -121,18 +121,17 @@ Widget datePicker(
         firstDate: firstDate,
         lastDate: lastDate,
       );
-      DateTime now = DateTime.now();
 
-      DateTime dateWithCurrentTime = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        now.hour,
-        now.minute,
-        now.second,
-      );
-
-      if (dateWithCurrentTime != null) {
+      if (date != null) {
+        DateTime now = DateTime.now();
+        DateTime dateWithCurrentTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          now.hour,
+          now.minute,
+          now.second,
+        );
         updateDateState(dateWithCurrentTime);
       }
     },

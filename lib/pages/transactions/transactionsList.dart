@@ -52,8 +52,7 @@ class TransactionsList extends StatelessWidget {
             ),
             content: Column(
               children: period['transactions'].map<Widget>((tx) {
-                Category category =
-                    categories.singleWhere((cat) => cat.cid == tx.cid);
+                Category category = getCategory(categories, tx.cid);
                 return TransactionTile(tx, category, refreshList);
               }).toList(),
             ),

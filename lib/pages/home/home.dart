@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
               StreamProvider<List<Category>>.value(
                   value: DatabaseWrapper(widget.user.uid).getCategories()),
             ],
-            child: TransactionForm(Transaction.empty()),
+            child: TransactionForm(tx: Transaction.empty()),
           ),
           () => retrieveNewData(widget.user.uid),
         ),

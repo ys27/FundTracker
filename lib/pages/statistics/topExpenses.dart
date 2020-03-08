@@ -52,9 +52,7 @@ class _TopExpensesState extends State<TopExpenses> {
                     SizedBox(height: 10.0),
                     BarTile(
                       title: tx['payee'],
-                      subtitle: widget.categories
-                          .singleWhere((cat) => cat.cid == tx['cid'])
-                          .name,
+                      subtitle: getCategory(widget.categories, tx['cid']).name,
                       amount: tx['amount'],
                     ),
                   ])

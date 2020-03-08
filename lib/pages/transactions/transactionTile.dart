@@ -34,7 +34,7 @@ class TransactionTile extends StatelessWidget {
                     StreamProvider<List<Category>>.value(
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
-                  child: TransactionForm(transaction),
+                  child: TransactionForm(tx: transaction),
                 );
               },
             );
