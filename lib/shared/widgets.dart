@@ -80,8 +80,12 @@ Widget deleteIcon(
   );
 }
 
-Future<DateTime> openDatePicker(BuildContext context, DateTime openDate,
-    {DateTime firstDate, DateTime lastDate}) {
+Future<DateTime> openDatePicker(
+  BuildContext context,
+  DateTime openDate, {
+  DateTime firstDate,
+  DateTime lastDate,
+}) {
   return showDatePicker(
     context: context,
     initialDate: openDate ?? DateTime.now(),
@@ -133,6 +137,32 @@ Widget datePicker(
           now.second,
         );
         updateDateState(dateWithCurrentTime);
+      }
+    },
+  );
+}
+
+Widget timePicker(
+  BuildContext context,
+  String leading,
+  String trailing,
+  Function updateTimeState,
+) {
+  return FlatButton(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(leading),
+        Text(trailing),
+        Icon(CommunityMaterialIcons.clock_outline),
+      ],
+    ),
+    onPressed: () async {
+      TimeOfDay time =
+          await showTimePicker(context: context, initialTime: TimeOfDay.now());
+
+      if (time != null) {
+        updateTimeState(time);
       }
     },
   );

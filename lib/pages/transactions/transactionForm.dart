@@ -118,6 +118,32 @@ class _TransactionFormState extends State<TransactionForm> {
                         ? getDateNotTime(DateTime.now())
                         : null,
                   ),
+                ] +
+                (isRecurringTxMode
+                    ? <Widget>[]
+                    : <Widget>[
+                        SizedBox(height: 20.0),
+                        timePicker(
+                          context,
+                          getTimeStr(_date ?? currentTxOrRecTx.date),
+                          '',
+                          (time) => setState(
+                            () {
+                              DateTime oldDateTime =
+                                  (_date ?? currentTxOrRecTx.date);
+                              DateTime newDateTime = DateTime(
+                                oldDateTime.year,
+                                oldDateTime.month,
+                                oldDateTime.day,
+                                time.hour,
+                                time.minute,
+                              );
+                              _date = newDateTime;
+                            },
+                          ),
+                        ),
+                      ]) +
+                <Widget>[
                   SizedBox(height: 20.0),
                   TypeAheadFormField(
                     autovalidate: _payee != null,

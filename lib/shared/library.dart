@@ -98,9 +98,20 @@ int findNumDaysInPeriod(
 }
 
 String getDateStr(DateTime date) {
+  String year = date.year.toString();
   String month = date.month.toString();
   String day = date.day.toString();
-  return '${date.year.toString()}.${month.length == 1 ? '0$month' : month}.${day.length == 1 ? '0$day' : day}';
+  return '$year.${getTwoDigitStr(month)}.${getTwoDigitStr(day)}';
+}
+
+String getTimeStr(DateTime date) {
+  String hour = date.hour.toString();
+  String minute = date.minute.toString();
+  return '${getTwoDigitStr(hour)}:${getTwoDigitStr(minute)}';
+}
+
+String getTwoDigitStr(String str) {
+  return str.length == 1 ? '0$str' : str;
 }
 
 DateTime getDateNotTime(DateTime date) {
