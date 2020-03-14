@@ -94,20 +94,23 @@ class SyncService {
 
   Future syncToLocal() async {
     if (await _localDBService.getUser(uid) == null) {
-      _fireDBService.getUser().then((user) => _localDBService.addUser(user));
-      _fireDBService.getTransactions().first.then((cloudTransactions) =>
-          _localDBService.addTransactions(cloudTransactions));
-      _fireDBService.getCategories().first.then(
-          (cloudCategories) => _localDBService.addCategories(cloudCategories));
-      _fireDBService
-          .getPeriods()
-          .first
-          .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods));
-      _fireDBService.getRecurringTransactions().first.then(
-          (cloudRecurringTransactions) => _localDBService
-              .addRecurringTransactions(cloudRecurringTransactions));
-      _fireDBService.getPreferences().first.then((cloudPreferences) =>
-          _localDBService.addPreferences(cloudPreferences));
+      final List<Future> getThenAdd = [
+        _fireDBService.getUser().then((user) => _localDBService.addUser(user)),
+        _fireDBService.getTransactions().first.then((cloudTransactions) =>
+            _localDBService.addTransactions(cloudTransactions)),
+        _fireDBService.getCategories().first.then((cloudCategories) =>
+            _localDBService.addCategories(cloudCategories)),
+        _fireDBService
+            .getPeriods()
+            .first
+            .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods)),
+        _fireDBService.getRecurringTransactions().first.then(
+            (cloudRecurringTransactions) => _localDBService
+                .addRecurringTransactions(cloudRecurringTransactions)),
+        _fireDBService.getPreferences().first.then((cloudPreferences) =>
+            _localDBService.addPreferences(cloudPreferences)),
+      ];
+      await Future.wait(getThenAdd);
     }
   }
 }
