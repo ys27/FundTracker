@@ -158,7 +158,7 @@ class _AuthFormState extends State<AuthForm> {
                             DatabaseWrapper(_user.uid).addDefaultCategories();
                             DatabaseWrapper(_user.uid).addDefaultPreferences();
                           } else if (!isRegister) {
-                            SyncService(_user.uid).syncToLocal();
+                            await SyncService(_user.uid).syncToLocal();
                           }
                         }
                       },
