@@ -27,6 +27,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  PageController _pageController =
+      PageController(initialPage: 0, keepPage: true);
+
   List<Transaction> _transactions;
   List<Category> _categories;
   Period _currentPeriod;
@@ -62,7 +65,7 @@ class _HomeState extends State<Home> {
           searchButton(),
           filterCategoriesButton(),
         ],
-        'widget': TransactionsList(
+        'body': TransactionsList(
           _transactions,
           _categories,
           _currentPeriod,
@@ -88,8 +91,7 @@ class _HomeState extends State<Home> {
         'actions': <Widget>[
           filterCategoriesButton(),
         ],
-        'widget':
-            Statistics(_transactions, _categories, _currentPeriod, _prefs),
+        'body': Statistics(_transactions, _categories, _currentPeriod, _prefs),
       }
     ];
 
@@ -99,7 +101,14 @@ class _HomeState extends State<Home> {
         title: Text(_pages[_selectedIndex]['name']),
         actions: _pages[_selectedIndex]['actions'],
       ),
-      body: _pages[_selectedIndex]['widget'],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) => setState(() => _selectedIndex = index),
+        children: <Widget>[
+          _pages[0]['body'],
+          _pages[1]['body'],
+        ],
+      ),
       floatingActionButton: _pages[_selectedIndex]['addButton'],
       bottomNavigationBar: transactionsAndStatistics(),
     );
@@ -152,7 +161,14 @@ class _HomeState extends State<Home> {
       ],
       currentIndex: _selectedIndex,
       onTap: (index) {
-        setState(() => _selectedIndex = index);
+        setState(() {
+          _selectedIndex = index;
+          _pageController.animateToPage(
+            index,
+            duration: Duration(milliseconds: 1),
+            curve: Curves.linear,
+          );
+        });
       },
     );
   }
