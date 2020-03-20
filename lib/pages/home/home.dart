@@ -40,8 +40,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     retrieveNewData(widget.user.uid);
+    super.initState();
   }
 
   @override
@@ -169,27 +169,20 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future retrieveNewData(String uid) async {
+  void retrieveNewData(String uid) async {
     RecurringTransactionsService.checkRecurringTransactions(uid);
-    final List<Future> retrievals = [
-      DatabaseWrapper(uid)
-          .getTransactions()
-          .first
-          .then((transactions) => setState(() => _transactions = transactions)),
-      DatabaseWrapper(uid)
-          .getCategories()
-          .first
-          .then((categories) => setState(() => _categories = categories)),
-      DatabaseWrapper(uid)
-          .getDefaultPeriod()
-          .first
-          .then((period) => setState(() => _currentPeriod = period)),
-      DatabaseWrapper(uid)
-          .getPreferences()
-          .first
-          .then((prefs) => setState(() => _prefs = prefs)),
-    ];
-    await Future.wait(retrievals);
+    List<Transaction> transactions =
+        await DatabaseWrapper(uid).getTransactions().first;
+    List<Category> categories =
+        await DatabaseWrapper(uid).getCategories().first;
+    Period period = await DatabaseWrapper(uid).getDefaultPeriod().first;
+    Preferences prefs = await DatabaseWrapper(uid).getPreferences().first;
+    setState(() {
+      _transactions = transactions;
+      _categories = categories;
+      _currentPeriod = period;
+      _prefs = prefs;
+    });
   }
 
   void openPage(Widget page) async {
