@@ -21,6 +21,10 @@ class FireDBService {
     return db
         .collection('transactions')
         .orderBy('date', descending: true)
+        // .getDocuments()
+        // .then((snapshots) => snapshots.documents
+        //     .map((map) => Transaction.fromMap(map.data))
+        //     .toList());
         .snapshots()
         .map((snapshot) => snapshot.documents
             .map((map) => Transaction.fromMap(map.data))

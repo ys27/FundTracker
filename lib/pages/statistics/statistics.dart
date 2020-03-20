@@ -160,6 +160,7 @@ class _StatisticsState extends State<Statistics> {
           isExpanded: true,
         );
       }
+
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,

@@ -27,8 +27,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  PageController _pageController =
-      PageController(initialPage: 0, keepPage: true);
+  PageController _pageController = PageController();
 
   List<Transaction> _transactions;
   List<Category> _categories;
@@ -103,11 +102,12 @@ class _HomeState extends State<Home> {
       ),
       body: PageView(
         controller: _pageController,
-        onPageChanged: (index) => setState(() => _selectedIndex = index),
-        children: <Widget>[
-          _pages[0]['body'],
-          _pages[1]['body'],
-        ],
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: <Widget>[_pages[0]['body'], _pages[1]['body']],
       ),
       floatingActionButton: _pages[_selectedIndex]['addButton'],
       bottomNavigationBar: transactionsAndStatistics(),
@@ -161,14 +161,7 @@ class _HomeState extends State<Home> {
       ],
       currentIndex: _selectedIndex,
       onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-          _pageController.animateToPage(
-            index,
-            duration: Duration(milliseconds: 1),
-            curve: Curves.linear,
-          );
-        });
+        _pageController.jumpToPage(index);
       },
     );
   }
