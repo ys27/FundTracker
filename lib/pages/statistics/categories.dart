@@ -118,7 +118,7 @@ class _CategoriesState extends State<Categories> {
               : <Widget>[
                   SizedBox(height: 35.0),
                   Center(
-                    child: Text('No transactions found in current period.'),
+                    child: Text('No expenses found in current period.'),
                   )
                 ]),
     );

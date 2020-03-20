@@ -31,7 +31,7 @@ class _TopExpensesState extends State<TopExpenses> {
   List<Widget> _columnContent = <Widget>[
     SizedBox(height: 35.0),
     Center(
-      child: Text('No transactions found in current period.'),
+      child: Text('No expenses found in current period.'),
     )
   ];
 
