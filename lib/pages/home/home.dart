@@ -161,33 +161,35 @@ class _HomeState extends State<Home> {
       ],
       currentIndex: _selectedIndex,
       onTap: (index) {
-        _pageController.jumpToPage(index);
+        if (_selectedIndex != index) {
+          retrieveNewData(widget.user.uid);
+          _pageController.jumpToPage(index);
+        }
       },
     );
   }
 
-  void retrieveNewData(String uid) {
-    RecurringTransactionsService.checkRecurringTransactions(widget.user.uid);
-
-    DatabaseWrapper(uid)
-        .getTransactions()
-        .first
-        .then((transactions) => setState(() => _transactions = transactions));
-
-    DatabaseWrapper(uid)
-        .getCategories()
-        .first
-        .then((categories) => setState(() => _categories = categories));
-
-    DatabaseWrapper(uid)
-        .getDefaultPeriod()
-        .first
-        .then((period) => setState(() => _currentPeriod = period));
-
-    DatabaseWrapper(uid)
-        .getPreferences()
-        .first
-        .then((prefs) => setState(() => _prefs = prefs));
+  Future retrieveNewData(String uid) async {
+    RecurringTransactionsService.checkRecurringTransactions(uid);
+    final List<Future> retrievals = [
+      DatabaseWrapper(uid)
+          .getTransactions()
+          .first
+          .then((transactions) => setState(() => _transactions = transactions)),
+      DatabaseWrapper(uid)
+          .getCategories()
+          .first
+          .then((categories) => setState(() => _categories = categories)),
+      DatabaseWrapper(uid)
+          .getDefaultPeriod()
+          .first
+          .then((period) => setState(() => _currentPeriod = period)),
+      DatabaseWrapper(uid)
+          .getPreferences()
+          .first
+          .then((prefs) => setState(() => _prefs = prefs)),
+    ];
+    await Future.wait(retrievals);
   }
 
   void openPage(Widget page) async {
