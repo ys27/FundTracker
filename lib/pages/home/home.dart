@@ -75,9 +75,9 @@ class _HomeState extends State<Home> {
           context,
           MultiProvider(
             providers: [
-              StreamProvider<List<Transaction>>.value(
+              FutureProvider<List<Transaction>>.value(
                   value: DatabaseWrapper(widget.user.uid).getTransactions()),
-              StreamProvider<List<Category>>.value(
+              FutureProvider<List<Category>>.value(
                   value: DatabaseWrapper(widget.user.uid).getCategories()),
             ],
             child: TransactionForm(tx: Transaction.empty()),
@@ -172,11 +172,10 @@ class _HomeState extends State<Home> {
   void retrieveNewData(String uid) async {
     RecurringTransactionsService.checkRecurringTransactions(uid);
     List<Transaction> transactions =
-        await DatabaseWrapper(uid).getTransactions().first;
-    List<Category> categories =
-        await DatabaseWrapper(uid).getCategories().first;
-    Period period = await DatabaseWrapper(uid).getDefaultPeriod().first;
-    Preferences prefs = await DatabaseWrapper(uid).getPreferences().first;
+        await DatabaseWrapper(uid).getTransactions();
+    List<Category> categories = await DatabaseWrapper(uid).getCategories();
+    Period period = await DatabaseWrapper(uid).getDefaultPeriod();
+    Preferences prefs = await DatabaseWrapper(uid).getPreferences();
     setState(() {
       _transactions = transactions;
       _categories = categories;

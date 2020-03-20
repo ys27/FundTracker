@@ -148,7 +148,7 @@ class _CategoriesListState extends State<CategoriesList> {
   }
 
   void retrieveNewData(String uid) {
-    DatabaseWrapper(uid).getCategories().first.then((categories) {
+    DatabaseWrapper(uid).getCategories().then((categories) {
       setState(() => _categories = List<Category>.from(categories));
     });
   }

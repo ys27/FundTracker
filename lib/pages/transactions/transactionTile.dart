@@ -29,9 +29,9 @@ class TransactionTile extends StatelessWidget {
               builder: (context) {
                 return MultiProvider(
                   providers: [
-                    StreamProvider<List<Transaction>>.value(
+                    FutureProvider<List<Transaction>>.value(
                         value: DatabaseWrapper(_user.uid).getTransactions()),
-                    StreamProvider<List<Category>>.value(
+                    FutureProvider<List<Category>>.value(
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
                   child: TransactionForm(tx: transaction),

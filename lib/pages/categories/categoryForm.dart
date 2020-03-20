@@ -36,7 +36,7 @@ class _CategoryFormState extends State<CategoryForm> {
   void initState() {
     super.initState();
     if (widget.uid != null) {
-      DatabaseWrapper(widget.uid).getTransactions().first.then((transactions) {
+      DatabaseWrapper(widget.uid).getTransactions().then((transactions) {
         setState(() => _categoryInUse =
             transactions.any((tx) => tx.cid == widget.category.cid));
       });

@@ -29,7 +29,6 @@ dependencies:
   flutter_spinkit: ^4.1.1+1
   sqflite: ^1.2.0
   uuid: ^2.0.4
-  streamqflite: ^1.0.0
   sticky_headers: ^0.1.8+1
   fl_chart: ^0.8.1
   flutter_typeahead: ^1.8.0

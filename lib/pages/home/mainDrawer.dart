@@ -72,7 +72,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Periods'),
             leading: Icon(CommunityMaterialIcons.calendar_range),
             onTap: () => widget.openPage(
-              StreamProvider<List<Period>>(
+              FutureProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
                 child: PeriodsList(widget.user, widget.openPage),
               ),
@@ -82,7 +82,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Recurring Transactions'),
             leading: Icon(CommunityMaterialIcons.history),
             onTap: () => widget.openPage(
-              StreamProvider<List<RecurringTransaction>>(
+              FutureProvider<List<RecurringTransaction>>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
                 child: RecurringTransactionsList(widget.user, widget.openPage),
@@ -93,7 +93,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Preferences'),
             leading: Icon(CommunityMaterialIcons.tune),
             onTap: () => widget.openPage(
-              StreamProvider<Preferences>(
+              FutureProvider<Preferences>(
                 create: (_) =>
                     DatabaseWrapper(widget.user.uid).getPreferences(),
                 child: PreferencesForm(widget.user, widget.openPage),

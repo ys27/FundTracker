@@ -48,9 +48,9 @@ class RecurringTransactionsList extends StatelessWidget {
         context,
         MultiProvider(
           providers: [
-            StreamProvider<List<Transaction>>.value(
+            FutureProvider<List<Transaction>>.value(
                 value: DatabaseWrapper(user.uid).getTransactions()),
-            StreamProvider<List<Category>>.value(
+            FutureProvider<List<Category>>.value(
                 value: DatabaseWrapper(user.uid).getCategories()),
           ],
           child: TransactionForm(recTx: RecurringTransaction.empty()),
@@ -71,9 +71,9 @@ class RecurringTransactionsList extends StatelessWidget {
           context: context,
           builder: (context) => MultiProvider(
             providers: [
-              StreamProvider<List<Transaction>>.value(
+              FutureProvider<List<Transaction>>.value(
                   value: DatabaseWrapper(user.uid).getTransactions()),
-              StreamProvider<List<Category>>.value(
+              FutureProvider<List<Category>>.value(
                   value: DatabaseWrapper(user.uid).getCategories()),
             ],
             child: TransactionForm(recTx: recTx),

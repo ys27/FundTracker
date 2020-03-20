@@ -9,24 +9,14 @@ import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
-import 'package:streamqflite/streamqflite.dart';
 import 'package:uuid/uuid.dart';
 
 class LocalDBService {
   static final LocalDBService _localDBService = LocalDBService.internal();
   factory LocalDBService() => _localDBService;
-  static StreamDatabase _streamDatabase;
   static Database _localDB;
 
-  Future<StreamDatabase> get db async {
-    if (_streamDatabase != null) {
-      return _streamDatabase;
-    }
-    _streamDatabase = StreamDatabase(await initializeDBs());
-    return _streamDatabase;
-  }
-
-  Future<Database> get database async {
+  Future<Database> get db async {
     if (_localDB == null) {
       _localDB = await initializeDBs();
     }
@@ -37,21 +27,22 @@ class LocalDBService {
   LocalDBService.internal();
 
   // Transactions
-  Stream<List<Transaction>> getTransactions(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db
-        .createQuery(
+  Future<List<Transaction>> getTransactions(String uid) async {
+    Database db = await this.db;
+    return db
+        .query(
           'transactions',
           where: 'uid = ?',
           whereArgs: [uid],
           orderBy: 'datetime(date) DESC',
         )
-        .mapToList((map) => Transaction.fromMap(map));
+        .then((transactions) =>
+            transactions.map((map) => Transaction.fromMap(map)).toList());
   }
 
   Future addTransactions(List<Transaction> transactions) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     transactions.forEach((tx) {
       batch.insert('transactions', tx.toMap());
     });
@@ -59,8 +50,8 @@ class LocalDBService {
   }
 
   Future updateTransactions(List<Transaction> transactions) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     transactions.forEach((tx) {
       batch.update(
         'transactions',
@@ -73,8 +64,8 @@ class LocalDBService {
   }
 
   Future deleteTransactions(List<Transaction> transactions) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     transactions.forEach((tx) {
       batch.delete('transactions', where: 'tid = ?', whereArgs: [tx.tid]);
     });
@@ -82,25 +73,26 @@ class LocalDBService {
   }
 
   Future deleteAllTransactions(String uid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.delete('transactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // Categories
-  Stream<List<Category>> getCategories(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db
-        .createQuery(
+  Future<List<Category>> getCategories(String uid) async {
+    Database db = await this.db;
+    return db
+        .query(
           'categories',
           where: 'uid = ?',
           whereArgs: [uid],
           orderBy: 'orderIndex ASC',
         )
-        .mapToList((map) => Category.fromMap(map));
+        .then((categories) =>
+            categories.map((map) => Category.fromMap(map)).toList());
   }
 
   Future addDefaultCategories(String uid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     categoriesRegistry.asMap().forEach((index, category) async {
       await db.insert(
         'categories',
@@ -119,8 +111,8 @@ class LocalDBService {
   }
 
   Future addCategories(List<Category> categories) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     categories.forEach((category) {
       batch.insert('categories', category.toMap());
     });
@@ -128,8 +120,8 @@ class LocalDBService {
   }
 
   Future updateCategories(List<Category> categories) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     categories.forEach((category) {
       batch.update(
         'categories',
@@ -142,8 +134,8 @@ class LocalDBService {
   }
 
   Future deleteCategories(List<Category> categories) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     categories.forEach((category) {
       batch.delete(
         'categories',
@@ -155,13 +147,13 @@ class LocalDBService {
   }
 
   Future deleteAllCategories(String uid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.delete('categories', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // User
   Future<User> getUser(String uid) async {
-    Database db = await this.database;
+    Database db = await this.db;
     return db.query(
       'users',
       where: 'uid = ?',
@@ -170,34 +162,35 @@ class LocalDBService {
   }
 
   Future addUser(User user) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.insert('users', user.toMap());
   }
 
   // Periods
-  Stream<List<Period>> getPeriods(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db
-        .createQuery(
+  Future<List<Period>> getPeriods(String uid) async {
+    Database db = await this.db;
+    return db
+        .query(
           'periods',
           where: 'uid = ?',
           whereArgs: [uid],
           orderBy: 'isDefault DESC',
         )
-        .mapToList((map) => Period.fromMap(map));
+        .then((periods) => periods.map((map) => Period.fromMap(map)).toList());
   }
 
-  Stream<Period> getDefaultPeriod(String uid) async* {
-    StreamDatabase db = await this.db;
-    yield* db.createQuery(
+  Future<Period> getDefaultPeriod(String uid) async {
+    Database db = await this.db;
+    return db.query(
       'periods',
       where: 'uid = ? AND isDefault = 1',
       whereArgs: [uid],
-    ).mapToOneOrDefault((map) => Period.fromMap(map), Period.monthly());
+    ).then((period) =>
+        period.length > 0 ? Period.fromMap(period[0]) : Period.monthly());
   }
 
   Future setRemainingNotDefault(Period period) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.update('periods', {'isDefault': 0});
     await db.update(
       'periods',
@@ -208,8 +201,8 @@ class LocalDBService {
   }
 
   Future addPeriods(List<Period> periods) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     periods.forEach((period) {
       batch.insert('periods', period.toMap());
     });
@@ -217,8 +210,8 @@ class LocalDBService {
   }
 
   Future updatePeriods(List<Period> periods) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     periods.forEach((period) {
       batch.update(
         'periods',
@@ -231,8 +224,8 @@ class LocalDBService {
   }
 
   Future deletePeriods(List<Period> periods) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     periods.forEach((period) {
       batch.delete(
         'periods',
@@ -244,27 +237,28 @@ class LocalDBService {
   }
 
   Future deleteAllPeriods(String uid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.delete('periods', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // Recurring Transactions
-  Stream<List<RecurringTransaction>> getRecurringTransactions(
+  Future<List<RecurringTransaction>> getRecurringTransactions(
     String uid,
-  ) async* {
-    StreamDatabase db = await this.db;
-    yield* db
-        .createQuery(
+  ) async {
+    Database db = await this.db;
+    return db
+        .query(
           'recurringTransactions',
           where: 'uid = ?',
           whereArgs: [uid],
           orderBy: 'nextDate ASC',
         )
-        .mapToList((map) => RecurringTransaction.fromMap(map));
+        .then((recTxs) =>
+            recTxs.map((map) => RecurringTransaction.fromMap(map)).toList());
   }
 
   Future<RecurringTransaction> getRecurringTransaction(String rid) async {
-    Database db = await this.database;
+    Database db = await this.db;
     return db.query(
       'recurringTransactions',
       where: 'rid = ?',
@@ -273,8 +267,8 @@ class LocalDBService {
   }
 
   Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     recTxs.forEach((recTx) {
       batch.insert('recurringTransactions', recTx.toMap());
     });
@@ -282,8 +276,8 @@ class LocalDBService {
   }
 
   Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     recTxs.forEach((recTx) {
       batch.update(
         'recurringTransactions',
@@ -298,8 +292,8 @@ class LocalDBService {
   Future incrementRecurringTransactionsNextDate(
     List<RecurringTransaction> recTxs,
   ) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     recTxs.forEach((recTx) {
       batch.update(
         'recurringTransactions',
@@ -314,8 +308,8 @@ class LocalDBService {
   Future deleteRecurringTransactions(
     List<RecurringTransaction> recTxs,
   ) async {
-    StreamDatabase db = await this.db;
-    StreamBatch batch = db.batch();
+    Database db = await this.db;
+    Batch batch = db.batch();
     recTxs.forEach((recTx) {
       batch.delete(
         'recurringTransactions',
@@ -327,23 +321,23 @@ class LocalDBService {
   }
 
   Future deleteAllRecurringTransactions(String uid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db
         .delete('recurringTransactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // Preferences
-  Stream<Preferences> getPreferences(String pid) async* {
-    StreamDatabase db = await this.db;
-    yield* db.createQuery(
+  Future<Preferences> getPreferences(String pid) async {
+    Database db = await this.db;
+    return db.query(
       'preferences',
       where: 'pid = ?',
       whereArgs: [pid],
-    ).mapToOneOrDefault((map) => Preferences.fromMap(map), null);
+    ).then((prefs) => prefs.length > 0 ? Preferences.fromMap(prefs[0]) : null);
   }
 
   Future addDefaultPreferences(String pid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.insert(
       'preferences',
       Preferences.original().setPreference('pid', pid).toMap(),
@@ -351,12 +345,12 @@ class LocalDBService {
   }
 
   Future addPreferences(Preferences prefs) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.insert('preferences', prefs.toMap());
   }
 
   Future updatePreferences(Preferences prefs) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.update(
       'preferences',
       prefs.toMap(),
@@ -366,7 +360,7 @@ class LocalDBService {
   }
 
   Future deletePreferences(String pid) async {
-    StreamDatabase db = await this.db;
+    Database db = await this.db;
     await db.delete(
       'preferences',
       where: 'pid = ?',

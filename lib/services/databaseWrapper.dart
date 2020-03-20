@@ -20,7 +20,7 @@ class DatabaseWrapper {
   }
 
   // Transactions
-  Stream<List<Transaction>> getTransactions() {
+  Future<List<Transaction>> getTransactions() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getTransactions()
         : _localDBService.getTransactions(uid);
@@ -51,7 +51,7 @@ class DatabaseWrapper {
   }
 
   // Categories
-  Stream<List<Category>> getCategories() {
+  Future<List<Category>> getCategories() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getCategories()
         : _localDBService.getCategories(uid);
@@ -109,13 +109,13 @@ class DatabaseWrapper {
   }
 
   // Periods
-  Stream<List<Period>> getPeriods() {
+  Future<List<Period>> getPeriods() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getPeriods()
         : _localDBService.getPeriods(uid);
   }
 
-  Stream<Period> getDefaultPeriod() {
+  Future<Period> getDefaultPeriod() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getDefaultPeriod()
         : _localDBService.getDefaultPeriod(uid);
@@ -152,7 +152,7 @@ class DatabaseWrapper {
   }
 
   // Recurring Transactions
-  Stream<List<RecurringTransaction>> getRecurringTransactions() {
+  Future<List<RecurringTransaction>> getRecurringTransactions() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getRecurringTransactions()
         : _localDBService.getRecurringTransactions(uid);
@@ -203,7 +203,7 @@ class DatabaseWrapper {
   }
 
   // Preferences
-  Stream<Preferences> getPreferences() {
+  Future<Preferences> getPreferences() {
     return DATABASE_TYPE == DatabaseType.Firebase
         ? _fireDBService.getPreferences()
         : _localDBService.getPreferences(uid);

@@ -17,18 +17,18 @@ class FireDBService {
   }
 
   // Transactions
-  Stream<List<Transaction>> getTransactions() {
+  Future<List<Transaction>> getTransactions() {
     return db
         .collection('transactions')
         .orderBy('date', descending: true)
-        // .getDocuments()
-        // .then((snapshots) => snapshots.documents
-        //     .map((map) => Transaction.fromMap(map.data))
-        //     .toList());
-        .snapshots()
-        .map((snapshot) => snapshot.documents
+        .getDocuments()
+        .then((snapshot) => snapshot.documents
             .map((map) => Transaction.fromMap(map.data))
             .toList());
+    // .snapshots()
+    // .map((snapshot) => snapshot.documents
+    //     .map((map) => Transaction.fromMap(map.data))
+    //     .toList());
   }
 
   Future addTransactions(List<Transaction> transactions) async {
@@ -65,9 +65,12 @@ class FireDBService {
   }
 
   // Categories
-  Stream<List<Category>> getCategories() {
-    return db.collection('categories').orderBy('orderIndex').snapshots().map(
-        (snapshot) => snapshot.documents
+  Future<List<Category>> getCategories() {
+    return db
+        .collection('categories')
+        .orderBy('orderIndex')
+        .getDocuments()
+        .then((snapshot) => snapshot.documents
             .map((map) => Category.fromMap(map.data))
             .toList());
   }
@@ -142,26 +145,24 @@ class FireDBService {
   }
 
   // Periods
-  Stream<List<Period>> getPeriods() {
+  Future<List<Period>> getPeriods() {
     return db
         .collection('periods')
         .orderBy('isDefault', descending: true)
-        .snapshots()
-        .map((snapshot) =>
+        .getDocuments()
+        .then((snapshot) =>
             snapshot.documents.map((map) => Period.fromMap(map.data)).toList());
   }
 
-  Stream<Period> getDefaultPeriod() {
+  Future<Period> getDefaultPeriod() {
     return db
         .collection('periods')
         .where('isDefault', isEqualTo: 1)
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.documents
-              .map((map) => Period.fromMap(map.data))
-              .toList()
-              .first,
-        );
+        .getDocuments()
+        .then((snapshot) => snapshot.documents
+            .map((map) => Period.fromMap(map.data))
+            .toList()
+            .first);
   }
 
   Future setRemainingNotDefault(Period period) async {
@@ -211,12 +212,12 @@ class FireDBService {
   }
 
   // Recurring Transactions
-  Stream<List<RecurringTransaction>> getRecurringTransactions() {
+  Future<List<RecurringTransaction>> getRecurringTransactions() {
     return db
         .collection('recurringTransactions')
         .orderBy('nextDate', descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.documents
+        .getDocuments()
+        .then((snapshot) => snapshot.documents
             .map((map) => RecurringTransaction.fromMap(map.data))
             .toList());
   }
@@ -284,12 +285,12 @@ class FireDBService {
   }
 
   // Preferences
-  Stream<Preferences> getPreferences() {
+  Future<Preferences> getPreferences() {
     return db
         .collection('preferences')
         .document(uid)
-        .snapshots()
-        .map((snapshot) => Preferences.fromMap(snapshot.data));
+        .get()
+        .then((snapshot) => Preferences.fromMap(snapshot.data));
   }
 
   Future addDefaultPreferences() async {
