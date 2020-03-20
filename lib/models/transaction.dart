@@ -68,4 +68,16 @@ class Transaction {
         this.cid == tx.cid &&
         this.uid == tx.uid);
   }
+
+  Transaction clone() {
+    return Transaction(
+      tid: this.tid,
+      date: this.date,
+      isExpense: this.isExpense,
+      payee: this.payee,
+      amount: this.amount,
+      cid: this.cid,
+      uid: this.uid,
+    );
+  }
 }

@@ -60,29 +60,42 @@ class Preferences {
   }
 
   Preferences setPreference(String property, dynamic value) {
+    Preferences copy = this.clone();
     switch (property) {
       case 'pid':
-        this.pid = value;
+        copy.pid = value;
         break;
       case 'limitDays':
-        this.limitDays = value;
+        copy.limitDays = value;
         break;
       case 'isLimitDaysEnabled':
-        this.isLimitDaysEnabled = value;
+        copy.isLimitDaysEnabled = value;
         break;
       case 'limitPeriods':
-        this.limitPeriods = value;
+        copy.limitPeriods = value;
         break;
       case 'isLimitPeriodsEnabled':
-        this.isLimitPeriodsEnabled = value;
+        copy.isLimitPeriodsEnabled = value;
         break;
       case 'limitByDate':
-        this.limitByDate = value;
+        copy.limitByDate = value;
         break;
       case 'isLimitByDateEnabled':
-        this.isLimitByDateEnabled = value;
+        copy.isLimitByDateEnabled = value;
         break;
     }
-    return this;
+    return copy;
+  }
+
+  Preferences clone() {
+    return Preferences(
+      pid: this.pid,
+      limitDays: this.limitDays,
+      isLimitDaysEnabled: this.isLimitDaysEnabled,
+      limitPeriods: this.limitPeriods,
+      isLimitPeriodsEnabled: this.isLimitPeriodsEnabled,
+      limitByDate: this.limitByDate,
+      isLimitByDateEnabled: this.isLimitByDateEnabled,
+    );
   }
 }

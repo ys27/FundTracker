@@ -71,18 +71,21 @@ class Category {
   }
 
   Category setEnabled(bool enabled) {
-    this.enabled = enabled;
-    return this;
+    Category copy = this.clone();
+    copy.enabled = enabled;
+    return copy;
   }
 
   Category setUnfiltered(bool unfiltered) {
-    this.unfiltered = unfiltered;
-    return this;
+    Category copy = this.clone();
+    copy.unfiltered = unfiltered;
+    return copy;
   }
 
   Category setOrder(int orderIndex) {
-    this.orderIndex = orderIndex;
-    return this;
+    Category copy = this.clone();
+    copy.orderIndex = orderIndex;
+    return copy;
   }
 
   bool equalTo(Category category) {
@@ -100,5 +103,18 @@ class Category {
         this.iconColor == Color(0xff000000) &&
         this.enabled &&
         this.unfiltered);
+  }
+
+  Category clone() {
+    return Category(
+      cid: this.cid,
+      name: this.name,
+      icon: this.icon,
+      iconColor: this.iconColor,
+      enabled: this.enabled,
+      unfiltered: this.unfiltered,
+      orderIndex: this.orderIndex,
+      uid: this.uid,
+    );
   }
 }

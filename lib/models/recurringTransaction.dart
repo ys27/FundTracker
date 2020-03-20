@@ -102,17 +102,33 @@ class RecurringTransaction {
   }
 
   RecurringTransaction incrementNextDate() {
+    RecurringTransaction copy = this.clone();
     int numDaysUntilNextDate = findNumDaysInPeriod(
       this.nextDate,
       this.frequencyValue,
       this.frequencyUnit,
     );
-    this.nextDate = nextDate.add(Duration(days: numDaysUntilNextDate));
-    return this;
+    copy.nextDate = nextDate.add(Duration(days: numDaysUntilNextDate));
+    return copy;
   }
 
   RecurringTransaction withNewId() {
-    this.rid = Uuid().v1();
-    return this;
+    RecurringTransaction copy = this.clone();
+    copy.rid = Uuid().v1();
+    return copy;
+  }
+
+  RecurringTransaction clone() {
+    return RecurringTransaction(
+      rid: this.rid,
+      nextDate: this.nextDate,
+      frequencyValue: this.frequencyValue,
+      frequencyUnit: this.frequencyUnit,
+      isExpense: this.isExpense,
+      payee: this.payee,
+      amount: this.amount,
+      cid: this.cid,
+      uid: this.uid,
+    );
   }
 }

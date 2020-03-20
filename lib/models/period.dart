@@ -76,8 +76,9 @@ class Period {
   }
 
   Period setStartDate(DateTime startDate) {
-    this.startDate = startDate;
-    return this;
+    Period copy = this.clone();
+    copy.startDate = startDate;
+    return copy;
   }
 
   bool equalTo(Period period) {
@@ -88,5 +89,17 @@ class Period {
         this.durationUnit == period.durationUnit &&
         this.isDefault == period.isDefault &&
         this.uid == period.uid);
+  }
+
+  Period clone() {
+    return Period(
+      pid: this.pid,
+      name: this.name,
+      startDate: this.startDate,
+      durationValue: this.durationValue,
+      durationUnit: this.durationUnit,
+      isDefault: this.isDefault,
+      uid: this.uid,
+    );
   }
 }
