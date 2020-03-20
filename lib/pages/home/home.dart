@@ -110,7 +110,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[_pages[0]['body'], _pages[1]['body']],
       ),
       floatingActionButton: _pages[_selectedIndex]['addButton'],
-      bottomNavigationBar: transactionsAndStatistics(),
+      bottomNavigationBar: bottomNavBar(),
     );
   }
 
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget transactionsAndStatistics() {
+  Widget bottomNavBar() {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
@@ -162,7 +162,6 @@ class _HomeState extends State<Home> {
       currentIndex: _selectedIndex,
       onTap: (index) {
         if (_selectedIndex != index) {
-          retrieveNewData(widget.user.uid);
           _pageController.jumpToPage(index);
         }
       },

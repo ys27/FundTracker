@@ -165,107 +165,111 @@ class _StatisticsState extends State<Statistics> {
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                child: FlatButton(
-                  padding: EdgeInsets.all(15.0),
-                  color: _showAllTimeStats
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey[100],
-                  child: Text(
-                    'All-Time',
-                    style: TextStyle(
-                        fontWeight: _showAllTimeStats
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: _showAllTimeStats ? Colors.white : Colors.black),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(15.0),
+                      color: _showAllTimeStats
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[100],
+                      child: Text(
+                        'All-Time',
+                        style: TextStyle(
+                            fontWeight: _showAllTimeStats
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: _showAllTimeStats
+                                ? Colors.white
+                                : Colors.black),
+                      ),
+                      onPressed: () => setState(() {
+                        _showAllTimeStats = true;
+                        _showPreferredStats = false;
+                        _showPeriodStats = false;
+                      }),
+                    ),
                   ),
-                  onPressed: () => setState(() {
-                    _showAllTimeStats = true;
-                    _showPreferredStats = false;
-                    _showPeriodStats = false;
-                  }),
-                ),
-              ),
-              Expanded(
-                child: FlatButton(
-                  padding: EdgeInsets.all(15.0),
-                  color: _showPreferredStats
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey[100],
-                  child: Text(
-                    _visiblePrefs,
-                    style: TextStyle(
-                        fontWeight: _showPreferredStats
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color:
-                            _showPreferredStats ? Colors.white : Colors.black),
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(15.0),
+                      color: _showPreferredStats
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[100],
+                      child: Text(
+                        _visiblePrefs,
+                        style: TextStyle(
+                            fontWeight: _showPreferredStats
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: _showPreferredStats
+                                ? Colors.white
+                                : Colors.black),
+                      ),
+                      onPressed: () => setState(() {
+                        _showPreferredStats = true;
+                        _showAllTimeStats = false;
+                        _showPeriodStats = false;
+                      }),
+                    ),
                   ),
-                  onPressed: () => setState(() {
-                    _showPreferredStats = true;
-                    _showAllTimeStats = false;
-                    _showPeriodStats = false;
-                  }),
-                ),
-              ),
-              Expanded(
-                child: FlatButton(
-                  padding: EdgeInsets.all(15.0),
-                  color: _showPeriodStats
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey[100],
-                  child: Text(
-                    'Period',
-                    style: TextStyle(
-                        fontWeight: _showPeriodStats
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: _showPeriodStats ? Colors.white : Colors.black),
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(15.0),
+                      color: _showPeriodStats
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[100],
+                      child: Text(
+                        'Period',
+                        style: TextStyle(
+                            fontWeight: _showPeriodStats
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color:
+                                _showPeriodStats ? Colors.white : Colors.black),
+                      ),
+                      onPressed: () => setState(() {
+                        _showPeriodStats = true;
+                        _showAllTimeStats = false;
+                        _showPreferredStats = false;
+                      }),
+                    ),
                   ),
-                  onPressed: () => setState(() {
-                    _showPeriodStats = true;
-                    _showAllTimeStats = false;
-                    _showPreferredStats = false;
-                  }),
-                ),
+                ],
               ),
-            ],
-          ),
-          _limitCustomizer,
-          _showStatistics
-              ? Balance(
-                  _transactions,
-                  _customPeriod == null ? _showPeriodStats : false,
-                  _daysLeft,
-                )
-              : Center(
-                  child: Text('No transactions available after this date.'),
-                ),
-          _showStatistics ? SizedBox(height: 20.0) : Container(),
-          _showStatistics
-              ? Categories(
-                  _transactions.where((tx) => tx.isExpense).toList(),
-                  widget.categories,
-                )
-              : Container(),
-          _showStatistics ? SizedBox(height: 20.0) : Container(),
-          _showStatistics
-              ? TopExpenses(
-                  _transactions.where((tx) => tx.isExpense).toList(),
-                  widget.categories,
-                  _transactions
-                      .where((tx) => !tx.isExpense)
-                      .fold(0.0, (a, b) => a + b.amount),
-                  _transactions
-                      .where((tx) => tx.isExpense)
-                      .fold(0.0, (a, b) => a + b.amount),
-                  _scrollController,
-                )
-              : Container(),
-        ],
+              _limitCustomizer,
+            ] +
+            (_showStatistics
+                ? <Widget>[
+                    Balance(
+                      _transactions,
+                      _customPeriod == null ? _showPeriodStats : false,
+                      _daysLeft,
+                    ),
+                    SizedBox(height: 20.0),
+                    Categories(
+                      _transactions.where((tx) => tx.isExpense).toList(),
+                      widget.categories,
+                    ),
+                    SizedBox(height: 20.0),
+                    TopExpenses(
+                      _transactions.where((tx) => tx.isExpense).toList(),
+                      widget.categories,
+                      _transactions
+                          .where((tx) => !tx.isExpense)
+                          .fold(0.0, (a, b) => a + b.amount),
+                      _transactions
+                          .where((tx) => tx.isExpense)
+                          .fold(0.0, (a, b) => a + b.amount),
+                      _scrollController,
+                    ),
+                  ]
+                : <Widget>[
+                    Center(
+                      child: Text('No transactions available after this date.'),
+                    ),
+                  ]),
       );
     }
 
