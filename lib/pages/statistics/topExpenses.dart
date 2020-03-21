@@ -27,13 +27,7 @@ class TopExpenses extends StatefulWidget {
 class _TopExpensesState extends State<TopExpenses> {
   int _showCount = 5;
   List<Map<String, dynamic>> _sortedTransactions;
-
-  List<Widget> _columnContent = <Widget>[
-    SizedBox(height: 35.0),
-    Center(
-      child: Text('No expenses found in current period.'),
-    )
-  ];
+  List<Widget> _columnContent;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +74,13 @@ class _TopExpensesState extends State<TopExpenses> {
               ],
             )
           ];
+    } else {
+      _columnContent = <Widget>[
+        SizedBox(height: 35.0),
+        Center(
+          child: Text('No expenses found in current period.'),
+        )
+      ];
     }
 
     return Column(
