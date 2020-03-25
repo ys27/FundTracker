@@ -275,7 +275,7 @@ List<Map<String, dynamic>> combineSmallPercentages(
         categories.where((category) => category['percentage'] > 0.05).toList();
 
     bigCategories.add({
-      'name': 'Etc.',
+      'name': 'Miscellaneous',
       'amount': smallCategoriesAmount,
       'percentage': smallCategoriesPercentage,
       'iconColor': Colors.black54,
