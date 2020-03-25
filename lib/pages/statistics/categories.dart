@@ -44,10 +44,12 @@ class _CategoriesState extends State<Categories> {
                 value: category['percentage'] * 100,
                 color: category['iconColor'],
                 radius: touchedIndex == index ? 145 : 140,
-                title: String.fromCharCode(65 + index),
+                title: String.fromCharCode(category['icon']),
                 titleStyle: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 25.0,
+                  fontFamily: 'MaterialDesignIconFont',
+                  package: 'community_material_icon',
                 ),
                 titlePositionPercentageOffset: 0.7,
               ),
@@ -95,7 +97,7 @@ class _CategoriesState extends State<Categories> {
                             Indicator(
                               color: category['iconColor'],
                               text:
-                                  '${String.fromCharCode(65 + index)}: ${category['name']} - \$${category['amount'].toStringAsFixed(2)} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
+                                  '${category['name']} - \$${category['amount'].toStringAsFixed(2)} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
                               isSquare: false,
                               size: touchedIndex == index ? 18 : 16,
                               textColor: touchedIndex == index

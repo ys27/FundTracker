@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
@@ -253,6 +254,7 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
         'name': category.name,
         'transactions': [tx],
         'iconColor': category.iconColor,
+        'icon': category.icon,
       });
     }
   });
@@ -277,6 +279,7 @@ List<Map<String, dynamic>> combineSmallPercentages(
       'amount': smallCategoriesAmount,
       'percentage': smallCategoriesPercentage,
       'iconColor': Colors.black54,
+      'icon': CommunityMaterialIcons.shape_outline.codePoint,
     });
     return bigCategories;
   }
