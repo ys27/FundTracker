@@ -53,11 +53,11 @@ class _PreferencesFormState extends State<PreferencesForm> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               Center(
                 child: Text('Limit # of Days/Periods prior to current date'),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -135,7 +135,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
               _isLimitByDateEnabled
                   ? Column(
                       children: <Widget>[
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 10.0),
                         datePicker(
                           context,
                           getDateStr(_limitByDate ?? _prefs.limitByDate),
@@ -166,7 +166,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         setState(() => _limit = val);
                       },
                     ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               RaisedButton(
                 color: Theme.of(context).primaryColor,
                 child: Text('Save', style: TextStyle(color: Colors.white)),
@@ -200,7 +200,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                   }
                 },
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               _wasUpdated ? Center(child: Text('Updated!')) : Container(),
               SizedBox(height: 60.0),
               // RaisedButton(
@@ -218,7 +218,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
               //     }
               //   },
               // ),
-              // SizedBox(height: 20.0),
+              // SizedBox(height: 10.0),
               RaisedButton(
                 child: Text('Reset Preferences'),
                 onPressed: () async {

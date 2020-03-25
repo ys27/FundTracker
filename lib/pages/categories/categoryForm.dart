@@ -72,7 +72,7 @@ class _CategoryFormState extends State<CategoryForm> {
                 key: _formKey,
                 child: ListView(
                   children: <Widget>[
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: widget.category.name,
                       validator: (val) {
@@ -89,7 +89,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         setState(() => _name = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     FlatButton(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,7 +114,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         setState(() => _icon = icon);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     FlatButton(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +139,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         setState(() => _iconColor = color);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     Icon(
                       IconData(
                         _icon ?? widget.category.icon,
@@ -148,7 +148,7 @@ class _CategoryFormState extends State<CategoryForm> {
                       ),
                       color: _iconColor ?? widget.category.iconColor,
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(

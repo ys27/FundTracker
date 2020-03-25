@@ -85,7 +85,7 @@ class _AuthFormState extends State<AuthForm> {
                 key: _formKey,
                 child: ListView(
                   children: <Widget>[
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: _email,
                       autovalidate: _email.isNotEmpty,
@@ -94,7 +94,7 @@ class _AuthFormState extends State<AuthForm> {
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (val) => setState(() => _email = val),
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: _password,
                       autovalidate: _password.isNotEmpty,
@@ -104,7 +104,7 @@ class _AuthFormState extends State<AuthForm> {
                           showPasswordToggle('Password', _obscurePassword),
                       onChanged: (val) => setState(() => _password = val),
                     ),
-                    isRegister ? SizedBox(height: 20.0) : Container(),
+                    isRegister ? SizedBox(height: 10.0) : Container(),
                     isRegister
                         ? TextFormField(
                             autovalidate: _passwordConfirm.isNotEmpty,
@@ -121,7 +121,7 @@ class _AuthFormState extends State<AuthForm> {
                             },
                           )
                         : Container(),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     isRegister
                         ? TextFormField(
                             autovalidate: _fullname.isNotEmpty,
@@ -131,7 +131,7 @@ class _AuthFormState extends State<AuthForm> {
                             onChanged: (val) => setState(() => _fullname = val),
                           )
                         : Container(),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: title(isRegister),

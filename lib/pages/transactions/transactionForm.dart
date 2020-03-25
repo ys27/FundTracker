@@ -77,7 +77,7 @@ class _TransactionFormState extends State<TransactionForm> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
@@ -97,7 +97,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   datePicker(
                     context,
                     isRecurringTxMode
@@ -122,7 +122,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 (isRecurringTxMode
                     ? <Widget>[]
                     : <Widget>[
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 10.0),
                         timePicker(
                           context,
                           getTimeStr(_date ?? currentTxOrRecTx.date),
@@ -144,7 +144,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         ),
                       ]) +
                 <Widget>[
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   TypeAheadFormField(
                     autovalidate: _payee != null,
                     validator: (val) {
@@ -218,7 +218,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       });
                     },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   TextFormField(
                     initialValue: currentTxOrRecTx.amount != null
                         ? currentTxOrRecTx.amount.toStringAsFixed(2)
@@ -242,7 +242,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       setState(() => _amount = double.parse(val));
                     },
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   Center(
                     child: DropdownButton<String>(
                       items: _enabledCategories.map((category) {
@@ -306,7 +306,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ] +
                 (isRecurringTxMode
                     ? <Widget>[
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 10.0),
                         TextFormField(
                           initialValue: widget.recTx.frequencyValue != null
                               ? widget.recTx.frequencyValue.toString()
@@ -330,7 +330,7 @@ class _TransactionFormState extends State<TransactionForm> {
                             setState(() => _frequencyValue = val);
                           },
                         ),
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 10.0),
                         DropdownButton<DateUnit>(
                           items: DateUnit.values.map((unit) {
                             return DropdownMenuItem<DateUnit>(
@@ -347,7 +347,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       ]
                     : <Widget>[]) +
                 <Widget>[
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 10.0),
                   RaisedButton(
                     color: Theme.of(context).primaryColor,
                     child: Text(

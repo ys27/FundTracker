@@ -58,7 +58,7 @@ class _PeriodFormState extends State<PeriodForm> {
                 key: _formKey,
                 child: ListView(
                   children: <Widget>[
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     datePicker(
                       context,
                       'Start Date:                         ',
@@ -66,7 +66,7 @@ class _PeriodFormState extends State<PeriodForm> {
                       (date) => setState(() => _startDate = date),
                       DateTime.now(),
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: widget.period.name,
                       validator: (val) {
@@ -83,7 +83,7 @@ class _PeriodFormState extends State<PeriodForm> {
                         setState(() => _name = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: widget.period.durationValue != null
                           ? widget.period.durationValue.toString()
@@ -107,7 +107,7 @@ class _PeriodFormState extends State<PeriodForm> {
                         setState(() => _durationValue = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     DropdownButton<DateUnit>(
                       items: DateUnit.values.map((unit) {
                         return DropdownMenuItem<DateUnit>(
@@ -121,14 +121,14 @@ class _PeriodFormState extends State<PeriodForm> {
                       value: _durationUnit ?? widget.period.durationUnit,
                       isExpanded: true,
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     SwitchListTile(
                         title: Text('Set to default (allowed: 1)'),
                         value: _isDefault ?? widget.period.isDefault,
                         onChanged: (val) {
                           setState(() => _isDefault = val);
                         }),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(
