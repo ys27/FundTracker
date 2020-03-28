@@ -169,15 +169,35 @@ class _TransactionFormState extends State<TransactionForm> {
                       if (query == '') {
                         return null;
                       } else {
-                        final List<String> suggestions = _transactions
+                        List<Map<String, dynamic>> suggestionsWithCount = [];
+
+                        _transactions
                             .where(
-                              (tx) => tx.payee
-                                  .toLowerCase()
-                                  .startsWith(query.toLowerCase()),
-                            )
-                            .map((tx) => '${tx.payee}::${tx.cid}')
-                            .toSet()
-                            .toList();
+                          (tx) => tx.payee
+                              .toLowerCase()
+                              .startsWith(query.toLowerCase()),
+                        )
+                            .forEach((tx) {
+                          final String suggestion = '${tx.payee}::${tx.cid}';
+                          final int suggestionIndex =
+                              suggestionsWithCount.indexWhere(
+                                  (map) => map['suggestion'] == suggestion);
+                          if (suggestionIndex != -1) {
+                            suggestionsWithCount[suggestionIndex]['count']++;
+                          } else {
+                            suggestionsWithCount.add({
+                              'suggestion': '${tx.payee}::${tx.cid}',
+                              'count': 1,
+                            });
+                          }
+                        });
+                        suggestionsWithCount
+                            .sort((a, b) => b['count'].compareTo(a['count']));
+                        final List<String> suggestions =
+                            suggestionsWithCount.map((map) {
+                          final String suggestion = map['suggestion'];
+                          return suggestion;
+                        }).toList();
                         if (suggestions.length > 0) {
                           return suggestions;
                         } else {
