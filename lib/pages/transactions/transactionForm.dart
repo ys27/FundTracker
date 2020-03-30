@@ -254,7 +254,9 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (val) {
-                      setState(() => _amount = double.parse(val));
+                      setState(() {
+                        _amount = val == '' ? 0 : double.parse(val);
+                      });
                     },
                   ),
                   SizedBox(height: 10.0),
