@@ -15,10 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
-  final Transaction tx;
-  final RecurringTransaction recTx;
-
-  TransactionForm({this.tx, this.recTx});
+  final Function getTxOrRecTx;
+  TransactionForm({this.getTxOrRecTx});
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -44,21 +42,18 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-    final bool isRecurringTxMode = widget.recTx != null;
-    final dynamic currentTxOrRecTx =
-        isRecurringTxMode ? widget.recTx : widget.tx;
+    final dynamic currentTxOrRecTx = widget.getTxOrRecTx();
     _typeAheadController.text = currentTxOrRecTx.payee;
   }
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    final bool isRecurringTxMode = widget.recTx != null;
-    final dynamic currentTxOrRecTx =
-        isRecurringTxMode ? widget.recTx : widget.tx;
+    final dynamic currentTxOrRecTx = widget.getTxOrRecTx();
+    final bool isRecurringTxMode = currentTxOrRecTx is RecurringTransaction;
     final bool isEditMode = isRecurringTxMode
-        ? !widget.recTx.equalTo(RecurringTransaction.empty())
-        : widget.tx.tid != null;
+        ? currentTxOrRecTx.rid != null
+        : currentTxOrRecTx.tid != null;
     final List<Transaction> _transactions =
         Provider.of<List<Transaction>>(context);
     final List<Category> _categories = Provider.of<List<Category>>(context);
@@ -104,7 +99,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         ? 'Next Date:                         '
                         : getDateStr(_date ?? currentTxOrRecTx.date),
                     isRecurringTxMode
-                        ? '${getDateStr(_nextDate ?? widget.recTx.nextDate)}'
+                        ? '${getDateStr(_nextDate ?? currentTxOrRecTx.nextDate)}'
                         : '',
                     (date) => setState(() {
                       if (isRecurringTxMode) {
@@ -328,8 +323,8 @@ class _TransactionFormState extends State<TransactionForm> {
                     ? <Widget>[
                         SizedBox(height: 10.0),
                         TextFormField(
-                          initialValue: widget.recTx.frequencyValue != null
-                              ? widget.recTx.frequencyValue.toString()
+                          initialValue: currentTxOrRecTx.frequencyValue != null
+                              ? currentTxOrRecTx.frequencyValue.toString()
                               : '',
                           autovalidate: _frequencyValue.isNotEmpty,
                           validator: (val) {
@@ -361,7 +356,8 @@ class _TransactionFormState extends State<TransactionForm> {
                           onChanged: (val) {
                             setState(() => _frequencyUnit = val);
                           },
-                          value: _frequencyUnit ?? widget.recTx.frequencyUnit,
+                          value:
+                              _frequencyUnit ?? currentTxOrRecTx.frequencyUnit,
                           isExpanded: true,
                         ),
                       ]
@@ -380,16 +376,16 @@ class _TransactionFormState extends State<TransactionForm> {
 
                         if (isRecurringTxMode) {
                           RecurringTransaction recTx = RecurringTransaction(
-                            rid: widget.recTx.rid ?? Uuid().v1(),
-                            nextDate: _nextDate ?? widget.recTx.nextDate,
+                            rid: currentTxOrRecTx.rid ?? Uuid().v1(),
+                            nextDate: _nextDate ?? currentTxOrRecTx.nextDate,
                             frequencyValue: _frequencyValue != ''
                                 ? int.parse(_frequencyValue)
-                                : widget.recTx.frequencyValue,
-                            frequencyUnit:
-                                _frequencyUnit ?? widget.recTx.frequencyUnit,
-                            isExpense: _isExpense ?? widget.recTx.isExpense,
-                            payee: _payee ?? widget.recTx.payee,
-                            amount: _amount ?? widget.recTx.amount,
+                                : currentTxOrRecTx.frequencyValue,
+                            frequencyUnit: _frequencyUnit ??
+                                currentTxOrRecTx.frequencyUnit,
+                            isExpense: _isExpense ?? currentTxOrRecTx.isExpense,
+                            payee: _payee ?? currentTxOrRecTx.payee,
+                            amount: _amount ?? currentTxOrRecTx.amount,
                             cid: _cid ??
                                 (_correspondingCategory != null
                                     ? _correspondingCategory.cid
@@ -406,11 +402,11 @@ class _TransactionFormState extends State<TransactionForm> {
                           SyncService(_user.uid).syncRecurringTransactions();
                         } else {
                           Transaction tx = Transaction(
-                            tid: widget.tx.tid ?? Uuid().v1(),
-                            date: _date ?? widget.tx.date,
-                            isExpense: _isExpense ?? widget.tx.isExpense,
-                            payee: _payee ?? widget.tx.payee,
-                            amount: _amount ?? widget.tx.amount,
+                            tid: currentTxOrRecTx.tid ?? Uuid().v1(),
+                            date: _date ?? currentTxOrRecTx.date,
+                            isExpense: _isExpense ?? currentTxOrRecTx.isExpense,
+                            payee: _payee ?? currentTxOrRecTx.payee,
+                            amount: _amount ?? currentTxOrRecTx.amount,
                             cid: _cid ??
                                 (_correspondingCategory != null
                                     ? _correspondingCategory.cid
@@ -445,9 +441,9 @@ class _TransactionFormState extends State<TransactionForm> {
                   isRecurringTxMode ? 'recurring transaction' : 'transaction',
                   () async => isRecurringTxMode
                       ? await DatabaseWrapper(_user.uid)
-                          .deleteRecurringTransactions([widget.recTx])
+                          .deleteRecurringTransactions([currentTxOrRecTx])
                       : await DatabaseWrapper(_user.uid)
-                          .deleteTransactions([widget.tx]),
+                          .deleteTransactions([currentTxOrRecTx]),
                   () => isRecurringTxMode
                       ? SyncService(_user.uid).syncRecurringTransactions()
                       : SyncService(_user.uid).syncTransactions(),

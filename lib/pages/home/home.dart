@@ -40,8 +40,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    retrieveNewData(widget.user.uid);
     super.initState();
+    retrieveNewData(widget.user.uid);
   }
 
   @override
@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
               FutureProvider<List<Category>>.value(
                   value: DatabaseWrapper(widget.user.uid).getCategories()),
             ],
-            child: TransactionForm(tx: Transaction.empty()),
+            child: TransactionForm(getTxOrRecTx: () => Transaction.empty()),
           ),
           () => retrieveNewData(widget.user.uid),
         ),

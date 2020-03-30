@@ -53,7 +53,8 @@ class RecurringTransactionsList extends StatelessWidget {
             FutureProvider<List<Category>>.value(
                 value: DatabaseWrapper(user.uid).getCategories()),
           ],
-          child: TransactionForm(recTx: RecurringTransaction.empty()),
+          child:
+              TransactionForm(getTxOrRecTx: () => RecurringTransaction.empty()),
         ),
         () {},
       ),
@@ -76,7 +77,7 @@ class RecurringTransactionsList extends StatelessWidget {
               FutureProvider<List<Category>>.value(
                   value: DatabaseWrapper(user.uid).getCategories()),
             ],
-            child: TransactionForm(recTx: recTx),
+            child: TransactionForm(getTxOrRecTx: () => recTx),
           ),
         ),
         title: Text(

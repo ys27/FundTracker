@@ -34,7 +34,7 @@ class TransactionTile extends StatelessWidget {
                     FutureProvider<List<Category>>.value(
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
-                  child: TransactionForm(tx: transaction),
+                  child: TransactionForm(getTxOrRecTx: () => transaction),
                 );
               },
             );
