@@ -150,6 +150,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                           (date) => setState(() => _limitByDate = date),
                           DateTime.now(),
                         ),
+                        SizedBox(height: 8.0),
                       ],
                     )
                   : TextFormField(
