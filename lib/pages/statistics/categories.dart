@@ -44,7 +44,9 @@ class _CategoriesState extends State<Categories> {
                 value: category['percentage'] * 100,
                 color: category['iconColor'],
                 radius: touchedIndex == index ? 145 : 140,
-                title: String.fromCharCode(category['icon']),
+                title: category['percentage'] > 0.04
+                    ? String.fromCharCode(category['icon'])
+                    : '',
                 titleStyle: TextStyle(
                   color: Colors.white,
                   fontSize: 25.0,
