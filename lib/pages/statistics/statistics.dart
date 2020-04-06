@@ -61,48 +61,6 @@ class _StatisticsState extends State<Statistics> {
         _limitCustomizer = SizedBox(height: 48.0);
       }
 
-      if (_showPreferredStats) {
-        if (widget.allTransactions.length > 0 &&
-                widget.prefs.isLimitDaysEnabled ||
-            widget.prefs.isLimitByDateEnabled) {
-          Preferences customPrefs = Preferences(
-            pid: widget.prefs.pid,
-            limitDays: widget.prefs.limitDays,
-            isLimitDaysEnabled: widget.prefs.isLimitDaysEnabled,
-            limitPeriods: widget.prefs.limitPeriods,
-            isLimitPeriodsEnabled: widget.prefs.isLimitPeriodsEnabled,
-            limitByDate: widget.prefs.limitByDate,
-            isLimitByDateEnabled: widget.prefs.isLimitByDateEnabled,
-          );
-          if (_customLimitByDate != null) {
-            customPrefs =
-                customPrefs.setPreference('limitByDate', _customLimitByDate);
-          }
-          _transactions =
-              filterTransactionsByLimit(widget.allTransactions, customPrefs);
-        } else {
-          _transactions = filterPeriodsWithLimit(
-                  _dividedTransactions, widget.prefs.limitPeriods)
-              .map<List<Transaction>>((map) => map['transactions'])
-              .expand((x) => x)
-              .toList();
-        }
-        print(_customLimitByDate);
-        _limitCustomizer = datePicker(
-          context,
-          getDateStr(_customLimitByDate ?? widget.prefs.limitByDate),
-          '',
-          (date) => setState(() => _customLimitByDate = getDateNotTime(date)),
-          widget.prefs.limitByDate,
-        );
-        if (_customLimitByDate != null &&
-            _customLimitByDate.isAfter(widget.allTransactions.first.date)) {
-          _showStatistics = false;
-        } else {
-          _showStatistics = true;
-        }
-      }
-
       if (_showPeriodStats) {
         Map<String, dynamic> _currentPeriodTransactions =
             findCurrentPeriod(_dividedTransactions);
@@ -150,6 +108,53 @@ class _StatisticsState extends State<Statistics> {
         );
       }
 
+      if (_showPreferredStats) {
+        if (widget.allTransactions.length > 0 &&
+                widget.prefs.isLimitDaysEnabled ||
+            widget.prefs.isLimitByDateEnabled) {
+          Preferences customPrefs = Preferences(
+            pid: widget.prefs.pid,
+            limitDays: widget.prefs.limitDays,
+            isLimitDaysEnabled: widget.prefs.isLimitDaysEnabled,
+            limitPeriods: widget.prefs.limitPeriods,
+            isLimitPeriodsEnabled: widget.prefs.isLimitPeriodsEnabled,
+            limitByDate: widget.prefs.limitByDate,
+            isLimitByDateEnabled: widget.prefs.isLimitByDateEnabled,
+          );
+          if (_customLimitByDate != null) {
+            customPrefs =
+                customPrefs.setPreference('limitByDate', _customLimitByDate);
+          }
+          _transactions =
+              filterTransactionsByLimit(widget.allTransactions, customPrefs);
+        } else {
+          _transactions = filterPeriodsWithLimit(
+                  _dividedTransactions, widget.prefs.limitPeriods)
+              .map<List<Transaction>>((map) => map['transactions'])
+              .expand((x) => x)
+              .toList();
+        }
+
+        DateTime limitFirstDate = widget.prefs.isLimitByDateEnabled
+            ? widget.prefs.limitByDate
+            : getDateNotTime(DateTime.now().add(Duration(days: 1)))
+                .subtract(Duration(days: widget.prefs.limitDays));
+
+        _limitCustomizer = datePicker(
+          context,
+          getDateStr(_customLimitByDate ?? limitFirstDate),
+          '',
+          (date) => setState(() => _customLimitByDate = getDateNotTime(date)),
+          widget.prefs.limitByDate,
+        );
+        if (_customLimitByDate != null &&
+            _customLimitByDate.isAfter(widget.allTransactions.first.date)) {
+          _showStatistics = false;
+        } else {
+          _showStatistics = true;
+        }
+      }
+
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,
@@ -183,6 +188,28 @@ class _StatisticsState extends State<Statistics> {
                   Expanded(
                     child: FlatButton(
                       padding: EdgeInsets.all(15.0),
+                      color: _showPeriodStats
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[100],
+                      child: Text(
+                        'Period',
+                        style: TextStyle(
+                            fontWeight: _showPeriodStats
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color:
+                                _showPeriodStats ? Colors.white : Colors.black),
+                      ),
+                      onPressed: () => setState(() {
+                        _showPeriodStats = true;
+                        _showAllTimeStats = false;
+                        _showPreferredStats = false;
+                      }),
+                    ),
+                  ),
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(15.0),
                       color: _showPreferredStats
                           ? Theme.of(context).primaryColor
                           : Colors.grey[100],
@@ -200,28 +227,6 @@ class _StatisticsState extends State<Statistics> {
                         _showPreferredStats = true;
                         _showAllTimeStats = false;
                         _showPeriodStats = false;
-                      }),
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _showPeriodStats
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Period',
-                        style: TextStyle(
-                            fontWeight: _showPeriodStats
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color:
-                                _showPeriodStats ? Colors.white : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
-                        _showPeriodStats = true;
-                        _showAllTimeStats = false;
-                        _showPreferredStats = false;
                       }),
                     ),
                   ),

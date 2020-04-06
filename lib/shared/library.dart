@@ -185,8 +185,9 @@ List<Transaction> filterTransactionsByLimit(
 ) {
   if (prefs.isLimitDaysEnabled) {
     return transactions
-        .where((tx) => tx.date.isAfter(DateTime.now()
-            .subtract(Duration(days: prefs.limitDays, milliseconds: 1))))
+        .where((tx) => tx.date.isAfter(
+            getDateNotTime(DateTime.now().add(Duration(days: 1)))
+                .subtract(Duration(days: prefs.limitDays, milliseconds: 1))))
         .toList();
   } else if (prefs.isLimitByDateEnabled) {
     return transactions
@@ -300,6 +301,12 @@ Map<String, double> getRelativePercentages(Map<String, double> values) {
   values.forEach((key, value) {
     if (value > max) max = value;
   });
+  if (max == 0) {
+    return {
+      'income': 0.0,
+      'expenses': 0.0,
+    };
+  }
   return {
     'income': values['income'] / max,
     'expenses': values['expenses'] / max,
