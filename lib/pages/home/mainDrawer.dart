@@ -93,11 +93,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Preferences'),
             leading: Icon(CommunityMaterialIcons.tune),
             onTap: () => widget.openPage(
-              FutureProvider<Preferences>(
-                create: (_) =>
-                    DatabaseWrapper(widget.user.uid).getPreferences(),
-                child: PreferencesForm(widget.user, widget.openPage),
-              ),
+              PreferencesForm(widget.user, widget.openPage),
             ),
           ),
           ListTile(
