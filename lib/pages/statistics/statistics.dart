@@ -32,8 +32,6 @@ class _StatisticsState extends State<Statistics> {
   bool _showPreferredStats = false;
   bool _showPeriodStats = true;
 
-  String _visiblePrefs = '';
-
   Widget _body = Center(
     child: Text('No statistics available. Requires at least one transaction.'),
   );
@@ -57,16 +55,6 @@ class _StatisticsState extends State<Statistics> {
         widget.allTransactions.length > 0) {
       _dividedTransactions = divideTransactionsIntoPeriods(
           widget.allTransactions, widget.currentPeriod);
-
-      if (widget.prefs.isLimitDaysEnabled) {
-        _visiblePrefs = '${widget.prefs.limitDays} days';
-      } else if (widget.prefs.isLimitByDateEnabled) {
-        _visiblePrefs = _customLimitByDate != null
-            ? '~ ${getDateStr(_customLimitByDate)}'
-            : '~ ${getDateStr(widget.prefs.limitByDate)}';
-      } else if (widget.prefs.isLimitPeriodsEnabled) {
-        _visiblePrefs = '${widget.prefs.limitPeriods} periods';
-      }
 
       if (_showAllTimeStats) {
         _transactions = widget.allTransactions;
@@ -99,9 +87,10 @@ class _StatisticsState extends State<Statistics> {
               .expand((x) => x)
               .toList();
         }
+        print(_customLimitByDate);
         _limitCustomizer = datePicker(
           context,
-          getDateStr(widget.prefs.limitByDate),
+          getDateStr(_customLimitByDate ?? widget.prefs.limitByDate),
           '',
           (date) => setState(() => _customLimitByDate = getDateNotTime(date)),
           widget.prefs.limitByDate,
@@ -198,14 +187,14 @@ class _StatisticsState extends State<Statistics> {
                           ? Theme.of(context).primaryColor
                           : Colors.grey[100],
                       child: Text(
-                        _visiblePrefs,
+                        'Custom',
                         style: TextStyle(
-                            fontWeight: _showPreferredStats
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: _showPreferredStats
-                                ? Colors.white
-                                : Colors.black),
+                          fontWeight: _showPreferredStats
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color:
+                              _showPreferredStats ? Colors.white : Colors.black,
+                        ),
                       ),
                       onPressed: () => setState(() {
                         _showPreferredStats = true;
