@@ -11,8 +11,6 @@ class Balance extends StatelessWidget {
 
   Balance(this.transactions, this.showPeriodStats, this.daysLeft);
 
-  final Widget remainingStatsHeight = SizedBox(height: 23.0);
-
   @override
   Widget build(BuildContext context) {
     final Map<String, double> balancesList = {
@@ -38,15 +36,13 @@ class Balance extends StatelessWidget {
         Center(
           child: Text(getAmountStr(balance), style: TextStyle(fontSize: 25.0)),
         ),
-        showPeriodStats
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('$daysLeft days remaining'),
-                  Text(remainingPerDay),
-                ],
-              )
-            : remainingStatsHeight,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('$daysLeft days remaining'),
+            Text(remainingPerDay),
+          ],
+        ),
         SizedBox(height: 10.0),
         BarTile(
           title: 'Income',

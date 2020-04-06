@@ -142,10 +142,10 @@ class _StatisticsState extends State<Statistics> {
 
         _limitCustomizer = datePicker(
           context,
-          getDateStr(_customLimitByDate ?? limitFirstDate),
-          '',
-          (date) => setState(() => _customLimitByDate = getDateNotTime(date)),
-          widget.prefs.limitByDate,
+          leading: getDateStr(_customLimitByDate ?? limitFirstDate),
+          updateDateState: (date) =>
+              setState(() => _customLimitByDate = getDateNotTime(date)),
+          openDate: limitFirstDate,
         );
         if (_customLimitByDate != null &&
             _customLimitByDate.isAfter(widget.allTransactions.first.date)) {

@@ -34,8 +34,7 @@ class TransactionsList extends StatelessWidget {
         child: Text('Add a transaction using the button below.'),
       );
     } else {
-      List<Map<String, dynamic>> _dividedTransactions =
-          filterByLimitAndDivideIntoPeriods(
+      List<Map<String, dynamic>> _dividedTransactions = divideIntoPeriods(
         transactions,
         prefs,
         currentPeriod,

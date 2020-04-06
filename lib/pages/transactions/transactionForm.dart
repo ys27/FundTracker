@@ -95,20 +95,20 @@ class _TransactionFormState extends State<TransactionForm> {
                   SizedBox(height: 10.0),
                   datePicker(
                     context,
-                    isRecurringTxMode
+                    leading: isRecurringTxMode
                         ? 'Next Date:                         '
                         : getDateStr(_date ?? currentTxOrRecTx.date),
-                    isRecurringTxMode
+                    trailing: isRecurringTxMode
                         ? '${getDateStr(_nextDate ?? currentTxOrRecTx.nextDate)}'
                         : '',
-                    (date) => setState(() {
+                    updateDateState: (date) => setState(() {
                       if (isRecurringTxMode) {
                         _nextDate = getDateNotTime(date);
                       } else {
                         _date = date;
                       }
                     }),
-                    DateTime.now(),
+                    openDate: DateTime.now(),
                     firstDate: isRecurringTxMode
                         ? getDateNotTime(DateTime.now())
                         : null,

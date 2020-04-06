@@ -81,8 +81,8 @@ Widget deleteIcon(
 }
 
 Future<DateTime> openDatePicker(
-  BuildContext context,
-  DateTime openDate, {
+  BuildContext context, {
+  DateTime openDate,
   DateTime firstDate,
   DateTime lastDate,
 }) {
@@ -101,11 +101,11 @@ Future<DateTime> openDatePicker(
 }
 
 Widget datePicker(
-  BuildContext context,
-  String leading,
-  String trailing,
+  BuildContext context, {
+  String leading = '',
+  String trailing = '',
   Function updateDateState,
-  DateTime limitByDate, {
+  DateTime openDate,
   DateTime firstDate,
   DateTime lastDate,
 }) {
@@ -121,7 +121,7 @@ Widget datePicker(
     onPressed: () async {
       DateTime date = await openDatePicker(
         context,
-        limitByDate,
+        openDate: openDate,
         firstDate: firstDate,
         lastDate: lastDate,
       );

@@ -160,19 +160,14 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   return periodsList;
 }
 
-List<Map<String, dynamic>> filterByLimitAndDivideIntoPeriods(
+List<Map<String, dynamic>> divideIntoPeriods(
   List<Transaction> transactions,
   Preferences prefs,
   Period currentPeriod,
 ) {
-  List<Transaction> filteredTransactions =
-      filterTransactionsByLimit(transactions, prefs);
   List<Map<String, dynamic>> dividedTransactions =
-      divideTransactionsIntoPeriods(filteredTransactions, currentPeriod);
-  if (prefs.isLimitPeriodsEnabled) {
-    dividedTransactions =
-        filterPeriodsWithLimit(dividedTransactions, prefs.limitPeriods);
-  }
+      divideTransactionsIntoPeriods(transactions, currentPeriod);
+
   // Remove periods without any txs
   return dividedTransactions
       .where((period) => period['transactions'].length > 0)

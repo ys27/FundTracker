@@ -28,6 +28,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
   bool _isLimitPeriodsEnabled;
   bool _isLimitByDateEnabled;
   bool _wasUpdated = false;
+  bool _isModified = false;
 
   Preferences _prefs;
 
@@ -62,7 +63,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
             children: <Widget>[
               SizedBox(height: 10.0),
               Center(
-                child: Text('Limit # of Days/Periods prior to current date'),
+                child: Text('Custom Range For Statistics'),
               ),
               SizedBox(height: 10.0),
               Row(
@@ -85,6 +86,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                                 : Colors.black),
                       ),
                       onPressed: () => setState(() {
+                        _isModified = true;
                         _isLimitDaysEnabled = true;
                         _isLimitPeriodsEnabled = false;
                         _isLimitByDateEnabled = false;
@@ -108,6 +110,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                                 : Colors.black),
                       ),
                       onPressed: () => setState(() {
+                        _isModified = true;
                         _isLimitPeriodsEnabled = true;
                         _isLimitDaysEnabled = false;
                         _isLimitByDateEnabled = false;
@@ -131,6 +134,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                                 : Colors.black),
                       ),
                       onPressed: () => setState(() {
+                        _isModified = true;
                         _isLimitByDateEnabled = true;
                         _isLimitDaysEnabled = false;
                         _isLimitPeriodsEnabled = false;
@@ -145,10 +149,13 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         SizedBox(height: 10.0),
                         datePicker(
                           context,
-                          getDateStr(_limitByDate ?? _prefs.limitByDate),
-                          '',
-                          (date) => setState(() => _limitByDate = date),
-                          DateTime.now(),
+                          leading:
+                              getDateStr(_limitByDate ?? _prefs.limitByDate),
+                          updateDateState: (date) => setState(() {
+                            _isModified = true;
+                            _limitByDate = date;
+                          }),
+                          openDate: DateTime.now(),
                         ),
                         SizedBox(height: 8.0),
                       ],
@@ -174,6 +181,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
                         setState(() {
+                          _isModified = true;
                           if (_isLimitDaysEnabled) {
                             _limitDays = val;
                           } else {
@@ -184,42 +192,48 @@ class _PreferencesFormState extends State<PreferencesForm> {
                     ),
               SizedBox(height: 10.0),
               RaisedButton(
-                color: Theme.of(context).primaryColor,
-                child: Text('Save', style: TextStyle(color: Colors.white)),
+                color:
+                    _isModified ? Theme.of(context).primaryColor : Colors.grey,
+                child: Text('Save',
+                    style: TextStyle(
+                        color: _isModified ? Colors.white : Colors.grey[400])),
                 onPressed: () async {
-                  if (_formKey.currentState.validate()) {
-                    int limitDays = _limitDays != '' && _isLimitDaysEnabled
-                        ? int.parse(_limitDays)
-                        : _prefs.limitDays;
-                    int limitPeriods =
-                        _limitPeriods != '' && _isLimitPeriodsEnabled
-                            ? int.parse(_limitPeriods)
-                            : _prefs.limitPeriods;
-                    DateTime limitByDate =
-                        _limitByDate != null && _isLimitByDateEnabled
-                            ? _limitByDate
-                            : _prefs.limitByDate;
+                  if (_isModified) {
+                    if (_formKey.currentState.validate()) {
+                      int limitDays = _limitDays != '' && _isLimitDaysEnabled
+                          ? int.parse(_limitDays)
+                          : _prefs.limitDays;
+                      int limitPeriods =
+                          _limitPeriods != '' && _isLimitPeriodsEnabled
+                              ? int.parse(_limitPeriods)
+                              : _prefs.limitPeriods;
+                      DateTime limitByDate =
+                          _limitByDate != null && _isLimitByDateEnabled
+                              ? _limitByDate
+                              : _prefs.limitByDate;
 
-                    Preferences prefs = Preferences(
-                      pid: widget.user.uid,
-                      limitDays:
-                          _isLimitDaysEnabled ? limitDays : _prefs.limitDays,
-                      isLimitDaysEnabled:
-                          _isLimitDaysEnabled ?? _prefs.isLimitDaysEnabled,
-                      limitPeriods: _isLimitPeriodsEnabled
-                          ? limitPeriods
-                          : _prefs.limitPeriods,
-                      isLimitPeriodsEnabled: _isLimitPeriodsEnabled ??
-                          _prefs.isLimitPeriodsEnabled,
-                      limitByDate: _isLimitByDateEnabled
-                          ? limitByDate
-                          : _prefs.limitByDate,
-                      isLimitByDateEnabled:
-                          _isLimitByDateEnabled ?? _prefs.isLimitByDateEnabled,
-                    );
-                    DatabaseWrapper(widget.user.uid).updatePreferences(prefs);
-                    retrieveNewData(widget.user.uid);
-                    displayUpdated();
+                      Preferences prefs = Preferences(
+                        pid: widget.user.uid,
+                        limitDays:
+                            _isLimitDaysEnabled ? limitDays : _prefs.limitDays,
+                        isLimitDaysEnabled:
+                            _isLimitDaysEnabled ?? _prefs.isLimitDaysEnabled,
+                        limitPeriods: _isLimitPeriodsEnabled
+                            ? limitPeriods
+                            : _prefs.limitPeriods,
+                        isLimitPeriodsEnabled: _isLimitPeriodsEnabled ??
+                            _prefs.isLimitPeriodsEnabled,
+                        limitByDate: _isLimitByDateEnabled
+                            ? limitByDate
+                            : _prefs.limitByDate,
+                        isLimitByDateEnabled: _isLimitByDateEnabled ??
+                            _prefs.isLimitByDateEnabled,
+                      );
+                      DatabaseWrapper(widget.user.uid).updatePreferences(prefs);
+                      retrieveNewData(widget.user.uid);
+                      setState(() => _isModified = false);
+                      displayUpdated();
+                    }
                   }
                 },
               ),
