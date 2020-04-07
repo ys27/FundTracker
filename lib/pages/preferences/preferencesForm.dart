@@ -126,7 +126,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                               getDateStr(_limitByDate ?? _prefs.limitByDate),
                           updateDateState: (date) => setState(() {
                             _isModified = true;
-                            _limitByDate = date;
+                            _limitByDate = getDateNotTime(date);
                           }),
                           openDate: DateTime.now(),
                         ),

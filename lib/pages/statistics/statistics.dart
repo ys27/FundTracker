@@ -76,10 +76,8 @@ class _StatisticsState extends State<Statistics> {
         _daysLeft = _currentPeriodTransactions['endDate']
             .difference(DateTime.now())
             .inDays;
-        _transactions = _currentPeriodTransactions['transactions'];
       } else {
         _daysLeft = 0;
-        _transactions = [];
       }
 
       if (_showAllTimeStats) {
@@ -93,6 +91,13 @@ class _StatisticsState extends State<Statistics> {
           if (_customPeriod['startDate'] ==
               _currentPeriodTransactions['startDate']) {
             _customPeriod = null;
+          }
+        }
+        if (_customPeriod == null) {
+          if (_currentPeriodTransactions.containsKey('transactions')) {
+            _transactions = _currentPeriodTransactions['transactions'];
+          } else {
+            _transactions = [];
           }
         }
 
@@ -133,6 +138,7 @@ class _StatisticsState extends State<Statistics> {
             isLimitPeriodsEnabled: widget.prefs.isLimitPeriodsEnabled,
             limitByDate: widget.prefs.limitByDate,
             isLimitByDateEnabled: widget.prefs.isLimitByDateEnabled,
+            defaultCustomLimitTab: widget.prefs.defaultCustomLimitTab,
           );
           if (_customLimitByDate != null) {
             customPrefs =
