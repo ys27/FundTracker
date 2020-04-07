@@ -203,3 +203,26 @@ Widget isExpenseSelector(
     ),
   );
 }
+
+Widget tabSelector(BuildContext context, List<Map<String, dynamic>> tabs) {
+  return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: tabs.map((tab) {
+        return Expanded(
+          child: FlatButton(
+            padding: EdgeInsets.all(15.0),
+            color: tab['enabled']
+                ? Theme.of(context).primaryColor
+                : Colors.grey[100],
+            child: Text(
+              tab['title'],
+              style: TextStyle(
+                  fontWeight:
+                      tab['enabled'] ? FontWeight.bold : FontWeight.normal,
+                  color: tab['enabled'] ? Colors.white : Colors.black),
+            ),
+            onPressed: tab['onPressed'],
+          ),
+        );
+      }).toList());
+}

@@ -1,3 +1,5 @@
+import 'package:fund_tracker/shared/constants.dart';
+
 class Preferences {
   String pid;
   int limitDays;
@@ -6,6 +8,7 @@ class Preferences {
   bool isLimitPeriodsEnabled;
   DateTime limitByDate;
   bool isLimitByDateEnabled;
+  LimitTab defaultCustomLimitTab;
 
   Preferences({
     this.pid,
@@ -15,6 +18,7 @@ class Preferences {
     this.isLimitPeriodsEnabled,
     this.limitByDate,
     this.isLimitByDateEnabled,
+    this.defaultCustomLimitTab,
   });
 
   Preferences.example() {
@@ -25,6 +29,7 @@ class Preferences {
     isLimitPeriodsEnabled = false;
     limitByDate = DateTime.now();
     isLimitByDateEnabled = false;
+    defaultCustomLimitTab = LimitTab.Period;
   }
 
   Preferences.original() {
@@ -35,6 +40,7 @@ class Preferences {
     isLimitPeriodsEnabled = false;
     limitByDate = DateTime(DateTime.now().year, 1, 1);
     isLimitByDateEnabled = false;
+    defaultCustomLimitTab = LimitTab.Period;
   }
 
   Preferences.fromMap(Map<String, dynamic> map) {
@@ -45,6 +51,11 @@ class Preferences {
     this.isLimitPeriodsEnabled = map['isLimitPeriodsEnabled'] == 1;
     this.limitByDate = DateTime.parse(map['limitByDate']);
     this.isLimitByDateEnabled = map['isLimitByDateEnabled'] == 1;
+    LimitTab.values.forEach((limitTab) {
+      if (limitTab.toString() == map['defaultCustomLimitTab']) {
+        this.defaultCustomLimitTab = limitTab;
+      }
+    });
   }
 
   Map<String, dynamic> toMap() {
@@ -56,6 +67,7 @@ class Preferences {
       'isLimitPeriodsEnabled': isLimitPeriodsEnabled ? 1 : 0,
       'limitByDate': limitByDate.toString(),
       'isLimitByDateEnabled': isLimitByDateEnabled ? 1 : 0,
+      'defaultCustomLimitTab': defaultCustomLimitTab.toString(),
     };
   }
 
@@ -83,6 +95,9 @@ class Preferences {
       case 'isLimitByDateEnabled':
         copy.isLimitByDateEnabled = value;
         break;
+      case 'defaultCustomLimitTab':
+        copy.defaultCustomLimitTab = value;
+        break;
     }
     return copy;
   }
@@ -96,6 +111,7 @@ class Preferences {
       isLimitPeriodsEnabled: this.isLimitPeriodsEnabled,
       limitByDate: this.limitByDate,
       isLimitByDateEnabled: this.isLimitByDateEnabled,
+      defaultCustomLimitTab: this.defaultCustomLimitTab,
     );
   }
 }

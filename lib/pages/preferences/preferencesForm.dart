@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
@@ -27,6 +28,9 @@ class _PreferencesFormState extends State<PreferencesForm> {
   bool _isLimitDaysEnabled;
   bool _isLimitPeriodsEnabled;
   bool _isLimitByDateEnabled;
+  bool _isDefaultTabAllTime = false;
+  bool _isDefaultTabPeriod = false;
+  bool _isDefaultTabCustom = false;
   bool _wasUpdated = false;
   bool _isModified = false;
 
@@ -55,6 +59,20 @@ class _PreferencesFormState extends State<PreferencesForm> {
       _isLimitByDateEnabled =
           _isLimitByDateEnabled ?? _prefs.isLimitByDateEnabled;
 
+      if (!_isDefaultTabAllTime &&
+          !_isDefaultTabPeriod &&
+          !_isDefaultTabCustom) {
+        if (_prefs.defaultCustomLimitTab == LimitTab.AllTime) {
+          _isDefaultTabAllTime = true;
+        } else if (_prefs.defaultCustomLimitTab == LimitTab.Period) {
+          _isDefaultTabPeriod = true;
+        } else if (_prefs.defaultCustomLimitTab == LimitTab.Custom) {
+          _isDefaultTabCustom = true;
+        } else {
+          _isDefaultTabPeriod = true;
+        }
+      }
+
       _body = Container(
         padding: bodyPadding,
         child: Form(
@@ -66,83 +84,38 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 child: Text('Custom Range For Statistics'),
               ),
               SizedBox(height: 10.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _isLimitDaysEnabled
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Days',
-                        style: TextStyle(
-                            fontWeight: _isLimitDaysEnabled
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: _isLimitDaysEnabled
-                                ? Colors.white
-                                : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
+              tabSelector(context, [
+                {
+                  'enabled': _isLimitDaysEnabled,
+                  'title': 'Days',
+                  'onPressed': () => setState(() {
                         _isModified = true;
                         _isLimitDaysEnabled = true;
                         _isLimitPeriodsEnabled = false;
                         _isLimitByDateEnabled = false;
                       }),
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _isLimitPeriodsEnabled
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Periods',
-                        style: TextStyle(
-                            fontWeight: _isLimitPeriodsEnabled
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: _isLimitPeriodsEnabled
-                                ? Colors.white
-                                : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
+                },
+                {
+                  'enabled': _isLimitPeriodsEnabled,
+                  'title': 'Periods',
+                  'onPressed': () => setState(() {
                         _isModified = true;
-                        _isLimitPeriodsEnabled = true;
                         _isLimitDaysEnabled = false;
+                        _isLimitPeriodsEnabled = true;
                         _isLimitByDateEnabled = false;
                       }),
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _isLimitByDateEnabled
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Start Date',
-                        style: TextStyle(
-                            fontWeight: _isLimitByDateEnabled
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: _isLimitByDateEnabled
-                                ? Colors.white
-                                : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
+                },
+                {
+                  'enabled': _isLimitByDateEnabled,
+                  'title': 'Start Date',
+                  'onPressed': () => setState(() {
                         _isModified = true;
-                        _isLimitByDateEnabled = true;
                         _isLimitDaysEnabled = false;
                         _isLimitPeriodsEnabled = false;
+                        _isLimitByDateEnabled = true;
                       }),
-                    ),
-                  ),
-                ],
-              ),
+                },
+              ]),
               _isLimitByDateEnabled
                   ? Column(
                       children: <Widget>[
@@ -191,6 +164,43 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       },
                     ),
               SizedBox(height: 10.0),
+              Center(
+                child: Text('Default Tab For Statistics'),
+              ),
+              SizedBox(height: 10.0),
+              tabSelector(context, [
+                {
+                  'enabled': _isDefaultTabAllTime,
+                  'title': 'All-Time',
+                  'onPressed': () => setState(() {
+                        _isModified = true;
+                        _isDefaultTabAllTime = true;
+                        _isDefaultTabPeriod = false;
+                        _isDefaultTabCustom = false;
+                      }),
+                },
+                {
+                  'enabled': _isDefaultTabPeriod,
+                  'title': 'Period',
+                  'onPressed': () => setState(() {
+                        _isModified = true;
+                        _isDefaultTabAllTime = false;
+                        _isDefaultTabPeriod = true;
+                        _isDefaultTabCustom = false;
+                      }),
+                },
+                {
+                  'enabled': _isDefaultTabCustom,
+                  'title': 'Custom',
+                  'onPressed': () => setState(() {
+                        _isModified = true;
+                        _isDefaultTabAllTime = false;
+                        _isDefaultTabPeriod = false;
+                        _isDefaultTabCustom = true;
+                      }),
+                },
+              ]),
+              SizedBox(height: 10.0),
               RaisedButton(
                 color:
                     _isModified ? Theme.of(context).primaryColor : Colors.grey,
@@ -212,6 +222,15 @@ class _PreferencesFormState extends State<PreferencesForm> {
                               ? _limitByDate
                               : _prefs.limitByDate;
 
+                      LimitTab defaultTab = LimitTab.Period;
+                      if (_isDefaultTabAllTime) {
+                        defaultTab = LimitTab.AllTime;
+                      } else if (_isDefaultTabPeriod) {
+                        defaultTab = LimitTab.Period;
+                      } else if (_isDefaultTabCustom) {
+                        defaultTab = LimitTab.Custom;
+                      }
+
                       Preferences prefs = Preferences(
                         pid: widget.user.uid,
                         limitDays:
@@ -228,11 +247,11 @@ class _PreferencesFormState extends State<PreferencesForm> {
                             : _prefs.limitByDate,
                         isLimitByDateEnabled: _isLimitByDateEnabled ??
                             _prefs.isLimitByDateEnabled,
+                        defaultCustomLimitTab: defaultTab,
                       );
                       DatabaseWrapper(widget.user.uid).updatePreferences(prefs);
                       retrieveNewData(widget.user.uid);
                       setState(() => _isModified = false);
-                      displayUpdated();
                     }
                   }
                 },
@@ -286,14 +305,6 @@ class _PreferencesFormState extends State<PreferencesForm> {
       drawer: MainDrawer(widget.user, widget.openPage),
       appBar: AppBar(title: Text('Preferences')),
       body: _body,
-    );
-  }
-
-  void displayUpdated() {
-    setState(() => _wasUpdated = true);
-    Future.delayed(
-      Duration(seconds: 1),
-      () => setState(() => _wasUpdated = false),
     );
   }
 

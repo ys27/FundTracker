@@ -6,6 +6,7 @@ import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categories.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
@@ -29,8 +30,8 @@ class Statistics extends StatefulWidget {
 
 class _StatisticsState extends State<Statistics> {
   bool _showAllTimeStats = false;
-  bool _showPreferredStats = false;
-  bool _showPeriodStats = true;
+  bool _showPeriodStats = false;
+  bool _showCustomStats = false;
 
   Widget _body = Center(
     child: Text('No statistics available. Requires at least one transaction.'),
@@ -53,8 +54,33 @@ class _StatisticsState extends State<Statistics> {
         widget.currentPeriod != null &&
         widget.prefs != null &&
         widget.allTransactions.length > 0) {
+      if (!_showAllTimeStats && !_showPeriodStats && !_showCustomStats) {
+        if (widget.prefs.defaultCustomLimitTab == LimitTab.AllTime) {
+          _showAllTimeStats = true;
+        } else if (widget.prefs.defaultCustomLimitTab == LimitTab.Period) {
+          _showPeriodStats = true;
+        } else if (widget.prefs.defaultCustomLimitTab == LimitTab.Custom) {
+          _showCustomStats = true;
+        } else {
+          _showPeriodStats = true;
+        }
+      }
+
       _dividedTransactions = divideTransactionsIntoPeriods(
           widget.allTransactions, widget.currentPeriod);
+
+      Map<String, dynamic> _currentPeriodTransactions =
+          findCurrentPeriod(_dividedTransactions);
+
+      if (_currentPeriodTransactions.containsKey('transactions')) {
+        _daysLeft = _currentPeriodTransactions['endDate']
+            .difference(DateTime.now())
+            .inDays;
+        _transactions = _currentPeriodTransactions['transactions'];
+      } else {
+        _daysLeft = 0;
+        _transactions = [];
+      }
 
       if (_showAllTimeStats) {
         _transactions = widget.allTransactions;
@@ -62,24 +88,11 @@ class _StatisticsState extends State<Statistics> {
       }
 
       if (_showPeriodStats) {
-        Map<String, dynamic> _currentPeriodTransactions =
-            findCurrentPeriod(_dividedTransactions);
         if (_customPeriod != null) {
           _transactions = _customPeriod['transactions'];
           if (_customPeriod['startDate'] ==
               _currentPeriodTransactions['startDate']) {
             _customPeriod = null;
-          }
-        }
-        if (_customPeriod == null) {
-          if (_currentPeriodTransactions.containsKey('transactions')) {
-            _daysLeft = _currentPeriodTransactions['endDate']
-                .difference(DateTime.now())
-                .inDays;
-            _transactions = _currentPeriodTransactions['transactions'];
-          } else {
-            _daysLeft = 0;
-            _transactions = [];
           }
         }
 
@@ -108,7 +121,7 @@ class _StatisticsState extends State<Statistics> {
         );
       }
 
-      if (_showPreferredStats) {
+      if (_showCustomStats) {
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
             widget.prefs.isLimitByDateEnabled) {
@@ -186,7 +199,7 @@ class _StatisticsState extends State<Statistics> {
                       ),
                       onPressed: () => setState(() {
                         _showAllTimeStats = true;
-                        _showPreferredStats = false;
+                        _showCustomStats = false;
                         _showPeriodStats = false;
                       }),
                     ),
@@ -209,28 +222,27 @@ class _StatisticsState extends State<Statistics> {
                       onPressed: () => setState(() {
                         _showPeriodStats = true;
                         _showAllTimeStats = false;
-                        _showPreferredStats = false;
+                        _showCustomStats = false;
                       }),
                     ),
                   ),
                   Expanded(
                     child: FlatButton(
                       padding: EdgeInsets.all(15.0),
-                      color: _showPreferredStats
+                      color: _showCustomStats
                           ? Theme.of(context).primaryColor
                           : Colors.grey[100],
                       child: Text(
                         'Custom',
                         style: TextStyle(
-                          fontWeight: _showPreferredStats
+                          fontWeight: _showCustomStats
                               ? FontWeight.bold
                               : FontWeight.normal,
-                          color:
-                              _showPreferredStats ? Colors.white : Colors.black,
+                          color: _showCustomStats ? Colors.white : Colors.black,
                         ),
                       ),
                       onPressed: () => setState(() {
-                        _showPreferredStats = true;
+                        _showCustomStats = true;
                         _showAllTimeStats = false;
                         _showPeriodStats = false;
                       }),

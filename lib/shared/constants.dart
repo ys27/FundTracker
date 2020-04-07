@@ -6,6 +6,8 @@ enum DateUnit { Days, Weeks, Months, Years }
 
 enum MenuItems { Edit, Delete }
 
+enum LimitTab { AllTime, Period, Custom }
+
 const Map<String, String> Months = {
   '1': 'January',
   '2': 'February',
