@@ -135,10 +135,16 @@ class _StatisticsState extends State<Statistics> {
               .toList();
         }
 
-        DateTime limitFirstDate = widget.prefs.isLimitByDateEnabled
-            ? widget.prefs.limitByDate
-            : getDateNotTime(DateTime.now().add(Duration(days: 1)))
-                .subtract(Duration(days: widget.prefs.limitDays));
+        DateTime limitFirstDate;
+        if (widget.prefs.isLimitByDateEnabled) {
+          limitFirstDate = widget.prefs.limitByDate;
+        } else if (widget.prefs.isLimitDaysEnabled) {
+          limitFirstDate = getDateNotTime(DateTime.now().add(Duration(days: 1)))
+              .subtract(Duration(days: widget.prefs.limitDays));
+        } else if (widget.prefs.isLimitPeriodsEnabled) {
+          limitFirstDate = findStartDateOfGivenNumPeriodsAgo(
+              widget.prefs.limitPeriods, widget.currentPeriod);
+        }
 
         _limitCustomizer = datePicker(
           context,

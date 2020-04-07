@@ -4,6 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
 void goHome(BuildContext context) {
@@ -56,14 +57,23 @@ DateTime findPrevPeriodStartDate(Period period) {
       break;
   }
 
-  periodStartDate = periodStartDate.subtract(Duration(days: numDaysInPeriod));
+  periodStartDate = getDateNotTime(
+      periodStartDate.subtract(Duration(days: numDaysInPeriod - 1, hours: 23)));
 
   return getDateNotTime(periodStartDate);
 }
 
-DateTime findFirstPeriodDate(Transaction firstTx, Period period) {
+DateTime findStartDateOfGivenDateTime(DateTime date, Period period) {
   DateTime iteratingDate = period.startDate;
-  while (iteratingDate.isAfter(firstTx.date)) {
+  while (iteratingDate.isAfter(date)) {
+    iteratingDate = findPrevPeriodStartDate(period.setStartDate(iteratingDate));
+  }
+  return iteratingDate;
+}
+
+DateTime findStartDateOfGivenNumPeriodsAgo(int numPeriods, Period period) {
+  DateTime iteratingDate = period.startDate;
+  for (int i = 1; i < numPeriods; i++) {
     iteratingDate = findPrevPeriodStartDate(period.setStartDate(iteratingDate));
   }
   return iteratingDate;
@@ -126,50 +136,40 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   List<Map<String, dynamic>> periodsList = [];
 
   if (transactions.length > 0) {
-    DateTime currentPeriodStartDate =
-        findFirstPeriodDate(transactions.last, period);
-    while (currentPeriodStartDate.isBefore(
+    DateTime iteratingPeriodStartDate =
+        findStartDateOfGivenDateTime(transactions.last.date, period);
+    while (iteratingPeriodStartDate.isBefore(
       transactions.first.date.add(Duration(milliseconds: 1)),
     )) {
       Period periodWithNewStartDate =
-          period.setStartDate(currentPeriodStartDate);
+          period.setStartDate(iteratingPeriodStartDate);
       int numDaysInPeriod = findNumDaysInPeriod(
         periodWithNewStartDate.startDate,
         periodWithNewStartDate.durationValue,
         periodWithNewStartDate.durationUnit,
       );
       DateTime nextPeriodStartDate = getDateNotTime(
-        currentPeriodStartDate.add(Duration(days: numDaysInPeriod)),
+        iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod)),
       );
       periodsList.insert(
         0,
         {
-          'startDate': currentPeriodStartDate,
+          'startDate': iteratingPeriodStartDate,
           'endDate': nextPeriodStartDate.subtract(Duration(microseconds: 1)),
           'transactions': transactions
               .where((tx) =>
-                  tx.date.isAfter(currentPeriodStartDate
+                  tx.date.isAfter(iteratingPeriodStartDate
                       .subtract(Duration(microseconds: 1))) &&
                   tx.date.isBefore(nextPeriodStartDate))
               .toList(),
         },
       );
-      currentPeriodStartDate = nextPeriodStartDate;
+      iteratingPeriodStartDate = nextPeriodStartDate;
     }
   }
-  return periodsList;
-}
-
-List<Map<String, dynamic>> divideIntoPeriods(
-  List<Transaction> transactions,
-  Preferences prefs,
-  Period currentPeriod,
-) {
-  List<Map<String, dynamic>> dividedTransactions =
-      divideTransactionsIntoPeriods(transactions, currentPeriod);
 
   // Remove periods without any txs
-  return dividedTransactions
+  return periodsList
       .where((period) => period['transactions'].length > 0)
       .toList();
 }

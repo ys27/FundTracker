@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 class TransactionsList extends StatelessWidget {
@@ -26,6 +29,8 @@ class TransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _user = Provider.of<FirebaseUser>(context);
+
     if (transactions == null || currentPeriod == null || prefs == null) {
       return Loader();
     }
@@ -34,11 +39,11 @@ class TransactionsList extends StatelessWidget {
         child: Text('Add a transaction using the button below.'),
       );
     } else {
-      List<Map<String, dynamic>> _dividedTransactions = divideIntoPeriods(
-        transactions,
-        prefs,
-        currentPeriod,
-      );
+      List<Map<String, dynamic>> _dividedTransactions =
+          divideTransactionsIntoPeriods(transactions, currentPeriod);
+
+      updateLatestPeriodStartDate(_dividedTransactions, _user);
+
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
@@ -98,5 +103,21 @@ class TransactionsList extends StatelessWidget {
       return a + nextAmount;
     });
     return '${sum < 0 ? '-' : ''}\$${abs(sum).toStringAsFixed(2)}';
+  }
+
+  void updateLatestPeriodStartDate(
+      List<Map<String, dynamic>> dividedTransactions, FirebaseUser user) {
+    dividedTransactions.forEach((period) {
+      DateTime now = DateTime.now();
+      if (now.isAfter(
+            period['startDate'].subtract(
+              Duration(microseconds: 1),
+            ),
+          ) &&
+          now.isBefore(period['endDate'])) {
+        DatabaseWrapper(user.uid)
+            .updatePeriods([currentPeriod.setStartDate(period['startDate'])]);
+      }
+    });
   }
 }
