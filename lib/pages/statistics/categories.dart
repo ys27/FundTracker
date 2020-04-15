@@ -4,7 +4,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/indicator.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 
 class Categories extends StatefulWidget {
   final List<Transaction> transactions;

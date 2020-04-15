@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/barTile.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 
 class Balance extends StatelessWidget {
   final List<Transaction> transactions;

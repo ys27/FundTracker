@@ -10,7 +10,7 @@ import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionsLi
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 
 class MainDrawer extends StatefulWidget {

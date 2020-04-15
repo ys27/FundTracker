@@ -6,7 +6,7 @@ import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 
 class PreferencesForm extends StatefulWidget {

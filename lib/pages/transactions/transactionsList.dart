@@ -8,7 +8,7 @@ import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 

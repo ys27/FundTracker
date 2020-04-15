@@ -8,7 +8,7 @@ import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/styles.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 
 class CategoriesList extends StatefulWidget {
   final FirebaseUser user;

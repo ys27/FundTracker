@@ -14,7 +14,7 @@ import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/services/search.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:fund_tracker/shared/widgets.dart';
+import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {

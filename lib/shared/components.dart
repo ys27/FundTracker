@@ -272,6 +272,7 @@ class TabSelector extends StatelessWidget {
 InputDecoration clearInput({
   String labelText,
   bool enabled = true,
+  bool focused,
   Function onPressed,
   bool passwordToggle = false,
   Function onPasswordTogglePressed,
