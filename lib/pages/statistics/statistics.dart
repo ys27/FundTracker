@@ -17,12 +17,12 @@ class Statistics extends StatefulWidget {
   final Period currentPeriod;
   final Preferences prefs;
 
-  Statistics(
+  Statistics({
     this.allTransactions,
     this.categories,
     this.currentPeriod,
     this.prefs,
-  );
+  });
 
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -218,26 +218,29 @@ class _StatisticsState extends State<Statistics> {
             (_showStatistics
                 ? <Widget>[
                     Balance(
-                      _transactions,
-                      _customPeriod == null ? _showPeriodStats : false,
-                      _daysLeft,
+                      transactions: _transactions,
+                      showPeriodStats:
+                          _customPeriod == null ? _showPeriodStats : false,
+                      daysLeft: _daysLeft,
                     ),
                     SizedBox(height: 20.0),
                     Categories(
-                      _transactions.where((tx) => tx.isExpense).toList(),
-                      widget.categories,
+                      transactions:
+                          _transactions.where((tx) => tx.isExpense).toList(),
+                      categories: widget.categories,
                     ),
                     SizedBox(height: 20.0),
                     TopExpenses(
-                      _transactions.where((tx) => tx.isExpense).toList(),
-                      widget.categories,
-                      _transactions
+                      transactions:
+                          _transactions.where((tx) => tx.isExpense).toList(),
+                      categories: widget.categories,
+                      totalIncome: _transactions
                           .where((tx) => !tx.isExpense)
                           .fold(0.0, (a, b) => a + b.amount),
-                      _transactions
+                      totalExpenses: _transactions
                           .where((tx) => tx.isExpense)
                           .fold(0.0, (a, b) => a + b.amount),
-                      _scrollController,
+                      scrollController: _scrollController,
                     ),
                   ]
                 : <Widget>[

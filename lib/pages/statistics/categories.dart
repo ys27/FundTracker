@@ -10,7 +10,7 @@ class Categories extends StatefulWidget {
   final List<Transaction> transactions;
   final List<Category> categories;
 
-  Categories(this.transactions, this.categories);
+  Categories({this.transactions, this.categories});
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -63,7 +63,7 @@ class _CategoriesState extends State<Categories> {
 
     return Column(
       children: <Widget>[
-            statTitle('Categories'),
+            StatTitle(title: 'Categories'),
           ] +
           ((widget.transactions.length > 0)
               ? <Widget>[

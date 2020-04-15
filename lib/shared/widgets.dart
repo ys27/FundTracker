@@ -2,16 +2,23 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-Widget statTitle(title) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      Text(
-        title,
-        style: TextStyle(fontSize: 30.0),
-      ),
-    ],
-  );
+class StatTitle extends StatelessWidget {
+  final String title;
+
+  StatTitle({this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          title,
+          style: TextStyle(fontSize: 30.0),
+        ),
+      ],
+    );
+  }
 }
 
 class Alert extends StatelessWidget {

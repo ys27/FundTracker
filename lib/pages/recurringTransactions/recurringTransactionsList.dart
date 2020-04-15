@@ -56,7 +56,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user, widget.openPage),
+      drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
       appBar: AppBar(title: Text('Recurring Transactions')),
       body: _body,
       floatingActionButton: addFloatingButton(

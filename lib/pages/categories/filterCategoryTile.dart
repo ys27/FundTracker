@@ -8,7 +8,7 @@ class FilterCategoryTile extends StatefulWidget {
   final Category category;
   final int numCategories;
 
-  FilterCategoryTile(this.category, this.numCategories);
+  FilterCategoryTile({this.category, this.numCategories});
 
   @override
   _FilterCategoryTileState createState() => _FilterCategoryTileState();

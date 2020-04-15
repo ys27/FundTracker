@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 class Home extends StatefulWidget {
   final FirebaseUser user;
 
-  Home(this.user);
+  Home({this.user});
 
   @override
   _HomeState createState() => _HomeState();
@@ -65,11 +65,11 @@ class _HomeState extends State<Home> {
           filterCategoriesButton(),
         ],
         'body': TransactionsList(
-          _transactions,
-          _categories,
-          _currentPeriod,
-          _prefs,
-          () => retrieveNewData(widget.user.uid),
+          transactions: _transactions,
+          categories: _categories,
+          currentPeriod: _currentPeriod,
+          prefs: _prefs,
+          refreshList: () => retrieveNewData(widget.user.uid),
         ),
         'addButton': addFloatingButton(
           context,
@@ -90,12 +90,17 @@ class _HomeState extends State<Home> {
         'actions': <Widget>[
           filterCategoriesButton(),
         ],
-        'body': Statistics(_transactions, _categories, _currentPeriod, _prefs),
+        'body': Statistics(
+          allTransactions: _transactions,
+          categories: _categories,
+          currentPeriod: _currentPeriod,
+          prefs: _prefs,
+        ),
       }
     ];
 
     return Scaffold(
-      drawer: MainDrawer(widget.user, openPage),
+      drawer: MainDrawer(user: widget.user, openPage: openPage),
       appBar: AppBar(
         title: Text(_pages[_selectedIndex]['name']),
         actions: _pages[_selectedIndex]['actions'],
@@ -139,7 +144,11 @@ class _HomeState extends State<Home> {
         await showDialog(
           context: context,
           builder: (context) {
-            return CategoriesList(widget.user, openPage, filterMode: true);
+            return CategoriesList(
+              user: widget.user,
+              openPage: openPage,
+              filterMode: true,
+            );
           },
         );
         retrieveNewData(widget.user.uid);

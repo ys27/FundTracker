@@ -15,7 +15,7 @@ class CategoriesList extends StatefulWidget {
   final Function openPage;
   final bool filterMode;
 
-  CategoriesList(this.user, this.openPage, {this.filterMode: false});
+  CategoriesList({this.user, this.openPage, this.filterMode: false});
 
   @override
   _CategoriesListState createState() => _CategoriesListState();
@@ -69,8 +69,8 @@ class _CategoriesListState extends State<CategoriesList> {
                     _categories
                         .map(
                           (category) => FilterCategoryTile(
-                            category,
-                            _categories.length,
+                            category: category,
+                            numCategories: _categories.length,
                           ),
                         )
                         .toList(),
@@ -93,9 +93,9 @@ class _CategoriesListState extends State<CategoriesList> {
                       (category) => Container(
                         key: Key(category.orderIndex.toString()),
                         child: CategoryTile(
-                          category,
-                          _categories.length,
-                          () => retrieveNewData(widget.user.uid),
+                          category: category,
+                          numCategories: _categories.length,
+                          refreshList: () => retrieveNewData(widget.user.uid),
                         ),
                       ),
                     )
@@ -108,7 +108,7 @@ class _CategoriesListState extends State<CategoriesList> {
         ? Scaffold(
             drawer: widget.filterMode
                 ? null
-                : MainDrawer(widget.user, widget.openPage),
+                : MainDrawer(user: widget.user, openPage: widget.openPage),
             appBar: AppBar(
               title: Text(
                 widget.filterMode ? 'Filter Categories' : 'Categories',

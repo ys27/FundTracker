@@ -12,7 +12,7 @@ class TransactionTile extends StatelessWidget {
   final Category category;
   final Function refreshList;
 
-  TransactionTile(this.transaction, this.category, this.refreshList);
+  TransactionTile({this.transaction, this.category, this.refreshList});
 
   @override
   Widget build(BuildContext context) {

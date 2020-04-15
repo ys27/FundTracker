@@ -9,7 +9,7 @@ class Balance extends StatelessWidget {
   final bool showPeriodStats;
   final int daysLeft;
 
-  Balance(this.transactions, this.showPeriodStats, this.daysLeft);
+  Balance({this.transactions, this.showPeriodStats, this.daysLeft});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class Balance extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        statTitle('Balance'),
+        StatTitle(title: 'Balance'),
         Center(
           child: Text(getAmountStr(balance), style: TextStyle(fontSize: 25.0)),
         ),

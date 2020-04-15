@@ -17,7 +17,7 @@ class MainDrawer extends StatefulWidget {
   final FirebaseUser user;
   final Function openPage;
 
-  MainDrawer(this.user, this.openPage);
+  MainDrawer({this.user, this.openPage});
 
   @override
   _MainDrawerState createState() => _MainDrawerState();
@@ -63,7 +63,10 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Categories'),
             leading: Icon(CommunityMaterialIcons.shape),
             onTap: () => widget.openPage(
-              CategoriesList(widget.user, widget.openPage),
+              CategoriesList(
+                user: widget.user,
+                openPage: widget.openPage,
+              ),
             ),
           ),
           ListTile(
@@ -93,7 +96,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Preferences'),
             leading: Icon(CommunityMaterialIcons.tune),
             onTap: () => widget.openPage(
-              PreferencesForm(widget.user, widget.openPage),
+              PreferencesForm(user: widget.user, openPage: widget.openPage),
             ),
           ),
           ListTile(

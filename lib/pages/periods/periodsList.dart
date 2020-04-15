@@ -52,12 +52,12 @@ class _PeriodsListState extends State<PeriodsList> {
     }
 
     return Scaffold(
-      drawer: MainDrawer(widget.user, widget.openPage),
+      drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
       appBar: AppBar(title: Text('Periods')),
       body: _body,
       floatingActionButton: addFloatingButton(
         context,
-        PeriodForm(Period.empty()),
+        PeriodForm(period: Period.empty()),
         () => retrieveNewData(widget.user.uid),
       ),
     );
@@ -70,7 +70,7 @@ class _PeriodsListState extends State<PeriodsList> {
         onTap: () async {
           await showDialog(
             context: context,
-            builder: (context) => PeriodForm(period),
+            builder: (context) => PeriodForm(period: period),
           );
           refreshList();
         },

@@ -13,7 +13,7 @@ import 'package:uuid/uuid.dart';
 class PeriodForm extends StatefulWidget {
   final Period period;
 
-  PeriodForm(this.period);
+  PeriodForm({this.period});
 
   @override
   _PeriodFormState createState() => _PeriodFormState();

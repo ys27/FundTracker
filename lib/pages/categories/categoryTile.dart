@@ -11,7 +11,7 @@ class CategoryTile extends StatefulWidget {
   final int numCategories;
   final Function refreshList;
 
-  CategoryTile(this.category, this.numCategories, this.refreshList);
+  CategoryTile({this.category, this.numCategories, this.refreshList});
 
   @override
   _CategoryTileState createState() => _CategoryTileState();

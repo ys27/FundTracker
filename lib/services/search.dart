@@ -50,11 +50,11 @@ class SearchService extends SearchDelegate {
           .where((tx) => tx.payee.toLowerCase().contains(query.toLowerCase()))
           .toList();
       return TransactionsList(
-        searchedTransactions,
-        categories,
-        currentPeriod,
-        prefs,
-        retrieveNewData,
+        transactions: searchedTransactions,
+        categories: categories,
+        currentPeriod: currentPeriod,
+        prefs: prefs,
+        refreshList: retrieveNewData,
       );
     }
   }

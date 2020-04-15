@@ -16,6 +16,7 @@ import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
   final Function getTxOrRecTx;
+
   TransactionForm({this.getTxOrRecTx});
 
   @override

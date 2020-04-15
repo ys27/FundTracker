@@ -12,13 +12,13 @@ class TopExpenses extends StatefulWidget {
   final double totalExpenses;
   final ScrollController scrollController;
 
-  TopExpenses(
+  TopExpenses({
     this.transactions,
     this.categories,
     this.totalIncome,
     this.totalExpenses,
     this.scrollController,
-  );
+  });
 
   @override
   _TopExpensesState createState() => _TopExpensesState();
@@ -84,7 +84,7 @@ class _TopExpensesState extends State<TopExpenses> {
     }
 
     return Column(
-      children: <Widget>[statTitle('Top Expenses')] + _columnContent,
+      children: <Widget>[StatTitle(title: 'Top Expenses')] + _columnContent,
     );
   }
 }
