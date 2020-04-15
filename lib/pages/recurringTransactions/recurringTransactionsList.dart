@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -100,14 +101,24 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
           );
           refreshList();
         },
-        title: Text(
-          '${recTx.payee}: ${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
-        ),
+        title: Wrap(children: <Widget>[
+          Text(
+            '${recTx.payee}: ',
+          ),
+          Text(
+              '${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}'),
+        ]),
         subtitle: Text(
           'Every ${recTx.frequencyValue} ${getFrequencyUnitStr(recTx.frequencyUnit)}' +
               getEndCondition(recTx),
         ),
-        trailing: Text('Next Date: ${getDateStr(recTx.nextDate)}'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(CommunityMaterialIcons.chevron_right),
+            Text('${getDateStr(recTx.nextDate)}'),
+          ],
+        ),
       ),
     );
   }
@@ -120,7 +131,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
 
   String getEndCondition(RecurringTransaction recTx) {
     if (recTx.endDate != null && recTx.endDate.toString().isNotEmpty) {
-      return ', until ${getDateStr(recTx.endDate)}';
+      return ', ~${getDateStr(recTx.endDate)}';
     } else if (recTx.occurrenceValue != null && recTx.occurrenceValue > 0) {
       return ', ${recTx.occurrenceValue} time(s)';
     } else {

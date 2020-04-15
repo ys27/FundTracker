@@ -66,8 +66,12 @@ class _TransactionFormState extends State<TransactionForm> {
     if (givenTxOrRecTx is RecurringTransaction) {
       _nextDate = givenTxOrRecTx.nextDate;
       _endDate = givenTxOrRecTx.endDate;
-      _occurrenceValue = givenTxOrRecTx.occurrenceValue ?? '';
-      _frequencyValue = givenTxOrRecTx.frequencyValue ?? '';
+      _occurrenceValue = givenTxOrRecTx.occurrenceValue != null
+          ? givenTxOrRecTx.occurrenceValue.toString()
+          : '';
+      _frequencyValue = givenTxOrRecTx.frequencyValue != null
+          ? givenTxOrRecTx.frequencyValue.toString()
+          : '';
       _frequencyUnit = givenTxOrRecTx.frequencyUnit;
     }
     if (givenTxOrRecTx is Transaction) {
@@ -179,8 +183,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         updateDateState: (date) {
                           setState(() {
                             _endDate = getDateNotTime(date);
-                            _occurrenceValue =
-                                givenTxOrRecTx.occurrenceValue ?? '';
+                            _occurrenceValue = '';
                           });
                           _occurrenceValueController.safeClear();
                         },
@@ -486,7 +489,9 @@ class _TransactionFormState extends State<TransactionForm> {
                           rid: givenTxOrRecTx.rid ?? Uuid().v1(),
                           nextDate: _nextDate,
                           endDate: _endDate,
-                          occurrenceValue: int.parse(_occurrenceValue),
+                          occurrenceValue: _occurrenceValue != ''
+                              ? int.parse(_occurrenceValue)
+                              : null,
                           frequencyValue: int.parse(_frequencyValue),
                           frequencyUnit: _frequencyUnit,
                           isExpense: _isExpense,
