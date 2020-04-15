@@ -8,7 +8,7 @@ class RecurringTransactionsService {
     DateTime now = DateTime.now();
     for (RecurringTransaction recTx in recTxs) {
       RecurringTransaction iteratingRecTx = recTx;
-      while (iteratingRecTx.nextDate.isBefore(now)) {
+      while (iteratingRecTx != null && iteratingRecTx.nextDate.isBefore(now)) {
         DatabaseWrapper(uid).addTransactions([iteratingRecTx.toTransaction()]);
         DatabaseWrapper(uid)
             .incrementRecurringTransactionsNextDate([iteratingRecTx]);

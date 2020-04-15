@@ -92,7 +92,6 @@ class _AuthFormState extends State<AuthForm> {
                         setState(() => _email = val);
                       },
                     ),
-                    SizedBox(height: 10.0),
                     TextFormField(
                       controller: _passwordController,
                       autovalidate: _password.isNotEmpty,
@@ -113,7 +112,6 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       onChanged: (val) => setState(() => _password = val),
                     ),
-                    isRegister ? SizedBox(height: 10.0) : Container(),
                     isRegister
                         ? TextFormField(
                             controller: _passwordConfirmController,
@@ -140,7 +138,6 @@ class _AuthFormState extends State<AuthForm> {
                             },
                           )
                         : Container(),
-                    SizedBox(height: 10.0),
                     isRegister
                         ? TextFormField(
                             controller: _fullnameController,

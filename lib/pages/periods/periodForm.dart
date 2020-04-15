@@ -102,7 +102,6 @@ class _PeriodFormState extends State<PeriodForm> {
                         setState(() => _name = val);
                       },
                     ),
-                    SizedBox(height: 10.0),
                     TextFormField(
                       controller: _durationValueController,
                       autovalidate: _durationValue.isNotEmpty,

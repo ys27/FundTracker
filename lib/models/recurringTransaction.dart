@@ -6,6 +6,8 @@ import 'package:uuid/uuid.dart';
 class RecurringTransaction {
   String rid;
   DateTime nextDate;
+  DateTime endDate;
+  int occurrenceValue;
   int frequencyValue;
   DateUnit frequencyUnit;
   bool isExpense;
@@ -17,6 +19,8 @@ class RecurringTransaction {
   RecurringTransaction({
     this.rid,
     this.nextDate,
+    this.endDate,
+    this.occurrenceValue,
     this.frequencyValue,
     this.frequencyUnit,
     this.isExpense,
@@ -30,6 +34,8 @@ class RecurringTransaction {
     DateTime now = DateTime.now();
     rid = null;
     nextDate = getDateNotTime(now);
+    endDate = null;
+    occurrenceValue = null;
     frequencyValue = null;
     frequencyUnit = DateUnit.Weeks;
     isExpense = true;
@@ -40,8 +46,11 @@ class RecurringTransaction {
   }
 
   RecurringTransaction.example() {
+    DateTime now = DateTime.now();
     rid = '';
-    nextDate = DateTime.now();
+    nextDate = getDateNotTime(now);
+    endDate = getDateNotTime(now);
+    occurrenceValue = -1;
     frequencyValue = 0;
     frequencyUnit = DateUnit.Weeks;
     isExpense = true;
@@ -54,6 +63,10 @@ class RecurringTransaction {
   RecurringTransaction.fromMap(Map<String, dynamic> map) {
     this.rid = map['rid'];
     this.nextDate = DateTime.parse(map['nextDate']);
+    this.endDate =
+        map['endDate'].isNotEmpty ? DateTime.parse(map['endDate']) : null;
+    this.occurrenceValue =
+        map['occurrenceValue'] == -1 ? null : map['occurrenceValue'];
     this.frequencyValue = map['frequencyValue'];
     this.frequencyUnit = DateUnit.values[map['frequencyUnit']];
     this.isExpense = map['isExpense'] == 1;
@@ -67,6 +80,8 @@ class RecurringTransaction {
     return {
       'rid': rid,
       'nextDate': nextDate.toString(),
+      'endDate': endDate != null ? endDate.toString() : '',
+      'occurrenceValue': occurrenceValue != null ? occurrenceValue : -1,
       'frequencyValue': frequencyValue,
       'frequencyUnit': frequencyUnit.index,
       'isExpense': isExpense ? 1 : 0,
@@ -80,6 +95,8 @@ class RecurringTransaction {
   bool equalTo(RecurringTransaction recTx) {
     return (this.rid == recTx.rid &&
         this.nextDate == recTx.nextDate &&
+        this.endDate == recTx.endDate &&
+        this.occurrenceValue == recTx.occurrenceValue &&
         this.frequencyValue == recTx.frequencyValue &&
         this.frequencyUnit == recTx.frequencyUnit &&
         this.isExpense == recTx.isExpense &&
@@ -109,6 +126,9 @@ class RecurringTransaction {
       this.frequencyUnit,
     );
     copy.nextDate = nextDate.add(Duration(days: numDaysUntilNextDate));
+    if (occurrenceValue != null && occurrenceValue > 0) {
+      copy.occurrenceValue--;
+    }
     return copy;
   }
 
@@ -122,6 +142,8 @@ class RecurringTransaction {
     return RecurringTransaction(
       rid: this.rid,
       nextDate: this.nextDate,
+      endDate: this.endDate,
+      occurrenceValue: this.occurrenceValue,
       frequencyValue: this.frequencyValue,
       frequencyUnit: this.frequencyUnit,
       isExpense: this.isExpense,

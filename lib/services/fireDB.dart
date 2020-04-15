@@ -6,6 +6,7 @@ import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:uuid/uuid.dart';
 
 class FireDBService {
@@ -223,11 +224,10 @@ class FireDBService {
   }
 
   Future<RecurringTransaction> getRecurringTransaction(String rid) {
-    return db
-        .collection('recurringTransactions')
-        .document(rid)
-        .get()
-        .then((snapshot) => RecurringTransaction.fromMap(snapshot.data));
+    return db.collection('recurringTransactions').document(rid).get().then(
+        (snapshot) => snapshot.data != null
+            ? RecurringTransaction.fromMap(snapshot.data)
+            : null);
   }
 
   Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
@@ -257,10 +257,22 @@ class FireDBService {
   ) async {
     WriteBatch batch = Firestore.instance.batch();
     recTxs.forEach((recTx) {
-      batch.updateData(
-        db.collection('recurringTransactions').document(recTx.rid),
-        recTx.incrementNextDate().toMap(),
-      );
+      RecurringTransaction nextRecTx = recTx.incrementNextDate();
+      if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
+          (nextRecTx.endDate != null &&
+              getDateNotTime(nextRecTx.nextDate)
+                  .subtract(Duration(milliseconds: 1))
+                  .isBefore(nextRecTx.endDate)) ||
+          (nextRecTx.occurrenceValue != null &&
+              nextRecTx.occurrenceValue > 0)) {
+        batch.updateData(
+          db.collection('recurringTransactions').document(recTx.rid),
+          nextRecTx.toMap(),
+        );
+      } else {
+        batch
+            .delete(db.collection('recurringTransactions').document(recTx.rid));
+      }
     });
     await batch.commit();
   }

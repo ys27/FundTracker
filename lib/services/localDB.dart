@@ -8,6 +8,7 @@ import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:uuid/uuid.dart';
 
@@ -263,7 +264,8 @@ class LocalDBService {
       'recurringTransactions',
       where: 'rid = ?',
       whereArgs: [rid],
-    ).then((map) => RecurringTransaction.fromMap(map[0] ?? {}));
+    ).then((map) =>
+        map.length > 0 ? RecurringTransaction.fromMap(map.first) : null);
   }
 
   Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
@@ -295,12 +297,27 @@ class LocalDBService {
     Database db = await this.db;
     Batch batch = db.batch();
     recTxs.forEach((recTx) {
-      batch.update(
-        'recurringTransactions',
-        recTx.incrementNextDate().toMap(),
-        where: 'rid = ?',
-        whereArgs: [recTx.rid],
-      );
+      RecurringTransaction nextRecTx = recTx.incrementNextDate();
+      if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
+          (nextRecTx.endDate != null &&
+              getDateNotTime(nextRecTx.nextDate)
+                  .subtract(Duration(milliseconds: 1))
+                  .isBefore(nextRecTx.endDate)) ||
+          (nextRecTx.occurrenceValue != null &&
+              nextRecTx.occurrenceValue > 0)) {
+        batch.update(
+          'recurringTransactions',
+          nextRecTx.toMap(),
+          where: 'rid = ?',
+          whereArgs: [recTx.rid],
+        );
+      } else {
+        batch.delete(
+          'recurringTransactions',
+          where: 'rid = ?',
+          whereArgs: [recTx.rid],
+        );
+      }
     });
     await batch.commit();
   }

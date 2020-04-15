@@ -41,7 +41,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    retrieveNewData(widget.user.uid);
+    if (widget.user.uid != null) {
+      retrieveNewData(widget.user.uid);
+    }
   }
 
   @override

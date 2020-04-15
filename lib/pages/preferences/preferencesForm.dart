@@ -175,7 +175,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         });
                       },
                     ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 30.0),
               Center(
                 child: Text('Default Tab For Statistics'),
               ),

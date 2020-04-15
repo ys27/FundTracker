@@ -29,8 +29,11 @@ class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _frequencyValueController =
       TextEditingController();
+  final TextEditingController _occurrenceController = TextEditingController();
 
   DateTime _nextDate;
+  DateTime _endDate;
+  String _occurrenceValue = '';
   String _frequencyValue = '';
   DateUnit _frequencyUnit;
 
@@ -46,14 +49,19 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-    final dynamic currentTxOrRecTx = widget.getTxOrRecTx();
-    _payeeController.text = currentTxOrRecTx.payee ?? '';
-    _amountController.text = currentTxOrRecTx.amount != null
-        ? currentTxOrRecTx.amount.toStringAsFixed(2)
+    final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
+    _payeeController.text = givenTxOrRecTx.payee ?? '';
+    _amountController.text = givenTxOrRecTx.amount != null
+        ? givenTxOrRecTx.amount.toStringAsFixed(2)
         : null;
-    _frequencyValueController.text = currentTxOrRecTx is RecurringTransaction
-        ? (currentTxOrRecTx.frequencyValue != null
-            ? currentTxOrRecTx.frequencyValue.toString()
+    _frequencyValueController.text = givenTxOrRecTx is RecurringTransaction
+        ? (givenTxOrRecTx.frequencyValue != null
+            ? givenTxOrRecTx.frequencyValue.toString()
+            : '')
+        : '';
+    _occurrenceController.text = givenTxOrRecTx is RecurringTransaction
+        ? (givenTxOrRecTx.occurrenceValue != null
+            ? givenTxOrRecTx.occurrenceValue.toString()
             : '')
         : '';
   }
@@ -61,11 +69,11 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
-    final dynamic currentTxOrRecTx = widget.getTxOrRecTx();
-    final bool isRecurringTxMode = currentTxOrRecTx is RecurringTransaction;
+    final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
+    final bool isRecurringTxMode = givenTxOrRecTx is RecurringTransaction;
     final bool isEditMode = isRecurringTxMode
-        ? currentTxOrRecTx.rid != null
-        : currentTxOrRecTx.tid != null;
+        ? givenTxOrRecTx.rid != null
+        : givenTxOrRecTx.tid != null;
     final List<Transaction> _transactions =
         Provider.of<List<Transaction>>(context);
     final List<Category> _categories = Provider.of<List<Category>>(context);
@@ -76,7 +84,7 @@ class _TransactionFormState extends State<TransactionForm> {
       final List<Category> _enabledCategories =
           _categories.where((category) => category.enabled).toList();
       final Category _correspondingCategory =
-          getCategory(_categories, currentTxOrRecTx.cid);
+          getCategory(_categories, givenTxOrRecTx.cid);
 
       _body = Container(
         padding: formPadding,
@@ -91,12 +99,12 @@ class _TransactionFormState extends State<TransactionForm> {
                       {
                         'enabled': _isExpense != null
                             ? !_isExpense
-                            : !currentTxOrRecTx.isExpense,
+                            : !givenTxOrRecTx.isExpense,
                         'title': 'Income',
                         'onPressed': () => setState(() => _isExpense = false),
                       },
                       {
-                        'enabled': _isExpense ?? currentTxOrRecTx.isExpense,
+                        'enabled': _isExpense ?? givenTxOrRecTx.isExpense,
                         'title': 'Expense',
                         'onPressed': () => setState(() => _isExpense = true),
                       },
@@ -107,9 +115,9 @@ class _TransactionFormState extends State<TransactionForm> {
                     context,
                     leading: isRecurringTxMode
                         ? 'Next Date:                         '
-                        : getDateStr(_date ?? currentTxOrRecTx.date),
+                        : getDateStr(_date ?? givenTxOrRecTx.date),
                     trailing: isRecurringTxMode
-                        ? '${getDateStr(_nextDate ?? currentTxOrRecTx.nextDate)}'
+                        ? '${getDateStr(_nextDate ?? givenTxOrRecTx.nextDate)}'
                         : '',
                     updateDateState: (date) => setState(() {
                       if (isRecurringTxMode) {
@@ -125,16 +133,32 @@ class _TransactionFormState extends State<TransactionForm> {
                   ),
                 ] +
                 (isRecurringTxMode
-                    ? <Widget>[]
+                    ? <Widget>[
+                        DatePicker(
+                          context,
+                          leading: 'End Date:                          ',
+                          trailing:
+                              '${getDateStr(_endDate ?? givenTxOrRecTx.endDate)}',
+                          updateDateState: (date) {
+                            setState(() {
+                              _endDate = getDateNotTime(date);
+                              _occurrenceValue =
+                                  givenTxOrRecTx.occurrenceValue ?? '';
+                            });
+                            _occurrenceController.safeClear();
+                          },
+                          openDate: DateTime.now(),
+                          firstDate: getDateNotTime(DateTime.now()),
+                        ),
+                      ]
                     : <Widget>[
-                        SizedBox(height: 10.0),
                         TimePicker(
                           context,
-                          leading: getTimeStr(_date ?? currentTxOrRecTx.date),
+                          leading: getTimeStr(_date ?? givenTxOrRecTx.date),
                           updateTimeState: (time) => setState(
                             () {
                               DateTime oldDateTime =
-                                  (_date ?? currentTxOrRecTx.date);
+                                  (_date ?? givenTxOrRecTx.date);
                               DateTime newDateTime = DateTime(
                                 oldDateTime.year,
                                 oldDateTime.month,
@@ -148,7 +172,6 @@ class _TransactionFormState extends State<TransactionForm> {
                         ),
                       ]) +
                 <Widget>[
-                  SizedBox(height: 10.0),
                   TypeAheadFormField(
                     autovalidate: _payee.isNotEmpty,
                     validator: (val) {
@@ -247,7 +270,6 @@ class _TransactionFormState extends State<TransactionForm> {
                       });
                     },
                   ),
-                  SizedBox(height: 10.0),
                   TextFormField(
                     controller: _amountController,
                     autovalidate: _amount != null,
@@ -338,13 +360,12 @@ class _TransactionFormState extends State<TransactionForm> {
                 ] +
                 (isRecurringTxMode
                     ? <Widget>[
-                        SizedBox(height: 10.0),
                         TextFormField(
                           controller: _frequencyValueController,
                           autovalidate: _frequencyValue.isNotEmpty,
                           validator: (val) {
                             if (val.isEmpty) {
-                              return 'Enter a value for the frequency.';
+                              return 'Enter a value.';
                             } else if (val.contains('.')) {
                               return 'This value must be an integer.';
                             } else if (int.parse(val) <= 0) {
@@ -376,9 +397,39 @@ class _TransactionFormState extends State<TransactionForm> {
                           onChanged: (val) {
                             setState(() => _frequencyUnit = val);
                           },
-                          value:
-                              _frequencyUnit ?? currentTxOrRecTx.frequencyUnit,
+                          value: _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
                           isExpanded: true,
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          controller: _occurrenceController,
+                          autovalidate: _occurrenceValue.isNotEmpty,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return null;
+                            }
+                            if (val.contains('.')) {
+                              return 'This value must be an integer.';
+                            } else if (int.parse(val) <= 0) {
+                              return 'This value must be greater than 0';
+                            }
+                            return null;
+                          },
+                          decoration: clearInput(
+                            labelText: 'How many times? (optional)',
+                            enabled: _occurrenceValue.isNotEmpty,
+                            onPressed: () {
+                              setState(() => _occurrenceValue = '');
+                              _occurrenceController.safeClear();
+                            },
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (val) {
+                            setState(() {
+                              _endDate = givenTxOrRecTx.endDate;
+                              _occurrenceValue = val;
+                            });
+                          },
                         ),
                       ]
                     : <Widget>[]) +
@@ -396,16 +447,20 @@ class _TransactionFormState extends State<TransactionForm> {
 
                         if (isRecurringTxMode) {
                           RecurringTransaction recTx = RecurringTransaction(
-                            rid: currentTxOrRecTx.rid ?? Uuid().v1(),
-                            nextDate: _nextDate ?? currentTxOrRecTx.nextDate,
+                            rid: givenTxOrRecTx.rid ?? Uuid().v1(),
+                            nextDate: _nextDate ?? givenTxOrRecTx.nextDate,
+                            endDate: _endDate ?? givenTxOrRecTx.endDate,
+                            occurrenceValue: _occurrenceValue != ''
+                                ? int.parse(_occurrenceValue)
+                                : givenTxOrRecTx.occurrenceValue,
                             frequencyValue: _frequencyValue != ''
                                 ? int.parse(_frequencyValue)
-                                : currentTxOrRecTx.frequencyValue,
-                            frequencyUnit: _frequencyUnit ??
-                                currentTxOrRecTx.frequencyUnit,
-                            isExpense: _isExpense ?? currentTxOrRecTx.isExpense,
-                            payee: _payee ?? currentTxOrRecTx.payee,
-                            amount: _amount ?? currentTxOrRecTx.amount,
+                                : givenTxOrRecTx.frequencyValue,
+                            frequencyUnit:
+                                _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
+                            isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
+                            payee: _payee ?? givenTxOrRecTx.payee,
+                            amount: _amount ?? givenTxOrRecTx.amount,
                             cid: _cid ??
                                 (_correspondingCategory != null
                                     ? _correspondingCategory.cid
@@ -422,11 +477,11 @@ class _TransactionFormState extends State<TransactionForm> {
                           SyncService(_user.uid).syncRecurringTransactions();
                         } else {
                           Transaction tx = Transaction(
-                            tid: currentTxOrRecTx.tid ?? Uuid().v1(),
-                            date: _date ?? currentTxOrRecTx.date,
-                            isExpense: _isExpense ?? currentTxOrRecTx.isExpense,
-                            payee: _payee ?? currentTxOrRecTx.payee,
-                            amount: _amount ?? currentTxOrRecTx.amount,
+                            tid: givenTxOrRecTx.tid ?? Uuid().v1(),
+                            date: _date ?? givenTxOrRecTx.date,
+                            isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
+                            payee: _payee ?? givenTxOrRecTx.payee,
+                            amount: _amount ?? givenTxOrRecTx.amount,
                             cid: _cid ??
                                 (_correspondingCategory != null
                                     ? _correspondingCategory.cid
@@ -445,7 +500,27 @@ class _TransactionFormState extends State<TransactionForm> {
                       }
                     },
                   ),
-                ],
+                ] +
+                (isRecurringTxMode
+                    ? <Widget>[
+                        SizedBox(height: 10.0),
+                        RaisedButton(
+                          color: Theme.of(context).accentColor,
+                          child: Text(
+                            'Reset End Conditions',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              _endDate = givenTxOrRecTx.endDate;
+                              _occurrenceValue =
+                                  givenTxOrRecTx.occurrenceValue ?? '';
+                            });
+                            _occurrenceController.safeClear();
+                          },
+                        ),
+                      ]
+                    : <Widget>[]),
           ),
         ),
       );
@@ -463,9 +538,9 @@ class _TransactionFormState extends State<TransactionForm> {
                       : 'transaction',
                   deleteFunction: () async => isRecurringTxMode
                       ? await DatabaseWrapper(_user.uid)
-                          .deleteRecurringTransactions([currentTxOrRecTx])
+                          .deleteRecurringTransactions([givenTxOrRecTx])
                       : await DatabaseWrapper(_user.uid)
-                          .deleteTransactions([currentTxOrRecTx]),
+                          .deleteTransactions([givenTxOrRecTx]),
                   syncFunction: isRecurringTxMode
                       ? SyncService(_user.uid).syncRecurringTransactions
                       : SyncService(_user.uid).syncTransactions,

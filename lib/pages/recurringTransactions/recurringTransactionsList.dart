@@ -5,6 +5,7 @@ import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
+import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
@@ -103,11 +104,28 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
           '${recTx.payee}: ${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
         ),
         subtitle: Text(
-          'Every ${recTx.frequencyValue} ${recTx.frequencyUnit.toString().split('.')[1]}',
+          'Every ${recTx.frequencyValue} ${getFrequencyUnitStr(recTx.frequencyUnit)}' +
+              getEndCondition(recTx),
         ),
         trailing: Text('Next Date: ${getDateStr(recTx.nextDate)}'),
       ),
     );
+  }
+
+  String getFrequencyUnitStr(DateUnit freqUnit) {
+    String unitPlural = freqUnit.toString().split('.')[1];
+    String unitSingular = unitPlural.substring(0, unitPlural.length - 1);
+    return '$unitSingular(s)';
+  }
+
+  String getEndCondition(RecurringTransaction recTx) {
+    if (recTx.endDate != null && recTx.endDate.toString().isNotEmpty) {
+      return ', until ${getDateStr(recTx.endDate)}';
+    } else if (recTx.occurrenceValue != null && recTx.occurrenceValue > 0) {
+      return ', ${recTx.occurrenceValue} time(s)';
+    } else {
+      return '';
+    }
   }
 
   void retrieveNewData(String uid) {

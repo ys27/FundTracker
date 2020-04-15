@@ -108,6 +108,9 @@ int findNumDaysInPeriod(
 }
 
 String getDateStr(DateTime date) {
+  if (date == null) {
+    return 'N/A';
+  }
   String year = date.year.toString();
   String month = date.month.toString();
   String day = date.day.toString();
