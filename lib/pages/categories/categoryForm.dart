@@ -67,129 +67,125 @@ class _CategoryFormState extends State<CategoryForm> {
             ),
             body: isLoading
                 ? Loader()
-                : Container(
-                    padding: formPadding,
-                    child: Form(
-                      key: _formKey,
-                      child: ListView(
-                        children: <Widget>[
-                          SizedBox(height: 10.0),
-                          TextFormField(
-                            controller: _nameController,
-                            validator: (val) {
-                              if (val.isEmpty) {
-                                return 'Enter a name for this category.';
-                              }
-                              return null;
+                : Form(
+                    key: _formKey,
+                    child: ListView(
+                      padding: formPadding,
+                      children: <Widget>[
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          controller: _nameController,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return 'Enter a name for this category.';
+                            }
+                            return null;
+                          },
+                          decoration: clearInput(
+                            labelText: 'Name',
+                            enabled: _name.isNotEmpty,
+                            onPressed: () {
+                              setState(() => _name = '');
+                              _nameController.safeClear();
                             },
-                            decoration: clearInput(
-                              labelText: 'Name',
-                              enabled: _name.isNotEmpty,
-                              onPressed: () {
-                                setState(() => _name = '');
-                                _nameController.safeClear();
+                          ),
+                          textCapitalization: TextCapitalization.words,
+                          onChanged: (val) {
+                            setState(() => _name = val);
+                          },
+                        ),
+                        SizedBox(height: 10.0),
+                        FlatButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('Icon'),
+                              Icon(
+                                IconData(
+                                  _icon ?? widget.category.icon,
+                                  fontFamily: 'MaterialDesignIconFont',
+                                  fontPackage: 'community_material_icon',
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () async {
+                            int icon = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return IconsList();
                               },
-                            ),
-                            textCapitalization: TextCapitalization.words,
-                            onChanged: (val) {
-                              setState(() => _name = val);
-                            },
+                            );
+                            setState(() => _icon = icon);
+                          },
+                        ),
+                        SizedBox(height: 10.0),
+                        FlatButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('Icon Color'),
+                              Icon(
+                                CommunityMaterialIcons.circle,
+                                color: _iconColor ?? widget.category.iconColor,
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 10.0),
-                          FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('Icon'),
-                                Icon(
-                                  IconData(
-                                    _icon ?? widget.category.icon,
-                                    fontFamily: 'MaterialDesignIconFont',
-                                    fontPackage: 'community_material_icon',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            onPressed: () async {
-                              int icon = await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return IconsList();
-                                },
-                              );
-                              setState(() => _icon = icon);
-                            },
-                          ),
-                          SizedBox(height: 10.0),
-                          FlatButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('Icon Color'),
-                                Icon(
-                                  CommunityMaterialIcons.circle,
-                                  color:
-                                      _iconColor ?? widget.category.iconColor,
-                                ),
-                              ],
-                            ),
-                            onPressed: () async {
-                              Color color = await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return categoryColorPicker(
-                                    context,
-                                    _iconColor ?? widget.category.iconColor,
-                                  );
-                                },
-                              );
-                              setState(() => _iconColor = color);
-                            },
-                          ),
-                          SizedBox(height: 10.0),
-                          Icon(
-                            IconData(
-                              _icon ?? widget.category.icon,
-                              fontFamily: 'MaterialDesignIconFont',
-                              fontPackage: 'community_material_icon',
-                            ),
-                            color: _iconColor ?? widget.category.iconColor,
-                          ),
-                          SizedBox(height: 10.0),
-                          RaisedButton(
-                            color: Theme.of(context).primaryColor,
-                            child: Text(
-                              isEditMode ? 'Save' : 'Add',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                Category category = Category(
-                                  cid: widget.category.cid ?? Uuid().v1(),
-                                  name: _name ?? widget.category.name,
-                                  icon: _icon ?? widget.category.icon,
-                                  iconColor:
-                                      _iconColor ?? widget.category.iconColor,
-                                  enabled: widget.category.enabled ?? true,
-                                  unfiltered:
-                                      widget.category.unfiltered ?? true,
-                                  orderIndex: widget.category.orderIndex ??
-                                      widget.numExistingCategories,
-                                  uid: _user.uid,
+                          onPressed: () async {
+                            Color color = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return categoryColorPicker(
+                                  context,
+                                  _iconColor ?? widget.category.iconColor,
                                 );
-                                setState(() => isLoading = true);
-                                isEditMode
-                                    ? await DatabaseWrapper(_user.uid)
-                                        .updateCategories([category])
-                                    : await DatabaseWrapper(_user.uid)
-                                        .addCategories([category]);
-                                SyncService(_user.uid).syncPeriods();
-                                Navigator.pop(context);
-                              }
-                            },
+                              },
+                            );
+                            setState(() => _iconColor = color);
+                          },
+                        ),
+                        SizedBox(height: 10.0),
+                        Icon(
+                          IconData(
+                            _icon ?? widget.category.icon,
+                            fontFamily: 'MaterialDesignIconFont',
+                            fontPackage: 'community_material_icon',
                           ),
-                        ],
-                      ),
+                          color: _iconColor ?? widget.category.iconColor,
+                        ),
+                        SizedBox(height: 10.0),
+                        RaisedButton(
+                          color: Theme.of(context).primaryColor,
+                          child: Text(
+                            isEditMode ? 'Save' : 'Add',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              Category category = Category(
+                                cid: widget.category.cid ?? Uuid().v1(),
+                                name: _name ?? widget.category.name,
+                                icon: _icon ?? widget.category.icon,
+                                iconColor:
+                                    _iconColor ?? widget.category.iconColor,
+                                enabled: widget.category.enabled ?? true,
+                                unfiltered: widget.category.unfiltered ?? true,
+                                orderIndex: widget.category.orderIndex ??
+                                    widget.numExistingCategories,
+                                uid: _user.uid,
+                              );
+                              setState(() => isLoading = true);
+                              isEditMode
+                                  ? await DatabaseWrapper(_user.uid)
+                                      .updateCategories([category])
+                                  : await DatabaseWrapper(_user.uid)
+                                      .addCategories([category]);
+                              SyncService(_user.uid).syncPeriods();
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
           )

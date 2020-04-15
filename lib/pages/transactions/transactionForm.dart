@@ -86,442 +86,433 @@ class _TransactionFormState extends State<TransactionForm> {
       final Category _correspondingCategory =
           getCategory(_categories, givenTxOrRecTx.cid);
 
-      _body = Container(
-        padding: formPadding,
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-                  SizedBox(height: 10.0),
-                  TabSelector(
-                    context,
-                    tabs: [
-                      {
-                        'enabled': _isExpense != null
-                            ? !_isExpense
-                            : !givenTxOrRecTx.isExpense,
-                        'title': 'Income',
-                        'onPressed': () => setState(() => _isExpense = false),
-                      },
-                      {
-                        'enabled': _isExpense ?? givenTxOrRecTx.isExpense,
-                        'title': 'Expense',
-                        'onPressed': () => setState(() => _isExpense = true),
-                      },
-                    ],
-                  ),
-                  SizedBox(height: 10.0),
-                  DatePicker(
-                    context,
-                    leading: isRecurringTxMode
-                        ? 'Next Date:                         '
-                        : getDateStr(_date ?? givenTxOrRecTx.date),
-                    trailing: isRecurringTxMode
-                        ? '${getDateStr(_nextDate ?? givenTxOrRecTx.nextDate)}'
-                        : '',
-                    updateDateState: (date) => setState(() {
-                      if (isRecurringTxMode) {
-                        _nextDate = getDateNotTime(date);
-                      } else {
-                        _date = date;
-                      }
-                    }),
-                    openDate: DateTime.now(),
-                    firstDate: isRecurringTxMode
-                        ? getDateNotTime(DateTime.now())
-                        : null,
-                  ),
-                ] +
-                (isRecurringTxMode
-                    ? <Widget>[
-                        DatePicker(
-                          context,
-                          leading: 'End Date:                          ',
-                          trailing:
-                              '${getDateStr(_endDate ?? givenTxOrRecTx.endDate)}',
-                          updateDateState: (date) {
-                            setState(() {
-                              _endDate = getDateNotTime(date);
-                              _occurrenceValue =
-                                  givenTxOrRecTx.occurrenceValue ?? '';
-                            });
-                            _occurrenceController.safeClear();
-                          },
-                          openDate: DateTime.now(),
-                          firstDate: getDateNotTime(DateTime.now()),
-                        ),
-                      ]
-                    : <Widget>[
-                        TimePicker(
-                          context,
-                          leading: getTimeStr(_date ?? givenTxOrRecTx.date),
-                          updateTimeState: (time) => setState(
-                            () {
-                              DateTime oldDateTime =
-                                  (_date ?? givenTxOrRecTx.date);
-                              DateTime newDateTime = DateTime(
-                                oldDateTime.year,
-                                oldDateTime.month,
-                                oldDateTime.day,
-                                time.hour,
-                                time.minute,
-                              );
-                              _date = newDateTime;
-                            },
-                          ),
-                        ),
-                      ]) +
-                <Widget>[
-                  TypeAheadFormField(
-                    autovalidate: _payee.isNotEmpty,
-                    validator: (val) {
-                      if (val.isEmpty) {
-                        return 'Enter a payee or a note.';
-                      } else if (val.length > 30) {
-                        return 'Max 30 characters.';
-                      }
-                      return null;
+      _body = Form(
+        key: _formKey,
+        child: ListView(
+          padding: formPadding,
+          children: <Widget>[
+                SizedBox(height: 10.0),
+                TabSelector(
+                  context,
+                  tabs: [
+                    {
+                      'enabled': _isExpense != null
+                          ? !_isExpense
+                          : !givenTxOrRecTx.isExpense,
+                      'title': 'Income',
+                      'onPressed': () => setState(() => _isExpense = false),
                     },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: _payeeController,
-                      decoration: clearInput(
-                        labelText: 'Payee',
-                        enabled: _payee.isNotEmpty,
-                        onPressed: () {
-                          setState(() => _payee = '');
-                          _payeeController.safeClear();
+                    {
+                      'enabled': _isExpense ?? givenTxOrRecTx.isExpense,
+                      'title': 'Expense',
+                      'onPressed': () => setState(() => _isExpense = true),
+                    },
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                DatePicker(
+                  context,
+                  leading: isRecurringTxMode
+                      ? 'Next Date:                         '
+                      : getDateStr(_date ?? givenTxOrRecTx.date),
+                  trailing: isRecurringTxMode
+                      ? '${getDateStr(_nextDate ?? givenTxOrRecTx.nextDate)}'
+                      : '',
+                  updateDateState: (date) => setState(() {
+                    if (isRecurringTxMode) {
+                      _nextDate = getDateNotTime(date);
+                    } else {
+                      _date = date;
+                    }
+                  }),
+                  openDate: DateTime.now(),
+                  firstDate:
+                      isRecurringTxMode ? getDateNotTime(DateTime.now()) : null,
+                ),
+              ] +
+              (isRecurringTxMode
+                  ? <Widget>[
+                      DatePicker(
+                        context,
+                        leading: 'End Date:                          ',
+                        trailing:
+                            '${getDateStr(_endDate ?? givenTxOrRecTx.endDate)}',
+                        updateDateState: (date) {
+                          setState(() {
+                            _endDate = getDateNotTime(date);
+                            _occurrenceValue =
+                                givenTxOrRecTx.occurrenceValue ?? '';
+                          });
+                          _occurrenceController.safeClear();
+                        },
+                        openDate: DateTime.now(),
+                        firstDate: getDateNotTime(DateTime.now()),
+                      ),
+                    ]
+                  : <Widget>[
+                      TimePicker(
+                        context,
+                        leading: getTimeStr(_date ?? givenTxOrRecTx.date),
+                        updateTimeState: (time) => setState(
+                          () {
+                            DateTime oldDateTime =
+                                (_date ?? givenTxOrRecTx.date);
+                            DateTime newDateTime = DateTime(
+                              oldDateTime.year,
+                              oldDateTime.month,
+                              oldDateTime.day,
+                              time.hour,
+                              time.minute,
+                            );
+                            _date = newDateTime;
+                          },
+                        ),
+                      ),
+                    ]) +
+              <Widget>[
+                TypeAheadFormField(
+                  autovalidate: _payee.isNotEmpty,
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return 'Enter a payee or a note.';
+                    } else if (val.length > 30) {
+                      return 'Max 30 characters.';
+                    }
+                    return null;
+                  },
+                  textFieldConfiguration: TextFieldConfiguration(
+                    controller: _payeeController,
+                    decoration: clearInput(
+                      labelText: 'Payee',
+                      enabled: _payee.isNotEmpty,
+                      onPressed: () {
+                        setState(() => _payee = '');
+                        _payeeController.safeClear();
+                      },
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    onChanged: (val) {
+                      setState(() => _payee = val);
+                    },
+                  ),
+                  suggestionsCallback: (query) {
+                    if (query == '') {
+                      return null;
+                    } else {
+                      List<Map<String, dynamic>> suggestionsWithCount = [];
+
+                      _transactions
+                          .where(
+                        (tx) => tx.payee
+                            .toLowerCase()
+                            .startsWith(query.toLowerCase()),
+                      )
+                          .forEach((tx) {
+                        final String suggestion = '${tx.payee}::${tx.cid}';
+                        final int suggestionIndex =
+                            suggestionsWithCount.indexWhere(
+                                (map) => map['suggestion'] == suggestion);
+                        if (suggestionIndex != -1) {
+                          suggestionsWithCount[suggestionIndex]['count']++;
+                        } else {
+                          suggestionsWithCount.add({
+                            'suggestion': '${tx.payee}::${tx.cid}',
+                            'count': 1,
+                          });
+                        }
+                      });
+                      suggestionsWithCount
+                          .sort((a, b) => b['count'].compareTo(a['count']));
+                      final List<String> suggestions =
+                          suggestionsWithCount.map((map) {
+                        final String suggestion = map['suggestion'];
+                        return suggestion;
+                      }).toList();
+                      if (suggestions.length > 0) {
+                        return suggestions;
+                      } else {
+                        return null;
+                      }
+                    }
+                  },
+                  itemBuilder: (context, suggestion) {
+                    final List<String> splitSuggestion = suggestion.split('::');
+                    final String suggestionPayee = splitSuggestion[0];
+                    final String suggestionCid = splitSuggestion[1];
+                    final Category category =
+                        getCategory(_categories, suggestionCid);
+                    return ListTile(
+                      leading: Icon(
+                        IconData(
+                          category.icon,
+                          fontFamily: 'MaterialDesignIconFont',
+                          fontPackage: 'community_material_icon',
+                        ),
+                        color: category.iconColor,
+                      ),
+                      title: Text(suggestionPayee),
+                      subtitle: Text(category.name),
+                    );
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    final List<String> splitSuggestion = suggestion.split('::');
+                    final String suggestionPayee = splitSuggestion[0];
+                    final String suggestionCid = splitSuggestion[1];
+
+                    _payeeController.text = suggestionPayee;
+                    setState(() {
+                      _payee = suggestionPayee;
+                      _cid = suggestionCid;
+                    });
+                  },
+                ),
+                TextFormField(
+                  controller: _amountController,
+                  autovalidate: _amount != null,
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return 'Please enter an amount.';
+                    }
+                    if (val.indexOf('.') > 0 && val.split('.')[1].length > 2) {
+                      return 'At most 2 decimal places allowed.';
+                    }
+                    return null;
+                  },
+                  decoration: clearInput(
+                    labelText: 'Amount',
+                    enabled: _amount != null,
+                    onPressed: () {
+                      setState(() => _amount = null);
+                      _amountController.safeClear();
+                    },
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (val) {
+                    setState(() {
+                      _amount = val == '' ? null : double.parse(val);
+                    });
+                  },
+                ),
+                SizedBox(height: 10.0),
+                Center(
+                  child: DropdownButton<String>(
+                    items: _enabledCategories.map((category) {
+                          return DropdownMenuItem(
+                            value: category.cid,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  IconData(
+                                    category.icon,
+                                    fontFamily: 'MaterialDesignIconFont',
+                                    fontPackage: 'community_material_icon',
+                                  ),
+                                  color: category.iconColor,
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(category.name),
+                              ],
+                            ),
+                          );
+                        }).toList() +
+                        (_correspondingCategory == null ||
+                                _enabledCategories.any((category) =>
+                                    category.cid == _correspondingCategory.cid)
+                            ? []
+                            : [
+                                DropdownMenuItem(
+                                  value: _correspondingCategory.cid,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        IconData(
+                                          _correspondingCategory.icon,
+                                          fontFamily: 'MaterialDesignIconFont',
+                                          fontPackage:
+                                              'community_material_icon',
+                                        ),
+                                        color: _correspondingCategory.iconColor,
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Text(_correspondingCategory.name),
+                                    ],
+                                  ),
+                                )
+                              ]),
+                    onChanged: (val) {
+                      setState(() => _cid = val);
+                    },
+                    value: _cid ??
+                        (_correspondingCategory != null
+                            ? _correspondingCategory.cid
+                            : _enabledCategories.first.cid),
+                    isExpanded: true,
+                  ),
+                ),
+              ] +
+              (isRecurringTxMode
+                  ? <Widget>[
+                      TextFormField(
+                        controller: _frequencyValueController,
+                        autovalidate: _frequencyValue.isNotEmpty,
+                        validator: (val) {
+                          if (val.isEmpty) {
+                            return 'Enter a value.';
+                          } else if (val.contains('.')) {
+                            return 'This value must be an integer.';
+                          } else if (int.parse(val) <= 0) {
+                            return 'This value must be greater than 0';
+                          }
+                          return null;
+                        },
+                        decoration: clearInput(
+                          labelText: 'Frequency',
+                          enabled: _frequencyValue.isNotEmpty,
+                          onPressed: () {
+                            setState(() => _frequencyValue = '');
+                            _frequencyValueController.safeClear();
+                          },
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) {
+                          setState(() => _frequencyValue = val);
                         },
                       ),
-                      textCapitalization: TextCapitalization.words,
-                      onChanged: (val) {
-                        setState(() => _payee = val);
-                      },
-                    ),
-                    suggestionsCallback: (query) {
-                      if (query == '') {
-                        return null;
-                      } else {
-                        List<Map<String, dynamic>> suggestionsWithCount = [];
-
-                        _transactions
-                            .where(
-                          (tx) => tx.payee
-                              .toLowerCase()
-                              .startsWith(query.toLowerCase()),
-                        )
-                            .forEach((tx) {
-                          final String suggestion = '${tx.payee}::${tx.cid}';
-                          final int suggestionIndex =
-                              suggestionsWithCount.indexWhere(
-                                  (map) => map['suggestion'] == suggestion);
-                          if (suggestionIndex != -1) {
-                            suggestionsWithCount[suggestionIndex]['count']++;
-                          } else {
-                            suggestionsWithCount.add({
-                              'suggestion': '${tx.payee}::${tx.cid}',
-                              'count': 1,
-                            });
+                      SizedBox(height: 10.0),
+                      DropdownButton<DateUnit>(
+                        items: DateUnit.values.map((unit) {
+                          return DropdownMenuItem<DateUnit>(
+                            value: unit,
+                            child: Text(unit.toString().split('.')[1]),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() => _frequencyUnit = val);
+                        },
+                        value: _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
+                        isExpanded: true,
+                      ),
+                      SizedBox(height: 10.0),
+                      TextFormField(
+                        controller: _occurrenceController,
+                        autovalidate: _occurrenceValue.isNotEmpty,
+                        validator: (val) {
+                          if (val.isEmpty) {
+                            return null;
                           }
-                        });
-                        suggestionsWithCount
-                            .sort((a, b) => b['count'].compareTo(a['count']));
-                        final List<String> suggestions =
-                            suggestionsWithCount.map((map) {
-                          final String suggestion = map['suggestion'];
-                          return suggestion;
-                        }).toList();
-                        if (suggestions.length > 0) {
-                          return suggestions;
-                        } else {
+                          if (val.contains('.')) {
+                            return 'This value must be an integer.';
+                          } else if (int.parse(val) <= 0) {
+                            return 'This value must be greater than 0';
+                          }
                           return null;
-                        }
-                      }
-                    },
-                    itemBuilder: (context, suggestion) {
-                      final List<String> splitSuggestion =
-                          suggestion.split('::');
-                      final String suggestionPayee = splitSuggestion[0];
-                      final String suggestionCid = splitSuggestion[1];
-                      final Category category =
-                          getCategory(_categories, suggestionCid);
-                      return ListTile(
-                        leading: Icon(
-                          IconData(
-                            category.icon,
-                            fontFamily: 'MaterialDesignIconFont',
-                            fontPackage: 'community_material_icon',
-                          ),
-                          color: category.iconColor,
-                        ),
-                        title: Text(suggestionPayee),
-                        subtitle: Text(category.name),
-                      );
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      final List<String> splitSuggestion =
-                          suggestion.split('::');
-                      final String suggestionPayee = splitSuggestion[0];
-                      final String suggestionCid = splitSuggestion[1];
-
-                      _payeeController.text = suggestionPayee;
-                      setState(() {
-                        _payee = suggestionPayee;
-                        _cid = suggestionCid;
-                      });
-                    },
-                  ),
-                  TextFormField(
-                    controller: _amountController,
-                    autovalidate: _amount != null,
-                    validator: (val) {
-                      if (val.isEmpty) {
-                        return 'Please enter an amount.';
-                      }
-                      if (val.indexOf('.') > 0 &&
-                          val.split('.')[1].length > 2) {
-                        return 'At most 2 decimal places allowed.';
-                      }
-                      return null;
-                    },
-                    decoration: clearInput(
-                      labelText: 'Amount',
-                      enabled: _amount != null,
-                      onPressed: () {
-                        setState(() => _amount = null);
-                        _amountController.safeClear();
-                      },
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {
-                      setState(() {
-                        _amount = val == '' ? null : double.parse(val);
-                      });
-                    },
-                  ),
-                  SizedBox(height: 10.0),
-                  Center(
-                    child: DropdownButton<String>(
-                      items: _enabledCategories.map((category) {
-                            return DropdownMenuItem(
-                              value: category.cid,
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    IconData(
-                                      category.icon,
-                                      fontFamily: 'MaterialDesignIconFont',
-                                      fontPackage: 'community_material_icon',
-                                    ),
-                                    color: category.iconColor,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Text(category.name),
-                                ],
-                              ),
-                            );
-                          }).toList() +
-                          (_correspondingCategory == null ||
-                                  _enabledCategories.any((category) =>
-                                      category.cid ==
-                                      _correspondingCategory.cid)
-                              ? []
-                              : [
-                                  DropdownMenuItem(
-                                    value: _correspondingCategory.cid,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          IconData(
-                                            _correspondingCategory.icon,
-                                            fontFamily:
-                                                'MaterialDesignIconFont',
-                                            fontPackage:
-                                                'community_material_icon',
-                                          ),
-                                          color:
-                                              _correspondingCategory.iconColor,
-                                        ),
-                                        SizedBox(width: 10.0),
-                                        Text(_correspondingCategory.name),
-                                      ],
-                                    ),
-                                  )
-                                ]),
-                      onChanged: (val) {
-                        setState(() => _cid = val);
-                      },
-                      value: _cid ??
-                          (_correspondingCategory != null
-                              ? _correspondingCategory.cid
-                              : _enabledCategories.first.cid),
-                      isExpanded: true,
-                    ),
-                  ),
-                ] +
-                (isRecurringTxMode
-                    ? <Widget>[
-                        TextFormField(
-                          controller: _frequencyValueController,
-                          autovalidate: _frequencyValue.isNotEmpty,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return 'Enter a value.';
-                            } else if (val.contains('.')) {
-                              return 'This value must be an integer.';
-                            } else if (int.parse(val) <= 0) {
-                              return 'This value must be greater than 0';
-                            }
-                            return null;
-                          },
-                          decoration: clearInput(
-                            labelText: 'Frequency',
-                            enabled: _frequencyValue.isNotEmpty,
-                            onPressed: () {
-                              setState(() => _frequencyValue = '');
-                              _frequencyValueController.safeClear();
-                            },
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (val) {
-                            setState(() => _frequencyValue = val);
-                          },
-                        ),
-                        SizedBox(height: 10.0),
-                        DropdownButton<DateUnit>(
-                          items: DateUnit.values.map((unit) {
-                            return DropdownMenuItem<DateUnit>(
-                              value: unit,
-                              child: Text(unit.toString().split('.')[1]),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            setState(() => _frequencyUnit = val);
-                          },
-                          value: _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
-                          isExpanded: true,
-                        ),
-                        SizedBox(height: 10.0),
-                        TextFormField(
-                          controller: _occurrenceController,
-                          autovalidate: _occurrenceValue.isNotEmpty,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return null;
-                            }
-                            if (val.contains('.')) {
-                              return 'This value must be an integer.';
-                            } else if (int.parse(val) <= 0) {
-                              return 'This value must be greater than 0';
-                            }
-                            return null;
-                          },
-                          decoration: clearInput(
-                            labelText: 'How many times? (optional)',
-                            enabled: _occurrenceValue.isNotEmpty,
-                            onPressed: () {
-                              setState(() => _occurrenceValue = '');
-                              _occurrenceController.safeClear();
-                            },
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (val) {
-                            setState(() {
-                              _endDate = givenTxOrRecTx.endDate;
-                              _occurrenceValue = val;
-                            });
-                          },
-                        ),
-                      ]
-                    : <Widget>[]) +
-                <Widget>[
-                  SizedBox(height: 10.0),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text(
-                      isEditMode ? 'Save' : 'Add',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        setState(() => isLoading = true);
-
-                        if (isRecurringTxMode) {
-                          RecurringTransaction recTx = RecurringTransaction(
-                            rid: givenTxOrRecTx.rid ?? Uuid().v1(),
-                            nextDate: _nextDate ?? givenTxOrRecTx.nextDate,
-                            endDate: _endDate ?? givenTxOrRecTx.endDate,
-                            occurrenceValue: _occurrenceValue != ''
-                                ? int.parse(_occurrenceValue)
-                                : givenTxOrRecTx.occurrenceValue,
-                            frequencyValue: _frequencyValue != ''
-                                ? int.parse(_frequencyValue)
-                                : givenTxOrRecTx.frequencyValue,
-                            frequencyUnit:
-                                _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
-                            isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
-                            payee: _payee ?? givenTxOrRecTx.payee,
-                            amount: _amount ?? givenTxOrRecTx.amount,
-                            cid: _cid ??
-                                (_correspondingCategory != null
-                                    ? _correspondingCategory.cid
-                                    : _enabledCategories.first.cid),
-                            uid: _user.uid,
-                          );
-                          isEditMode
-                              ? DatabaseWrapper(_user.uid)
-                                  .updateRecurringTransactions([recTx])
-                              : DatabaseWrapper(_user.uid)
-                                  .addRecurringTransactions([recTx]);
-                          RecurringTransactionsService
-                              .checkRecurringTransactions(_user.uid);
-                          SyncService(_user.uid).syncRecurringTransactions();
-                        } else {
-                          Transaction tx = Transaction(
-                            tid: givenTxOrRecTx.tid ?? Uuid().v1(),
-                            date: _date ?? givenTxOrRecTx.date,
-                            isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
-                            payee: _payee ?? givenTxOrRecTx.payee,
-                            amount: _amount ?? givenTxOrRecTx.amount,
-                            cid: _cid ??
-                                (_correspondingCategory != null
-                                    ? _correspondingCategory.cid
-                                    : _enabledCategories.first.cid),
-                            uid: _user.uid,
-                          );
-                          isEditMode
-                              ? await DatabaseWrapper(_user.uid)
-                                  .updateTransactions([tx])
-                              : await DatabaseWrapper(_user.uid)
-                                  .addTransactions([tx]);
-                          SyncService(_user.uid).syncTransactions();
-                        }
-
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ] +
-                (isRecurringTxMode
-                    ? <Widget>[
-                        SizedBox(height: 10.0),
-                        RaisedButton(
-                          color: Theme.of(context).accentColor,
-                          child: Text(
-                            'Reset End Conditions',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              _endDate = givenTxOrRecTx.endDate;
-                              _occurrenceValue =
-                                  givenTxOrRecTx.occurrenceValue ?? '';
-                            });
+                        },
+                        decoration: clearInput(
+                          labelText: 'How many times? (optional)',
+                          enabled: _occurrenceValue.isNotEmpty,
+                          onPressed: () {
+                            setState(() => _occurrenceValue = '');
                             _occurrenceController.safeClear();
                           },
                         ),
-                      ]
-                    : <Widget>[]),
-          ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) {
+                          setState(() {
+                            _endDate = givenTxOrRecTx.endDate;
+                            _occurrenceValue = val;
+                          });
+                        },
+                      ),
+                    ]
+                  : <Widget>[]) +
+              <Widget>[
+                SizedBox(height: 10.0),
+                RaisedButton(
+                  color: Theme.of(context).primaryColor,
+                  child: Text(
+                    isEditMode ? 'Save' : 'Add',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState.validate()) {
+                      setState(() => isLoading = true);
+
+                      if (isRecurringTxMode) {
+                        RecurringTransaction recTx = RecurringTransaction(
+                          rid: givenTxOrRecTx.rid ?? Uuid().v1(),
+                          nextDate: _nextDate ?? givenTxOrRecTx.nextDate,
+                          endDate: _endDate ?? givenTxOrRecTx.endDate,
+                          occurrenceValue: _occurrenceValue != ''
+                              ? int.parse(_occurrenceValue)
+                              : givenTxOrRecTx.occurrenceValue,
+                          frequencyValue: _frequencyValue != ''
+                              ? int.parse(_frequencyValue)
+                              : givenTxOrRecTx.frequencyValue,
+                          frequencyUnit:
+                              _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
+                          isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
+                          payee: _payee ?? givenTxOrRecTx.payee,
+                          amount: _amount ?? givenTxOrRecTx.amount,
+                          cid: _cid ??
+                              (_correspondingCategory != null
+                                  ? _correspondingCategory.cid
+                                  : _enabledCategories.first.cid),
+                          uid: _user.uid,
+                        );
+                        isEditMode
+                            ? DatabaseWrapper(_user.uid)
+                                .updateRecurringTransactions([recTx])
+                            : DatabaseWrapper(_user.uid)
+                                .addRecurringTransactions([recTx]);
+                        RecurringTransactionsService.checkRecurringTransactions(
+                            _user.uid);
+                        SyncService(_user.uid).syncRecurringTransactions();
+                      } else {
+                        Transaction tx = Transaction(
+                          tid: givenTxOrRecTx.tid ?? Uuid().v1(),
+                          date: _date ?? givenTxOrRecTx.date,
+                          isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
+                          payee: _payee ?? givenTxOrRecTx.payee,
+                          amount: _amount ?? givenTxOrRecTx.amount,
+                          cid: _cid ??
+                              (_correspondingCategory != null
+                                  ? _correspondingCategory.cid
+                                  : _enabledCategories.first.cid),
+                          uid: _user.uid,
+                        );
+                        isEditMode
+                            ? await DatabaseWrapper(_user.uid)
+                                .updateTransactions([tx])
+                            : await DatabaseWrapper(_user.uid)
+                                .addTransactions([tx]);
+                        SyncService(_user.uid).syncTransactions();
+                      }
+
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ] +
+              (isRecurringTxMode
+                  ? <Widget>[
+                      SizedBox(height: 10.0),
+                      RaisedButton(
+                        color: Theme.of(context).accentColor,
+                        child: Text(
+                          'Reset End Conditions',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            _endDate = givenTxOrRecTx.endDate;
+                            _occurrenceValue =
+                                givenTxOrRecTx.occurrenceValue ?? '';
+                          });
+                          _occurrenceController.safeClear();
+                        },
+                      ),
+                    ]
+                  : <Widget>[]),
         ),
       );
     }

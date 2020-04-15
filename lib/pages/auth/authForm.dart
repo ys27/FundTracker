@@ -68,135 +68,133 @@ class _AuthFormState extends State<AuthForm> {
       ),
       body: _isLoading
           ? Loader()
-          : Container(
-              padding: formPadding,
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    SizedBox(height: 10.0),
-                    TextFormField(
-                      controller: _emailController,
-                      autovalidate: _email.isNotEmpty,
-                      validator: emailValidator,
-                      decoration: clearInput(
-                        labelText: 'Email',
-                        enabled: _email.isNotEmpty,
-                        onPressed: () {
-                          setState(() => _email = '');
-                          _emailController.safeClear();
-                        },
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) {
-                        setState(() => _email = val);
+          : Form(
+              key: _formKey,
+              child: ListView(
+                padding: formPadding,
+                children: <Widget>[
+                  SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: _emailController,
+                    autovalidate: _email.isNotEmpty,
+                    validator: emailValidator,
+                    decoration: clearInput(
+                      labelText: 'Email',
+                      enabled: _email.isNotEmpty,
+                      onPressed: () {
+                        setState(() => _email = '');
+                        _emailController.safeClear();
                       },
                     ),
-                    TextFormField(
-                      controller: _passwordController,
-                      autovalidate: _password.isNotEmpty,
-                      validator: passwordValidator,
-                      obscureText: _obscurePassword,
-                      decoration: clearInput(
-                        labelText: 'Password',
-                        enabled: _password.isNotEmpty,
-                        onPressed: () {
-                          setState(() => _password = '');
-                          _passwordController.safeClear();
-                        },
-                        passwordToggle: true,
-                        onPasswordTogglePressed: () => setState(
-                          () => _obscurePassword = !_obscurePassword,
-                        ),
-                        passwordToggleVisible: _obscurePassword,
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (val) {
+                      setState(() => _email = val);
+                    },
+                  ),
+                  TextFormField(
+                    controller: _passwordController,
+                    autovalidate: _password.isNotEmpty,
+                    validator: passwordValidator,
+                    obscureText: _obscurePassword,
+                    decoration: clearInput(
+                      labelText: 'Password',
+                      enabled: _password.isNotEmpty,
+                      onPressed: () {
+                        setState(() => _password = '');
+                        _passwordController.safeClear();
+                      },
+                      passwordToggle: true,
+                      onPasswordTogglePressed: () => setState(
+                        () => _obscurePassword = !_obscurePassword,
                       ),
-                      onChanged: (val) => setState(() => _password = val),
+                      passwordToggleVisible: _obscurePassword,
                     ),
-                    isRegister
-                        ? TextFormField(
-                            controller: _passwordConfirmController,
-                            autovalidate: _passwordConfirm.isNotEmpty,
-                            validator: (val) =>
-                                passwordConfirmValidator(val, _password),
-                            obscureText: _obscurePasswordConfirm,
-                            decoration: clearInput(
-                              labelText: 'Confirm Password',
-                              enabled: _passwordConfirm.isNotEmpty,
-                              onPressed: () {
-                                setState(() => _passwordConfirm = '');
-                                _passwordConfirmController.safeClear();
-                              },
-                              passwordToggle: true,
-                              onPasswordTogglePressed: () => setState(
-                                () => _obscurePasswordConfirm =
-                                    !_obscurePasswordConfirm,
-                              ),
-                              passwordToggleVisible: _obscurePasswordConfirm,
-                            ),
-                            onChanged: (val) {
-                              setState(() => _passwordConfirm = val);
+                    onChanged: (val) => setState(() => _password = val),
+                  ),
+                  isRegister
+                      ? TextFormField(
+                          controller: _passwordConfirmController,
+                          autovalidate: _passwordConfirm.isNotEmpty,
+                          validator: (val) =>
+                              passwordConfirmValidator(val, _password),
+                          obscureText: _obscurePasswordConfirm,
+                          decoration: clearInput(
+                            labelText: 'Confirm Password',
+                            enabled: _passwordConfirm.isNotEmpty,
+                            onPressed: () {
+                              setState(() => _passwordConfirm = '');
+                              _passwordConfirmController.safeClear();
                             },
-                          )
-                        : Container(),
-                    isRegister
-                        ? TextFormField(
-                            controller: _fullnameController,
-                            autovalidate: _fullname.isNotEmpty,
-                            validator: fullNameValidator,
-                            textCapitalization: TextCapitalization.words,
-                            decoration: clearInput(
-                              labelText: 'Full Name',
-                              enabled: _fullname.isNotEmpty,
-                              onPressed: () {
-                                setState(() => _fullname = '');
-                                _fullnameController.safeClear();
-                              },
+                            passwordToggle: true,
+                            onPasswordTogglePressed: () => setState(
+                              () => _obscurePasswordConfirm =
+                                  !_obscurePasswordConfirm,
                             ),
-                            onChanged: (val) => setState(() => _fullname = val),
-                          )
-                        : Container(),
-                    SizedBox(height: 10.0),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      child: title(isRegister),
-                      onPressed: () async {
-                        setState(() => _error = '');
-                        if (_formKey.currentState.validate()) {
-                          setState(() => _isLoading = true);
-                          dynamic _user = isRegister
-                              ? await _auth.register(_email, _password)
-                              : await _auth.signIn(_email, _password);
-                          if (_user is String) {
-                            setState(() {
-                              _isLoading = false;
-                              _error = _user;
-                            });
-                          } else if (isRegister) {
-                            DatabaseWrapper(_user.uid).addUser(
-                              User(
-                                uid: _user.uid,
-                                email: _email,
-                                fullname: _fullname,
-                              ),
-                            );
-                            DatabaseWrapper(_user.uid).addDefaultCategories();
-                            DatabaseWrapper(_user.uid).addDefaultPreferences();
-                          } else if (!isRegister) {
-                            await SyncService(_user.uid).syncToLocal();
-                          }
+                            passwordToggleVisible: _obscurePasswordConfirm,
+                          ),
+                          onChanged: (val) {
+                            setState(() => _passwordConfirm = val);
+                          },
+                        )
+                      : Container(),
+                  isRegister
+                      ? TextFormField(
+                          controller: _fullnameController,
+                          autovalidate: _fullname.isNotEmpty,
+                          validator: fullNameValidator,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: clearInput(
+                            labelText: 'Full Name',
+                            enabled: _fullname.isNotEmpty,
+                            onPressed: () {
+                              setState(() => _fullname = '');
+                              _fullnameController.safeClear();
+                            },
+                          ),
+                          onChanged: (val) => setState(() => _fullname = val),
+                        )
+                      : Container(),
+                  SizedBox(height: 10.0),
+                  RaisedButton(
+                    color: Theme.of(context).primaryColor,
+                    child: title(isRegister),
+                    onPressed: () async {
+                      setState(() => _error = '');
+                      if (_formKey.currentState.validate()) {
+                        setState(() => _isLoading = true);
+                        dynamic _user = isRegister
+                            ? await _auth.register(_email, _password)
+                            : await _auth.signIn(_email, _password);
+                        if (_user is String) {
+                          setState(() {
+                            _isLoading = false;
+                            _error = _user;
+                          });
+                        } else if (isRegister) {
+                          DatabaseWrapper(_user.uid).addUser(
+                            User(
+                              uid: _user.uid,
+                              email: _email,
+                              fullname: _fullname,
+                            ),
+                          );
+                          DatabaseWrapper(_user.uid).addDefaultCategories();
+                          DatabaseWrapper(_user.uid).addDefaultPreferences();
+                        } else if (!isRegister) {
+                          await SyncService(_user.uid).syncToLocal();
                         }
-                      },
+                      }
+                    },
+                  ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    _error,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 14.0,
                     ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      _error,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 14.0,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
     );
