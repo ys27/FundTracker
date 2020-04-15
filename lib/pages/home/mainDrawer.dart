@@ -2,7 +2,6 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/periods/periodsList.dart';
@@ -73,7 +72,10 @@ class _MainDrawerState extends State<MainDrawer> {
             onTap: () => widget.openPage(
               FutureProvider<List<Period>>(
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
-                child: PeriodsList(widget.user, widget.openPage),
+                child: PeriodsList(
+                  user: widget.user,
+                  openPage: widget.openPage,
+                ),
               ),
             ),
           ),
@@ -81,10 +83,9 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Recurring Transactions'),
             leading: Icon(CommunityMaterialIcons.history),
             onTap: () => widget.openPage(
-              FutureProvider<List<RecurringTransaction>>(
-                create: (_) =>
-                    DatabaseWrapper(widget.user.uid).getRecurringTransactions(),
-                child: RecurringTransactionsList(widget.user, widget.openPage),
+              RecurringTransactionsList(
+                user: widget.user,
+                openPage: widget.openPage,
               ),
             ),
           ),

@@ -36,7 +36,9 @@ class _PeriodFormState extends State<PeriodForm> {
   void initState() {
     super.initState();
     _nameController.text = widget.period.name;
-    _durationValueController.text = widget.period.durationValue.toString();
+    _durationValueController.text = widget.period.durationValue != null
+        ? widget.period.durationValue.toString()
+        : '';
   }
 
   @override

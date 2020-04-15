@@ -2,21 +2,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
+import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
-import 'package:provider/provider.dart';
 
-class PeriodsList extends StatelessWidget {
+class PeriodsList extends StatefulWidget {
   final FirebaseUser user;
   final Function openPage;
 
-  PeriodsList(this.user, this.openPage);
+  PeriodsList({this.user, this.openPage});
+
+  @override
+  _PeriodsListState createState() => _PeriodsListState();
+}
+
+class _PeriodsListState extends State<PeriodsList> {
+  List<Period> _periods;
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveNewData(widget.user.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Period> _periods = Provider.of<List<Period>>(context);
     Widget _body = Loader();
 
     if (_periods != null) {
@@ -29,33 +41,39 @@ class PeriodsList extends StatelessWidget {
           padding: bodyPadding,
           child: ListView.builder(
             itemCount: _periods.length,
-            itemBuilder: (context, index) =>
-                periodCard(context, _periods[index]),
+            itemBuilder: (context, index) => periodCard(
+              context,
+              _periods[index],
+              () => retrieveNewData(widget.user.uid),
+            ),
           ),
         );
       }
     }
 
     return Scaffold(
-      drawer: MainDrawer(user, openPage),
+      drawer: MainDrawer(widget.user, widget.openPage),
       appBar: AppBar(title: Text('Periods')),
       body: _body,
       floatingActionButton: addFloatingButton(
         context,
         PeriodForm(Period.empty()),
-        () {},
+        () => retrieveNewData(widget.user.uid),
       ),
     );
   }
 
-  Widget periodCard(BuildContext context, Period period) {
+  Widget periodCard(BuildContext context, Period period, Function refreshList) {
     return Card(
       color: period.isDefault ? Colors.blue[50] : null,
       child: ListTile(
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => PeriodForm(period),
-        ),
+        onTap: () async {
+          await showDialog(
+            context: context,
+            builder: (context) => PeriodForm(period),
+          );
+          refreshList();
+        },
         title: Text(period.name),
         subtitle: Text(
           'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}',
@@ -63,5 +81,11 @@ class PeriodsList extends StatelessWidget {
         trailing: Text('Start Date: ${getDateStr(period.startDate)}'),
       ),
     );
+  }
+
+  void retrieveNewData(String uid) {
+    DatabaseWrapper(uid).getPeriods().then((periods) {
+      setState(() => _periods = List<Period>.from(periods));
+    });
   }
 }

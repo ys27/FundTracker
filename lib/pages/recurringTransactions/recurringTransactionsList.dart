@@ -11,16 +11,28 @@ import 'package:fund_tracker/shared/widgets.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
-class RecurringTransactionsList extends StatelessWidget {
+class RecurringTransactionsList extends StatefulWidget {
   final FirebaseUser user;
   final Function openPage;
 
-  RecurringTransactionsList(this.user, this.openPage);
+  RecurringTransactionsList({this.user, this.openPage});
+
+  @override
+  _RecurringTransactionsListState createState() =>
+      _RecurringTransactionsListState();
+}
+
+class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
+  List<RecurringTransaction> _recTxs;
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveNewData(widget.user.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<RecurringTransaction> _recTxs =
-        Provider.of<List<RecurringTransaction>>(context);
     Widget _body = Loader();
 
     if (_recTxs != null) {
@@ -33,15 +45,18 @@ class RecurringTransactionsList extends StatelessWidget {
           padding: bodyPadding,
           child: ListView.builder(
             itemCount: _recTxs.length,
-            itemBuilder: (context, index) =>
-                recurringTransactionCard(context, _recTxs[index]),
+            itemBuilder: (context, index) => recurringTransactionCard(
+              context,
+              _recTxs[index],
+              () => retrieveNewData(widget.user.uid),
+            ),
           ),
         );
       }
     }
 
     return Scaffold(
-      drawer: MainDrawer(user, openPage),
+      drawer: MainDrawer(widget.user, widget.openPage),
       appBar: AppBar(title: Text('Recurring Transactions')),
       body: _body,
       floatingActionButton: addFloatingButton(
@@ -49,14 +64,14 @@ class RecurringTransactionsList extends StatelessWidget {
         MultiProvider(
           providers: [
             FutureProvider<List<Transaction>>.value(
-                value: DatabaseWrapper(user.uid).getTransactions()),
+                value: DatabaseWrapper(widget.user.uid).getTransactions()),
             FutureProvider<List<Category>>.value(
-                value: DatabaseWrapper(user.uid).getCategories()),
+                value: DatabaseWrapper(widget.user.uid).getCategories()),
           ],
           child:
               TransactionForm(getTxOrRecTx: () => RecurringTransaction.empty()),
         ),
-        () {},
+        () => retrieveNewData(widget.user.uid),
       ),
     );
   }
@@ -64,22 +79,26 @@ class RecurringTransactionsList extends StatelessWidget {
   Widget recurringTransactionCard(
     BuildContext context,
     RecurringTransaction recTx,
+    Function refreshList,
   ) {
     return Card(
       color: recTx.isExpense ? Colors.red[50] : Colors.green[50],
       child: ListTile(
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => MultiProvider(
-            providers: [
-              FutureProvider<List<Transaction>>.value(
-                  value: DatabaseWrapper(user.uid).getTransactions()),
-              FutureProvider<List<Category>>.value(
-                  value: DatabaseWrapper(user.uid).getCategories()),
-            ],
-            child: TransactionForm(getTxOrRecTx: () => recTx),
-          ),
-        ),
+        onTap: () async {
+          await showDialog(
+            context: context,
+            builder: (context) => MultiProvider(
+              providers: [
+                FutureProvider<List<Transaction>>.value(
+                    value: DatabaseWrapper(widget.user.uid).getTransactions()),
+                FutureProvider<List<Category>>.value(
+                    value: DatabaseWrapper(widget.user.uid).getCategories()),
+              ],
+              child: TransactionForm(getTxOrRecTx: () => recTx),
+            ),
+          );
+          refreshList();
+        },
         title: Text(
           '${recTx.payee}: ${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
         ),
@@ -89,5 +108,11 @@ class RecurringTransactionsList extends StatelessWidget {
         trailing: Text('Next Date: ${getDateStr(recTx.nextDate)}'),
       ),
     );
+  }
+
+  void retrieveNewData(String uid) {
+    DatabaseWrapper(uid).getRecurringTransactions().then((recTxs) {
+      setState(() => _recTxs = List<RecurringTransaction>.from(recTxs));
+    });
   }
 }
