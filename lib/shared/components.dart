@@ -280,7 +280,7 @@ InputDecoration clearInput({
 }) {
   return InputDecoration(
     labelText: labelText,
-    suffixIcon: enabled
+    suffixIcon: enabled && focused
         ? Row(
             mainAxisSize: MainAxisSize.min,
             children: (passwordToggle

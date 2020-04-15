@@ -26,6 +26,16 @@ class _AuthFormState extends State<AuthForm> {
   final _passwordConfirmController = TextEditingController();
   final _fullnameController = TextEditingController();
 
+  final FocusNode _emailFocus = new FocusNode();
+  final FocusNode _passwordFocus = new FocusNode();
+  final FocusNode _passwordConfirmFocus = new FocusNode();
+  final FocusNode _fullnameFocus = new FocusNode();
+
+  bool _isEmailInFocus = false;
+  bool _isPasswordInFocus = false;
+  bool _isPasswordConfirmInFocus = false;
+  bool _isFullnameInFocus = false;
+
   String _email = '';
   String _password = '';
   String _passwordConfirm = '';
@@ -46,6 +56,24 @@ class _AuthFormState extends State<AuthForm> {
 
   Widget authToggleText(bool isRegister) {
     return Text(isRegister ? 'Sign In' : 'Register');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocus.addListener(_checkFocus);
+    _passwordFocus.addListener(_checkFocus);
+    _passwordConfirmFocus.addListener(_checkFocus);
+    _fullnameFocus.addListener(_checkFocus);
+  }
+
+  void _checkFocus() {
+    setState(() {
+      _isEmailInFocus = _emailFocus.hasFocus;
+      _isPasswordInFocus = _passwordFocus.hasFocus;
+      _isPasswordConfirmInFocus = _passwordConfirmFocus.hasFocus;
+      _isFullnameInFocus = _fullnameFocus.hasFocus;
+    });
   }
 
   @override
@@ -76,11 +104,13 @@ class _AuthFormState extends State<AuthForm> {
                   SizedBox(height: 10.0),
                   TextFormField(
                     controller: _emailController,
+                    focusNode: _emailFocus,
                     autovalidate: _email.isNotEmpty,
                     validator: emailValidator,
                     decoration: clearInput(
                       labelText: 'Email',
                       enabled: _email.isNotEmpty,
+                      focused: _isEmailInFocus,
                       onPressed: () {
                         setState(() => _email = '');
                         _emailController.safeClear();
@@ -93,12 +123,14 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   TextFormField(
                     controller: _passwordController,
+                    focusNode: _passwordFocus,
                     autovalidate: _password.isNotEmpty,
                     validator: passwordValidator,
                     obscureText: _obscurePassword,
                     decoration: clearInput(
                       labelText: 'Password',
                       enabled: _password.isNotEmpty,
+                      focused: _isPasswordInFocus,
                       onPressed: () {
                         setState(() => _password = '');
                         _passwordController.safeClear();
@@ -114,6 +146,7 @@ class _AuthFormState extends State<AuthForm> {
                   isRegister
                       ? TextFormField(
                           controller: _passwordConfirmController,
+                          focusNode: _passwordConfirmFocus,
                           autovalidate: _passwordConfirm.isNotEmpty,
                           validator: (val) =>
                               passwordConfirmValidator(val, _password),
@@ -121,6 +154,7 @@ class _AuthFormState extends State<AuthForm> {
                           decoration: clearInput(
                             labelText: 'Confirm Password',
                             enabled: _passwordConfirm.isNotEmpty,
+                            focused: _isPasswordConfirmInFocus,
                             onPressed: () {
                               setState(() => _passwordConfirm = '');
                               _passwordConfirmController.safeClear();
@@ -140,12 +174,14 @@ class _AuthFormState extends State<AuthForm> {
                   isRegister
                       ? TextFormField(
                           controller: _fullnameController,
+                          focusNode: _fullnameFocus,
                           autovalidate: _fullname.isNotEmpty,
                           validator: fullNameValidator,
                           textCapitalization: TextCapitalization.words,
                           decoration: clearInput(
                             labelText: 'Full Name',
                             enabled: _fullname.isNotEmpty,
+                            focused: _isFullnameInFocus,
                             onPressed: () {
                               setState(() => _fullname = '');
                               _fullnameController.safeClear();

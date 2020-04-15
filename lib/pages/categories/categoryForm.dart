@@ -32,6 +32,10 @@ class _CategoryFormState extends State<CategoryForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
+  final FocusNode _nameFocus = new FocusNode();
+
+  bool _isNameInFocus = false;
+
   String _name = '';
   int _icon;
   Color _iconColor;
@@ -42,6 +46,14 @@ class _CategoryFormState extends State<CategoryForm> {
   void initState() {
     super.initState();
     _nameController.text = widget.category.name;
+
+    _nameFocus.addListener(_checkFocus);
+  }
+
+  void _checkFocus() {
+    setState(() {
+      _isNameInFocus = _nameFocus.hasFocus;
+    });
   }
 
   @override
@@ -75,6 +87,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         SizedBox(height: 10.0),
                         TextFormField(
                           controller: _nameController,
+                          focusNode: _nameFocus,
                           validator: (val) {
                             if (val.isEmpty) {
                               return 'Enter a name for this category.';
@@ -84,6 +97,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           decoration: clearInput(
                             labelText: 'Name',
                             enabled: _name.isNotEmpty,
+                            focused: _isNameInFocus,
                             onPressed: () {
                               setState(() => _name = '');
                               _nameController.safeClear();

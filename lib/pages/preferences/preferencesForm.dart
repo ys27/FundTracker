@@ -23,6 +23,10 @@ class _PreferencesFormState extends State<PreferencesForm> {
   final _formKey = GlobalKey<FormState>();
   final _limitController = TextEditingController();
 
+  final FocusNode _limitFocus = new FocusNode();
+
+  bool _isLimitInFocus = false;
+
   String _limit = '';
   String _limitDays = '';
   String _limitPeriods = '';
@@ -42,6 +46,14 @@ class _PreferencesFormState extends State<PreferencesForm> {
   void initState() {
     super.initState();
     retrieveNewData(widget.user.uid);
+
+    _limitFocus.addListener(_checkFocus);
+  }
+
+  void _checkFocus() {
+    setState(() {
+      _isLimitInFocus = _limitFocus.hasFocus;
+    });
   }
 
   @override
@@ -140,6 +152,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                     )
                   : TextFormField(
                       controller: _limitController,
+                      focusNode: _limitFocus,
                       autovalidate: _isLimitDaysEnabled
                           ? _limitDays.isNotEmpty
                           : _limitPeriods.isNotEmpty,
@@ -157,6 +170,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         labelText:
                             'Current Value: ${_isLimitDaysEnabled ? _prefs.limitDays : _prefs.limitPeriods}',
                         enabled: _limit.isNotEmpty,
+                        focused: _isLimitInFocus,
                         onPressed: () {
                           setState(() => _limit = '');
                           _limitController.safeClear();

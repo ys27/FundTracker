@@ -24,6 +24,12 @@ class _PeriodFormState extends State<PeriodForm> {
   final _nameController = TextEditingController();
   final _durationValueController = TextEditingController();
 
+  final FocusNode _nameFocus = new FocusNode();
+  final FocusNode _durationValueFocus = new FocusNode();
+
+  bool _isNameInFocus = false;
+  bool _isDurationValueInFocus = false;
+
   String _name = '';
   DateTime _startDate;
   String _durationValue = '';
@@ -39,6 +45,16 @@ class _PeriodFormState extends State<PeriodForm> {
     _durationValueController.text = widget.period.durationValue != null
         ? widget.period.durationValue.toString()
         : '';
+
+    _nameFocus.addListener(_checkFocus);
+    _durationValueFocus.addListener(_checkFocus);
+  }
+
+  void _checkFocus() {
+    setState(() {
+      _isNameInFocus = _nameFocus.hasFocus;
+      _isDurationValueInFocus = _durationValueFocus.hasFocus;
+    });
   }
 
   @override
@@ -81,6 +97,7 @@ class _PeriodFormState extends State<PeriodForm> {
                   SizedBox(height: 10.0),
                   TextFormField(
                     controller: _nameController,
+                    focusNode: _nameFocus,
                     autovalidate: _name.isNotEmpty,
                     validator: (val) {
                       if (val.isEmpty) {
@@ -91,6 +108,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     decoration: clearInput(
                       labelText: 'Name',
                       enabled: _name.isNotEmpty,
+                      focused: _isNameInFocus,
                       onPressed: () {
                         setState(() => _name = '');
                         _nameController.safeClear();
@@ -103,6 +121,7 @@ class _PeriodFormState extends State<PeriodForm> {
                   ),
                   TextFormField(
                     controller: _durationValueController,
+                    focusNode: _durationValueFocus,
                     autovalidate: _durationValue.isNotEmpty,
                     validator: (val) {
                       if (val.isEmpty) {
@@ -117,6 +136,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     decoration: clearInput(
                       labelText: 'Duration',
                       enabled: _durationValue.isNotEmpty,
+                      focused: _isDurationValueInFocus,
                       onPressed: () {
                         setState(() => _durationValue = '');
                         _durationValueController.safeClear();

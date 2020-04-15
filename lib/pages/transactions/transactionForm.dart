@@ -29,7 +29,18 @@ class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _frequencyValueController =
       TextEditingController();
-  final TextEditingController _occurrenceController = TextEditingController();
+  final TextEditingController _occurrenceValueController =
+      TextEditingController();
+
+  final FocusNode _payeeFocus = new FocusNode();
+  final FocusNode _amountFocus = new FocusNode();
+  final FocusNode _frequencyValueFocus = new FocusNode();
+  final FocusNode _occurrenceValueFocus = new FocusNode();
+
+  bool _isPayeeInFocus = false;
+  bool _isAmountInFocus = false;
+  bool _isFrequencyValueInFocus = false;
+  bool _isOccurrenceValueInFocus = false;
 
   DateTime _nextDate;
   DateTime _endDate;
@@ -59,11 +70,25 @@ class _TransactionFormState extends State<TransactionForm> {
             ? givenTxOrRecTx.frequencyValue.toString()
             : '')
         : '';
-    _occurrenceController.text = givenTxOrRecTx is RecurringTransaction
+    _occurrenceValueController.text = givenTxOrRecTx is RecurringTransaction
         ? (givenTxOrRecTx.occurrenceValue != null
             ? givenTxOrRecTx.occurrenceValue.toString()
             : '')
         : '';
+
+    _payeeFocus.addListener(_checkFocus);
+    _amountFocus.addListener(_checkFocus);
+    _frequencyValueFocus.addListener(_checkFocus);
+    _occurrenceValueFocus.addListener(_checkFocus);
+  }
+
+  void _checkFocus() {
+    setState(() {
+      _isPayeeInFocus = _payeeFocus.hasFocus;
+      _isAmountInFocus = _amountFocus.hasFocus;
+      _isFrequencyValueInFocus = _frequencyValueFocus.hasFocus;
+      _isOccurrenceValueInFocus = _occurrenceValueFocus.hasFocus;
+    });
   }
 
   @override
@@ -143,7 +168,7 @@ class _TransactionFormState extends State<TransactionForm> {
                             _occurrenceValue =
                                 givenTxOrRecTx.occurrenceValue ?? '';
                           });
-                          _occurrenceController.safeClear();
+                          _occurrenceValueController.safeClear();
                         },
                         openDate: DateTime.now(),
                         firstDate: getDateNotTime(DateTime.now()),
@@ -182,9 +207,11 @@ class _TransactionFormState extends State<TransactionForm> {
                   },
                   textFieldConfiguration: TextFieldConfiguration(
                     controller: _payeeController,
+                    focusNode: _payeeFocus,
                     decoration: clearInput(
                       labelText: 'Payee',
                       enabled: _payee.isNotEmpty,
+                      focused: _isPayeeInFocus,
                       onPressed: () {
                         setState(() => _payee = '');
                         _payeeController.safeClear();
@@ -268,6 +295,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
                 TextFormField(
                   controller: _amountController,
+                  focusNode: _amountFocus,
                   autovalidate: _amount != null,
                   validator: (val) {
                     if (val.isEmpty) {
@@ -281,6 +309,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   decoration: clearInput(
                     labelText: 'Amount',
                     enabled: _amount != null,
+                    focused: _isAmountInFocus,
                     onPressed: () {
                       setState(() => _amount = null);
                       _amountController.safeClear();
@@ -354,6 +383,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   ? <Widget>[
                       TextFormField(
                         controller: _frequencyValueController,
+                        focusNode: _frequencyValueFocus,
                         autovalidate: _frequencyValue.isNotEmpty,
                         validator: (val) {
                           if (val.isEmpty) {
@@ -368,6 +398,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         decoration: clearInput(
                           labelText: 'Frequency',
                           enabled: _frequencyValue.isNotEmpty,
+                          focused: _isFrequencyValueInFocus,
                           onPressed: () {
                             setState(() => _frequencyValue = '');
                             _frequencyValueController.safeClear();
@@ -394,7 +425,8 @@ class _TransactionFormState extends State<TransactionForm> {
                       ),
                       SizedBox(height: 10.0),
                       TextFormField(
-                        controller: _occurrenceController,
+                        controller: _occurrenceValueController,
+                        focusNode: _occurrenceValueFocus,
                         autovalidate: _occurrenceValue.isNotEmpty,
                         validator: (val) {
                           if (val.isEmpty) {
@@ -410,9 +442,10 @@ class _TransactionFormState extends State<TransactionForm> {
                         decoration: clearInput(
                           labelText: 'How many times? (optional)',
                           enabled: _occurrenceValue.isNotEmpty,
+                          focused: _isOccurrenceValueInFocus,
                           onPressed: () {
                             setState(() => _occurrenceValue = '');
-                            _occurrenceController.safeClear();
+                            _occurrenceValueController.safeClear();
                           },
                         ),
                         keyboardType: TextInputType.number,
@@ -508,7 +541,7 @@ class _TransactionFormState extends State<TransactionForm> {
                             _occurrenceValue =
                                 givenTxOrRecTx.occurrenceValue ?? '';
                           });
-                          _occurrenceController.safeClear();
+                          _occurrenceValueController.safeClear();
                         },
                       ),
                     ]
