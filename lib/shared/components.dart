@@ -272,7 +272,6 @@ class TabSelector extends StatelessWidget {
 InputDecoration clearInput({
   String labelText,
   bool enabled = true,
-  bool focused,
   Function onPressed,
   bool passwordToggle = false,
   Function onPasswordTogglePressed,
@@ -280,7 +279,7 @@ InputDecoration clearInput({
 }) {
   return InputDecoration(
     labelText: labelText,
-    suffixIcon: enabled && focused
+    suffixIcon: enabled
         ? Row(
             mainAxisSize: MainAxisSize.min,
             children: (passwordToggle

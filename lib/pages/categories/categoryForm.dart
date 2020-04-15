@@ -36,7 +36,7 @@ class _CategoryFormState extends State<CategoryForm> {
 
   bool _isNameInFocus = false;
 
-  String _name = '';
+  String _name;
   int _icon;
   Color _iconColor;
 
@@ -45,6 +45,10 @@ class _CategoryFormState extends State<CategoryForm> {
   @override
   void initState() {
     super.initState();
+    _name = widget.category.name ?? '';
+    _icon = widget.category.icon;
+    _iconColor = widget.category.iconColor;
+
     _nameController.text = widget.category.name;
 
     _nameFocus.addListener(_checkFocus);
@@ -96,8 +100,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           },
                           decoration: clearInput(
                             labelText: 'Name',
-                            enabled: _name.isNotEmpty,
-                            focused: _isNameInFocus,
+                            enabled: _name.isNotEmpty && _isNameInFocus,
                             onPressed: () {
                               setState(() => _name = '');
                               _nameController.safeClear();
@@ -116,7 +119,7 @@ class _CategoryFormState extends State<CategoryForm> {
                               Text('Icon'),
                               Icon(
                                 IconData(
-                                  _icon ?? widget.category.icon,
+                                  _icon,
                                   fontFamily: 'MaterialDesignIconFont',
                                   fontPackage: 'community_material_icon',
                                 ),
@@ -141,7 +144,7 @@ class _CategoryFormState extends State<CategoryForm> {
                               Text('Icon Color'),
                               Icon(
                                 CommunityMaterialIcons.circle,
-                                color: _iconColor ?? widget.category.iconColor,
+                                color: _iconColor,
                               ),
                             ],
                           ),
@@ -151,7 +154,7 @@ class _CategoryFormState extends State<CategoryForm> {
                               builder: (context) {
                                 return categoryColorPicker(
                                   context,
-                                  _iconColor ?? widget.category.iconColor,
+                                  _iconColor,
                                 );
                               },
                             );
@@ -161,11 +164,11 @@ class _CategoryFormState extends State<CategoryForm> {
                         SizedBox(height: 10.0),
                         Icon(
                           IconData(
-                            _icon ?? widget.category.icon,
+                            _icon,
                             fontFamily: 'MaterialDesignIconFont',
                             fontPackage: 'community_material_icon',
                           ),
-                          color: _iconColor ?? widget.category.iconColor,
+                          color: _iconColor,
                         ),
                         SizedBox(height: 10.0),
                         RaisedButton(
@@ -178,10 +181,9 @@ class _CategoryFormState extends State<CategoryForm> {
                             if (_formKey.currentState.validate()) {
                               Category category = Category(
                                 cid: widget.category.cid ?? Uuid().v1(),
-                                name: _name ?? widget.category.name,
-                                icon: _icon ?? widget.category.icon,
-                                iconColor:
-                                    _iconColor ?? widget.category.iconColor,
+                                name: _name,
+                                icon: _icon,
+                                iconColor: _iconColor,
                                 enabled: widget.category.enabled ?? true,
                                 unfiltered: widget.category.unfiltered ?? true,
                                 orderIndex: widget.category.orderIndex ??

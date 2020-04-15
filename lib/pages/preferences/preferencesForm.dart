@@ -169,8 +169,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       decoration: clearInput(
                         labelText:
                             'Current Value: ${_isLimitDaysEnabled ? _prefs.limitDays : _prefs.limitPeriods}',
-                        enabled: _limit.isNotEmpty,
-                        focused: _isLimitInFocus,
+                        enabled: _limit.isNotEmpty && _isLimitInFocus,
                         onPressed: () {
                           setState(() => _limit = '');
                           _limitController.safeClear();

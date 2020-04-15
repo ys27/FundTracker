@@ -44,15 +44,15 @@ class _TransactionFormState extends State<TransactionForm> {
 
   DateTime _nextDate;
   DateTime _endDate;
-  String _occurrenceValue = '';
-  String _frequencyValue = '';
+  String _occurrenceValue;
+  String _frequencyValue;
   DateUnit _frequencyUnit;
 
   DateTime _date;
 
   bool _isExpense;
-  String _payee = '';
-  double _amount;
+  String _payee;
+  String _amount;
   String _cid;
 
   bool isLoading = false;
@@ -60,7 +60,26 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
+
     final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
+
+    if (givenTxOrRecTx is RecurringTransaction) {
+      _nextDate = givenTxOrRecTx.nextDate;
+      _endDate = givenTxOrRecTx.endDate;
+      _occurrenceValue = givenTxOrRecTx.occurrenceValue ?? '';
+      _frequencyValue = givenTxOrRecTx.frequencyValue ?? '';
+      _frequencyUnit = givenTxOrRecTx.frequencyUnit;
+    }
+    if (givenTxOrRecTx is Transaction) {
+      _date = givenTxOrRecTx.date;
+    }
+
+    _isExpense = givenTxOrRecTx.isExpense;
+    _payee = givenTxOrRecTx.payee ?? '';
+    _amount =
+        givenTxOrRecTx.amount != null ? givenTxOrRecTx.amount.toString() : '';
+    _cid = givenTxOrRecTx.cid;
+
     _payeeController.text = givenTxOrRecTx.payee ?? '';
     _amountController.text = givenTxOrRecTx.amount != null
         ? givenTxOrRecTx.amount.toStringAsFixed(2)
@@ -121,14 +140,12 @@ class _TransactionFormState extends State<TransactionForm> {
                   context,
                   tabs: [
                     {
-                      'enabled': _isExpense != null
-                          ? !_isExpense
-                          : !givenTxOrRecTx.isExpense,
+                      'enabled': !_isExpense,
                       'title': 'Income',
                       'onPressed': () => setState(() => _isExpense = false),
                     },
                     {
-                      'enabled': _isExpense ?? givenTxOrRecTx.isExpense,
+                      'enabled': _isExpense,
                       'title': 'Expense',
                       'onPressed': () => setState(() => _isExpense = true),
                     },
@@ -139,10 +156,8 @@ class _TransactionFormState extends State<TransactionForm> {
                   context,
                   leading: isRecurringTxMode
                       ? 'Next Date:                         '
-                      : getDateStr(_date ?? givenTxOrRecTx.date),
-                  trailing: isRecurringTxMode
-                      ? '${getDateStr(_nextDate ?? givenTxOrRecTx.nextDate)}'
-                      : '',
+                      : getDateStr(_date),
+                  trailing: isRecurringTxMode ? '${getDateStr(_nextDate)}' : '',
                   updateDateState: (date) => setState(() {
                     if (isRecurringTxMode) {
                       _nextDate = getDateNotTime(date);
@@ -160,8 +175,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       DatePicker(
                         context,
                         leading: 'End Date:                          ',
-                        trailing:
-                            '${getDateStr(_endDate ?? givenTxOrRecTx.endDate)}',
+                        trailing: '${getDateStr(_endDate)}',
                         updateDateState: (date) {
                           setState(() {
                             _endDate = getDateNotTime(date);
@@ -177,11 +191,10 @@ class _TransactionFormState extends State<TransactionForm> {
                   : <Widget>[
                       TimePicker(
                         context,
-                        leading: getTimeStr(_date ?? givenTxOrRecTx.date),
+                        leading: getTimeStr(_date),
                         updateTimeState: (time) => setState(
                           () {
-                            DateTime oldDateTime =
-                                (_date ?? givenTxOrRecTx.date);
+                            DateTime oldDateTime = _date;
                             DateTime newDateTime = DateTime(
                               oldDateTime.year,
                               oldDateTime.month,
@@ -210,8 +223,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     focusNode: _payeeFocus,
                     decoration: clearInput(
                       labelText: 'Payee',
-                      enabled: _payee.isNotEmpty,
-                      focused: _isPayeeInFocus,
+                      enabled: _payee.isNotEmpty && _isPayeeInFocus,
                       onPressed: () {
                         setState(() => _payee = '');
                         _payeeController.safeClear();
@@ -296,7 +308,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 TextFormField(
                   controller: _amountController,
                   focusNode: _amountFocus,
-                  autovalidate: _amount != null,
+                  autovalidate: _amount.isNotEmpty,
                   validator: (val) {
                     if (val.isEmpty) {
                       return 'Please enter an amount.';
@@ -308,8 +320,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   },
                   decoration: clearInput(
                     labelText: 'Amount',
-                    enabled: _amount != null,
-                    focused: _isAmountInFocus,
+                    enabled: _amount.isNotEmpty && _isAmountInFocus,
                     onPressed: () {
                       setState(() => _amount = null);
                       _amountController.safeClear();
@@ -318,7 +329,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   keyboardType: TextInputType.number,
                   onChanged: (val) {
                     setState(() {
-                      _amount = val == '' ? null : double.parse(val);
+                      _amount = val;
                     });
                   },
                 ),
@@ -397,8 +408,8 @@ class _TransactionFormState extends State<TransactionForm> {
                         },
                         decoration: clearInput(
                           labelText: 'Frequency',
-                          enabled: _frequencyValue.isNotEmpty,
-                          focused: _isFrequencyValueInFocus,
+                          enabled: _frequencyValue.isNotEmpty &&
+                              _isFrequencyValueInFocus,
                           onPressed: () {
                             setState(() => _frequencyValue = '');
                             _frequencyValueController.safeClear();
@@ -420,7 +431,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         onChanged: (val) {
                           setState(() => _frequencyUnit = val);
                         },
-                        value: _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
+                        value: _frequencyUnit,
                         isExpanded: true,
                       ),
                       SizedBox(height: 10.0),
@@ -441,8 +452,8 @@ class _TransactionFormState extends State<TransactionForm> {
                         },
                         decoration: clearInput(
                           labelText: 'How many times? (optional)',
-                          enabled: _occurrenceValue.isNotEmpty,
-                          focused: _isOccurrenceValueInFocus,
+                          enabled: _occurrenceValue.isNotEmpty &&
+                              _isOccurrenceValueInFocus,
                           onPressed: () {
                             setState(() => _occurrenceValue = '');
                             _occurrenceValueController.safeClear();
@@ -451,7 +462,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
                           setState(() {
-                            _endDate = givenTxOrRecTx.endDate;
+                            _endDate = null;
                             _occurrenceValue = val;
                           });
                         },
@@ -473,19 +484,14 @@ class _TransactionFormState extends State<TransactionForm> {
                       if (isRecurringTxMode) {
                         RecurringTransaction recTx = RecurringTransaction(
                           rid: givenTxOrRecTx.rid ?? Uuid().v1(),
-                          nextDate: _nextDate ?? givenTxOrRecTx.nextDate,
-                          endDate: _endDate ?? givenTxOrRecTx.endDate,
-                          occurrenceValue: _occurrenceValue != ''
-                              ? int.parse(_occurrenceValue)
-                              : givenTxOrRecTx.occurrenceValue,
-                          frequencyValue: _frequencyValue != ''
-                              ? int.parse(_frequencyValue)
-                              : givenTxOrRecTx.frequencyValue,
-                          frequencyUnit:
-                              _frequencyUnit ?? givenTxOrRecTx.frequencyUnit,
-                          isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
-                          payee: _payee ?? givenTxOrRecTx.payee,
-                          amount: _amount ?? givenTxOrRecTx.amount,
+                          nextDate: _nextDate,
+                          endDate: _endDate,
+                          occurrenceValue: int.parse(_occurrenceValue),
+                          frequencyValue: int.parse(_frequencyValue),
+                          frequencyUnit: _frequencyUnit,
+                          isExpense: _isExpense,
+                          payee: _payee,
+                          amount: double.parse(_amount),
                           cid: _cid ??
                               (_correspondingCategory != null
                                   ? _correspondingCategory.cid
@@ -503,10 +509,10 @@ class _TransactionFormState extends State<TransactionForm> {
                       } else {
                         Transaction tx = Transaction(
                           tid: givenTxOrRecTx.tid ?? Uuid().v1(),
-                          date: _date ?? givenTxOrRecTx.date,
-                          isExpense: _isExpense ?? givenTxOrRecTx.isExpense,
-                          payee: _payee ?? givenTxOrRecTx.payee,
-                          amount: _amount ?? givenTxOrRecTx.amount,
+                          date: _date,
+                          isExpense: _isExpense,
+                          payee: _payee,
+                          amount: double.parse(_amount),
                           cid: _cid ??
                               (_correspondingCategory != null
                                   ? _correspondingCategory.cid

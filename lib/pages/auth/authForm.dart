@@ -109,8 +109,7 @@ class _AuthFormState extends State<AuthForm> {
                     validator: emailValidator,
                     decoration: clearInput(
                       labelText: 'Email',
-                      enabled: _email.isNotEmpty,
-                      focused: _isEmailInFocus,
+                      enabled: _email.isNotEmpty && _isEmailInFocus,
                       onPressed: () {
                         setState(() => _email = '');
                         _emailController.safeClear();
@@ -129,8 +128,7 @@ class _AuthFormState extends State<AuthForm> {
                     obscureText: _obscurePassword,
                     decoration: clearInput(
                       labelText: 'Password',
-                      enabled: _password.isNotEmpty,
-                      focused: _isPasswordInFocus,
+                      enabled: _password.isNotEmpty && _isPasswordInFocus,
                       onPressed: () {
                         setState(() => _password = '');
                         _passwordController.safeClear();
@@ -153,8 +151,7 @@ class _AuthFormState extends State<AuthForm> {
                           obscureText: _obscurePasswordConfirm,
                           decoration: clearInput(
                             labelText: 'Confirm Password',
-                            enabled: _passwordConfirm.isNotEmpty,
-                            focused: _isPasswordConfirmInFocus,
+                            enabled: _passwordConfirm.isNotEmpty && _isPasswordConfirmInFocus,
                             onPressed: () {
                               setState(() => _passwordConfirm = '');
                               _passwordConfirmController.safeClear();
@@ -180,8 +177,7 @@ class _AuthFormState extends State<AuthForm> {
                           textCapitalization: TextCapitalization.words,
                           decoration: clearInput(
                             labelText: 'Full Name',
-                            enabled: _fullname.isNotEmpty,
-                            focused: _isFullnameInFocus,
+                            enabled: _fullname.isNotEmpty && _isFullnameInFocus,
                             onPressed: () {
                               setState(() => _fullname = '');
                               _fullnameController.safeClear();

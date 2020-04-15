@@ -21,7 +21,7 @@ class Transaction {
     tid = null;
     date = DateTime.now();
     isExpense = true;
-    payee = '';
+    payee = null;
     amount = null;
     cid = null;
     uid = null;

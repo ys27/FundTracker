@@ -30,9 +30,9 @@ class _PeriodFormState extends State<PeriodForm> {
   bool _isNameInFocus = false;
   bool _isDurationValueInFocus = false;
 
-  String _name = '';
+  String _name;
   DateTime _startDate;
-  String _durationValue = '';
+  String _durationValue;
   DateUnit _durationUnit;
   bool _isDefault;
 
@@ -41,6 +41,16 @@ class _PeriodFormState extends State<PeriodForm> {
   @override
   void initState() {
     super.initState();
+
+    _name = widget.period.name ?? '';
+    _startDate = widget.period.startDate;
+    _durationValue = widget.period.durationValue != null
+        ? widget.period.durationValue.toString()
+        : '';
+    _durationUnit = widget.period.durationUnit;
+    _isDefault =
+        widget.period.isDefault != null ? widget.period.isDefault : false;
+
     _nameController.text = widget.period.name;
     _durationValueController.text = widget.period.durationValue != null
         ? widget.period.durationValue.toString()
@@ -88,8 +98,7 @@ class _PeriodFormState extends State<PeriodForm> {
                   DatePicker(
                     context,
                     leading: 'Start Date:                         ',
-                    trailing:
-                        '${getDateStr(_startDate ?? widget.period.startDate)}',
+                    trailing: '${getDateStr(_startDate)}',
                     updateDateState: (date) =>
                         setState(() => _startDate = date),
                     openDate: DateTime.now(),
@@ -107,8 +116,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     },
                     decoration: clearInput(
                       labelText: 'Name',
-                      enabled: _name.isNotEmpty,
-                      focused: _isNameInFocus,
+                      enabled: _name.isNotEmpty && _isNameInFocus,
                       onPressed: () {
                         setState(() => _name = '');
                         _nameController.safeClear();
@@ -135,8 +143,8 @@ class _PeriodFormState extends State<PeriodForm> {
                     },
                     decoration: clearInput(
                       labelText: 'Duration',
-                      enabled: _durationValue.isNotEmpty,
-                      focused: _isDurationValueInFocus,
+                      enabled:
+                          _durationValue.isNotEmpty && _isDurationValueInFocus,
                       onPressed: () {
                         setState(() => _durationValue = '');
                         _durationValueController.safeClear();
@@ -158,13 +166,13 @@ class _PeriodFormState extends State<PeriodForm> {
                     onChanged: (val) {
                       setState(() => _durationUnit = val);
                     },
-                    value: _durationUnit ?? widget.period.durationUnit,
+                    value: _durationUnit,
                     isExpanded: true,
                   ),
                   SizedBox(height: 10.0),
                   SwitchListTile(
                       title: Text('Set to default (allowed: 1)'),
-                      value: _isDefault ?? widget.period.isDefault,
+                      value: _isDefault,
                       onChanged: (val) {
                         setState(() => _isDefault = val);
                       }),
@@ -179,14 +187,13 @@ class _PeriodFormState extends State<PeriodForm> {
                       if (_formKey.currentState.validate()) {
                         Period period = Period(
                           pid: widget.period.pid ?? Uuid().v1(),
-                          name: _name ?? widget.period.name,
-                          startDate: _startDate ?? widget.period.startDate,
+                          name: _name,
+                          startDate: _startDate,
                           durationValue: _durationValue != ''
                               ? int.parse(_durationValue)
                               : widget.period.durationValue,
-                          durationUnit:
-                              _durationUnit ?? widget.period.durationUnit,
-                          isDefault: _isDefault ?? widget.period.isDefault,
+                          durationUnit: _durationUnit,
+                          isDefault: _isDefault,
                           uid: _user.uid,
                         );
                         setState(() => isLoading = true);
