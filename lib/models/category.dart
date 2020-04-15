@@ -97,7 +97,7 @@ class Category {
         this.uid == category.uid);
   }
 
-  bool isOthers() {
+  bool isNamedOthers() {
     return (this.name == 'Others' &&
         this.icon == 62229 &&
         this.iconColor == Color(0xff000000) &&

@@ -24,7 +24,10 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _typeAheadController = TextEditingController();
+  final TextEditingController _payeeController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _frequencyValueController =
+      TextEditingController();
 
   DateTime _nextDate;
   String _frequencyValue = '';
@@ -33,7 +36,7 @@ class _TransactionFormState extends State<TransactionForm> {
   DateTime _date;
 
   bool _isExpense;
-  String _payee;
+  String _payee = '';
   double _amount;
   String _cid;
 
@@ -43,7 +46,15 @@ class _TransactionFormState extends State<TransactionForm> {
   void initState() {
     super.initState();
     final dynamic currentTxOrRecTx = widget.getTxOrRecTx();
-    _typeAheadController.text = currentTxOrRecTx.payee;
+    _payeeController.text = currentTxOrRecTx.payee ?? '';
+    _amountController.text = currentTxOrRecTx.amount != null
+        ? currentTxOrRecTx.amount.toStringAsFixed(2)
+        : null;
+    _frequencyValueController.text = currentTxOrRecTx is RecurringTransaction
+        ? (currentTxOrRecTx.frequencyValue != null
+            ? currentTxOrRecTx.frequencyValue.toString()
+            : '')
+        : '';
   }
 
   @override
@@ -73,25 +84,20 @@ class _TransactionFormState extends State<TransactionForm> {
           child: ListView(
             children: <Widget>[
                   SizedBox(height: 10.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      isExpenseSelector(
-                        context,
-                        _isExpense != null
-                            ? !_isExpense
-                            : !currentTxOrRecTx.isExpense,
-                        'Income',
-                        () => setState(() => _isExpense = false),
-                      ),
-                      isExpenseSelector(
-                        context,
-                        _isExpense ?? currentTxOrRecTx.isExpense,
-                        'Expense',
-                        () => setState(() => _isExpense = true),
-                      ),
-                    ],
-                  ),
+                  tabSelector(context, [
+                    {
+                      'enabled': _isExpense != null
+                          ? !_isExpense
+                          : !currentTxOrRecTx.isExpense,
+                      'title': 'Income',
+                      'onPressed': () => setState(() => _isExpense = false),
+                    },
+                    {
+                      'enabled': _isExpense ?? currentTxOrRecTx.isExpense,
+                      'title': 'Expense',
+                      'onPressed': () => setState(() => _isExpense = true),
+                    },
+                  ]),
                   SizedBox(height: 10.0),
                   datePicker(
                     context,
@@ -141,7 +147,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 <Widget>[
                   SizedBox(height: 10.0),
                   TypeAheadFormField(
-                    autovalidate: _payee != null,
+                    autovalidate: _payee.isNotEmpty,
                     validator: (val) {
                       if (val.isEmpty) {
                         return 'Enter a payee or a note.';
@@ -151,9 +157,14 @@ class _TransactionFormState extends State<TransactionForm> {
                       return null;
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                      controller: _typeAheadController,
-                      decoration: InputDecoration(
+                      controller: _payeeController,
+                      decoration: clearInput(
                         labelText: 'Payee',
+                        enabled: _payee.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _payee = '');
+                          _payeeController.safeClear();
+                        },
                       ),
                       textCapitalization: TextCapitalization.words,
                       onChanged: (val) {
@@ -226,7 +237,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       final String suggestionPayee = splitSuggestion[0];
                       final String suggestionCid = splitSuggestion[1];
 
-                      _typeAheadController.text = suggestionPayee;
+                      _payeeController.text = suggestionPayee;
                       setState(() {
                         _payee = suggestionPayee;
                         _cid = suggestionCid;
@@ -235,9 +246,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   ),
                   SizedBox(height: 10.0),
                   TextFormField(
-                    initialValue: currentTxOrRecTx.amount != null
-                        ? currentTxOrRecTx.amount.toStringAsFixed(2)
-                        : '',
+                    controller: _amountController,
                     autovalidate: _amount != null,
                     validator: (val) {
                       if (val.isEmpty) {
@@ -249,13 +258,18 @@ class _TransactionFormState extends State<TransactionForm> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
+                    decoration: clearInput(
                       labelText: 'Amount',
+                      enabled: _amount != null,
+                      onPressed: () {
+                        setState(() => _amount = null);
+                        _amountController.safeClear();
+                      },
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (val) {
                       setState(() {
-                        _amount = val == '' ? 0 : double.parse(val);
+                        _amount = val == '' ? null : double.parse(val);
                       });
                     },
                   ),
@@ -325,9 +339,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     ? <Widget>[
                         SizedBox(height: 10.0),
                         TextFormField(
-                          initialValue: currentTxOrRecTx.frequencyValue != null
-                              ? currentTxOrRecTx.frequencyValue.toString()
-                              : '',
+                          controller: _frequencyValueController,
                           autovalidate: _frequencyValue.isNotEmpty,
                           validator: (val) {
                             if (val.isEmpty) {
@@ -339,8 +351,13 @@ class _TransactionFormState extends State<TransactionForm> {
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
+                          decoration: clearInput(
                             labelText: 'Frequency',
+                            enabled: _frequencyValue.isNotEmpty,
+                            onPressed: () {
+                              setState(() => _frequencyValue = '');
+                              _frequencyValueController.safeClear();
+                            },
                           ),
                           keyboardType: TextInputType.number,
                           onChanged: (val) {
@@ -462,5 +479,13 @@ class _TransactionFormState extends State<TransactionForm> {
     return Text(isEditMode
         ? 'Edit ${recurring}Transaction'
         : 'Add ${recurring}Transaction');
+  }
+}
+
+extension on TextEditingController {
+  void safeClear() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      this.clear();
+    });
   }
 }

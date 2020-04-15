@@ -184,78 +184,35 @@ class _StatisticsState extends State<Statistics> {
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _showAllTimeStats
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'All-Time',
-                        style: TextStyle(
-                            fontWeight: _showAllTimeStats
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: _showAllTimeStats
-                                ? Colors.white
-                                : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
+              tabSelector(context, [
+                {
+                  'enabled': _showAllTimeStats,
+                  'title': 'All-Time',
+                  'onPressed': () => setState(() {
                         _showAllTimeStats = true;
-                        _showCustomStats = false;
                         _showPeriodStats = false;
+                        _showCustomStats = false;
                       }),
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _showPeriodStats
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Period',
-                        style: TextStyle(
-                            fontWeight: _showPeriodStats
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color:
-                                _showPeriodStats ? Colors.white : Colors.black),
-                      ),
-                      onPressed: () => setState(() {
+                },
+                {
+                  'enabled': _showPeriodStats,
+                  'title': 'Period',
+                  'onPressed': () => setState(() {
+                        _showAllTimeStats = false;
                         _showPeriodStats = true;
-                        _showAllTimeStats = false;
                         _showCustomStats = false;
                       }),
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(15.0),
-                      color: _showCustomStats
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[100],
-                      child: Text(
-                        'Custom',
-                        style: TextStyle(
-                          fontWeight: _showCustomStats
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: _showCustomStats ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      onPressed: () => setState(() {
-                        _showCustomStats = true;
+                },
+                {
+                  'enabled': _showCustomStats,
+                  'title': 'Custom',
+                  'onPressed': () => setState(() {
                         _showAllTimeStats = false;
                         _showPeriodStats = false;
+                        _showCustomStats = true;
                       }),
-                    ),
-                  ),
-                ],
-              ),
+                },
+              ]),
               _limitCustomizer,
             ] +
             (_showStatistics

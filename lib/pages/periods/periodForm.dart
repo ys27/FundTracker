@@ -21,14 +21,23 @@ class PeriodForm extends StatefulWidget {
 
 class _PeriodFormState extends State<PeriodForm> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _durationValueController = TextEditingController();
 
-  String _name;
+  String _name = '';
   DateTime _startDate;
   String _durationValue = '';
   DateUnit _durationUnit;
   bool _isDefault;
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.period.name;
+    _durationValueController.text = widget.period.durationValue.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +79,21 @@ class _PeriodFormState extends State<PeriodForm> {
                     ),
                     SizedBox(height: 10.0),
                     TextFormField(
-                      initialValue: widget.period.name,
+                      controller: _nameController,
+                      autovalidate: _name.isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter a name for this period.';
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
+                      decoration: clearInput(
                         labelText: 'Name',
+                        enabled: _name.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _name = '');
+                          _nameController.safeClear();
+                        },
                       ),
                       textCapitalization: TextCapitalization.words,
                       onChanged: (val) {
@@ -87,9 +102,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     ),
                     SizedBox(height: 10.0),
                     TextFormField(
-                      initialValue: widget.period.durationValue != null
-                          ? widget.period.durationValue.toString()
-                          : '',
+                      controller: _durationValueController,
                       autovalidate: _durationValue.isNotEmpty,
                       validator: (val) {
                         if (val.isEmpty) {
@@ -101,8 +114,13 @@ class _PeriodFormState extends State<PeriodForm> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
+                      decoration: clearInput(
                         labelText: 'Duration',
+                        enabled: _durationValue.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _durationValue = '');
+                          _durationValueController.safeClear();
+                        },
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
@@ -175,5 +193,13 @@ class _PeriodFormState extends State<PeriodForm> {
 
   Widget title(bool isEditMode) {
     return Text(isEditMode ? 'Edit Period' : 'Add Period');
+  }
+}
+
+extension on TextEditingController {
+  void safeClear() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      this.clear();
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/categories/categoryForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:provider/provider.dart';
@@ -44,11 +45,11 @@ class _CategoryTileState extends State<CategoryTile> {
             ),
             Checkbox(
               value: widget.category.enabled,
-              activeColor: (widget.category.isOthers()
+              activeColor: (widget.category.isNamedOthers()
                   ? Colors.grey
                   : Theme.of(context).primaryColor),
               onChanged: (val) async {
-                if (!widget.category.isOthers()) {
+                if (!widget.category.isNamedOthers()) {
                   setState(() => widget.category.enabled = val);
                   await DatabaseWrapper(_user.uid)
                       .updateCategories([widget.category.setEnabled(val)]);
@@ -58,14 +59,19 @@ class _CategoryTileState extends State<CategoryTile> {
           ],
         ),
         onTap: () async {
-          if (!widget.category.isOthers()) {
+          if (!widget.category.isNamedOthers()) {
+            List<Transaction> transactions =
+                await DatabaseWrapper(_user.uid).getTransactions();
+            bool _isCategoryInUse =
+                transactions.any((tx) => tx.cid == widget.category.cid);
             await showDialog(
               context: context,
               builder: (context) {
                 return CategoryForm(
-                  widget.category,
-                  widget.numCategories,
+                  category: widget.category,
+                  numExistingCategories: widget.numCategories,
                   uid: _user.uid,
+                  isUsed: _isCategoryInUse,
                 );
               },
             );

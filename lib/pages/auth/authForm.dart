@@ -1,4 +1,3 @@
-import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/services/auth.dart';
@@ -22,6 +21,11 @@ class _AuthFormState extends State<AuthForm> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _passwordConfirmController = TextEditingController();
+  final _fullnameController = TextEditingController();
+
   String _email = '';
   String _password = '';
   String _passwordConfirm = '';
@@ -41,22 +45,7 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   Widget authToggleText(bool isRegister) {
-    return Text(isRegister ? 'Back' : 'Register');
-  }
-
-  InputDecoration showPasswordToggle(String label, bool isVisible) {
-    return InputDecoration(
-      labelText: label,
-      suffix: ButtonTheme(
-        minWidth: 10.0,
-        child: IconButton(
-          icon: _obscurePassword
-              ? Icon(CommunityMaterialIcons.eye_off)
-              : Icon(CommunityMaterialIcons.eye),
-          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-        ),
-      ),
-    );
+    return Text(isRegister ? 'Sign In' : 'Register');
   }
 
   @override
@@ -87,34 +76,64 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     SizedBox(height: 10.0),
                     TextFormField(
-                      initialValue: _email,
+                      controller: _emailController,
                       autovalidate: _email.isNotEmpty,
                       validator: emailValidator,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: clearInput(
+                        labelText: 'Email',
+                        enabled: _email.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _email = '');
+                          _emailController.safeClear();
+                        },
+                      ),
                       keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) => setState(() => _email = val),
+                      onChanged: (val) {
+                        setState(() => _email = val);
+                      },
                     ),
                     SizedBox(height: 10.0),
                     TextFormField(
-                      initialValue: _password,
+                      controller: _passwordController,
                       autovalidate: _password.isNotEmpty,
                       validator: passwordValidator,
                       obscureText: _obscurePassword,
-                      decoration:
-                          showPasswordToggle('Password', _obscurePassword),
+                      decoration: clearInput(
+                        labelText: 'Password',
+                        enabled: _password.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _password = '');
+                          _passwordController.safeClear();
+                        },
+                        passwordToggle: true,
+                        onPasswordTogglePressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        passwordToggleVisible: _obscurePassword,
+                      ),
                       onChanged: (val) => setState(() => _password = val),
                     ),
                     isRegister ? SizedBox(height: 10.0) : Container(),
                     isRegister
                         ? TextFormField(
+                            controller: _passwordConfirmController,
                             autovalidate: _passwordConfirm.isNotEmpty,
-                            validator: (val) {
-                              return passwordConfirmValidator(val, _password);
-                            },
+                            validator: (val) =>
+                                passwordConfirmValidator(val, _password),
                             obscureText: _obscurePasswordConfirm,
-                            decoration: showPasswordToggle(
-                              'Confirm Password',
-                              _obscurePasswordConfirm,
+                            decoration: clearInput(
+                              labelText: 'Confirm Password',
+                              enabled: _passwordConfirm.isNotEmpty,
+                              onPressed: () {
+                                setState(() => _passwordConfirm = '');
+                                _passwordConfirmController.safeClear();
+                              },
+                              passwordToggle: true,
+                              onPasswordTogglePressed: () => setState(
+                                () => _obscurePasswordConfirm =
+                                    !_obscurePasswordConfirm,
+                              ),
+                              passwordToggleVisible: _obscurePasswordConfirm,
                             ),
                             onChanged: (val) {
                               setState(() => _passwordConfirm = val);
@@ -124,10 +143,18 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(height: 10.0),
                     isRegister
                         ? TextFormField(
+                            controller: _fullnameController,
                             autovalidate: _fullname.isNotEmpty,
                             validator: fullNameValidator,
                             textCapitalization: TextCapitalization.words,
-                            decoration: InputDecoration(labelText: 'Full Name'),
+                            decoration: clearInput(
+                              labelText: 'Full Name',
+                              enabled: _fullname.isNotEmpty,
+                              onPressed: () {
+                                setState(() => _fullname = '');
+                                _fullnameController.safeClear();
+                              },
+                            ),
                             onChanged: (val) => setState(() => _fullname = val),
                           )
                         : Container(),
@@ -181,7 +208,7 @@ class _AuthFormState extends State<AuthForm> {
 
 String emailValidator(val) {
   if (val.isEmpty) {
-    return 'An email is required.';
+    return 'Email is required.';
   }
   if (!RegExp(
           r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
@@ -213,4 +240,12 @@ String fullNameValidator(val) {
     return 'This is a required field.';
   }
   return null;
+}
+
+extension on TextEditingController {
+  void safeClear() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      this.clear();
+    });
+  }
 }

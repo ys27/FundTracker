@@ -118,8 +118,8 @@ class _CategoriesListState extends State<CategoriesList> {
             floatingActionButton: addFloatingButton(
               context,
               CategoryForm(
-                Category.empty(_categories.length),
-                _categories.length,
+                category: Category.empty(_categories.length),
+                numExistingCategories: _categories.length,
               ),
               () => retrieveNewData(widget.user.uid),
             ),

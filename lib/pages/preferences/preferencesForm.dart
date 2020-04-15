@@ -21,7 +21,9 @@ class PreferencesForm extends StatefulWidget {
 
 class _PreferencesFormState extends State<PreferencesForm> {
   final _formKey = GlobalKey<FormState>();
+  final _limitController = TextEditingController();
 
+  String _limit = '';
   String _limitDays = '';
   String _limitPeriods = '';
   DateTime _limitByDate;
@@ -134,6 +136,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
                       ],
                     )
                   : TextFormField(
+                      controller: _limitController,
                       autovalidate: _isLimitDaysEnabled
                           ? _limitDays.isNotEmpty
                           : _limitPeriods.isNotEmpty,
@@ -147,14 +150,20 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
+                      decoration: clearInput(
                         labelText:
                             'Current Value: ${_isLimitDaysEnabled ? _prefs.limitDays : _prefs.limitPeriods}',
+                        enabled: _limit.isNotEmpty,
+                        onPressed: () {
+                          setState(() => _limit = '');
+                          _limitController.safeClear();
+                        },
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (val) {
                         setState(() {
                           _isModified = true;
+                          _limit = val;
                           if (_isLimitDaysEnabled) {
                             _limitDays = val;
                           } else {
@@ -312,6 +321,14 @@ class _PreferencesFormState extends State<PreferencesForm> {
     Preferences prefs = await DatabaseWrapper(uid).getPreferences();
     setState(() {
       _prefs = prefs;
+    });
+  }
+}
+
+extension on TextEditingController {
+  void safeClear() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      this.clear();
     });
   }
 }

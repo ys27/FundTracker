@@ -182,28 +182,6 @@ Widget addFloatingButton(BuildContext context, Widget page, Function callback) {
   );
 }
 
-Widget isExpenseSelector(
-  BuildContext context,
-  bool isExpense,
-  String title,
-  Function callback,
-) {
-  return Expanded(
-    child: FlatButton(
-      padding: EdgeInsets.all(15.0),
-      color: isExpense ? Theme.of(context).primaryColor : Colors.grey[100],
-      child: Text(
-        title,
-        style: TextStyle(
-          fontWeight: isExpense ? FontWeight.bold : FontWeight.normal,
-          color: isExpense ? Colors.white : Colors.black,
-        ),
-      ),
-      onPressed: callback,
-    ),
-  );
-}
-
 Widget tabSelector(BuildContext context, List<Map<String, dynamic>> tabs) {
   return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -225,4 +203,40 @@ Widget tabSelector(BuildContext context, List<Map<String, dynamic>> tabs) {
           ),
         );
       }).toList());
+}
+
+InputDecoration clearInput({
+  String labelText,
+  bool enabled = true,
+  Function onPressed,
+  bool passwordToggle = false,
+  Function onPasswordTogglePressed,
+  bool passwordToggleVisible = false,
+}) {
+  return InputDecoration(
+    labelText: labelText,
+    suffixIcon: enabled
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: (passwordToggle
+                    ? <Widget>[
+                        ButtonTheme(
+                          child: IconButton(
+                            icon: passwordToggleVisible
+                                ? Icon(CommunityMaterialIcons.eye_off)
+                                : Icon(CommunityMaterialIcons.eye),
+                            onPressed: onPasswordTogglePressed,
+                          ),
+                        )
+                      ]
+                    : <Widget>[]) +
+                <Widget>[
+                  IconButton(
+                    icon: Icon(CommunityMaterialIcons.close),
+                    onPressed: onPressed,
+                  ),
+                ],
+          )
+        : null,
+  );
 }

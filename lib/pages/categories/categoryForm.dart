@@ -14,9 +14,15 @@ import 'package:uuid/uuid.dart';
 class CategoryForm extends StatefulWidget {
   final Category category;
   final int numExistingCategories;
+  final bool isUsed;
   final String uid;
 
-  CategoryForm(this.category, this.numExistingCategories, {this.uid});
+  CategoryForm({
+    this.category,
+    this.numExistingCategories,
+    this.isUsed = false,
+    this.uid,
+  });
 
   @override
   _CategoryFormState createState() => _CategoryFormState();
@@ -24,23 +30,18 @@ class CategoryForm extends StatefulWidget {
 
 class _CategoryFormState extends State<CategoryForm> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
 
-  String _name;
+  String _name = '';
   int _icon;
   Color _iconColor;
-  bool _isCategoryInUse;
 
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.uid != null) {
-      DatabaseWrapper(widget.uid).getTransactions().then((transactions) {
-        setState(() => _isCategoryInUse =
-            transactions.any((tx) => tx.cid == widget.category.cid));
-      });
-    }
+    _nameController.text = widget.category.name;
   }
 
   @override
@@ -48,12 +49,11 @@ class _CategoryFormState extends State<CategoryForm> {
     final _user = Provider.of<FirebaseUser>(context);
     final isEditMode =
         !widget.category.equalTo(Category.empty(widget.numExistingCategories));
-
-    return _isCategoryInUse != null
+    return widget.isUsed != null
         ? Scaffold(
             appBar: AppBar(
               title: title(isEditMode),
-              actions: isEditMode && !_isCategoryInUse
+              actions: isEditMode && !widget.isUsed
                   ? <Widget>[
                       deleteIcon(
                         context,
@@ -75,15 +75,20 @@ class _CategoryFormState extends State<CategoryForm> {
                         children: <Widget>[
                           SizedBox(height: 10.0),
                           TextFormField(
-                            initialValue: widget.category.name,
+                            controller: _nameController,
                             validator: (val) {
                               if (val.isEmpty) {
                                 return 'Enter a name for this category.';
                               }
                               return null;
                             },
-                            decoration: InputDecoration(
+                            decoration: clearInput(
                               labelText: 'Name',
+                              enabled: _name.isNotEmpty,
+                              onPressed: () {
+                                setState(() => _name = '');
+                                _nameController.safeClear();
+                              },
                             ),
                             textCapitalization: TextCapitalization.words,
                             onChanged: (val) {
@@ -224,4 +229,12 @@ Widget categoryColorPicker(BuildContext context, Color currentColor) {
       ),
     ),
   );
+}
+
+extension on TextEditingController {
+  void safeClear() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      this.clear();
+    });
+  }
 }
