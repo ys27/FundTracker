@@ -115,13 +115,13 @@ class _CategoriesListState extends State<CategoriesList> {
               ),
             ),
             body: _body,
-            floatingActionButton: addFloatingButton(
+            floatingActionButton: FloatingButton(
               context,
-              CategoryForm(
+              page: CategoryForm(
                 category: Category.empty(_categories.length),
                 numExistingCategories: _categories.length,
               ),
-              () => retrieveNewData(widget.user.uid),
+              callback: () => retrieveNewData(widget.user.uid),
             ),
           )
         : Loader();

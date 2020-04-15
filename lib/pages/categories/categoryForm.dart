@@ -55,12 +55,12 @@ class _CategoryFormState extends State<CategoryForm> {
               title: title(isEditMode),
               actions: isEditMode && !widget.isUsed
                   ? <Widget>[
-                      deleteIcon(
+                      DeleteIcon(
                         context,
-                        'category',
-                        () => DatabaseWrapper(_user.uid)
+                        itemDesc: 'category',
+                        deleteFunction: () => DatabaseWrapper(_user.uid)
                             .deleteCategories([widget.category]),
-                        () => SyncService(_user.uid).syncCategories(),
+                        syncFunction: SyncService(_user.uid).syncCategories,
                       )
                     ]
                   : null, // add reset category here for defaults

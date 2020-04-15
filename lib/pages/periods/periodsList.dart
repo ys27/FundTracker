@@ -55,10 +55,10 @@ class _PeriodsListState extends State<PeriodsList> {
       drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
       appBar: AppBar(title: Text('Periods')),
       body: _body,
-      floatingActionButton: addFloatingButton(
+      floatingActionButton: FloatingButton(
         context,
-        PeriodForm(period: Period.empty()),
-        () => retrieveNewData(widget.user.uid),
+        page: PeriodForm(period: Period.empty()),
+        callback: () => retrieveNewData(widget.user.uid),
       ),
     );
   }

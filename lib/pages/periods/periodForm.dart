@@ -51,12 +51,12 @@ class _PeriodFormState extends State<PeriodForm> {
         title: title(isEditMode),
         actions: isEditMode
             ? <Widget>[
-                deleteIcon(
+                DeleteIcon(
                   context,
-                  'custom period',
-                  () =>
+                  itemDesc: 'custom period',
+                  deleteFunction: () =>
                       DatabaseWrapper(_user.uid).deletePeriods([widget.period]),
-                  () => SyncService(_user.uid).syncPeriods(),
+                  syncFunction: SyncService(_user.uid).syncPeriods,
                 )
               ]
             : null,
@@ -70,7 +70,7 @@ class _PeriodFormState extends State<PeriodForm> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(height: 10.0),
-                    datePicker(
+                    DatePicker(
                       context,
                       leading: 'Start Date:                         ',
                       trailing:

@@ -86,43 +86,46 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 child: Text('Custom Range For Statistics'),
               ),
               SizedBox(height: 10.0),
-              tabSelector(context, [
-                {
-                  'enabled': _isLimitDaysEnabled,
-                  'title': 'Days',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isLimitDaysEnabled = true;
-                        _isLimitPeriodsEnabled = false;
-                        _isLimitByDateEnabled = false;
-                      }),
-                },
-                {
-                  'enabled': _isLimitPeriodsEnabled,
-                  'title': 'Periods',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isLimitDaysEnabled = false;
-                        _isLimitPeriodsEnabled = true;
-                        _isLimitByDateEnabled = false;
-                      }),
-                },
-                {
-                  'enabled': _isLimitByDateEnabled,
-                  'title': 'Start Date',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isLimitDaysEnabled = false;
-                        _isLimitPeriodsEnabled = false;
-                        _isLimitByDateEnabled = true;
-                      }),
-                },
-              ]),
+              TabSelector(
+                context,
+                tabs: [
+                  {
+                    'enabled': _isLimitDaysEnabled,
+                    'title': 'Days',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isLimitDaysEnabled = true;
+                          _isLimitPeriodsEnabled = false;
+                          _isLimitByDateEnabled = false;
+                        }),
+                  },
+                  {
+                    'enabled': _isLimitPeriodsEnabled,
+                    'title': 'Periods',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isLimitDaysEnabled = false;
+                          _isLimitPeriodsEnabled = true;
+                          _isLimitByDateEnabled = false;
+                        }),
+                  },
+                  {
+                    'enabled': _isLimitByDateEnabled,
+                    'title': 'Start Date',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isLimitDaysEnabled = false;
+                          _isLimitPeriodsEnabled = false;
+                          _isLimitByDateEnabled = true;
+                        }),
+                  },
+                ],
+              ),
               _isLimitByDateEnabled
                   ? Column(
                       children: <Widget>[
                         SizedBox(height: 10.0),
-                        datePicker(
+                        DatePicker(
                           context,
                           leading:
                               getDateStr(_limitByDate ?? _prefs.limitByDate),
@@ -177,38 +180,41 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 child: Text('Default Tab For Statistics'),
               ),
               SizedBox(height: 10.0),
-              tabSelector(context, [
-                {
-                  'enabled': _isDefaultTabAllTime,
-                  'title': 'All-Time',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isDefaultTabAllTime = true;
-                        _isDefaultTabPeriod = false;
-                        _isDefaultTabCustom = false;
-                      }),
-                },
-                {
-                  'enabled': _isDefaultTabPeriod,
-                  'title': 'Period',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isDefaultTabAllTime = false;
-                        _isDefaultTabPeriod = true;
-                        _isDefaultTabCustom = false;
-                      }),
-                },
-                {
-                  'enabled': _isDefaultTabCustom,
-                  'title': 'Custom',
-                  'onPressed': () => setState(() {
-                        _isModified = true;
-                        _isDefaultTabAllTime = false;
-                        _isDefaultTabPeriod = false;
-                        _isDefaultTabCustom = true;
-                      }),
-                },
-              ]),
+              TabSelector(
+                context,
+                tabs: [
+                  {
+                    'enabled': _isDefaultTabAllTime,
+                    'title': 'All-Time',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isDefaultTabAllTime = true;
+                          _isDefaultTabPeriod = false;
+                          _isDefaultTabCustom = false;
+                        }),
+                  },
+                  {
+                    'enabled': _isDefaultTabPeriod,
+                    'title': 'Period',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isDefaultTabAllTime = false;
+                          _isDefaultTabPeriod = true;
+                          _isDefaultTabCustom = false;
+                        }),
+                  },
+                  {
+                    'enabled': _isDefaultTabCustom,
+                    'title': 'Custom',
+                    'onPressed': () => setState(() {
+                          _isModified = true;
+                          _isDefaultTabAllTime = false;
+                          _isDefaultTabPeriod = false;
+                          _isDefaultTabCustom = true;
+                        }),
+                  },
+                ],
+              ),
               SizedBox(height: 10.0),
               RaisedButton(
                 color:

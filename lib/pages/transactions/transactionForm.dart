@@ -85,22 +85,25 @@ class _TransactionFormState extends State<TransactionForm> {
           child: ListView(
             children: <Widget>[
                   SizedBox(height: 10.0),
-                  tabSelector(context, [
-                    {
-                      'enabled': _isExpense != null
-                          ? !_isExpense
-                          : !currentTxOrRecTx.isExpense,
-                      'title': 'Income',
-                      'onPressed': () => setState(() => _isExpense = false),
-                    },
-                    {
-                      'enabled': _isExpense ?? currentTxOrRecTx.isExpense,
-                      'title': 'Expense',
-                      'onPressed': () => setState(() => _isExpense = true),
-                    },
-                  ]),
+                  TabSelector(
+                    context,
+                    tabs: [
+                      {
+                        'enabled': _isExpense != null
+                            ? !_isExpense
+                            : !currentTxOrRecTx.isExpense,
+                        'title': 'Income',
+                        'onPressed': () => setState(() => _isExpense = false),
+                      },
+                      {
+                        'enabled': _isExpense ?? currentTxOrRecTx.isExpense,
+                        'title': 'Expense',
+                        'onPressed': () => setState(() => _isExpense = true),
+                      },
+                    ],
+                  ),
                   SizedBox(height: 10.0),
-                  datePicker(
+                  DatePicker(
                     context,
                     leading: isRecurringTxMode
                         ? 'Next Date:                         '
@@ -125,11 +128,10 @@ class _TransactionFormState extends State<TransactionForm> {
                     ? <Widget>[]
                     : <Widget>[
                         SizedBox(height: 10.0),
-                        timePicker(
+                        TimePicker(
                           context,
-                          getTimeStr(_date ?? currentTxOrRecTx.date),
-                          '',
-                          (time) => setState(
+                          leading: getTimeStr(_date ?? currentTxOrRecTx.date),
+                          updateTimeState: (time) => setState(
                             () {
                               DateTime oldDateTime =
                                   (_date ?? currentTxOrRecTx.date);
@@ -306,19 +308,17 @@ class _TransactionFormState extends State<TransactionForm> {
                                     value: _correspondingCategory.cid,
                                     child: Row(
                                       children: <Widget>[
-                                        () {
-                                          return Icon(
-                                            IconData(
-                                              _correspondingCategory.icon,
-                                              fontFamily:
-                                                  'MaterialDesignIconFont',
-                                              fontPackage:
-                                                  'community_material_icon',
-                                            ),
-                                            color: _correspondingCategory
-                                                .iconColor,
-                                          );
-                                        }(),
+                                        Icon(
+                                          IconData(
+                                            _correspondingCategory.icon,
+                                            fontFamily:
+                                                'MaterialDesignIconFont',
+                                            fontPackage:
+                                                'community_material_icon',
+                                          ),
+                                          color:
+                                              _correspondingCategory.iconColor,
+                                        ),
                                         SizedBox(width: 10.0),
                                         Text(_correspondingCategory.name),
                                       ],
@@ -456,17 +456,19 @@ class _TransactionFormState extends State<TransactionForm> {
         title: title(isRecurringTxMode, isEditMode),
         actions: isEditMode
             ? <Widget>[
-                deleteIcon(
+                DeleteIcon(
                   context,
-                  isRecurringTxMode ? 'recurring transaction' : 'transaction',
-                  () async => isRecurringTxMode
+                  itemDesc: isRecurringTxMode
+                      ? 'recurring transaction'
+                      : 'transaction',
+                  deleteFunction: () async => isRecurringTxMode
                       ? await DatabaseWrapper(_user.uid)
                           .deleteRecurringTransactions([currentTxOrRecTx])
                       : await DatabaseWrapper(_user.uid)
                           .deleteTransactions([currentTxOrRecTx]),
-                  () => isRecurringTxMode
-                      ? SyncService(_user.uid).syncRecurringTransactions()
-                      : SyncService(_user.uid).syncTransactions(),
+                  syncFunction: isRecurringTxMode
+                      ? SyncService(_user.uid).syncRecurringTransactions
+                      : SyncService(_user.uid).syncTransactions,
                 ),
               ]
             : null,

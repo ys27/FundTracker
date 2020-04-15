@@ -71,9 +71,9 @@ class _HomeState extends State<Home> {
           prefs: _prefs,
           refreshList: () => retrieveNewData(widget.user.uid),
         ),
-        'addButton': addFloatingButton(
+        'addButton': FloatingButton(
           context,
-          MultiProvider(
+          page: MultiProvider(
             providers: [
               FutureProvider<List<Transaction>>.value(
                   value: DatabaseWrapper(widget.user.uid).getTransactions()),
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
             ],
             child: TransactionForm(getTxOrRecTx: () => Transaction.empty()),
           ),
-          () => retrieveNewData(widget.user.uid),
+          callback: () => retrieveNewData(widget.user.uid),
         ),
       },
       {

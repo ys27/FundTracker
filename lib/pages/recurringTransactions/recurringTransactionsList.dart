@@ -59,9 +59,9 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
       drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
       appBar: AppBar(title: Text('Recurring Transactions')),
       body: _body,
-      floatingActionButton: addFloatingButton(
+      floatingActionButton: FloatingButton(
         context,
-        MultiProvider(
+        page: MultiProvider(
           providers: [
             FutureProvider<List<Transaction>>.value(
                 value: DatabaseWrapper(widget.user.uid).getTransactions()),
@@ -71,7 +71,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
           child:
               TransactionForm(getTxOrRecTx: () => RecurringTransaction.empty()),
         ),
-        () => retrieveNewData(widget.user.uid),
+        callback: () => retrieveNewData(widget.user.uid),
       ),
     );
   }

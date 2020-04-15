@@ -165,7 +165,7 @@ class _StatisticsState extends State<Statistics> {
               widget.prefs.limitPeriods, widget.currentPeriod);
         }
 
-        _limitCustomizer = datePicker(
+        _limitCustomizer = DatePicker(
           context,
           leading: getDateStr(_customLimitByDate ?? limitFirstDate),
           updateDateState: (date) =>
@@ -184,35 +184,38 @@ class _StatisticsState extends State<Statistics> {
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
-              tabSelector(context, [
-                {
-                  'enabled': _showAllTimeStats,
-                  'title': 'All-Time',
-                  'onPressed': () => setState(() {
-                        _showAllTimeStats = true;
-                        _showPeriodStats = false;
-                        _showCustomStats = false;
-                      }),
-                },
-                {
-                  'enabled': _showPeriodStats,
-                  'title': 'Period',
-                  'onPressed': () => setState(() {
-                        _showAllTimeStats = false;
-                        _showPeriodStats = true;
-                        _showCustomStats = false;
-                      }),
-                },
-                {
-                  'enabled': _showCustomStats,
-                  'title': 'Custom',
-                  'onPressed': () => setState(() {
-                        _showAllTimeStats = false;
-                        _showPeriodStats = false;
-                        _showCustomStats = true;
-                      }),
-                },
-              ]),
+              TabSelector(
+                context,
+                tabs: [
+                  {
+                    'enabled': _showAllTimeStats,
+                    'title': 'All-Time',
+                    'onPressed': () => setState(() {
+                          _showAllTimeStats = true;
+                          _showPeriodStats = false;
+                          _showCustomStats = false;
+                        }),
+                  },
+                  {
+                    'enabled': _showPeriodStats,
+                    'title': 'Period',
+                    'onPressed': () => setState(() {
+                          _showAllTimeStats = false;
+                          _showPeriodStats = true;
+                          _showCustomStats = false;
+                        }),
+                  },
+                  {
+                    'enabled': _showCustomStats,
+                    'title': 'Custom',
+                    'onPressed': () => setState(() {
+                          _showAllTimeStats = false;
+                          _showPeriodStats = false;
+                          _showCustomStats = true;
+                        }),
+                  },
+                ],
+              ),
               _limitCustomizer,
             ] +
             (_showStatistics
