@@ -325,7 +325,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     labelText: 'Amount',
                     enabled: _amount.isNotEmpty && _isAmountInFocus,
                     onPressed: () {
-                      setState(() => _amount = null);
+                      setState(() => _amount = '');
                       _amountController.safeClear();
                     },
                   ),

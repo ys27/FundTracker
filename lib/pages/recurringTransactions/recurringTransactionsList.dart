@@ -102,11 +102,10 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
           refreshList();
         },
         title: Wrap(children: <Widget>[
+          Text('${recTx.payee}: '),
           Text(
-            '${recTx.payee}: ',
+            '${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
           ),
-          Text(
-              '${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}'),
         ]),
         subtitle: Text(
           'Every ${recTx.frequencyValue} ${getFrequencyUnitStr(recTx.frequencyUnit)}' +
