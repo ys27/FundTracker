@@ -24,10 +24,6 @@ class FireDBService {
         .then((snapshot) => snapshot.documents
             .map((map) => Transaction.fromMap(map.data))
             .toList());
-    // .snapshots()
-    // .map((snapshot) => snapshot.documents
-    //     .map((map) => Transaction.fromMap(map.data))
-    //     .toList());
   }
 
   Future addTransactions(List<Transaction> transactions) async {
@@ -140,10 +136,16 @@ class FireDBService {
         .collection('periods')
         .where('isDefault', isEqualTo: 1)
         .getDocuments()
-        .then((snapshot) => snapshot.documents
+        .then((snapshot) {
+      if (snapshot.documents.length > 0) {
+        return snapshot.documents
             .map((map) => Period.fromMap(map.data))
             .toList()
-            .first);
+            .first;
+      } else {
+        return Period.monthly();
+      }
+    });
   }
 
   Future setRemainingNotDefault(Period period) async {
