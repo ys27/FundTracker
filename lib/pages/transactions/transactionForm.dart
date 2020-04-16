@@ -423,7 +423,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         isExpanded: true,
                       ),
                       SizedBox(height: 10.0),
-                      Center(child: Text('End Conditions (optional)')),
+                      Center(child: Text('End Condition (optional)')),
                       TextFormField(
                         controller: _occurrenceValueController,
                         focusNode: _occurrenceValueFocus,
