@@ -132,7 +132,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
     if (recTx.endDate != null && recTx.endDate.toString().isNotEmpty) {
       return ', ~${getDateStr(recTx.endDate)}';
     } else if (recTx.occurrenceValue != null && recTx.occurrenceValue > 0) {
-      return ', ${recTx.occurrenceValue} time(s)';
+      return ', ${recTx.occurrenceValue} time(s) left';
     } else {
       return '';
     }
