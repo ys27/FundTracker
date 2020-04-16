@@ -151,7 +151,8 @@ class _AuthFormState extends State<AuthForm> {
                           obscureText: _obscurePasswordConfirm,
                           decoration: clearInput(
                             labelText: 'Confirm Password',
-                            enabled: _passwordConfirm.isNotEmpty && _isPasswordConfirmInFocus,
+                            enabled: _passwordConfirm.isNotEmpty &&
+                                _isPasswordConfirmInFocus,
                             onPressed: () {
                               setState(() => _passwordConfirm = '');
                               _passwordConfirmController.safeClear();

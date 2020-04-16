@@ -5,12 +5,15 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
+import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
+import 'package:fund_tracker/services/fireDB.dart';
+import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/services/search.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -41,9 +44,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    if (widget.user.uid != null) {
-      retrieveNewData(widget.user.uid);
-    }
+    retrieveNewData(widget.user.uid);
   }
 
   @override
@@ -179,12 +180,22 @@ class _HomeState extends State<Home> {
   }
 
   void retrieveNewData(String uid) async {
-    RecurringTransactionsService.checkRecurringTransactions(uid);
-    List<Transaction> transactions =
-        await DatabaseWrapper(uid).getTransactions();
-    List<Category> categories = await DatabaseWrapper(uid).getCategories();
-    Period period = await DatabaseWrapper(uid).getDefaultPeriod();
-    Preferences prefs = await DatabaseWrapper(uid).getPreferences();
+    List<Transaction> transactions;
+    List<Category> categories;
+    Period period;
+    Preferences prefs;
+    if (await LocalDBService().getUser(uid) == null) {
+      transactions = await FireDBService(uid).getTransactions();
+      categories = await FireDBService(uid).getCategories();
+      period = await FireDBService(uid).getDefaultPeriod();
+      prefs = await FireDBService(uid).getPreferences();
+    } else {
+      RecurringTransactionsService.checkRecurringTransactions(uid);
+      transactions = await DatabaseWrapper(uid).getTransactions();
+      categories = await DatabaseWrapper(uid).getCategories();
+      period = await DatabaseWrapper(uid).getDefaultPeriod();
+      prefs = await DatabaseWrapper(uid).getPreferences();
+    }
     setState(() {
       _transactions = transactions;
       _categories = categories;
