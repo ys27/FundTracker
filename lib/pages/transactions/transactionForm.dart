@@ -175,22 +175,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
               ] +
               (isRecurringTxMode
-                  ? <Widget>[
-                      DatePicker(
-                        context,
-                        leading: 'End Date:                          ',
-                        trailing: '${getDateStr(_endDate)}',
-                        updateDateState: (date) {
-                          setState(() {
-                            _endDate = getDateNotTime(date);
-                            _occurrenceValue = '';
-                          });
-                          _occurrenceValueController.safeClear();
-                        },
-                        openDate: DateTime.now(),
-                        firstDate: getDateNotTime(DateTime.now()),
-                      ),
-                    ]
+                  ? <Widget>[]
                   : <Widget>[
                       TimePicker(
                         context,
@@ -438,6 +423,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         isExpanded: true,
                       ),
                       SizedBox(height: 10.0),
+                      Center(child: Text('End Conditions (optional)')),
                       TextFormField(
                         controller: _occurrenceValueController,
                         focusNode: _occurrenceValueFocus,
@@ -454,7 +440,7 @@ class _TransactionFormState extends State<TransactionForm> {
                           return null;
                         },
                         decoration: clearInput(
-                          labelText: 'How many times? (optional)',
+                          labelText: 'How many times?',
                           enabled: _occurrenceValue.isNotEmpty &&
                               _isOccurrenceValueInFocus,
                           onPressed: () {
@@ -469,6 +455,20 @@ class _TransactionFormState extends State<TransactionForm> {
                             _occurrenceValue = val;
                           });
                         },
+                      ),
+                      DatePicker(
+                        context,
+                        leading: 'End Date:                          ',
+                        trailing: '${getDateStr(_endDate)}',
+                        updateDateState: (date) {
+                          setState(() {
+                            _endDate = getDateNotTime(date);
+                            _occurrenceValue = '';
+                          });
+                          _occurrenceValueController.safeClear();
+                        },
+                        openDate: DateTime.now(),
+                        firstDate: getDateNotTime(DateTime.now()),
                       ),
                     ]
                   : <Widget>[]) +
@@ -550,9 +550,14 @@ class _TransactionFormState extends State<TransactionForm> {
                           setState(() {
                             _endDate = givenTxOrRecTx.endDate;
                             _occurrenceValue =
-                                givenTxOrRecTx.occurrenceValue ?? '';
+                                givenTxOrRecTx.occurrenceValue != null
+                                    ? givenTxOrRecTx.occurrenceValue.toString()
+                                    : '';
                           });
-                          _occurrenceValueController.safeClear();
+                          _occurrenceValueController.text =
+                              givenTxOrRecTx.occurrenceValue != null
+                                  ? givenTxOrRecTx.occurrenceValue.toString()
+                                  : '';
                         },
                       ),
                     ]

@@ -5,7 +5,6 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
