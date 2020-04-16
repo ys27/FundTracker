@@ -180,6 +180,9 @@ class _StatisticsState extends State<Statistics> {
         }
       }
 
+      final List<Transaction> onlyExpenses =
+          _transactions.where((tx) => tx.isExpense).toList();
+
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,
@@ -228,14 +231,12 @@ class _StatisticsState extends State<Statistics> {
                     ),
                     SizedBox(height: 20.0),
                     Categories(
-                      transactions:
-                          _transactions.where((tx) => tx.isExpense).toList(),
+                      transactions: onlyExpenses,
                       categories: widget.categories,
                     ),
                     SizedBox(height: 20.0),
                     TopExpenses(
-                      transactions:
-                          _transactions.where((tx) => tx.isExpense).toList(),
+                      transactions: onlyExpenses,
                       categories: widget.categories,
                       totalIncome: _transactions
                           .where((tx) => !tx.isExpense)

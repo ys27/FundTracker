@@ -70,7 +70,6 @@ class _HomeState extends State<Home> {
           transactions: _transactions,
           categories: _categories,
           currentPeriod: _currentPeriod,
-          prefs: _prefs,
           refreshList: () => retrieveNewData(widget.user.uid),
         ),
         'addButton': FloatingButton(

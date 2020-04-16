@@ -5,9 +5,7 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/library.dart';
-import 'package:uuid/uuid.dart';
 
 class FireDBService {
   final String uid;
@@ -74,24 +72,6 @@ class FireDBService {
         .then((snapshot) => snapshot.documents
             .map((map) => Category.fromMap(map.data))
             .toList());
-  }
-
-  Future addDefaultCategories() async {
-    categoriesRegistry.asMap().forEach((index, category) async {
-      String cid = Uuid().v1();
-      await db.collection('categories').document(cid).setData(
-            Category(
-              cid: cid,
-              name: category['name'],
-              icon: category['icon'],
-              iconColor: category['color'],
-              enabled: true,
-              unfiltered: true,
-              orderIndex: index,
-              uid: uid,
-            ).toMap(),
-          );
-    });
   }
 
   Future addCategories(List<Category> categories) async {

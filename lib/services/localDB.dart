@@ -5,12 +5,10 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
-import 'package:uuid/uuid.dart';
 
 class LocalDBService {
   static final LocalDBService _localDBService = LocalDBService.internal();
@@ -90,25 +88,6 @@ class LocalDBService {
         )
         .then((categories) =>
             categories.map((map) => Category.fromMap(map)).toList());
-  }
-
-  Future addDefaultCategories(String uid) async {
-    Database db = await this.db;
-    categoriesRegistry.asMap().forEach((index, category) async {
-      await db.insert(
-        'categories',
-        Category(
-          cid: Uuid().v1(),
-          name: category['name'],
-          icon: category['icon'],
-          iconColor: category['color'],
-          enabled: true,
-          unfiltered: true,
-          orderIndex: index,
-          uid: uid,
-        ).toMap(),
-      );
-    });
   }
 
   Future addCategories(List<Category> categories) async {

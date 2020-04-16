@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
-import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionTile.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -16,14 +15,12 @@ class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions;
   final List<Category> categories;
   final Period currentPeriod;
-  final Preferences prefs;
   final Function refreshList;
 
   TransactionsList({
     this.transactions,
     this.categories,
     this.currentPeriod,
-    this.prefs,
     this.refreshList,
   });
 
@@ -31,7 +28,7 @@ class TransactionsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseUser>(context);
 
-    if (transactions == null || currentPeriod == null || prefs == null) {
+    if (transactions == null || currentPeriod == null || categories == null) {
       return Loader();
     }
     if (transactions.length == 0) {

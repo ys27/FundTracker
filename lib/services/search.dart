@@ -53,7 +53,6 @@ class SearchService extends SearchDelegate {
         transactions: searchedTransactions,
         categories: categories,
         currentPeriod: currentPeriod,
-        prefs: prefs,
         refreshList: retrieveNewData,
       );
     }

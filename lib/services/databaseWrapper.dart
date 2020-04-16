@@ -4,10 +4,12 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
+import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:uuid/uuid.dart';
 
 class DatabaseWrapper {
   final String uid;
@@ -58,8 +60,22 @@ class DatabaseWrapper {
   }
 
   Future addDefaultCategories() async {
-    await _fireDBService.addDefaultCategories();
-    await _localDBService.addDefaultCategories(uid);
+    List<Category> categories = [];
+    categoriesRegistry.asMap().forEach((index, category) async {
+      String cid = Uuid().v1();
+      categories.add(Category(
+        cid: cid,
+        name: category['name'],
+        icon: category['icon'],
+        iconColor: category['color'],
+        enabled: true,
+        unfiltered: true,
+        orderIndex: index,
+        uid: uid,
+      ));
+    });
+    await _fireDBService.addCategories(categories);
+    await _localDBService.addCategories(categories);
   }
 
   Future addCategories(List<Category> categories) async {
@@ -86,15 +102,15 @@ class DatabaseWrapper {
         : await _localDBService.deleteAllCategories(uid);
   }
 
-  Future resetCategories() async {
-    DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.deleteAllCategories()
-        : await _localDBService.deleteAllCategories(uid);
+  // Future resetCategories() async {
+  //   DATABASE_TYPE == DatabaseType.Firebase
+  //       ? await _fireDBService.deleteAllCategories()
+  //       : await _localDBService.deleteAllCategories(uid);
 
-    DATABASE_TYPE == DatabaseType.Firebase
-        ? await _fireDBService.addDefaultCategories()
-        : await _localDBService.addDefaultCategories(uid);
-  }
+  //   DATABASE_TYPE == DatabaseType.Firebase
+  //       ? await _fireDBService.addDefaultCategories()
+  //       : await _localDBService.addDefaultCategories(uid);
+  // }
 
   // User Info
   Future<User> getUser() {
