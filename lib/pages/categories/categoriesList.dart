@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -6,6 +7,7 @@ import 'package:fund_tracker/pages/categories/categoryTile.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 
@@ -36,47 +38,54 @@ class _CategoriesListState extends State<CategoriesList> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _body;
-
-    if (_categories != null) {
-      _body = Container(
-        padding: bodyPadding,
-        child: ReorderableListView(
-          header: Column(
-            children: <Widget>[
-              Center(
-                child: Text(
-                  'Hold and drag on a category to a different order.',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              ),
-              SizedBox(height: 20.0),
-            ],
-          ),
-          onReorder: _onReorder,
-          children: _categories
-              .map(
-                (category) => Container(
-                  key: Key(category.orderIndex.toString()),
-                  child: CategoryTile(
-                    category: category,
-                    numCategories: _categories.length,
-                    refreshList: () => retrieveNewData(widget.user.uid),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-      );
-    }
-
     return _categories != null
         ? Scaffold(
             drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
             appBar: AppBar(
               title: Text('Categories'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(CommunityMaterialIcons.check),
+                  onPressed: () async {
+                    List<Category> updatedCategories = _categories
+                        .map((cat) => cat.setEnabled(cat.enabled))
+                        .toList();
+                    await DatabaseWrapper(widget.user.uid)
+                        .updateCategories(updatedCategories);
+                    goHome(context);
+                  },
+                ),
+              ],
             ),
-            body: _body,
+            body: Container(
+              padding: bodyPadding,
+              child: ReorderableListView(
+                header: Column(
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        'Hold and drag on a category to a different order.',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+                onReorder: _onReorder,
+                children: _categories
+                    .map(
+                      (category) => Container(
+                        key: Key(category.orderIndex.toString()),
+                        child: CategoryTile(
+                          category: category,
+                          numCategories: _categories.length,
+                          refreshList: () => retrieveNewData(widget.user.uid),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
             floatingActionButton: FloatingButton(
               context,
               page: CategoryForm(
