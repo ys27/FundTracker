@@ -5,7 +5,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/categories/categoriesList.dart';
+import 'package:fund_tracker/pages/home/filter.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
@@ -145,10 +145,9 @@ class _HomeState extends State<Home> {
         await showDialog(
           context: context,
           builder: (context) {
-            return CategoriesList(
+            return Filter(
               user: widget.user,
               openPage: openPage,
-              filterMode: true,
             );
           },
         );
