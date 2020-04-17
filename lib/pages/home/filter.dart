@@ -36,7 +36,7 @@ class _FilterState extends State<Filter> {
     return (_categories != null && _prefs != null)
         ? Scaffold(
             appBar: AppBar(
-              title: Text('Filter Categories'),
+              title: Text('Filter'),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(CommunityMaterialIcons.check),
@@ -65,7 +65,7 @@ class _FilterState extends State<Filter> {
                       child: FlatButton(
                         textColor: Colors.white,
                         color: Theme.of(context).primaryColor,
-                        child: Text('Reset Filters'),
+                        child: Text('Enable All'),
                         onPressed: () async {
                           setState(() {
                             _categories.forEach((cat) => cat.unfiltered = true);
