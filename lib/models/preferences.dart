@@ -9,6 +9,8 @@ class Preferences {
   DateTime limitByDate;
   bool isLimitByDateEnabled;
   LimitTab defaultCustomLimitTab;
+  bool incomeUnfiltered;
+  bool expensesUnfiltered;
 
   Preferences({
     this.pid,
@@ -19,6 +21,8 @@ class Preferences {
     this.limitByDate,
     this.isLimitByDateEnabled,
     this.defaultCustomLimitTab,
+    this.incomeUnfiltered,
+    this.expensesUnfiltered,
   });
 
   Preferences.example() {
@@ -30,6 +34,8 @@ class Preferences {
     limitByDate = DateTime.now();
     isLimitByDateEnabled = false;
     defaultCustomLimitTab = LimitTab.Period;
+    incomeUnfiltered = true;
+    expensesUnfiltered = true;
   }
 
   Preferences.original() {
@@ -41,6 +47,8 @@ class Preferences {
     limitByDate = DateTime(DateTime.now().year, 1, 1);
     isLimitByDateEnabled = false;
     defaultCustomLimitTab = LimitTab.Period;
+    incomeUnfiltered = true;
+    expensesUnfiltered = true;
   }
 
   Preferences.fromMap(Map<String, dynamic> map) {
@@ -56,6 +64,8 @@ class Preferences {
         this.defaultCustomLimitTab = limitTab;
       }
     });
+    this.incomeUnfiltered = map['incomeUnfiltered'] == 1;
+    this.expensesUnfiltered = map['expensesUnfiltered'] == 1;
   }
 
   Map<String, dynamic> toMap() {
@@ -68,6 +78,8 @@ class Preferences {
       'limitByDate': limitByDate.toString(),
       'isLimitByDateEnabled': isLimitByDateEnabled ? 1 : 0,
       'defaultCustomLimitTab': defaultCustomLimitTab.toString(),
+      'incomeUnfiltered': incomeUnfiltered ? 1 : 0,
+      'expensesUnfiltered': expensesUnfiltered ? 1 : 0,
     };
   }
 
@@ -98,6 +110,12 @@ class Preferences {
       case 'defaultCustomLimitTab':
         copy.defaultCustomLimitTab = value;
         break;
+      case 'incomeUnfiltered':
+        copy.incomeUnfiltered = value;
+        break;
+      case 'expensesUnfiltered':
+        copy.expensesUnfiltered = value;
+        break;
     }
     return copy;
   }
@@ -112,6 +130,8 @@ class Preferences {
       limitByDate: this.limitByDate,
       isLimitByDateEnabled: this.isLimitByDateEnabled,
       defaultCustomLimitTab: this.defaultCustomLimitTab,
+      incomeUnfiltered: this.incomeUnfiltered,
+      expensesUnfiltered: this.expensesUnfiltered,
     );
   }
 }

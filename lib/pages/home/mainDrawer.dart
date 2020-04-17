@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/user.dart';
-import 'package:fund_tracker/pages/categories/categoriesPage.dart';
+import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/periods/periodsList.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionsList.dart';
@@ -63,7 +63,7 @@ class _MainDrawerState extends State<MainDrawer> {
             title: Text('Categories'),
             leading: Icon(CommunityMaterialIcons.shape),
             onTap: () => widget.openPage(
-              CategoriesPage(
+              CategoriesList(
                 user: widget.user,
                 openPage: widget.openPage,
               ),

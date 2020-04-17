@@ -1,8 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:provider/provider.dart';
 
 class FilterCategoryTile extends StatefulWidget {
   final Category category;
@@ -17,8 +14,6 @@ class FilterCategoryTile extends StatefulWidget {
 class _FilterCategoryTileState extends State<FilterCategoryTile> {
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
-
     return CheckboxListTile(
       key: Key(widget.category.orderIndex.toString()),
       title: Row(
@@ -39,8 +34,6 @@ class _FilterCategoryTileState extends State<FilterCategoryTile> {
       activeColor: Theme.of(context).primaryColor,
       onChanged: (val) async {
         setState(() => widget.category.unfiltered = val);
-        await DatabaseWrapper(_user.uid)
-            .updateCategories([widget.category.setUnfiltered(val)]);
       },
     );
   }

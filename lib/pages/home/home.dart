@@ -57,13 +57,31 @@ class _HomeState extends State<Home> {
       _transactions = _transactions
           .where((tx) => !categoriesFiltered.contains(tx.cid))
           .toList();
+      if (!_prefs.incomeUnfiltered) {
+        _transactions = _transactions.where((tx) => tx.isExpense).toList();
+      }
+      if (!_prefs.expensesUnfiltered) {
+        _transactions = _transactions.where((tx) => !tx.isExpense).toList();
+      }
     }
 
     final List<Map<String, dynamic>> _pages = [
       {
         'name': 'Records',
         'actions': <Widget>[
-          searchButton(),
+          IconButton(
+            icon: Icon(CommunityMaterialIcons.magnify),
+            onPressed: () => showSearch(
+              context: context,
+              delegate: SearchService(
+                _transactions,
+                _categories,
+                _currentPeriod,
+                _prefs,
+                retrieveNewData,
+              ),
+            ),
+          ),
           filterCategoriesButton(),
         ],
         'body': TransactionsList(
@@ -116,22 +134,23 @@ class _HomeState extends State<Home> {
         children: <Widget>[_pages[0]['body'], _pages[1]['body']],
       ),
       floatingActionButton: _pages[_selectedIndex]['addButton'],
-      bottomNavigationBar: bottomNavBar(),
-    );
-  }
-
-  Widget searchButton() {
-    return IconButton(
-      icon: Icon(CommunityMaterialIcons.magnify),
-      onPressed: () => showSearch(
-        context: context,
-        delegate: SearchService(
-          _transactions,
-          _categories,
-          _currentPeriod,
-          _prefs,
-          retrieveNewData,
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CommunityMaterialIcons.file_document),
+            title: Text('Records'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CommunityMaterialIcons.chart_pie),
+            title: Text('Statistics'),
+          )
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (_selectedIndex != index) {
+            _pageController.jumpToPage(index);
+          }
+        },
       ),
     );
   }
@@ -152,27 +171,6 @@ class _HomeState extends State<Home> {
           },
         );
         retrieveNewData(widget.user.uid);
-      },
-    );
-  }
-
-  Widget bottomNavBar() {
-    return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(CommunityMaterialIcons.file_document),
-          title: Text('Records'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(CommunityMaterialIcons.chart_pie),
-          title: Text('Statistics'),
-        )
-      ],
-      currentIndex: _selectedIndex,
-      onTap: (index) {
-        if (_selectedIndex != index) {
-          _pageController.jumpToPage(index);
-        }
       },
     );
   }
