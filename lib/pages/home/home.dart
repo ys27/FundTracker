@@ -29,7 +29,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   PageController _pageController = PageController();
 
   List<Transaction> _transactions;
@@ -45,6 +45,20 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     retrieveNewData(widget.user.uid);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      retrieveNewData(widget.user.uid);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
