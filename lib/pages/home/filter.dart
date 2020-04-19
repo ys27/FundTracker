@@ -141,12 +141,16 @@ class _FilterState extends State<Filter> {
   }
 
   void retrieveNewData(String uid) async {
-    List<Category> categories = await DatabaseWrapper(uid).getCategories();
-    Preferences prefs = await DatabaseWrapper(uid).getPreferences();
+    List<Future> dataFutures = [];
+
+    dataFutures.add(DatabaseWrapper(uid).getCategories());
+    dataFutures.add(DatabaseWrapper(uid).getPreferences());
+
+    List<dynamic> data = await Future.wait(dataFutures);
 
     setState(() {
-      _categories = categories;
-      _prefs = prefs;
+      _categories = data[0];
+      _prefs = data[1];
     });
   }
 }

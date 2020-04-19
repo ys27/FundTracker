@@ -83,9 +83,8 @@ class _PeriodsListState extends State<PeriodsList> {
     );
   }
 
-  void retrieveNewData(String uid) {
-    DatabaseWrapper(uid).getPeriods().then((periods) {
-      setState(() => _periods = List<Period>.from(periods));
-    });
+  void retrieveNewData(String uid) async {
+    List<Period> periods = await DatabaseWrapper(uid).getPeriods();
+    setState(() => _periods = periods);
   }
 }

@@ -15,6 +15,7 @@ import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
 import 'package:fund_tracker/services/search.dart';
+import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
@@ -176,27 +177,29 @@ class _HomeState extends State<Home> {
   }
 
   void retrieveNewData(String uid) async {
-    List<Transaction> transactions;
-    List<Category> categories;
-    Period period;
-    Preferences prefs;
+    List<Future> dataFutures = [];
+
     if (await LocalDBService().getUser(uid) == null) {
-      transactions = await FireDBService(uid).getTransactions();
-      categories = await FireDBService(uid).getCategories();
-      period = await FireDBService(uid).getDefaultPeriod();
-      prefs = await FireDBService(uid).getPreferences();
+      dataFutures.add(FireDBService(uid).getTransactions());
+      dataFutures.add(FireDBService(uid).getCategories());
+      dataFutures.add(FireDBService(uid).getDefaultPeriod());
+      dataFutures.add(FireDBService(uid).getPreferences());
     } else {
-      RecurringTransactionsService.checkRecurringTransactions(uid);
-      transactions = await DatabaseWrapper(uid).getTransactions();
-      categories = await DatabaseWrapper(uid).getCategories();
-      period = await DatabaseWrapper(uid).getDefaultPeriod();
-      prefs = await DatabaseWrapper(uid).getPreferences();
+      await RecurringTransactionsService.checkRecurringTransactions(uid);
+      SyncService(uid).syncRecurringTransactions();
+      dataFutures.add(DatabaseWrapper(uid).getTransactions());
+      dataFutures.add(DatabaseWrapper(uid).getCategories());
+      dataFutures.add(DatabaseWrapper(uid).getDefaultPeriod());
+      dataFutures.add(DatabaseWrapper(uid).getPreferences());
     }
+
+    List<dynamic> data = await Future.wait(dataFutures);
+
     setState(() {
-      _transactions = transactions;
-      _categories = categories;
-      _currentPeriod = period;
-      _prefs = prefs;
+      _transactions = data[0];
+      _categories = data[1];
+      _currentPeriod = data[2];
+      _prefs = data[3];
     });
   }
 

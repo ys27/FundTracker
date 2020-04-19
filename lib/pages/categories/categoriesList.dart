@@ -118,9 +118,8 @@ class _CategoriesListState extends State<CategoriesList> {
     });
   }
 
-  void retrieveNewData(String uid) {
-    DatabaseWrapper(uid).getCategories().then((categories) {
-      setState(() => _categories = List<Category>.from(categories));
-    });
+  void retrieveNewData(String uid) async {
+    List<Category> categories = await DatabaseWrapper(uid).getCategories();
+    setState(() => _categories = categories);
   }
 }

@@ -2,7 +2,7 @@ import 'package:fund_tracker/models/recurringTransaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 
 class RecurringTransactionsService {
-  static checkRecurringTransactions(String uid) async {
+  static Future<void> checkRecurringTransactions(String uid) async {
     List<RecurringTransaction> recTxs =
         await DatabaseWrapper(uid).getRecurringTransactions();
     DateTime now = DateTime.now();

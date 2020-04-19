@@ -138,9 +138,9 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
     }
   }
 
-  void retrieveNewData(String uid) {
-    DatabaseWrapper(uid).getRecurringTransactions().then((recTxs) {
-      setState(() => _recTxs = List<RecurringTransaction>.from(recTxs));
-    });
+  void retrieveNewData(String uid) async {
+    List<RecurringTransaction> recTxs =
+        await DatabaseWrapper(uid).getRecurringTransactions();
+    setState(() => _recTxs = recTxs);
   }
 }
