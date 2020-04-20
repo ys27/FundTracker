@@ -1,4 +1,4 @@
-# fund_tracker
+# Fund Tracker
 
 A flutter application for budgets and keeping track of transactions.
 
