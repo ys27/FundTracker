@@ -61,65 +61,58 @@ class _CategoriesState extends State<Categories> {
           .toList();
     }
 
-    return Column(
-      children: <Widget>[
-            StatTitle(title: 'Categories'),
-          ] +
-          ((widget.transactions.length > 0)
-              ? <Widget>[
-                  SizedBox(height: 35.0),
-                  PieChart(
-                    PieChartData(
-                      sections: sectionData,
-                      sectionsSpace: 1,
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      pieTouchData: PieTouchData(
-                        touchCallback: (pieTouchResponse) => setState(() {
-                          touchedIndex = (pieTouchResponse.touchInput
-                                      is FlLongPressEnd ||
-                                  pieTouchResponse.touchInput is FlPanEnd ||
-                                  pieTouchResponse.touchedSectionIndex == null)
-                              ? touchedIndex
-                              : pieTouchResponse.touchedSectionIndex;
-                        }),
-                      ),
-                    ),
+    return Column(children: <Widget>[
+      StatTitle(title: 'Categories'),
+      if (widget.transactions.length > 0) ...[
+        SizedBox(height: 35.0),
+        PieChart(
+          PieChartData(
+            sections: sectionData,
+            sectionsSpace: 1,
+            borderData: FlBorderData(
+              show: false,
+            ),
+            pieTouchData: PieTouchData(
+              touchCallback: (pieTouchResponse) => setState(() {
+                touchedIndex = (pieTouchResponse.touchInput is FlLongPressEnd ||
+                        pieTouchResponse.touchInput is FlPanEnd ||
+                        pieTouchResponse.touchedSectionIndex == null)
+                    ? touchedIndex
+                    : pieTouchResponse.touchedSectionIndex;
+              }),
+            ),
+          ),
+        ),
+        SizedBox(height: 20.0),
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: _categoricalData
+              .asMap()
+              .map(
+                (index, category) => MapEntry(
+                  index,
+                  Indicator(
+                    color: category['iconColor'],
+                    text:
+                        '${category['name']} - \$${category['amount'].toStringAsFixed(2)} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
+                    isSquare: false,
+                    size: touchedIndex == index ? 18 : 16,
+                    textColor:
+                        touchedIndex == index ? Colors.black : Colors.grey,
+                    handleTap: () => setState(() => touchedIndex = index),
                   ),
-                  SizedBox(height: 20.0),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: _categoricalData
-                        .asMap()
-                        .map(
-                          (index, category) => MapEntry(
-                            index,
-                            Indicator(
-                              color: category['iconColor'],
-                              text:
-                                  '${category['name']} - \$${category['amount'].toStringAsFixed(2)} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
-                              isSquare: false,
-                              size: touchedIndex == index ? 18 : 16,
-                              textColor: touchedIndex == index
-                                  ? Colors.black
-                                  : Colors.grey,
-                              handleTap: () =>
-                                  setState(() => touchedIndex = index),
-                            ),
-                          ),
-                        )
-                        .values
-                        .toList(),
-                  ),
-                ]
-              : <Widget>[
-                  SizedBox(height: 35.0),
-                  Center(
-                    child: Text('No expenses found in current period.'),
-                  )
-                ]),
-    );
+                ),
+              )
+              .values
+              .toList(),
+        ),
+      ] else ...[
+        SizedBox(height: 35.0),
+        Center(
+          child: Text('No expenses found in current period.'),
+        ),
+      ]
+    ]);
   }
 }

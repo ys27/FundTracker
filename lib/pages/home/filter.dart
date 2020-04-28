@@ -58,84 +58,80 @@ class _FilterState extends State<Filter> {
                 ),
               ],
             ),
-            body: ListView(
-              children: <Widget>[
-                    SizedBox(height: 10.0),
-                    Center(
-                      child: FlatButton(
-                        textColor: Colors.white,
-                        color: Theme.of(context).primaryColor,
-                        child: Text('Enable All'),
-                        onPressed: () async {
-                          setState(() {
-                            _categories.forEach((cat) => cat.unfiltered = true);
-                            _incomeUnfiltered = true;
-                            _expensesUnfiltered = true;
-                          });
-                          final List<Category> allCategoriesUnfiltered =
-                              _categories
-                                  .map((cat) => cat.setUnfiltered(true))
-                                  .toList();
-                          await DatabaseWrapper(widget.user.uid)
-                              .updateCategories(allCategoriesUnfiltered);
-                          await DatabaseWrapper(widget.user.uid)
-                              .updatePreferences(
-                            _prefs
-                                .setPreference('incomeUnfiltered', true)
-                                .setPreference('expensesUnfiltered', true),
-                          );
-                        },
-                      ),
+            body: ListView(children: <Widget>[
+              SizedBox(height: 10.0),
+              Center(
+                child: FlatButton(
+                  textColor: Colors.white,
+                  color: Theme.of(context).primaryColor,
+                  child: Text('Enable All'),
+                  onPressed: () async {
+                    setState(() {
+                      _categories.forEach((cat) => cat.unfiltered = true);
+                      _incomeUnfiltered = true;
+                      _expensesUnfiltered = true;
+                    });
+                    final List<Category> allCategoriesUnfiltered = _categories
+                        .map((cat) => cat.setUnfiltered(true))
+                        .toList();
+                    await DatabaseWrapper(widget.user.uid)
+                        .updateCategories(allCategoriesUnfiltered);
+                    await DatabaseWrapper(widget.user.uid).updatePreferences(
+                      _prefs
+                          .setPreference('incomeUnfiltered', true)
+                          .setPreference('expensesUnfiltered', true),
+                    );
+                  },
+                ),
+              ),
+              CheckboxListTile(
+                key: Key('income'),
+                title: Row(
+                  children: <Widget>[
+                    Icon(
+                      CommunityMaterialIcons.currency_usd,
+                      color: Colors.green,
                     ),
-                    CheckboxListTile(
-                      key: Key('income'),
-                      title: Row(
-                        children: <Widget>[
-                          Icon(
-                            CommunityMaterialIcons.currency_usd,
-                            color: Colors.green,
-                          ),
-                          SizedBox(width: 25.0),
-                          Text('Income'),
-                        ],
-                      ),
-                      value: _incomeUnfiltered ?? _prefs.incomeUnfiltered,
-                      activeColor: Theme.of(context).primaryColor,
-                      onChanged: (val) async {
-                        setState(() => _incomeUnfiltered = val);
-                      },
+                    SizedBox(width: 25.0),
+                    Text('Income'),
+                  ],
+                ),
+                value: _incomeUnfiltered ?? _prefs.incomeUnfiltered,
+                activeColor: Theme.of(context).primaryColor,
+                onChanged: (val) async {
+                  setState(() => _incomeUnfiltered = val);
+                },
+              ),
+              CheckboxListTile(
+                key: Key('expenses'),
+                title: Row(
+                  children: <Widget>[
+                    Icon(
+                      CommunityMaterialIcons.currency_usd,
+                      color: Colors.red,
                     ),
-                    CheckboxListTile(
-                      key: Key('expenses'),
-                      title: Row(
-                        children: <Widget>[
-                          Icon(
-                            CommunityMaterialIcons.currency_usd,
-                            color: Colors.red,
-                          ),
-                          SizedBox(width: 25.0),
-                          Text('Expenses'),
-                        ],
-                      ),
-                      value: _expensesUnfiltered ?? _prefs.expensesUnfiltered,
-                      activeColor: Theme.of(context).primaryColor,
-                      onChanged: (val) async {
-                        setState(() => _expensesUnfiltered = val);
-                      },
+                    SizedBox(width: 25.0),
+                    Text('Expenses'),
+                  ],
+                ),
+                value: _expensesUnfiltered ?? _prefs.expensesUnfiltered,
+                activeColor: Theme.of(context).primaryColor,
+                onChanged: (val) async {
+                  setState(() => _expensesUnfiltered = val);
+                },
+              ),
+              Divider(
+                color: Colors.grey,
+              ),
+              ..._categories
+                  .map(
+                    (category) => FilterCategoryTile(
+                      category: category,
+                      numCategories: _categories.length,
                     ),
-                    Divider(
-                      color: Colors.grey,
-                    )
-                  ] +
-                  _categories
-                      .map(
-                        (category) => FilterCategoryTile(
-                          category: category,
-                          numCategories: _categories.length,
-                        ),
-                      )
-                      .toList(),
-            ),
+                  )
+                  .toList()
+            ]),
           )
         : Loader();
   }

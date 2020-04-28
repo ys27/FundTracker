@@ -194,79 +194,76 @@ class _StatisticsState extends State<Statistics> {
         controller: _scrollController,
         padding: bodyPadding,
         children: <Widget>[
-              TabSelector(
-                context,
-                tabs: [
-                  {
-                    'enabled': _showAllTimeStats,
-                    'title': 'All-Time',
-                    'onPressed': () => setState(() {
-                          _showAllTimeStats = true;
-                          _showPeriodStats = false;
-                          _showCustomStats = false;
-                        }),
-                  },
-                  {
-                    'enabled': _showPeriodStats,
-                    'title': 'Period',
-                    'onPressed': () => setState(() {
-                          _showAllTimeStats = false;
-                          _showPeriodStats = true;
-                          _showCustomStats = false;
-                        }),
-                  },
-                  {
-                    'enabled': _showCustomStats,
-                    'title': 'Custom',
-                    'onPressed': () => setState(() {
-                          _showAllTimeStats = false;
-                          _showPeriodStats = false;
-                          _showCustomStats = true;
-                        }),
-                  },
-                ],
+          TabSelector(
+            context,
+            tabs: [
+              {
+                'enabled': _showAllTimeStats,
+                'title': 'All-Time',
+                'onPressed': () => setState(() {
+                      _showAllTimeStats = true;
+                      _showPeriodStats = false;
+                      _showCustomStats = false;
+                    }),
+              },
+              {
+                'enabled': _showPeriodStats,
+                'title': 'Period',
+                'onPressed': () => setState(() {
+                      _showAllTimeStats = false;
+                      _showPeriodStats = true;
+                      _showCustomStats = false;
+                    }),
+              },
+              {
+                'enabled': _showCustomStats,
+                'title': 'Custom',
+                'onPressed': () => setState(() {
+                      _showAllTimeStats = false;
+                      _showPeriodStats = false;
+                      _showCustomStats = true;
+                    }),
+              },
+            ],
+          ),
+          _limitCustomizer,
+          if (_showStatistics) ...[
+            Balance(
+              transactions: _transactions,
+              showPeriodStats: _customPeriod == null ? _showPeriodStats : false,
+              daysLeft: _daysLeft,
+            ),
+            SizedBox(height: 20.0),
+            Categories(
+              transactions: onlyExpenses,
+              categories: widget.categories,
+            ),
+            if (_showAllTimeStats || _showCustomStats) ...[
+              SizedBox(height: 20.0),
+              Periodic(
+                dividedTransactions: _showAllTimeStats
+                    ? _dividedTransactions.reversed.toList()
+                    : _customDividedTransactions.reversed.toList(),
               ),
-              _limitCustomizer,
-            ] +
-            (_showStatistics
-                ? <Widget>[
-                    Balance(
-                      transactions: _transactions,
-                      showPeriodStats:
-                          _customPeriod == null ? _showPeriodStats : false,
-                      daysLeft: _daysLeft,
-                    ),
-                    SizedBox(height: 20.0),
-                    Categories(
-                      transactions: onlyExpenses,
-                      categories: widget.categories,
-                    ),
-                    if (_showAllTimeStats || _showCustomStats) ...[
-                      SizedBox(height: 20.0),
-                      Periodic(
-                        dividedTransactions: _showAllTimeStats
-                            ? _dividedTransactions.reversed.toList()
-                            : _customDividedTransactions.reversed.toList(),
-                      ),
-                    ],
-                    SizedBox(height: 20.0),
-                    TopExpenses(
-                      transactions: onlyExpenses,
-                      categories: widget.categories,
-                      totalIncome: _transactions
-                          .where((tx) => !tx.isExpense)
-                          .fold(0.0, (a, b) => a + b.amount),
-                      totalExpenses: _transactions
-                          .where((tx) => tx.isExpense)
-                          .fold(0.0, (a, b) => a + b.amount),
-                      scrollController: _scrollController,
-                    ),
-                  ]
-                : <Widget>[
-                    Center(
-                      child: Text('No transactions available after this date.'),
-                    ),
-                  ]),
+            ],
+            SizedBox(height: 20.0),
+            TopExpenses(
+              transactions: onlyExpenses,
+              categories: widget.categories,
+              totalIncome: _transactions
+                  .where((tx) => !tx.isExpense)
+                  .fold(0.0, (a, b) => a + b.amount),
+              totalExpenses: _transactions
+                  .where((tx) => tx.isExpense)
+                  .fold(0.0, (a, b) => a + b.amount),
+              scrollController: _scrollController,
+            ),
+          ] else ...[
+            Center(
+              child: Text('No transactions available after this date.'),
+            ),
+          ]
+        ],
       );
     }
 

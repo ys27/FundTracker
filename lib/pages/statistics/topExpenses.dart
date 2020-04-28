@@ -41,39 +41,39 @@ class _TopExpensesState extends State<TopExpenses> {
           .toList();
       _sortedTransactions = getPercentagesOutOfTotalAmount(
           _sortedTransactions, widget.totalExpenses);
-      _columnContent = sublist(_sortedTransactions, 0, _showCount)
-              .map((tx) => <Widget>[
-                    SizedBox(height: 10.0),
-                    BarTile(
-                      title: tx['payee'],
-                      subtitle: getCategory(widget.categories, tx['cid']).name,
-                      amount: tx['amount'],
-                    ),
-                  ])
-              .expand((x) => x)
-              .toList() +
-          <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                FlatButton(
-                  child: Text('Collapse'),
-                  onPressed: () => setState(() => _showCount = 5),
-                ),
-                FlatButton(
-                  child: Text('Show more'),
-                  onPressed: () {
-                    setState(() => _showCount += 5);
-                    widget.scrollController.animateTo(
-                      99999,
-                      duration: Duration(seconds: 3),
-                      curve: Curves.easeInOutQuint,
-                    );
-                  },
-                )
-              ],
+      _columnContent = <Widget>[
+        ...sublist(_sortedTransactions, 0, _showCount)
+            .map((tx) => <Widget>[
+                  SizedBox(height: 10.0),
+                  BarTile(
+                    title: tx['payee'],
+                    subtitle: getCategory(widget.categories, tx['cid']).name,
+                    amount: tx['amount'],
+                  ),
+                ])
+            .expand((x) => x)
+            .toList(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            FlatButton(
+              child: Text('Collapse'),
+              onPressed: () => setState(() => _showCount = 5),
+            ),
+            FlatButton(
+              child: Text('Show more'),
+              onPressed: () {
+                setState(() => _showCount += 5);
+                widget.scrollController.animateTo(
+                  99999,
+                  duration: Duration(seconds: 3),
+                  curve: Curves.easeInOutQuint,
+                );
+              },
             )
-          ];
+          ],
+        )
+      ];
     } else {
       _columnContent = <Widget>[
         SizedBox(height: 35.0),
@@ -84,7 +84,10 @@ class _TopExpensesState extends State<TopExpenses> {
     }
 
     return Column(
-      children: <Widget>[StatTitle(title: 'Top Expenses')] + _columnContent,
+      children: <Widget>[
+        StatTitle(title: 'Top Expenses'),
+        ..._columnContent,
+      ],
     );
   }
 }

@@ -282,24 +282,22 @@ InputDecoration clearInput({
     suffixIcon: enabled
         ? Row(
             mainAxisSize: MainAxisSize.min,
-            children: (passwordToggle
-                    ? <Widget>[
-                        ButtonTheme(
-                          child: IconButton(
-                            icon: passwordToggleVisible
-                                ? Icon(CommunityMaterialIcons.eye_off)
-                                : Icon(CommunityMaterialIcons.eye),
-                            onPressed: onPasswordTogglePressed,
-                          ),
-                        )
-                      ]
-                    : <Widget>[]) +
-                <Widget>[
-                  IconButton(
-                    icon: Icon(CommunityMaterialIcons.close),
-                    onPressed: onPressed,
+            children: <Widget>[
+              if (passwordToggle) ...[
+                ButtonTheme(
+                  child: IconButton(
+                    icon: passwordToggleVisible
+                        ? Icon(CommunityMaterialIcons.eye_off)
+                        : Icon(CommunityMaterialIcons.eye),
+                    onPressed: onPasswordTogglePressed,
                   ),
-                ],
+                ),
+              ],
+              IconButton(
+                icon: Icon(CommunityMaterialIcons.close),
+                onPressed: onPressed,
+              ),
+            ],
           )
         : null,
   );
