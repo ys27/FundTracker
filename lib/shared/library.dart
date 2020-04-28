@@ -56,8 +56,8 @@ DateTime findPrevPeriodStartDate(Period period) {
       break;
   }
 
-  periodStartDate = getDateNotTime(
-      periodStartDate.subtract(Duration(days: numDaysInPeriod - 1, hours: 23)));
+  periodStartDate =
+      periodStartDate.subtract(Duration(days: numDaysInPeriod - 1, hours: 23));
 
   return getDateNotTime(periodStartDate);
 }
@@ -344,6 +344,10 @@ String getAmountStr(double amount) {
 
 Category getCategory(List<Category> categories, String cid) {
   return categories.singleWhere((cat) => cat.cid == cid, orElse: () => null);
+}
+
+double getAverage(List<double> numbers) {
+  return numbers.fold(0.0, (a, b) => a + b) / numbers.length;
 }
 
 double abs(double value) {

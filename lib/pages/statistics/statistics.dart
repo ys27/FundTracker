@@ -5,6 +5,7 @@ import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categories.dart';
+import 'package:fund_tracker/pages/statistics/periodic.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -126,6 +127,7 @@ class _StatisticsState extends State<Statistics> {
         );
       }
 
+      List<Map<String, dynamic>> _customDividedTransactions;
       if (_showCustomStats) {
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
@@ -139,6 +141,8 @@ class _StatisticsState extends State<Statistics> {
             limitByDate: widget.prefs.limitByDate,
             isLimitByDateEnabled: widget.prefs.isLimitByDateEnabled,
             defaultCustomLimitTab: widget.prefs.defaultCustomLimitTab,
+            incomeUnfiltered: widget.prefs.incomeUnfiltered,
+            expensesUnfiltered: widget.prefs.expensesUnfiltered,
           );
           if (_customLimitByDate != null) {
             customPrefs =
@@ -146,9 +150,12 @@ class _StatisticsState extends State<Statistics> {
           }
           _transactions =
               filterTransactionsByLimit(widget.allTransactions, customPrefs);
+          _customDividedTransactions = divideTransactionsIntoPeriods(
+              _transactions, widget.currentPeriod);
         } else {
-          _transactions = filterPeriodsWithLimit(
-                  _dividedTransactions, widget.prefs.limitPeriods)
+          _customDividedTransactions = filterPeriodsWithLimit(
+              _dividedTransactions, widget.prefs.limitPeriods);
+          _transactions = _customDividedTransactions
               .map<List<Transaction>>((map) => map['transactions'])
               .expand((x) => x)
               .toList();
@@ -234,6 +241,14 @@ class _StatisticsState extends State<Statistics> {
                       transactions: onlyExpenses,
                       categories: widget.categories,
                     ),
+                    if (_showAllTimeStats || _showCustomStats) ...[
+                      SizedBox(height: 20.0),
+                      Periodic(
+                        dividedTransactions: _showAllTimeStats
+                            ? _dividedTransactions.reversed.toList()
+                            : _customDividedTransactions.reversed.toList(),
+                      ),
+                    ],
                     SizedBox(height: 20.0),
                     TopExpenses(
                       transactions: onlyExpenses,

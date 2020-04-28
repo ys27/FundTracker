@@ -39,7 +39,7 @@ class Balance extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text('$daysLeft days remaining'),
+            Text('$daysLeft days until next period'),
             Text(remainingPerDay),
           ],
         ),

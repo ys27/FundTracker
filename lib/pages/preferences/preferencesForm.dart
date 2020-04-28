@@ -276,6 +276,8 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         isLimitByDateEnabled: _isLimitByDateEnabled ??
                             _prefs.isLimitByDateEnabled,
                         defaultCustomLimitTab: defaultTab,
+                        incomeUnfiltered: _prefs.incomeUnfiltered,
+                        expensesUnfiltered: _prefs.expensesUnfiltered,
                       );
                       DatabaseWrapper(widget.user.uid).updatePreferences(prefs);
                       retrieveNewData(widget.user.uid);
