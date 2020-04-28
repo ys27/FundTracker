@@ -107,7 +107,7 @@ class Periodic extends StatelessWidget {
                   color: Colors.black,
                 ),
                 children: <TextSpan>[
-                  TextSpan(text: 'Periodic averages: '),
+                  TextSpan(text: 'Average: '),
                   TextSpan(
                       text: getAmountStr(averageIncome),
                       style: new TextStyle(color: Colors.green)),
