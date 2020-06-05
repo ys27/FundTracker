@@ -26,7 +26,7 @@ class Balance extends StatelessWidget {
     final double balance = balancesList['income'] - balancesList['expenses'];
     final Map<String, dynamic> relativePercentages =
         getRelativePercentages(balancesList);
-    final String remainingPerDay = balance < 0
+    final String remainingPerDay = balance <= 0
         ? 'No remaining balance'
         : '\$${(balance / daysLeft).toStringAsFixed(2)} / day';
 
