@@ -44,24 +44,27 @@ class TransactionsList extends StatelessWidget {
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
-          return StickyHeader(
-            header: transactionsPeriodHeader(
-              currentPeriod.name == 'Default Monthly',
-              period['startDate'],
-              period['endDate'],
-              period['transactions'],
-            ),
-            content: Column(
-              children: period['transactions'].map<Widget>((tx) {
-                Category category = getCategory(categories, tx.cid);
-                return TransactionTile(
-                  transaction: tx,
-                  category: category,
-                  refreshList: refreshList,
-                );
-              }).toList(),
-            ),
-          );
+          if (period['transactions'].length > 0) {
+            return StickyHeader(
+              header: transactionsPeriodHeader(
+                currentPeriod.name == 'Default Monthly',
+                period['startDate'],
+                period['endDate'],
+                period['transactions'],
+              ),
+              content: Column(
+                children: period['transactions'].map<Widget>((tx) {
+                  Category category = getCategory(categories, tx.cid);
+                  return TransactionTile(
+                    transaction: tx,
+                    category: category,
+                    refreshList: refreshList,
+                  );
+                }).toList(),
+              ),
+            );
+          } else
+            return Container();
         },
         itemCount: _dividedTransactions.length,
         // physics: const AlwaysScrollableScrollPhysics(),
@@ -110,11 +113,9 @@ class TransactionsList extends StatelessWidget {
       List<Map<String, dynamic>> dividedTransactions, FirebaseUser user) {
     dividedTransactions.forEach((period) {
       DateTime now = DateTime.now();
-      if (now.isAfter(
-            period['startDate'].subtract(
-              Duration(microseconds: 1),
-            ),
-          ) &&
+      if (now.isAfter(period['startDate'].subtract(
+            Duration(microseconds: 1),
+          )) &&
           now.isBefore(period['endDate'])) {
         DatabaseWrapper(user.uid)
             .updatePeriods([currentPeriod.setStartDate(period['startDate'])]);

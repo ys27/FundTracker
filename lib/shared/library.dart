@@ -137,12 +137,12 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
 ) {
   List<Map<String, dynamic>> periodsList = [];
 
+  DateTime _now = DateTime.now();
+
   if (transactions.length > 0) {
     DateTime iteratingPeriodStartDate =
         findStartDateOfGivenDateTime(transactions.last.date, period);
-    while (iteratingPeriodStartDate.isBefore(
-      transactions.first.date.add(Duration(milliseconds: 1)),
-    )) {
+    while (iteratingPeriodStartDate.isBefore(_now)) {
       Period periodWithNewStartDate =
           period.setStartDate(iteratingPeriodStartDate);
       int numDaysInPeriod = findNumDaysInPeriod(
@@ -171,9 +171,10 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   }
 
   // Remove periods without any txs
-  return periodsList
-      .where((period) => period['transactions'].length > 0)
-      .toList();
+  // return periodsList
+  //     .where((period) => period['transactions'].length > 0)
+  //     .toList();
+  return periodsList;
 }
 
 List<Transaction> filterTransactionsByLimit(
