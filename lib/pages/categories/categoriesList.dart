@@ -64,7 +64,7 @@ class _CategoriesListState extends State<CategoriesList> {
                   children: <Widget>[
                     Center(
                       child: Text(
-                        'Hold and drag on a category to a different order.',
+                        'Hold and drag to change the order.',
                         style: TextStyle(fontSize: 16.0),
                       ),
                     ),

@@ -133,7 +133,9 @@ class _CategoryFormState extends State<CategoryForm> {
                                 return IconsList();
                               },
                             );
-                            setState(() => _icon = icon);
+                            if (icon != null) {
+                              setState(() => _icon = icon);
+                            }
                           },
                         ),
                         SizedBox(height: 10.0),
@@ -158,7 +160,9 @@ class _CategoryFormState extends State<CategoryForm> {
                                 );
                               },
                             );
-                            setState(() => _iconColor = color);
+                            if (color != null) {
+                              setState(() => _iconColor = color);
+                            }
                           },
                         ),
                         SizedBox(height: 10.0),
