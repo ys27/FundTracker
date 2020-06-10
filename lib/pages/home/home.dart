@@ -5,7 +5,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
-import 'package:fund_tracker/pages/home/filter.dart';
+import 'package:fund_tracker/pages/filters/filterList.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
@@ -179,7 +179,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         await showDialog(
           context: context,
           builder: (context) {
-            return Filter(
+            return FilterList(
               user: widget.user,
               openPage: openPage,
             );
