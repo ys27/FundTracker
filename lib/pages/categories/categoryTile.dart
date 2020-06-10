@@ -51,6 +51,8 @@ class _CategoryTileState extends State<CategoryTile> {
               onChanged: (val) async {
                 if (!widget.category.isNamedOthers()) {
                   setState(() => widget.category.enabled = val);
+                  await DatabaseWrapper(_user.uid)
+                      .updateCategories([widget.category]);
                 }
               },
             ),

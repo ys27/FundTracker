@@ -43,19 +43,6 @@ class _CategoriesListState extends State<CategoriesList> {
             drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
             appBar: AppBar(
               title: Text('Categories'),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(CommunityMaterialIcons.check),
-                  onPressed: () async {
-                    List<Category> updatedCategories = _categories
-                        .map((cat) => cat.setEnabled(cat.enabled))
-                        .toList();
-                    await DatabaseWrapper(widget.user.uid)
-                        .updateCategories(updatedCategories);
-                    goHome(context);
-                  },
-                ),
-              ],
             ),
             body: Container(
               padding: bodyPadding,
