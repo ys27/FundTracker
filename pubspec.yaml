@@ -36,13 +36,15 @@ dependencies:
   flutter_colorpicker: ^0.3.2
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.7.4
+  flutter_launcher_icons: ^0.7.5
   flutter_test:
     sdk: flutter
 
 flutter_icons:
   image_path: "assets/images/icon.png"
   android: true
+  adaptive_icon_background: "#B71C1C"
+  adaptive_icon_foreground: "assets/images/icon-foreground.png"
   ios: true
 
 # For information on the generic Dart part of this file, see the
