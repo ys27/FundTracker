@@ -59,16 +59,22 @@ Let's open the menu and go to `Categories`.
 This page displays a list of all the categories. 
 You can choose to show these in the transactions page by selecting/unselecting individual categories and change the order it is displayed in the dropdown.
 
-<img alt="Menu From Home" src="https://github.com/ys27/FundTracker/blob/master/README_images/menu_open_from_home.png?raw=true" width="40%">
-<img alt="Default Categories" src="https://github.com/ys27/FundTracker/blob/master/README_images/categories_default.png?raw=true" width="40%">
+<div>
+  <img alt="Menu From Home" src="https://github.com/ys27/FundTracker/blob/master/README_images/menu_open_from_home.png?raw=true" width="40%">
+  <img alt="Default Categories" src="https://github.com/ys27/FundTracker/blob/master/README_images/categories_default.png?raw=true" width="40%">
+</div>
 
 But we are here to create a new category, so click on the floating + button.
 In the category creation/edit page, you can specify the name, the icon (from MaterialIcons), and the colour.
 
-<img alt="Adding Category Name" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_category_sold_name.png?raw=true" width="40%">
-<img alt="Adding Category Icon" src="https://github.com/ys27/FundTracker/blob/master/README_images/icon_selection.png?raw=true" width="40%">
-<img alt="Adding Category Colour" src="https://github.com/ys27/FundTracker/blob/master/README_images/colour_selection.png?raw=true" width="40%">
-<img alt="Adding Category Filled" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_category_sold_finished.png?raw=true" width="40%">
+<div>
+  <img alt="Adding Category Name" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_category_sold_name.png?raw=true" width="40%">
+  <img alt="Adding Category Icon" src="https://github.com/ys27/FundTracker/blob/master/README_images/icon_selection.png?raw=true" width="40%">
+</div>
+<div>
+  <img alt="Adding Category Colour" src="https://github.com/ys27/FundTracker/blob/master/README_images/colour_selection.png?raw=true" width="40%">
+  <img alt="Adding Category Filled" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_category_sold_finished.png?raw=true" width="40%">
+</div>
 
 Click `Add` and at the bottom of the list, voila!
 
@@ -79,15 +85,19 @@ For now, let's go back to the car transaction and change the category.
 In the category dropdown, you can see that `Items Sold` is now available to use.
 Select the category, save, and the transaction is now updated.
 
-<img alt="New Category In Dropdown" src="https://github.com/ys27/FundTracker/blob/master/README_images/car_tx_sold_category.png?raw=true" width="40%">
-<img alt="Updated Transaction New Category" src="https://github.com/ys27/FundTracker/blob/master/README_images/home_tx_sold_category.png?raw=true" width="40%">
+<div>
+  <img alt="New Category In Dropdown" src="https://github.com/ys27/FundTracker/blob/master/README_images/car_tx_sold_category.png?raw=true" width="40%">
+  <img alt="Updated Transaction New Category" src="https://github.com/ys27/FundTracker/blob/master/README_images/home_tx_sold_category.png?raw=true" width="40%">
+</div>
 
 I just bought another app from the Play Store and wish to add a transaction.
 As soon as I start typing, transactions from the past that starts with the same name are suggested.
 Choose the suggestion. The name and the category are changed for you. Enter the rest of the details and save.
 
-<img alt="Show Suggestions" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_tx_gpstore2_suggestions.png?raw=true" width="40%">
-<img alt="Add Suggestion Details" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_tx_gpstore2_details.png?raw=true" width="40%">
+<div>
+  <img alt="Show Suggestions" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_tx_gpstore2_suggestions.png?raw=true" width="40%">
+  <img alt="Add Suggestion Details" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_tx_gpstore2_details.png?raw=true" width="40%">
+</div>
 
 Now that you have a few transactions, let's check out our statistics.
 You can swipe to the left or click on `Statistics`.
@@ -110,8 +120,10 @@ The statistics page currently has the following information:
 - Expenditure per category (TODO: Consider income? preferences)
 - Top Expenses
 
-<img alt="Statistics" src="https://github.com/ys27/FundTracker/blob/master/README_images/statistics.png?raw=true" width="40%">
-<img alt="Statistics Categories" src="https://github.com/ys27/FundTracker/blob/master/README_images/stats_categories.png?raw=true" width="40%">
+<div>
+  <img alt="Statistics" src="https://github.com/ys27/FundTracker/blob/master/README_images/statistics.png?raw=true" width="40%">
+  <img alt="Statistics Categories" src="https://github.com/ys27/FundTracker/blob/master/README_images/stats_categories.png?raw=true" width="40%">
+</div>
 <img alt="Statistics Top Expenses" src="https://github.com/ys27/FundTracker/blob/master/README_images/stats_top_expenses.png?raw=true" width="40%">
 
 The transactions can be filtered from the home page (Transactions or Statistics). This filter is shared and affects the statistics.
@@ -127,8 +139,10 @@ I want a 4 week custom period that starts this Friday.
 Don't worry about past transactions, this will set the past periods properly from any set start date.
 Let's also set this as the default (active) period.
 
-<img alt="Empty Periods" src="https://github.com/ys27/FundTracker/blob/master/README_images/periods_empty.png?raw=true" width="40%">
-<img alt="Add 4 Weeks Period" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_period_4_weeks.png?raw=true" width="40%">
+<div>
+  <img alt="Empty Periods" src="https://github.com/ys27/FundTracker/blob/master/README_images/periods_empty.png?raw=true" width="40%">
+  <img alt="Add 4 Weeks Period" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_period_4_weeks.png?raw=true" width="40%">
+</div>
 
 I've also added a 2 week period to show that the active period is highlighted in blue.
 
@@ -151,8 +165,10 @@ We can add this from the menu > `Recurring Transactions`.
 Let's say I want to give my little brother $5 for the next 5 days.
 I can set the next date (or the start date), transaction details, the frequency, and if applicable, the end condition using *either* the number of times I would like, or the end date.
 
-<img alt="Add Recurring Transaction" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_recurring_transactions_allowance.png?raw=true" width="40%">
-<img alt="Added Recurring Transaction" src="https://github.com/ys27/FundTracker/blob/master/README_images/recurring_transactions_allowance.png?raw=true" width="40%">
+<div>
+  <img alt="Add Recurring Transaction" src="https://github.com/ys27/FundTracker/blob/master/README_images/add_recurring_transactions_allowance.png?raw=true" width="40%">
+  <img alt="Added Recurring Transaction" src="https://github.com/ys27/FundTracker/blob/master/README_images/recurring_transactions_allowance.png?raw=true" width="40%">
+</div>
 
 Now that the recurring transaction is added, let's go to the home page. 
 Since we set the next date for today, the transaction is already added.
