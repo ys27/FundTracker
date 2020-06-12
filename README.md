@@ -2,9 +2,9 @@
 
 A flutter application for budgets and keeping track of transactions.
 
-Built because I couldn't find any applications that allowed a custom or a 4-week period.
+I built this because I couldn't find any application that allowed a custom or a 4-week period.
 
-Allows authentication with Firebase and uses Firestore as a cloud database on top of using the devices' local database. 
+Allows authentication with Firebase and uses Firestore as a cloud database on top of using the devices' local database as backup. 
 
 Features include: 
 - statistics
