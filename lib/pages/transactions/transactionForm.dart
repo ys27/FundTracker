@@ -158,9 +158,7 @@ class _TransactionFormState extends State<TransactionForm> {
             SizedBox(height: 10.0),
             DatePicker(
               context,
-              leading: isRecurringTxMode
-                  ? 'Next Date:                         '
-                  : getDateStr(_date),
+              leading: isRecurringTxMode ? 'Next Date: ' : getDateStr(_date),
               trailing: isRecurringTxMode ? '${getDateStr(_nextDate)}' : '',
               updateDateState: (date) => setState(() {
                 if (isRecurringTxMode) {
@@ -452,7 +450,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               DatePicker(
                 context,
-                leading: 'End Date:                          ',
+                leading: 'End Date: ',
                 trailing: '${getDateStr(_endDate)}',
                 updateDateState: (date) {
                   setState(() {

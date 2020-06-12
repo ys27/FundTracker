@@ -97,7 +97,7 @@ class _PeriodFormState extends State<PeriodForm> {
                   SizedBox(height: 10.0),
                   DatePicker(
                     context,
-                    leading: 'Start Date:                         ',
+                    leading: 'Start Date: ',
                     trailing: '${getDateStr(_startDate)}',
                     updateDateState: (date) =>
                         setState(() => _startDate = date),
