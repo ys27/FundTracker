@@ -86,16 +86,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         'actions': <Widget>[
           IconButton(
             icon: Icon(CommunityMaterialIcons.magnify),
-            onPressed: () => showSearch(
-              context: context,
-              delegate: SearchService(
-                _transactions,
-                _categories,
-                _currentPeriod,
-                _prefs,
-                retrieveNewData,
-              ),
-            ),
+            onPressed: () => showTxSearch(_transactions),
           ),
           filterCategoriesButton(),
         ],
@@ -187,6 +178,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         );
         retrieveNewData(widget.user.uid);
       },
+    );
+  }
+
+  void showTxSearch(List<Transaction> txs, {String prevQuery}) {
+    print(prevQuery);
+    showSearch(
+      context: context,
+      query: prevQuery,
+      delegate: SearchService(
+        transactions: txs,
+        categories: _categories,
+        currentPeriod: _currentPeriod,
+        prefs: _prefs,
+        refreshList: (prevQuery) async {
+          Navigator.pop(context);
+          List<Transaction> newTxs =
+              await DatabaseWrapper(widget.user.uid).getTransactions();
+          showTxSearch(newTxs, prevQuery: prevQuery);
+        },
+      ),
     );
   }
 

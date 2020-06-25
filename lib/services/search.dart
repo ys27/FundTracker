@@ -11,15 +11,15 @@ class SearchService extends SearchDelegate {
   final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
-  final Function retrieveNewData;
+  final Function refreshList;
 
-  SearchService(
+  SearchService({
     this.transactions,
     this.categories,
     this.currentPeriod,
     this.prefs,
-    this.retrieveNewData,
-  );
+    this.refreshList,
+  });
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -44,7 +44,7 @@ class SearchService extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.isEmpty) {
-      return Center(child: Text('Start typing to query transactions.'));
+      return Center(child: Text('Start typing to find transactions.'));
     } else {
       final List<Transaction> searchedTransactions = transactions
           .where((tx) => tx.payee.toLowerCase().contains(query.toLowerCase()))
@@ -53,7 +53,7 @@ class SearchService extends SearchDelegate {
         transactions: searchedTransactions,
         categories: categories,
         currentPeriod: currentPeriod,
-        refreshList: retrieveNewData,
+        refreshList: () => refreshList(query),
       );
     }
   }
