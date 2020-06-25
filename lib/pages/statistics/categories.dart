@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/statistics/indicator.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -9,8 +10,9 @@ import 'package:fund_tracker/shared/components.dart';
 class Categories extends StatefulWidget {
   final List<Transaction> transactions;
   final List<Category> categories;
+  final Preferences prefs;
 
-  Categories({this.transactions, this.categories});
+  Categories({this.transactions, this.categories, this.prefs});
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -18,12 +20,14 @@ class Categories extends StatefulWidget {
 
 class _CategoriesState extends State<Categories> {
   int touchedIndex = -1;
-  bool onlyExpenses = true;
+  bool onlyExpenses;
 
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> _categoricalData;
     List<PieChartSectionData> sectionData;
+
+    onlyExpenses = onlyExpenses ?? widget.prefs.isOnlyExpenses;
 
     final List<Transaction> txExpenses =
         widget.transactions.where((tx) => tx.isExpense).toList();
@@ -70,11 +74,12 @@ class _CategoriesState extends State<Categories> {
       StatTitle(title: 'Categories'),
       SizedBox(height: 10.0),
       SwitchListTile(
-          title: Text('Only expenses'),
-          value: onlyExpenses,
-          onChanged: (val) {
-            setState(() => onlyExpenses = val);
-          }),
+        title: Text('Only expenses'),
+        value: onlyExpenses,
+        onChanged: (val) {
+          setState(() => onlyExpenses = val);
+        },
+      ),
       if (widget.transactions.length > 0) ...[
         SizedBox(height: 35.0),
         PieChart(

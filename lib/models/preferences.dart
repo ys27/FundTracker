@@ -11,6 +11,7 @@ class Preferences {
   LimitTab defaultCustomLimitTab;
   bool incomeUnfiltered;
   bool expensesUnfiltered;
+  bool isOnlyExpenses;
 
   Preferences({
     this.pid,
@@ -23,6 +24,7 @@ class Preferences {
     this.defaultCustomLimitTab,
     this.incomeUnfiltered,
     this.expensesUnfiltered,
+    this.isOnlyExpenses,
   });
 
   Preferences.example() {
@@ -36,6 +38,7 @@ class Preferences {
     defaultCustomLimitTab = LimitTab.Period;
     incomeUnfiltered = true;
     expensesUnfiltered = true;
+    isOnlyExpenses = false;
   }
 
   Preferences.original() {
@@ -49,6 +52,7 @@ class Preferences {
     defaultCustomLimitTab = LimitTab.Period;
     incomeUnfiltered = true;
     expensesUnfiltered = true;
+    isOnlyExpenses = false;
   }
 
   Preferences.fromMap(Map<String, dynamic> map) {
@@ -66,6 +70,7 @@ class Preferences {
     });
     this.incomeUnfiltered = map['incomeUnfiltered'] == 1;
     this.expensesUnfiltered = map['expensesUnfiltered'] == 1;
+    this.isOnlyExpenses = map['isOnlyExpenses'] == 1;
   }
 
   Map<String, dynamic> toMap() {
@@ -80,6 +85,7 @@ class Preferences {
       'defaultCustomLimitTab': defaultCustomLimitTab.toString(),
       'incomeUnfiltered': incomeUnfiltered ? 1 : 0,
       'expensesUnfiltered': expensesUnfiltered ? 1 : 0,
+      'isOnlyExpenses': isOnlyExpenses ? 1 : 0,
     };
   }
 
@@ -116,6 +122,9 @@ class Preferences {
       case 'expensesUnfiltered':
         copy.expensesUnfiltered = value;
         break;
+      case 'isOnlyExpenses':
+        copy.isOnlyExpenses = value;
+        break;
     }
     return copy;
   }
@@ -132,6 +141,7 @@ class Preferences {
       defaultCustomLimitTab: this.defaultCustomLimitTab,
       incomeUnfiltered: this.incomeUnfiltered,
       expensesUnfiltered: this.expensesUnfiltered,
+      isOnlyExpenses: this.isOnlyExpenses,
     );
   }
 }

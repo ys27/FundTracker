@@ -182,7 +182,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   void showTxSearch(List<Transaction> txs, {String prevQuery}) {
-    print(prevQuery);
     showSearch(
       context: context,
       query: prevQuery,

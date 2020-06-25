@@ -37,6 +37,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
   bool _isDefaultTabAllTime = false;
   bool _isDefaultTabPeriod = false;
   bool _isDefaultTabCustom = false;
+  bool _isOnlyExpenses;
   bool _wasUpdated = false;
   bool _isModified = false;
 
@@ -72,6 +73,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
           _isLimitPeriodsEnabled ?? _prefs.isLimitPeriodsEnabled;
       _isLimitByDateEnabled =
           _isLimitByDateEnabled ?? _prefs.isLimitByDateEnabled;
+      _isOnlyExpenses = _isOnlyExpenses ?? _prefs.isOnlyExpenses;
 
       if (!_isDefaultTabAllTime &&
           !_isDefaultTabPeriod &&
@@ -229,6 +231,17 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 ],
               ),
               SizedBox(height: 10.0),
+              SwitchListTile(
+                title: Text('Only expenses (default)'),
+                value: _isOnlyExpenses,
+                onChanged: (val) {
+                  setState(() {
+                    _isModified = true;
+                    _isOnlyExpenses = val;
+                  });
+                },
+              ),
+              SizedBox(height: 10.0),
               RaisedButton(
                 color:
                     _isModified ? Theme.of(context).primaryColor : Colors.grey,
@@ -263,21 +276,19 @@ class _PreferencesFormState extends State<PreferencesForm> {
                         pid: widget.user.uid,
                         limitDays:
                             _isLimitDaysEnabled ? limitDays : _prefs.limitDays,
-                        isLimitDaysEnabled:
-                            _isLimitDaysEnabled ?? _prefs.isLimitDaysEnabled,
+                        isLimitDaysEnabled: _isLimitDaysEnabled,
                         limitPeriods: _isLimitPeriodsEnabled
                             ? limitPeriods
                             : _prefs.limitPeriods,
-                        isLimitPeriodsEnabled: _isLimitPeriodsEnabled ??
-                            _prefs.isLimitPeriodsEnabled,
+                        isLimitPeriodsEnabled: _isLimitPeriodsEnabled,
                         limitByDate: _isLimitByDateEnabled
                             ? limitByDate
                             : _prefs.limitByDate,
-                        isLimitByDateEnabled: _isLimitByDateEnabled ??
-                            _prefs.isLimitByDateEnabled,
+                        isLimitByDateEnabled: _isLimitByDateEnabled,
                         defaultCustomLimitTab: defaultTab,
                         incomeUnfiltered: _prefs.incomeUnfiltered,
                         expensesUnfiltered: _prefs.expensesUnfiltered,
+                        isOnlyExpenses: _isOnlyExpenses,
                       );
                       DatabaseWrapper(widget.user.uid).updatePreferences(prefs);
                       retrieveNewData(widget.user.uid);
