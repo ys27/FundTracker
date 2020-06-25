@@ -235,7 +235,7 @@ class _StatisticsState extends State<Statistics> {
             ),
             SizedBox(height: 20.0),
             Categories(
-              transactions: onlyExpenses,
+              transactions: _transactions,
               categories: widget.categories,
             ),
             if (_showAllTimeStats || _showCustomStats) ...[

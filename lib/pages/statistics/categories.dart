@@ -18,15 +18,20 @@ class Categories extends StatefulWidget {
 
 class _CategoriesState extends State<Categories> {
   int touchedIndex = -1;
+  bool onlyExpenses = true;
 
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> _categoricalData;
     List<PieChartSectionData> sectionData;
 
+    final List<Transaction> txExpenses =
+        widget.transactions.where((tx) => tx.isExpense).toList();
+
     if (widget.transactions.length > 0) {
-      final List<Map<String, dynamic>> _transactionsInCategories =
-          divideTransactionsIntoCategories(
+      final List<Map<String, dynamic>> _transactionsInCategories = onlyExpenses
+          ? divideTransactionsIntoCategories(txExpenses, widget.categories)
+          : divideTransactionsIntoCategories(
               widget.transactions, widget.categories);
       final List<Map<String, dynamic>> _categoriesWithTotalAmounts =
           appendTotalCategorialAmounts(_transactionsInCategories);
@@ -63,6 +68,13 @@ class _CategoriesState extends State<Categories> {
 
     return Column(children: <Widget>[
       StatTitle(title: 'Categories'),
+      SizedBox(height: 10.0),
+      SwitchListTile(
+          title: Text('Only expenses'),
+          value: onlyExpenses,
+          onChanged: (val) {
+            setState(() => onlyExpenses = val);
+          }),
       if (widget.transactions.length > 0) ...[
         SizedBox(height: 35.0),
         PieChart(

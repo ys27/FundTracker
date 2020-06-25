@@ -227,10 +227,13 @@ int getCurrentPeriodIndex(List<Map<String, dynamic>> list) {
 List<Map<String, dynamic>> appendTotalCategorialAmounts(
     List<Map<String, dynamic>> dividedTransactions) {
   return dividedTransactions
-      .map((map) => {
-            ...map,
-            'amount': map['transactions'].fold(0.0, (a, b) => a + b.amount),
+      .map((category) => {
+            ...category,
+            'amount': category['transactions']
+                .fold(0.0, (a, b) => a + (b.isExpense ? 1 : -1) * b.amount)
           })
+      .toList()
+      .where((category) => category['amount'] > 0)
       .toList();
 }
 
@@ -351,16 +354,6 @@ double getAverage(List<double> numbers) {
   return numbers.fold(0.0, (a, b) => a + b) / numbers.length;
 }
 
-double abs(double value) {
-  if (value < 0) {
-    return -1 * value;
-  }
-  return value;
-}
-
-int min(int a, int b) {
-  if (a < b) {
-    return a;
-  }
-  return b;
-}
+double abs(double value) => value < 0 ? -1 * value : value;
+dynamic max(dynamic a, dynamic b) => a > b ? a : b;
+dynamic min(dynamic a, dynamic b) => a < b ? a : b;
