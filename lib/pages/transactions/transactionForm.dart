@@ -220,26 +220,12 @@ class _TransactionFormState extends State<TransactionForm> {
                 if (query == '') {
                   return null;
                 } else {
-                  List<Map<String, dynamic>> suggestionsWithCount = [];
-
-                  _transactions
-                      .where(
+                  List<Map<String, dynamic>> suggestionsWithCount =
+                      getSuggestionsWithCount(_transactions.where(
                     (tx) =>
                         tx.payee.toLowerCase().startsWith(query.toLowerCase()),
-                  )
-                      .forEach((tx) {
-                    final String suggestion = '${tx.payee}::${tx.cid}';
-                    final int suggestionIndex = suggestionsWithCount
-                        .indexWhere((map) => map['suggestion'] == suggestion);
-                    if (suggestionIndex != -1) {
-                      suggestionsWithCount[suggestionIndex]['count']++;
-                    } else {
-                      suggestionsWithCount.add({
-                        'suggestion': '${tx.payee}::${tx.cid}',
-                        'count': 1,
-                      });
-                    }
-                  });
+                  ));
+
                   suggestionsWithCount
                       .sort((a, b) => b['count'].compareTo(a['count']));
                   final List<String> suggestions =

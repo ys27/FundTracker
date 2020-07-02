@@ -7,6 +7,7 @@ import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/periods/periodsList.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
 import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionsList.dart';
+import 'package:fund_tracker/pages/suggestions/suggestionsList.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -87,6 +88,16 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: Icon(CommunityMaterialIcons.history),
             onTap: () => widget.openPage(
               RecurringTransactionsList(
+                user: widget.user,
+                openPage: widget.openPage,
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text('Suggestions'),
+            leading: Icon(CommunityMaterialIcons.lightbulb_outline),
+            onTap: () => widget.openPage(
+              SuggestionsList(
                 user: widget.user,
                 openPage: widget.openPage,
               ),

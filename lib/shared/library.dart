@@ -340,6 +340,28 @@ List<Map<String, dynamic>> appendIndividualPercentages(
       .toList();
 }
 
+List<Map<String, dynamic>> getSuggestionsWithCount(List<Transaction> txs) {
+  List<Map<String, dynamic>> suggestionsWithCount = [];
+
+  txs.forEach((tx) {
+    final String suggestion = '${tx.payee}::${tx.cid}';
+    final int suggestionIndex = suggestionsWithCount
+        .indexWhere((map) => map['suggestion'] == suggestion);
+    if (suggestionIndex != -1) {
+      suggestionsWithCount[suggestionIndex]['count']++;
+    } else {
+      suggestionsWithCount.add({
+        'payee': tx.payee,
+        'cid': tx.cid,
+        'suggestion': '${tx.payee}::${tx.cid}',
+        'count': 1,
+      });
+    }
+  });
+
+  return suggestionsWithCount;
+}
+
 String getAmountStr(double amount) {
   return amount < 0
       ? '-\$${abs(amount).toStringAsFixed(2)}'
