@@ -531,17 +531,25 @@ class _TransactionFormState extends State<TransactionForm> {
                             .addTransactions([tx]);
                     SyncService(_user.uid).syncTransactions();
                   }
-                  if (!isEditMode && !_addSuggestion) {
-                    await DatabaseWrapper(_user.uid).addHiddenSuggestions(
-                      [
-                        Suggestion(
-                          sid: '$_payee::$cid',
-                          payee: _payee,
-                          cid: cid,
-                          uid: _user.uid,
-                        )
-                      ],
+                  if (!isEditMode) {
+                    Suggestion suggestionToAdd = Suggestion(
+                      sid: '$_payee::$cid',
+                      payee: _payee,
+                      cid: cid,
+                      uid: _user.uid,
                     );
+                    if (!_addSuggestion) {
+                      await DatabaseWrapper(_user.uid).addHiddenSuggestions(
+                        [suggestionToAdd],
+                      );
+                    } else if (widget.hiddenSuggestions
+                            .where((hidden) => hidden.equalTo(suggestionToAdd))
+                            .length >
+                        0) {
+                      await DatabaseWrapper(_user.uid).deleteHiddenSuggestions(
+                        [suggestionToAdd],
+                      );
+                    }
                   }
 
                   Navigator.pop(context);
