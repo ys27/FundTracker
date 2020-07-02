@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -26,6 +27,7 @@ class RecurringTransactionsList extends StatefulWidget {
 
 class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
   List<RecurringTransaction> _recTxs;
+  List<Suggestion> _hiddenSuggestions;
 
   @override
   void initState() {
@@ -70,8 +72,10 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
             FutureProvider<List<Category>>.value(
                 value: DatabaseWrapper(widget.user.uid).getCategories()),
           ],
-          child:
-              TransactionForm(getTxOrRecTx: () => RecurringTransaction.empty()),
+          child: TransactionForm(
+            hiddenSuggestions: _hiddenSuggestions,
+            getTxOrRecTx: () => RecurringTransaction.empty(),
+          ),
         ),
         callback: () => retrieveNewData(widget.user.uid),
       ),
@@ -96,7 +100,10 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
                 FutureProvider<List<Category>>.value(
                     value: DatabaseWrapper(widget.user.uid).getCategories()),
               ],
-              child: TransactionForm(getTxOrRecTx: () => recTx),
+              child: TransactionForm(
+                hiddenSuggestions: _hiddenSuggestions,
+                getTxOrRecTx: () => recTx,
+              ),
             ),
           );
           refreshList();
@@ -139,8 +146,16 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
   }
 
   void retrieveNewData(String uid) async {
-    List<RecurringTransaction> recTxs =
-        await DatabaseWrapper(uid).getRecurringTransactions();
-    setState(() => _recTxs = recTxs);
+    List<Future> dataFutures = [];
+
+    dataFutures.add(DatabaseWrapper(uid).getRecurringTransactions());
+    dataFutures.add(DatabaseWrapper(uid).getHiddenSuggestions());
+
+    List<dynamic> data = await Future.wait(dataFutures);
+
+    setState(() {
+      _recTxs = data[0];
+      _hiddenSuggestions = data[1];
+    });
   }
 }

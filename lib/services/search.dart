@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionsList.dart';
 
@@ -11,6 +12,7 @@ class SearchService extends SearchDelegate {
   final List<Category> categories;
   final Period currentPeriod;
   final Preferences prefs;
+  final List<Suggestion> hiddenSuggestions;
   final Function refreshList;
 
   SearchService({
@@ -18,6 +20,7 @@ class SearchService extends SearchDelegate {
     this.categories,
     this.currentPeriod,
     this.prefs,
+    this.hiddenSuggestions,
     this.refreshList,
   });
 
@@ -53,6 +56,7 @@ class SearchService extends SearchDelegate {
         transactions: searchedTransactions,
         categories: categories,
         currentPeriod: currentPeriod,
+        hiddenSuggestions: hiddenSuggestions,
         refreshList: () => refreshList(query),
       );
     }

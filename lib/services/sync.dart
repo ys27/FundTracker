@@ -1,5 +1,6 @@
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
@@ -81,12 +82,36 @@ class SyncService {
         .then((preferences) => _fireDBService.addPreferences(preferences));
   }
 
+  void syncHiddenSuggestions() async {
+    List<Suggestion> cloudHiddenSuggestions =
+        await _fireDBService.getHiddenSuggestions();
+    List<Suggestion> localHiddenSuggestions =
+        await _localDBService.getHiddenSuggestions(uid);
+    List<Suggestion> hiddenSuggestionsOnlyInCloud = cloudHiddenSuggestions
+        .where((cloud) =>
+            localHiddenSuggestions
+                .where((local) => local.equalTo(cloud))
+                .length ==
+            0)
+        .toList();
+    List<Suggestion> hiddenSuggestionsOnlyInLocal = localHiddenSuggestions
+        .where((local) =>
+            cloudHiddenSuggestions
+                .where((cloud) => cloud.equalTo(local))
+                .length ==
+            0)
+        .toList();
+    _fireDBService.deleteHiddenSuggestions(hiddenSuggestionsOnlyInCloud);
+    _fireDBService.addHiddenSuggestions(hiddenSuggestionsOnlyInLocal);
+  }
+
   void syncToCloud() {
     syncTransactions();
     syncCategories();
     syncPeriods();
     syncRecurringTransactions();
     syncPreferences();
+    syncHiddenSuggestions();
   }
 
   Future syncToLocal() async {
@@ -105,6 +130,8 @@ class SyncService {
                 .addRecurringTransactions(cloudRecurringTransactions)),
         _fireDBService.getPreferences().then((cloudPreferences) =>
             _localDBService.addPreferences(cloudPreferences)),
+        _fireDBService.getHiddenSuggestions().then((cloudHiddenSuggestions) =>
+            _localDBService.addHiddenSuggestions(cloudHiddenSuggestions)),
       ];
       await Future.wait(getThenAdd);
     }

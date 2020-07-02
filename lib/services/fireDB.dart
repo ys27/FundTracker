@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -307,5 +308,28 @@ class FireDBService {
 
   Future deletePreferences() async {
     await db.collection('preferences').document(uid).delete();
+  }
+
+  // Hidden Suggestions
+  Future<List<Suggestion>> getHiddenSuggestions() {
+    return db.collection('hiddenSuggestions').getDocuments().then((snapshot) =>
+        snapshot.documents.map((map) => Suggestion.fromMap(map.data)).toList());
+  }
+
+  Future addHiddenSuggestions(List<Suggestion> suggestions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    suggestions.forEach((suggestion) {
+      batch.setData(db.collection('hiddenSuggestions').document(suggestion.sid),
+          suggestion.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {
+    WriteBatch batch = Firestore.instance.batch();
+    suggestions.forEach((suggestion) {
+      batch.delete(db.collection('hiddenSuggestions').document(suggestion.sid));
+    });
+    await batch.commit();
   }
 }

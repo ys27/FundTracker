@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/recurringTransactions.dart';
@@ -15,9 +16,10 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
+  final List<Suggestion> hiddenSuggestions;
   final Function getTxOrRecTx;
 
-  TransactionForm({this.getTxOrRecTx});
+  TransactionForm({this.hiddenSuggestions, this.getTxOrRecTx});
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -221,18 +223,33 @@ class _TransactionFormState extends State<TransactionForm> {
                   return null;
                 } else {
                   List<Map<String, dynamic>> suggestionsWithCount =
-                      getSuggestionsWithCount(_transactions.where(
-                    (tx) =>
-                        tx.payee.toLowerCase().startsWith(query.toLowerCase()),
-                  ));
+                      getSuggestionsWithCount(
+                    _transactions
+                        .where(
+                          (tx) => tx.payee.toLowerCase().startsWith(query),
+                        )
+                        .toList(),
+                    _user.uid,
+                  );
+
+                  print(widget.hiddenSuggestions[0].payee);
+                  suggestionsWithCount.removeWhere((map) {
+                    Suggestion suggestion = map['suggestion'];
+                    return widget.hiddenSuggestions
+                            .where((hidden) => hidden.equalTo(suggestion))
+                            .length >
+                        0;
+                  });
 
                   suggestionsWithCount
                       .sort((a, b) => b['count'].compareTo(a['count']));
+
                   final List<String> suggestions =
                       suggestionsWithCount.map((map) {
-                    final String suggestion = map['suggestion'];
+                    final String suggestion = map['suggestion'].sid;
                     return suggestion;
                   }).toList();
+
                   if (suggestions.length > 0) {
                     return suggestions;
                   } else {

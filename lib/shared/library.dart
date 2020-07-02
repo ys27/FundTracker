@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/shared/constants.dart';
 
@@ -340,20 +341,28 @@ List<Map<String, dynamic>> appendIndividualPercentages(
       .toList();
 }
 
-List<Map<String, dynamic>> getSuggestionsWithCount(List<Transaction> txs) {
+List<Map<String, dynamic>> getSuggestionsWithCount(
+    List<Transaction> txs, String uid) {
   List<Map<String, dynamic>> suggestionsWithCount = [];
-
   txs.forEach((tx) {
-    final String suggestion = '${tx.payee}::${tx.cid}';
-    final int suggestionIndex = suggestionsWithCount
-        .indexWhere((map) => map['suggestion'] == suggestion);
+    final int suggestionIndex = suggestionsWithCount.indexWhere((map) {
+      Suggestion suggestion = map['suggestion'];
+      return suggestion.equalTo(Suggestion(
+        payee: tx.payee,
+        cid: tx.cid,
+        uid: uid,
+      ));
+    });
     if (suggestionIndex != -1) {
       suggestionsWithCount[suggestionIndex]['count']++;
     } else {
       suggestionsWithCount.add({
-        'payee': tx.payee,
-        'cid': tx.cid,
-        'suggestion': '${tx.payee}::${tx.cid}',
+        'suggestion': Suggestion(
+          sid: '${tx.payee}::${tx.cid}',
+          payee: tx.payee,
+          cid: tx.cid,
+          uid: uid,
+        ),
         'count': 1,
       });
     }

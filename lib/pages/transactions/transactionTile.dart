@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -10,9 +11,15 @@ import 'package:provider/provider.dart';
 class TransactionTile extends StatelessWidget {
   final Transaction transaction;
   final Category category;
+  final List<Suggestion> hiddenSuggestions;
   final Function refreshList;
 
-  TransactionTile({this.transaction, this.category, this.refreshList});
+  TransactionTile({
+    this.transaction,
+    this.category,
+    this.hiddenSuggestions,
+    this.refreshList,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +41,10 @@ class TransactionTile extends StatelessWidget {
                     FutureProvider<List<Category>>.value(
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
-                  child: TransactionForm(getTxOrRecTx: () => transaction),
+                  child: TransactionForm(
+                    hiddenSuggestions: hiddenSuggestions,
+                    getTxOrRecTx: () => transaction,
+                  ),
                 );
               },
             );

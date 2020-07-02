@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -21,6 +22,7 @@ class SuggestionsList extends StatefulWidget {
 class _SuggestionsListState extends State<SuggestionsList> {
   List<Transaction> _transactions;
   List<Category> _categories;
+  List<Suggestion> _hiddenSuggestions;
 
   @override
   void initState() {
@@ -32,14 +34,16 @@ class _SuggestionsListState extends State<SuggestionsList> {
   Widget build(BuildContext context) {
     Widget _body = Loader();
 
-    if (_transactions != null && _categories != null) {
+    if (_transactions != null &&
+        _categories != null &&
+        _hiddenSuggestions != null) {
       if (_transactions.length == 0) {
         _body = Center(
           child: Text('There are no suggestions.'),
         );
       } else {
         List<Map<String, dynamic>> suggestionsWithCount =
-            getSuggestionsWithCount(_transactions);
+            getSuggestionsWithCount(_transactions, widget.user.uid);
         suggestionsWithCount.sort((a, b) => b['count'].compareTo(a['count']));
         _body = Container(
           padding: bodyPadding,
@@ -47,7 +51,7 @@ class _SuggestionsListState extends State<SuggestionsList> {
             itemCount: suggestionsWithCount.length,
             itemBuilder: (context, index) => suggestionCard(
               context,
-              suggestionsWithCount[index],
+              suggestionsWithCount[index]['suggestion'],
               () => retrieveNewData(widget.user.uid),
             ),
           ),
@@ -62,10 +66,10 @@ class _SuggestionsListState extends State<SuggestionsList> {
     );
   }
 
-  Widget suggestionCard(BuildContext context, Map<String, dynamic> suggestion,
-      Function refreshList) {
+  Widget suggestionCard(
+      BuildContext context, Suggestion suggestion, Function refreshList) {
     Category category =
-        _categories.singleWhere((cat) => cat.cid == suggestion['cid']);
+        _categories.singleWhere((cat) => cat.cid == suggestion.cid);
     return Card(
       child: CheckboxListTile(
         secondary: CircleAvatar(
@@ -80,12 +84,22 @@ class _SuggestionsListState extends State<SuggestionsList> {
             color: category.iconColor,
           ),
         ),
-        title: Text(suggestion['payee']),
+        title: Text(suggestion.payee),
         subtitle: Text(category.name),
-        value: true,
+        value: _hiddenSuggestions.singleWhere(
+                (hiddenSuggestion) => hiddenSuggestion.equalTo(suggestion),
+                orElse: () => null) ==
+            null,
         activeColor: Theme.of(context).primaryColor,
         onChanged: (val) async {
-          // setState(() => category.unfiltered = val);
+          if (val) {
+            await DatabaseWrapper(widget.user.uid)
+                .deleteHiddenSuggestions([suggestion]);
+          } else {
+            await DatabaseWrapper(widget.user.uid)
+                .addHiddenSuggestions([suggestion]);
+          }
+          retrieveNewData(widget.user.uid);
         },
       ),
     );
@@ -95,9 +109,12 @@ class _SuggestionsListState extends State<SuggestionsList> {
     List<Transaction> transactions =
         await DatabaseWrapper(uid).getTransactions();
     List<Category> categories = await DatabaseWrapper(uid).getCategories();
+    List<Suggestion> hiddenSuggestions =
+        await DatabaseWrapper(uid).getHiddenSuggestions();
     setState(() {
       _transactions = transactions;
       _categories = categories;
+      _hiddenSuggestions = hiddenSuggestions;
     });
   }
 }

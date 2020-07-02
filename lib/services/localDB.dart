@@ -3,6 +3,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/shared/config.dart';
@@ -24,6 +25,83 @@ class LocalDBService {
   }
 
   LocalDBService.internal();
+
+  // Database-related
+  String getTypeInDB(dynamic column) {
+    if (column is String) {
+      return 'TEXT';
+    } else if (column is int) {
+      return 'INTEGER';
+    } else if (column is bool) {
+      return 'INTEGER'; // 1 - true, 0 - false
+    } else if (column is DateTime) {
+      return 'TEXT';
+    } else if (column is double) {
+      return 'REAL';
+    } else if (column is DateUnit) {
+      return 'INTEGER';
+    } else if (column is Color) {
+      return 'TEXT';
+    } else {
+      return 'TEXT';
+    }
+  }
+
+  Future<Database> initializeDBs() async {
+    String directory = await getDatabasesPath();
+
+    return await openDatabase('$directory/$LOCAL_DATABASE_FILENAME.db',
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+  }
+
+  void _createDB(Database db, int version) {
+    Map<String, dynamic> tables = {
+      'categories': {
+        'model': Category.example(),
+        'primaryKey': 'cid',
+      },
+      'transactions': {
+        'model': Transaction.example(),
+        'primaryKey': 'tid',
+      },
+      'users': {
+        'model': User.example(),
+        'primaryKey': 'uid',
+      },
+      'periods': {
+        'model': Period.example(),
+        'primaryKey': 'pid',
+      },
+      'preferences': {
+        'model': Preferences.example(),
+        'primaryKey': 'pid',
+      },
+      'recurringTransactions': {
+        'model': RecurringTransaction.example(),
+        'primaryKey': 'rid',
+      },
+      'hiddenSuggestions': {
+        'model': Suggestion.example(),
+        'primaryKey': 'sid',
+      },
+    };
+
+    tables.forEach((tableName, tableData) async {
+      String columnsQuery = '';
+      for (MapEntry<String, dynamic> column
+          in tableData['model'].toMap().entries) {
+        columnsQuery += '${column.key} ${getTypeInDB(column.value)}';
+        if (column.key == tableData['primaryKey']) {
+          columnsQuery += ' PRIMARY KEY';
+        }
+        columnsQuery += ', ';
+      }
+      columnsQuery = columnsQuery.substring(0, columnsQuery.length - 2);
+      db.execute('CREATE TABLE $tableName($columnsQuery)');
+    });
+  }
+
+  void _upgradeDB(Database db, int oldVersion, int newVersion) {}
 
   // Transactions
   Future<List<Transaction>> getTransactions(String uid) async {
@@ -364,57 +442,33 @@ class LocalDBService {
     );
   }
 
-  // Database-related
-  String getTypeInDB(dynamic column) {
-    if (column is String) {
-      return 'TEXT';
-    } else if (column is int) {
-      return 'INTEGER';
-    } else if (column is bool) {
-      return 'INTEGER'; // 1 - true, 0 - false
-    } else if (column is DateTime) {
-      return 'TEXT';
-    } else if (column is double) {
-      return 'REAL';
-    } else if (column is DateUnit) {
-      return 'INTEGER';
-    } else if (column is Color) {
-      return 'TEXT';
-    } else {
-      return 'TEXT';
-    }
+  // Hidden Suggestions
+  Future<List<Suggestion>> getHiddenSuggestions(String uid) async {
+    Database db = await this.db;
+    return db.query(
+      'hiddenSuggestions',
+      where: 'uid = ?',
+      whereArgs: [uid],
+    ).then((suggestions) =>
+        suggestions.map((map) => Suggestion.fromMap(map)).toList());
   }
 
-  Future<Database> initializeDBs() async {
-    String directory = await getDatabasesPath();
-
-    return await openDatabase('$directory/$LOCAL_DATABASE_FILENAME.db',
-        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
-  }
-
-  void _createDB(Database db, int version) {
-    Map<String, dynamic> tables = {
-      'categories': Category.example(),
-      'transactions': Transaction.example(),
-      'users': User.example(),
-      'periods': Period.example(),
-      'preferences': Preferences.example(),
-      'recurringTransactions': RecurringTransaction.example(),
-    };
-
-    tables.forEach((tableName, model) async {
-      String columnsQuery = '';
-      for (MapEntry<String, dynamic> column in model.toMap().entries) {
-        columnsQuery += '${column.key} ${getTypeInDB(column.value)}';
-        if (column.key == '${tableName[0].toLowerCase()}id') {
-          columnsQuery += ' PRIMARY KEY';
-        }
-        columnsQuery += ', ';
-      }
-      columnsQuery = columnsQuery.substring(0, columnsQuery.length - 2);
-      db.execute('CREATE TABLE $tableName($columnsQuery)');
+  Future addHiddenSuggestions(List<Suggestion> suggestions) async {
+    Database db = await this.db;
+    Batch batch = db.batch();
+    suggestions.forEach((suggestion) {
+      batch.insert('hiddenSuggestions', suggestion.toMap());
     });
+    await batch.commit();
   }
 
-  void _upgradeDB(Database db, int oldVersion, int newVersion) {}
+  Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {
+    Database db = await this.db;
+    Batch batch = db.batch();
+    suggestions.forEach((suggestion) {
+      batch.delete('hiddenSuggestions',
+          where: 'sid = ?', whereArgs: [suggestion.sid]);
+    });
+    await batch.commit();
+  }
 }

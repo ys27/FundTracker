@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/filters/filterList.dart';
 import 'package:fund_tracker/pages/statistics/statistics.dart';
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<Category> _categories;
   Period _currentPeriod;
   Preferences _prefs;
+  List<Suggestion> _hiddenSuggestions;
 
   int _selectedIndex = 0;
   List<String> categoriesFiltered = [];
@@ -94,6 +96,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           transactions: _transactions,
           categories: _categories,
           currentPeriod: _currentPeriod,
+          hiddenSuggestions: _hiddenSuggestions,
           refreshList: () => retrieveNewData(widget.user.uid),
         ),
         'addButton': FloatingButton(
@@ -105,7 +108,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               FutureProvider<List<Category>>.value(
                   value: DatabaseWrapper(widget.user.uid).getCategories()),
             ],
-            child: TransactionForm(getTxOrRecTx: () => Transaction.empty()),
+            child: TransactionForm(
+              hiddenSuggestions: _hiddenSuggestions,
+              getTxOrRecTx: () => Transaction.empty(),
+            ),
           ),
           callback: () => retrieveNewData(widget.user.uid),
         ),
@@ -190,6 +196,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         categories: _categories,
         currentPeriod: _currentPeriod,
         prefs: _prefs,
+        hiddenSuggestions: _hiddenSuggestions,
         refreshList: (prevQuery) async {
           Navigator.pop(context);
           List<Transaction> newTxs =
@@ -208,6 +215,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       dataFutures.add(FireDBService(uid).getCategories());
       dataFutures.add(FireDBService(uid).getDefaultPeriod());
       dataFutures.add(FireDBService(uid).getPreferences());
+      dataFutures.add(FireDBService(uid).getHiddenSuggestions());
     } else {
       await RecurringTransactionsService.checkRecurringTransactions(uid);
       SyncService(uid).syncRecurringTransactions();
@@ -215,6 +223,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       dataFutures.add(DatabaseWrapper(uid).getCategories());
       dataFutures.add(DatabaseWrapper(uid).getDefaultPeriod());
       dataFutures.add(DatabaseWrapper(uid).getPreferences());
+      dataFutures.add(DatabaseWrapper(uid).getHiddenSuggestions());
     }
 
     List<dynamic> data = await Future.wait(dataFutures);
@@ -224,6 +233,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _categories = data[1];
       _currentPeriod = data[2];
       _prefs = data[3];
+      _hiddenSuggestions = data[4];
     });
   }
 

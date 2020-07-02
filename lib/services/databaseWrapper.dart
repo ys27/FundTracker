@@ -2,6 +2,7 @@ import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesRegistry.dart';
@@ -244,5 +245,24 @@ class DatabaseWrapper {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.addDefaultPreferences()
         : await _localDBService.addDefaultPreferences(uid);
+  }
+
+// Hidden Suggestions
+  Future<List<Suggestion>> getHiddenSuggestions() {
+    return DATABASE_TYPE == DatabaseType.Firebase
+        ? _fireDBService.getHiddenSuggestions()
+        : _localDBService.getHiddenSuggestions(uid);
+  }
+
+  Future addHiddenSuggestions(List<Suggestion> suggestions) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.addHiddenSuggestions(suggestions)
+        : await _localDBService.addHiddenSuggestions(suggestions);
+  }
+
+  Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.deleteHiddenSuggestions(suggestions)
+        : await _localDBService.deleteHiddenSuggestions(suggestions);
   }
 }
