@@ -56,6 +56,7 @@ class _TransactionFormState extends State<TransactionForm> {
   String _payee;
   String _amount;
   String _cid;
+  bool _addSuggestion;
 
   bool isLoading = false;
 
@@ -85,6 +86,7 @@ class _TransactionFormState extends State<TransactionForm> {
     _amount =
         givenTxOrRecTx.amount != null ? givenTxOrRecTx.amount.toString() : '';
     _cid = givenTxOrRecTx.cid;
+    _addSuggestion = true;
 
     _payeeController.text = givenTxOrRecTx.payee ?? '';
     _amountController.text = givenTxOrRecTx.amount != null
@@ -232,7 +234,6 @@ class _TransactionFormState extends State<TransactionForm> {
                     _user.uid,
                   );
 
-                  print(widget.hiddenSuggestions[0].payee);
                   suggestionsWithCount.removeWhere((map) {
                     Suggestion suggestion = map['suggestion'];
                     return widget.hiddenSuggestions
@@ -466,6 +467,15 @@ class _TransactionFormState extends State<TransactionForm> {
                 firstDate: getDateNotTime(DateTime.now()),
               ),
             ],
+            if (!isEditMode) ...[
+              SwitchListTile(
+                title: Text('Add suggestion'),
+                value: _addSuggestion,
+                onChanged: (val) {
+                  setState(() => _addSuggestion = val);
+                },
+              ),
+            ],
             SizedBox(height: 10.0),
             RaisedButton(
               color: Theme.of(context).primaryColor,
@@ -476,7 +486,10 @@ class _TransactionFormState extends State<TransactionForm> {
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
                   setState(() => isLoading = true);
-
+                  String cid = _cid ??
+                      (_correspondingCategory != null
+                          ? _correspondingCategory.cid
+                          : _enabledCategories.first.cid);
                   if (isRecurringTxMode) {
                     RecurringTransaction recTx = RecurringTransaction(
                       rid: givenTxOrRecTx.rid ?? Uuid().v1(),
@@ -490,10 +503,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       isExpense: _isExpense,
                       payee: _payee,
                       amount: double.parse(_amount),
-                      cid: _cid ??
-                          (_correspondingCategory != null
-                              ? _correspondingCategory.cid
-                              : _enabledCategories.first.cid),
+                      cid: cid,
                       uid: _user.uid,
                     );
                     isEditMode
@@ -511,10 +521,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       isExpense: _isExpense,
                       payee: _payee,
                       amount: double.parse(_amount),
-                      cid: _cid ??
-                          (_correspondingCategory != null
-                              ? _correspondingCategory.cid
-                              : _enabledCategories.first.cid),
+                      cid: cid,
                       uid: _user.uid,
                     );
                     isEditMode
@@ -523,6 +530,18 @@ class _TransactionFormState extends State<TransactionForm> {
                         : await DatabaseWrapper(_user.uid)
                             .addTransactions([tx]);
                     SyncService(_user.uid).syncTransactions();
+                  }
+                  if (!isEditMode && !_addSuggestion) {
+                    await DatabaseWrapper(_user.uid).addHiddenSuggestions(
+                      [
+                        Suggestion(
+                          sid: '$_payee::$cid',
+                          payee: _payee,
+                          cid: cid,
+                          uid: _user.uid,
+                        )
+                      ],
+                    );
                   }
 
                   Navigator.pop(context);

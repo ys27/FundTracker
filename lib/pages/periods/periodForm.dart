@@ -171,11 +171,12 @@ class _PeriodFormState extends State<PeriodForm> {
                   ),
                   SizedBox(height: 10.0),
                   SwitchListTile(
-                      title: Text('Set to default (allowed: 1)'),
-                      value: _isDefault,
-                      onChanged: (val) {
-                        setState(() => _isDefault = val);
-                      }),
+                    title: Text('Set to default (allowed: 1)'),
+                    value: _isDefault,
+                    onChanged: (val) {
+                      setState(() => _isDefault = val);
+                    },
+                  ),
                   SizedBox(height: 10.0),
                   RaisedButton(
                     color: Theme.of(context).primaryColor,
