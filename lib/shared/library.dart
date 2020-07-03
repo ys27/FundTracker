@@ -344,6 +344,7 @@ List<Map<String, dynamic>> appendIndividualPercentages(
 List<Map<String, dynamic>> getSuggestionsWithCount(
     List<Transaction> txs, String uid) {
   List<Map<String, dynamic>> suggestionsWithCount = [];
+
   txs.forEach((tx) {
     final int suggestionIndex = suggestionsWithCount.indexWhere((map) {
       Suggestion suggestion = map['suggestion'];
@@ -353,6 +354,7 @@ List<Map<String, dynamic>> getSuggestionsWithCount(
         uid: uid,
       ));
     });
+
     if (suggestionIndex != -1) {
       suggestionsWithCount[suggestionIndex]['count']++;
     } else {

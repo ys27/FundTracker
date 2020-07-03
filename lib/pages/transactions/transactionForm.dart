@@ -228,7 +228,9 @@ class _TransactionFormState extends State<TransactionForm> {
                       getSuggestionsWithCount(
                     _transactions
                         .where(
-                          (tx) => tx.payee.toLowerCase().startsWith(query),
+                          (tx) => tx.payee
+                              .toLowerCase()
+                              .startsWith(query.toLowerCase()),
                         )
                         .toList(),
                     _user.uid,
