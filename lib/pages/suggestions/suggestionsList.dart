@@ -42,16 +42,16 @@ class _SuggestionsListState extends State<SuggestionsList> {
           child: Text('There are no suggestions.'),
         );
       } else {
-        List<Map<String, dynamic>> suggestionsWithCount =
-            getSuggestionsWithCount(_transactions, widget.user.uid);
-        suggestionsWithCount.sort((a, b) => b['count'].compareTo(a['count']));
+        List<Map<String, dynamic>> suggestions =
+            getSuggestions(_transactions, widget.user.uid);
+        suggestions.sort((a, b) => b['latestDate'].compareTo(a['latestDate']));
         _body = Container(
           padding: bodyPadding,
           child: ListView.builder(
-            itemCount: suggestionsWithCount.length,
+            itemCount: suggestions.length,
             itemBuilder: (context, index) => suggestionCard(
               context,
-              suggestionsWithCount[index]['suggestion'],
+              suggestions[index]['suggestion'],
               () => retrieveNewData(widget.user.uid),
             ),
           ),

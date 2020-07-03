@@ -224,8 +224,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 if (query == '') {
                   return null;
                 } else {
-                  List<Map<String, dynamic>> suggestionsWithCount =
-                      getSuggestionsWithCount(
+                  List<Map<String, dynamic>> suggestions = getSuggestions(
                     _transactions
                         .where(
                           (tx) => tx.payee
@@ -236,28 +235,23 @@ class _TransactionFormState extends State<TransactionForm> {
                     _user.uid,
                   );
 
-                  suggestionsWithCount.removeWhere((map) {
-                    Suggestion suggestion = map['suggestion'];
+                  suggestions.removeWhere((map) {
                     return widget.hiddenSuggestions
-                            .where((hidden) => hidden.equalTo(suggestion))
+                            .where((hidden) =>
+                                hidden.equalTo(map['suggestion'] as Suggestion))
                             .length >
                         0;
                   });
 
-                  suggestionsWithCount
-                      .sort((a, b) => b['count'].compareTo(a['count']));
+                  suggestions.sort((a, b) => b['count'].compareTo(a['count']));
 
-                  final List<String> suggestions =
-                      suggestionsWithCount.map((map) {
-                    final String suggestion = map['suggestion'].sid;
-                    return suggestion;
-                  }).toList();
+                  final List<String> suggestionStrings = suggestions
+                      .map((map) => map['suggestion'].sid as String)
+                      .toList();
 
-                  if (suggestions.length > 0) {
-                    return suggestions;
-                  } else {
-                    return null;
-                  }
+                  return suggestionStrings.length > 0
+                      ? suggestionStrings
+                      : null;
                 }
               },
               itemBuilder: (context, suggestion) {
