@@ -58,6 +58,8 @@ class _TransactionFormState extends State<TransactionForm> {
   String _cid;
   bool _addSuggestion;
 
+  bool _suggestionUsed;
+
   bool isLoading = false;
 
   @override
@@ -107,6 +109,8 @@ class _TransactionFormState extends State<TransactionForm> {
     _amountFocus.addListener(_checkFocus);
     _frequencyValueFocus.addListener(_checkFocus);
     _occurrenceValueFocus.addListener(_checkFocus);
+
+    _suggestionUsed = false;
   }
 
   void _checkFocus() {
@@ -211,13 +215,19 @@ class _TransactionFormState extends State<TransactionForm> {
                   labelText: 'Payee',
                   enabled: _payee.isNotEmpty && _isPayeeInFocus,
                   onPressed: () {
-                    setState(() => _payee = '');
+                    setState(() {
+                      _payee = '';
+                      _suggestionUsed = false;
+                    });
                     _payeeController.safeClear();
                   },
                 ),
                 textCapitalization: TextCapitalization.words,
                 onChanged: (val) {
-                  setState(() => _payee = val);
+                  setState(() {
+                    _payee = val;
+                    _suggestionUsed = false;
+                  });
                 },
               ),
               suggestionsCallback: (query) {
@@ -282,6 +292,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 setState(() {
                   _payee = suggestionPayee;
                   _cid = suggestionCid;
+                  _suggestionUsed = true;
                 });
               },
             ),
@@ -362,7 +373,10 @@ class _TransactionFormState extends State<TransactionForm> {
                   ]
                 ],
                 onChanged: (val) {
-                  setState(() => _cid = val);
+                  setState(() {
+                    _cid = val;
+                    _suggestionUsed = false;
+                  });
                 },
                 value: _cid ??
                     (_correspondingCategory != null
@@ -463,7 +477,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 firstDate: getDateNotTime(DateTime.now()),
               ),
             ],
-            if (!isEditMode) ...[
+            if (!isEditMode && !_suggestionUsed) ...[
               SwitchListTile(
                 title: Text('Add suggestion'),
                 value: _addSuggestion,
@@ -527,7 +541,7 @@ class _TransactionFormState extends State<TransactionForm> {
                             .addTransactions([tx]);
                     SyncService(_user.uid).syncTransactions();
                   }
-                  if (!isEditMode) {
+                  if (!isEditMode && !_suggestionUsed) {
                     Suggestion suggestionToAdd = Suggestion(
                       sid: '$_payee::$cid',
                       payee: _payee,
@@ -547,7 +561,6 @@ class _TransactionFormState extends State<TransactionForm> {
                       );
                     }
                   }
-
                   Navigator.pop(context);
                 }
               },
