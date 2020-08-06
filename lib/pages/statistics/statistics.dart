@@ -55,6 +55,7 @@ class _StatisticsState extends State<Statistics> {
         widget.currentPeriod != null &&
         widget.prefs != null &&
         widget.allTransactions.length > 0) {
+      _showStatistics = true;
       if (!_showAllTimeStats && !_showPeriodStats && !_showCustomStats) {
         if (widget.prefs.defaultCustomLimitTab == LimitTab.AllTime) {
           _showAllTimeStats = true;
@@ -75,8 +76,9 @@ class _StatisticsState extends State<Statistics> {
 
       if (_currentPeriodTransactions.containsKey('transactions')) {
         _daysLeft = _currentPeriodTransactions['endDate']
-            .difference(DateTime.now())
-            .inDays;
+                .difference(DateTime.now())
+                .inDays +
+            1;
       } else {
         _daysLeft = 0;
       }
