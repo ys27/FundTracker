@@ -80,7 +80,7 @@ class _CategoriesState extends State<Categories> {
           setState(() => onlyExpenses = val);
         },
       ),
-      if (widget.transactions.length > 0) ...[
+      if (sectionData.length > 0) ...[
         SizedBox(height: 35.0),
         PieChart(
           PieChartData(
@@ -127,7 +127,8 @@ class _CategoriesState extends State<Categories> {
       ] else ...[
         SizedBox(height: 35.0),
         Center(
-          child: Text('No expenses found in current period.'),
+          child: Text(
+              'No ${onlyExpenses ? 'expenses' : 'negative balance'} in current period.'),
         ),
       ]
     ]);
