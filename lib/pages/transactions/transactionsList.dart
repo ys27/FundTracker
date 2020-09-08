@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
@@ -29,7 +29,7 @@ class TransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseAuthentication.User>(context);
 
     if (transactions == null || currentPeriod == null || categories == null) {
       return Loader();
@@ -114,7 +114,7 @@ class TransactionsList extends StatelessWidget {
   }
 
   void updateLatestPeriodStartDate(
-      List<Map<String, dynamic>> dividedTransactions, FirebaseUser user) {
+      List<Map<String, dynamic>> dividedTransactions, FirebaseAuthentication.User user) {
     dividedTransactions.forEach((period) {
       DateTime now = DateTime.now();
       if (now.isAfter(period['startDate'].subtract(

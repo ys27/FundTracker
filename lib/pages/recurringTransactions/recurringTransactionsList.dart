@@ -1,5 +1,5 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/recurringTransaction.dart';
@@ -15,7 +15,7 @@ import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
 class RecurringTransactionsList extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   RecurringTransactionsList({this.user, this.openPage});

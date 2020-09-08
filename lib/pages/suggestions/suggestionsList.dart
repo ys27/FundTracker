@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/suggestion.dart';
@@ -10,7 +10,7 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 
 class SuggestionsList extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   SuggestionsList({this.user, this.openPage});

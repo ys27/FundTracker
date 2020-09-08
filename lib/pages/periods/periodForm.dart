@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -69,7 +69,7 @@ class _PeriodFormState extends State<PeriodForm> {
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseAuthentication.User>(context);
     final isEditMode = !widget.period.equalTo(Period.empty());
 
     return Scaffold(

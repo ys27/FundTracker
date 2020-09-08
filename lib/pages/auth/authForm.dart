@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
+import 'package:fund_tracker/pages/auth/emailVerification.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
@@ -44,6 +45,7 @@ class _AuthFormState extends State<AuthForm> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
+  bool _emailVerificationSent = false;
 
   Widget title(bool isRegister) {
     return Text(
@@ -80,157 +82,183 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     bool isRegister = widget.method == AuthMethod.Register;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: title(isRegister),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            child: authToggleText(isRegister),
-            onPressed: () {
+    return _emailVerificationSent
+        ? EmailVerification(
+            auth: _auth,
+            goBack: () {
+              setState(() {
+                _emailVerificationSent = false;
+                _isLoading = false;
+              });
               widget.toggleView();
             },
           )
-        ],
-      ),
-      body: _isLoading
-          ? Loader()
-          : Form(
-              key: _formKey,
-              child: ListView(
-                padding: formPadding,
-                children: <Widget>[
-                  SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: _emailController,
-                    focusNode: _emailFocus,
-                    autovalidate: _email.isNotEmpty,
-                    validator: emailValidator,
-                    decoration: clearInput(
-                      labelText: 'Email',
-                      enabled: _email.isNotEmpty && _isEmailInFocus,
-                      onPressed: () {
-                        setState(() => _email = '');
-                        _emailController.safeClear();
-                      },
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (val) {
-                      setState(() => _email = val);
-                    },
-                  ),
-                  TextFormField(
-                    controller: _passwordController,
-                    focusNode: _passwordFocus,
-                    autovalidate: _password.isNotEmpty,
-                    validator: passwordValidator,
-                    obscureText: _obscurePassword,
-                    decoration: clearInput(
-                      labelText: 'Password',
-                      enabled: _password.isNotEmpty && _isPasswordInFocus,
-                      onPressed: () {
-                        setState(() => _password = '');
-                        _passwordController.safeClear();
-                      },
-                      passwordToggle: true,
-                      onPasswordTogglePressed: () => setState(
-                        () => _obscurePassword = !_obscurePassword,
-                      ),
-                      passwordToggleVisible: _obscurePassword,
-                    ),
-                    onChanged: (val) => setState(() => _password = val),
-                  ),
-                  isRegister
-                      ? TextFormField(
-                          controller: _passwordConfirmController,
-                          focusNode: _passwordConfirmFocus,
-                          autovalidate: _passwordConfirm.isNotEmpty,
-                          validator: (val) =>
-                              passwordConfirmValidator(val, _password),
-                          obscureText: _obscurePasswordConfirm,
+        : Scaffold(
+            backgroundColor: Colors.grey[100],
+            appBar: AppBar(
+              title: title(isRegister),
+              actions: <Widget>[
+                FlatButton(
+                  textColor: Colors.white,
+                  child: authToggleText(isRegister),
+                  onPressed: () {
+                    widget.toggleView();
+                  },
+                )
+              ],
+            ),
+            body: _isLoading
+                ? Loader()
+                : Form(
+                    key: _formKey,
+                    child: ListView(
+                      padding: formPadding,
+                      children: <Widget>[
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          controller: _emailController,
+                          focusNode: _emailFocus,
+                          autovalidate: _email.isNotEmpty,
+                          validator: emailValidator,
                           decoration: clearInput(
-                            labelText: 'Confirm Password',
-                            enabled: _passwordConfirm.isNotEmpty &&
-                                _isPasswordConfirmInFocus,
+                            labelText: 'Email',
+                            enabled: _email.isNotEmpty && _isEmailInFocus,
                             onPressed: () {
-                              setState(() => _passwordConfirm = '');
-                              _passwordConfirmController.safeClear();
+                              setState(() => _email = '');
+                              _emailController.safeClear();
+                            },
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (val) {
+                            setState(() => _email = val);
+                          },
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          focusNode: _passwordFocus,
+                          autovalidate: _password.isNotEmpty,
+                          validator: passwordValidator,
+                          obscureText: _obscurePassword,
+                          decoration: clearInput(
+                            labelText: 'Password',
+                            enabled: _password.isNotEmpty && _isPasswordInFocus,
+                            onPressed: () {
+                              setState(() => _password = '');
+                              _passwordController.safeClear();
                             },
                             passwordToggle: true,
                             onPasswordTogglePressed: () => setState(
-                              () => _obscurePasswordConfirm =
-                                  !_obscurePasswordConfirm,
+                              () => _obscurePassword = !_obscurePassword,
                             ),
-                            passwordToggleVisible: _obscurePasswordConfirm,
+                            passwordToggleVisible: _obscurePassword,
                           ),
-                          onChanged: (val) {
-                            setState(() => _passwordConfirm = val);
-                          },
-                        )
-                      : Container(),
-                  isRegister
-                      ? TextFormField(
-                          controller: _fullnameController,
-                          focusNode: _fullnameFocus,
-                          autovalidate: _fullname.isNotEmpty,
-                          validator: fullNameValidator,
-                          textCapitalization: TextCapitalization.words,
-                          decoration: clearInput(
-                            labelText: 'Full Name',
-                            enabled: _fullname.isNotEmpty && _isFullnameInFocus,
-                            onPressed: () {
-                              setState(() => _fullname = '');
-                              _fullnameController.safeClear();
+                          onChanged: (val) => setState(() => _password = val),
+                        ),
+                        if (isRegister) ...[
+                          TextFormField(
+                            controller: _passwordConfirmController,
+                            focusNode: _passwordConfirmFocus,
+                            autovalidate: _passwordConfirm.isNotEmpty,
+                            validator: (val) =>
+                                passwordConfirmValidator(val, _password),
+                            obscureText: _obscurePasswordConfirm,
+                            decoration: clearInput(
+                              labelText: 'Confirm Password',
+                              enabled: _passwordConfirm.isNotEmpty &&
+                                  _isPasswordConfirmInFocus,
+                              onPressed: () {
+                                setState(() => _passwordConfirm = '');
+                                _passwordConfirmController.safeClear();
+                              },
+                              passwordToggle: true,
+                              onPasswordTogglePressed: () => setState(
+                                () => _obscurePasswordConfirm =
+                                    !_obscurePasswordConfirm,
+                              ),
+                              passwordToggleVisible: _obscurePasswordConfirm,
+                            ),
+                            onChanged: (val) {
+                              setState(() => _passwordConfirm = val);
                             },
                           ),
-                          onChanged: (val) => setState(() => _fullname = val),
-                        )
-                      : Container(),
-                  SizedBox(height: 10.0),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    child: title(isRegister),
-                    onPressed: () async {
-                      setState(() => _error = '');
-                      if (_formKey.currentState.validate()) {
-                        setState(() => _isLoading = true);
-                        dynamic _user = isRegister
-                            ? await _auth.register(_email, _password)
-                            : await _auth.signIn(_email, _password);
-                        if (_user is String) {
-                          setState(() {
-                            _isLoading = false;
-                            _error = _user;
-                          });
-                        } else if (isRegister) {
-                          DatabaseWrapper(_user.uid).addUser(
-                            User(
-                              uid: _user.uid,
-                              email: _email,
-                              fullname: _fullname,
+                          TextFormField(
+                            controller: _fullnameController,
+                            focusNode: _fullnameFocus,
+                            autovalidate: _fullname.isNotEmpty,
+                            validator: fullNameValidator,
+                            textCapitalization: TextCapitalization.words,
+                            decoration: clearInput(
+                              labelText: 'Full Name',
+                              enabled:
+                                  _fullname.isNotEmpty && _isFullnameInFocus,
+                              onPressed: () {
+                                setState(() => _fullname = '');
+                                _fullnameController.safeClear();
+                              },
                             ),
-                          );
-                          DatabaseWrapper(_user.uid).addDefaultCategories();
-                          DatabaseWrapper(_user.uid).addDefaultPreferences();
-                        } else if (!isRegister) {
-                          await SyncService(_user.uid).syncToLocal();
-                        }
-                      }
-                    },
-                  ),
-                  SizedBox(height: 12.0),
-                  Text(
-                    _error,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 14.0,
+                            onChanged: (val) => setState(() => _fullname = val),
+                          )
+                        ],
+                        SizedBox(height: 10.0),
+                        RaisedButton(
+                          color: Theme.of(context).primaryColor,
+                          child: title(isRegister),
+                          onPressed: () async {
+                            setState(() => _error = '');
+                            if (_formKey.currentState.validate()) {
+                              setState(() => _isLoading = true);
+                              dynamic _user = isRegister
+                                  ? await _auth.register(_email, _password)
+                                  : await _auth.signIn(_email, _password);
+                              if (_user is String) {
+                                setState(() {
+                                  _isLoading = false;
+                                  _error = _user;
+                                });
+                              } else if (!isRegister && _user == null) {
+                                setState(() {
+                                  _isLoading = false;
+                                  _emailVerificationSent = true;
+                                });
+                              } else if (!isRegister) {
+                                await SyncService(_user.uid).syncToLocal();
+                              } else if (isRegister) {
+                                List<Future> initialUserFutures = [];
+                                initialUserFutures.add(
+                                  DatabaseWrapper(_user.uid).addUser(
+                                    User(
+                                      uid: _user.uid,
+                                      email: _email,
+                                      fullname: _fullname,
+                                    ),
+                                  ),
+                                );
+                                initialUserFutures.add(
+                                  DatabaseWrapper(_user.uid)
+                                      .addDefaultCategories(),
+                                );
+                                initialUserFutures.add(
+                                  DatabaseWrapper(_user.uid)
+                                      .addDefaultPreferences(),
+                                );
+                                await Future.wait(initialUserFutures);
+                                setState(() => _emailVerificationSent = true);
+                              }
+                            }
+                          },
+                        ),
+                        SizedBox(height: 12.0),
+                        Text(
+                          _error,
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-    );
+          );
   }
 }
 

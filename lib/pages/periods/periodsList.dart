@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
@@ -9,7 +9,7 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 
 class PeriodsList extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   PeriodsList({this.user, this.openPage});

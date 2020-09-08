@@ -1,5 +1,5 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:fund_tracker/models/category.dart';
@@ -10,7 +10,7 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/shared/library.dart';
 
 class FilterList extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   FilterList({this.user, this.openPage});

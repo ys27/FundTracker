@@ -13,7 +13,7 @@ class FireDBService {
   DocumentReference db;
 
   FireDBService(this.uid) {
-    this.db = Firestore.instance.collection('users').document(this.uid);
+    this.db = FirebaseFirestore.instance.collection('users').doc(this.uid);
   }
 
   // Transactions
@@ -21,40 +21,40 @@ class FireDBService {
     return db
         .collection('transactions')
         .orderBy('date', descending: true)
-        .getDocuments()
-        .then((snapshot) => snapshot.documents
-            .map((map) => Transaction.fromMap(map.data))
+        .get()
+        .then((snapshot) => snapshot.docs
+            .map((map) => Transaction.fromMap(map.data()))
             .toList());
   }
 
   Future addTransactions(List<Transaction> transactions) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     transactions.forEach((tx) {
-      batch.setData(db.collection('transactions').document(tx.tid), tx.toMap());
+      batch.set(db.collection('transactions').doc(tx.tid), tx.toMap());
     });
     await batch.commit();
   }
 
   Future updateTransactions(List<Transaction> transactions) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     transactions.forEach((tx) {
-      batch.updateData(
-          db.collection('transactions').document(tx.tid), tx.toMap());
+      batch.update(
+          db.collection('transactions').doc(tx.tid), tx.toMap());
     });
     await batch.commit();
   }
 
   Future deleteTransactions(List<Transaction> transactions) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     transactions.forEach((tx) {
-      batch.delete(db.collection('transactions').document(tx.tid));
+      batch.delete(db.collection('transactions').doc(tx.tid));
     });
     await batch.commit();
   }
 
   Future deleteAllTransactions() async {
-    await db.collection('transactions').getDocuments().then((snapshot) async {
-      for (DocumentSnapshot doc in snapshot.documents) {
+    await db.collection('transactions').get().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.docs) {
         await doc.reference.delete();
       }
     });
@@ -65,17 +65,17 @@ class FireDBService {
     return db
         .collection('categories')
         .orderBy('orderIndex')
-        .getDocuments()
-        .then((snapshot) => snapshot.documents
-            .map((map) => Category.fromMap(map.data))
+        .get()
+        .then((snapshot) => snapshot.docs
+            .map((map) => Category.fromMap(map.data()))
             .toList());
   }
 
   Future addCategories(List<Category> categories) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     categories.forEach((category) {
-      batch.setData(
-        db.collection('categories').document(category.cid),
+      batch.set(
+        db.collection('categories').doc(category.cid),
         category.toMap(),
       );
     });
@@ -83,10 +83,10 @@ class FireDBService {
   }
 
   Future updateCategories(List<Category> categories) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     categories.forEach((category) {
-      batch.updateData(
-        db.collection('categories').document(category.cid),
+      batch.update(
+        db.collection('categories').doc(category.cid),
         category.toMap(),
       );
     });
@@ -94,16 +94,16 @@ class FireDBService {
   }
 
   Future deleteCategories(List<Category> categories) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     categories.forEach((category) {
-      batch.delete(db.collection('categories').document(category.cid));
+      batch.delete(db.collection('categories').doc(category.cid));
     });
     await batch.commit();
   }
 
   Future deleteAllCategories() async {
-    await db.collection('categories').getDocuments().then((snapshot) async {
-      for (DocumentSnapshot doc in snapshot.documents) {
+    await db.collection('categories').get().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.docs) {
         await doc.reference.delete();
       }
     });
@@ -113,13 +113,13 @@ class FireDBService {
   Future<User> getUser() {
     return db
         .collection('user')
-        .document(uid)
+        .doc(uid)
         .get()
-        .then((snapshot) => User.fromMap(snapshot.data));
+        .then((snapshot) => User.fromMap(snapshot.data()));
   }
 
   Future addUser(User user) async {
-    await db.collection('user').document(uid).setData(user.toMap());
+    await db.collection('user').doc(uid).set(user.toMap());
   }
 
   // Periods
@@ -127,20 +127,20 @@ class FireDBService {
     return db
         .collection('periods')
         .orderBy('isDefault', descending: true)
-        .getDocuments()
+        .get()
         .then((snapshot) =>
-            snapshot.documents.map((map) => Period.fromMap(map.data)).toList());
+            snapshot.docs.map((map) => Period.fromMap(map.data())).toList());
   }
 
   Future<Period> getDefaultPeriod() {
     return db
         .collection('periods')
         .where('isDefault', isEqualTo: 1)
-        .getDocuments()
+        .get()
         .then((snapshot) {
-      if (snapshot.documents.length > 0) {
-        return snapshot.documents
-            .map((map) => Period.fromMap(map.data))
+      if (snapshot.docs.length > 0) {
+        return snapshot.docs
+            .map((map) => Period.fromMap(map.data()))
             .toList()
             .first;
       } else {
@@ -151,45 +151,45 @@ class FireDBService {
 
   Future setRemainingNotDefault(Period period) async {
     db.collection('periods').snapshots().map((snapshot) {
-      snapshot.documents.map((map) async {
-        return await map.reference.updateData({'isDefault': 0});
+      snapshot.docs.map((map) async {
+        return await map.reference.update({'isDefault': 0});
       });
     });
     await db
         .collection('periods')
-        .document(period.pid)
-        .updateData({'isDefault': 1});
+        .doc(period.pid)
+        .update({'isDefault': 1});
   }
 
   Future addPeriods(List<Period> periods) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     periods.forEach((period) {
-      batch.setData(
-          db.collection('periods').document(period.pid), period.toMap());
+      batch.set(
+          db.collection('periods').doc(period.pid), period.toMap());
     });
     await batch.commit();
   }
 
   Future updatePeriods(List<Period> periods) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     periods.forEach((period) {
-      batch.updateData(
-          db.collection('periods').document(period.pid), period.toMap());
+      batch.update(
+          db.collection('periods').doc(period.pid), period.toMap());
     });
     await batch.commit();
   }
 
   Future deletePeriods(List<Period> periods) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     periods.forEach((period) {
-      batch.delete(db.collection('periods').document(period.pid));
+      batch.delete(db.collection('periods').doc(period.pid));
     });
     await batch.commit();
   }
 
   Future deleteAllPeriods() async {
-    await db.collection('periods').getDocuments().then((snapshot) async {
-      for (DocumentSnapshot doc in snapshot.documents) {
+    await db.collection('periods').get().then((snapshot) async {
+      for (DocumentSnapshot doc in snapshot.docs) {
         await doc.reference.delete();
       }
     });
@@ -200,24 +200,24 @@ class FireDBService {
     return db
         .collection('recurringTransactions')
         .orderBy('nextDate', descending: false)
-        .getDocuments()
-        .then((snapshot) => snapshot.documents
-            .map((map) => RecurringTransaction.fromMap(map.data))
+        .get()
+        .then((snapshot) => snapshot.docs
+            .map((map) => RecurringTransaction.fromMap(map.data()))
             .toList());
   }
 
   Future<RecurringTransaction> getRecurringTransaction(String rid) {
-    return db.collection('recurringTransactions').document(rid).get().then(
+    return db.collection('recurringTransactions').doc(rid).get().then(
         (snapshot) => snapshot.data != null
-            ? RecurringTransaction.fromMap(snapshot.data)
+            ? RecurringTransaction.fromMap(snapshot.data())
             : null);
   }
 
   Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     recTxs.forEach((recTx) {
-      batch.setData(
-        db.collection('recurringTransactions').document(recTx.rid),
+      batch.set(
+        db.collection('recurringTransactions').doc(recTx.rid),
         recTx.toMap(),
       );
     });
@@ -225,10 +225,10 @@ class FireDBService {
   }
 
   Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     recTxs.forEach((recTx) {
-      batch.updateData(
-        db.collection('recurringTransactions').document(recTx.rid),
+      batch.update(
+        db.collection('recurringTransactions').doc(recTx.rid),
         recTx.toMap(),
       );
     });
@@ -238,7 +238,7 @@ class FireDBService {
   Future incrementRecurringTransactionsNextDate(
     List<RecurringTransaction> recTxs,
   ) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     recTxs.forEach((recTx) {
       RecurringTransaction nextRecTx = recTx.incrementNextDate();
       if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
@@ -248,22 +248,22 @@ class FireDBService {
                   .isBefore(nextRecTx.endDate)) ||
           (nextRecTx.occurrenceValue != null &&
               nextRecTx.occurrenceValue > 0)) {
-        batch.updateData(
-          db.collection('recurringTransactions').document(recTx.rid),
+        batch.update(
+          db.collection('recurringTransactions').doc(recTx.rid),
           nextRecTx.toMap(),
         );
       } else {
         batch
-            .delete(db.collection('recurringTransactions').document(recTx.rid));
+            .delete(db.collection('recurringTransactions').doc(recTx.rid));
       }
     });
     await batch.commit();
   }
 
   Future deleteRecurringTransactions(List<RecurringTransaction> recTxs) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     recTxs.forEach((recTx) {
-      batch.delete(db.collection('recurringTransactions').document(recTx.rid));
+      batch.delete(db.collection('recurringTransactions').doc(recTx.rid));
     });
     await batch.commit();
   }
@@ -271,9 +271,9 @@ class FireDBService {
   Future deleteAllRecurringTransactions() async {
     await db
         .collection('recurringTransaction')
-        .getDocuments()
+        .get()
         .then((snapshot) async {
-      for (DocumentSnapshot doc in snapshot.documents) {
+      for (DocumentSnapshot doc in snapshot.docs) {
         await doc.reference.delete();
       }
     });
@@ -283,52 +283,52 @@ class FireDBService {
   Future<Preferences> getPreferences() {
     return db
         .collection('preferences')
-        .document(uid)
+        .doc(uid)
         .get()
-        .then((snapshot) => Preferences.fromMap(snapshot.data));
+        .then((snapshot) => Preferences.fromMap(snapshot.data()));
   }
 
   Future addDefaultPreferences() async {
     await db
         .collection('preferences')
-        .document(uid)
-        .setData(Preferences.original().setPreference('pid', uid).toMap());
+        .doc(uid)
+        .set(Preferences.original().setPreference('pid', uid).toMap());
   }
 
   Future addPreferences(Preferences prefs) async {
     await db
         .collection('preferences')
-        .document(prefs.pid)
-        .setData(prefs.toMap());
+        .doc(prefs.pid)
+        .set(prefs.toMap());
   }
 
   Future updatePreferences(Preferences prefs) async {
-    await db.collection('preferences').document(uid).updateData(prefs.toMap());
+    await db.collection('preferences').doc(uid).update(prefs.toMap());
   }
 
   Future deletePreferences() async {
-    await db.collection('preferences').document(uid).delete();
+    await db.collection('preferences').doc(uid).delete();
   }
 
   // Hidden Suggestions
   Future<List<Suggestion>> getHiddenSuggestions() {
-    return db.collection('hiddenSuggestions').getDocuments().then((snapshot) =>
-        snapshot.documents.map((map) => Suggestion.fromMap(map.data)).toList());
+    return db.collection('hiddenSuggestions').get().then((snapshot) =>
+        snapshot.docs.map((map) => Suggestion.fromMap(map.data())).toList());
   }
 
   Future addHiddenSuggestions(List<Suggestion> suggestions) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     suggestions.forEach((suggestion) {
-      batch.setData(db.collection('hiddenSuggestions').document(suggestion.sid),
+      batch.set(db.collection('hiddenSuggestions').doc(suggestion.sid),
           suggestion.toMap());
     });
     await batch.commit();
   }
 
   Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {
-    WriteBatch batch = Firestore.instance.batch();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     suggestions.forEach((suggestion) {
-      batch.delete(db.collection('hiddenSuggestions').document(suggestion.sid));
+      batch.delete(db.collection('hiddenSuggestions').doc(suggestion.sid));
     });
     await batch.commit();
   }

@@ -1,10 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/wrapper.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(App());
+}
 
 class App extends StatelessWidget {
   @override
@@ -17,7 +22,7 @@ class App extends StatelessWidget {
           currentFocus.focusedChild.unfocus();
         }
       },
-      child: StreamProvider<FirebaseUser>(
+      child: StreamProvider<FirebaseAuthentication.User>(
         create: (_) => AuthService().user,
         child: MaterialApp(
           home: Wrapper(),

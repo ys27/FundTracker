@@ -1,16 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Stream<FirebaseUser> get user {
-    return _auth.onAuthStateChanged;
+  Stream<FirebaseAuthentication.User> get user {
+    return _auth.idTokenChanges();
   }
 
   Future register(String email, String password) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      await result.user.sendEmailVerification();
       return result.user;
     } catch (e) {
       return e.message;
@@ -19,12 +21,19 @@ class AuthService {
 
   Future signIn(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (!result.user.emailVerified) {
+        return null;
+      }
       return result.user;
     } catch (e) {
       return e.message;
     }
+  }
+
+  Future sendEmailVerification() async {
+    await _auth.currentUser.sendEmailVerification();
   }
 
   Future signOut() async {

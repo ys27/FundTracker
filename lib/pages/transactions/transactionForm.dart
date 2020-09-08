@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -124,7 +124,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<FirebaseUser>(context);
+    final _user = Provider.of<FirebaseAuthentication.User>(context);
     final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
     final bool isRecurringTxMode = givenTxOrRecTx is RecurringTransaction;
     final bool isEditMode = isRecurringTxMode

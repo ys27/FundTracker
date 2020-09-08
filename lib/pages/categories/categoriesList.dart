@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/pages/categories/categoryForm.dart';
@@ -10,7 +10,7 @@ import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 
 class CategoriesList extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   CategoriesList({this.user, this.openPage});

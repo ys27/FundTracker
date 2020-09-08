@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -10,7 +10,7 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 
 class PreferencesForm extends StatefulWidget {
-  final FirebaseUser user;
+  final FirebaseAuthentication.User user;
   final Function openPage;
 
   PreferencesForm({this.user, this.openPage});
