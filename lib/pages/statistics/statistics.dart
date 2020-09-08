@@ -35,7 +35,10 @@ class _StatisticsState extends State<Statistics> {
   bool _showCustomStats = false;
 
   Widget _body = Center(
-    child: Text('No statistics available. Requires at least one transaction.'),
+    child: Text(
+      'No statistics available. Requires at least one transaction.',
+      textAlign: TextAlign.center,
+    ),
   );
 
   Widget _limitCustomizer;

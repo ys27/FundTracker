@@ -47,7 +47,7 @@ class _MainDrawerState extends State<MainDrawer> {
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
-                userInfo != null ? userInfo.fullname[0] : '',
+                userInfo != null && userInfo.fullname.length > 0 ? userInfo.fullname[0] : '',
                 style: TextStyle(
                   fontSize: 40.0,
                   color: Theme.of(context).primaryColor,
