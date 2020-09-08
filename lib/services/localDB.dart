@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/plannedTransaction.dart';
 import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
@@ -76,8 +76,8 @@ class LocalDBService {
         'model': Preferences.example(),
         'primaryKey': 'pid',
       },
-      'recurringTransactions': {
-        'model': RecurringTransaction.example(),
+      'plannedTransactions': {
+        'model': PlannedTransaction.example(),
         'primaryKey': 'rid',
       },
       'hiddenSuggestions': {
@@ -299,62 +299,62 @@ class LocalDBService {
     await db.delete('periods', where: 'uid = ?', whereArgs: [uid]);
   }
 
-  // Recurring Transactions
-  Future<List<RecurringTransaction>> getRecurringTransactions(
+  // Planned Transactions
+  Future<List<PlannedTransaction>> getPlannedTransactions(
     String uid,
   ) async {
     Database db = await this.db;
     return db
         .query(
-          'recurringTransactions',
+          'plannedTransactions',
           where: 'uid = ?',
           whereArgs: [uid],
           orderBy: 'nextDate ASC',
         )
-        .then((recTxs) =>
-            recTxs.map((map) => RecurringTransaction.fromMap(map)).toList());
+        .then((plannedTxs) =>
+            plannedTxs.map((map) => PlannedTransaction.fromMap(map)).toList());
   }
 
-  Future<RecurringTransaction> getRecurringTransaction(String rid) async {
+  Future<PlannedTransaction> getPlannedTransaction(String rid) async {
     Database db = await this.db;
     return db.query(
-      'recurringTransactions',
+      'plannedTransactions',
       where: 'rid = ?',
       whereArgs: [rid],
     ).then((map) =>
-        map.length > 0 ? RecurringTransaction.fromMap(map.first) : null);
+        map.length > 0 ? PlannedTransaction.fromMap(map.first) : null);
   }
 
-  Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
+  Future addPlannedTransactions(List<PlannedTransaction> plannedTxs) async {
     Database db = await this.db;
     Batch batch = db.batch();
-    recTxs.forEach((recTx) {
-      batch.insert('recurringTransactions', recTx.toMap());
+    plannedTxs.forEach((plannedTx) {
+      batch.insert('plannedTransactions', plannedTx.toMap());
     });
     await batch.commit();
   }
 
-  Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
+  Future updatePlannedTransactions(List<PlannedTransaction> plannedTxs) async {
     Database db = await this.db;
     Batch batch = db.batch();
-    recTxs.forEach((recTx) {
+    plannedTxs.forEach((plannedTx) {
       batch.update(
-        'recurringTransactions',
-        recTx.toMap(),
+        'plannedTransactions',
+        plannedTx.toMap(),
         where: 'rid = ?',
-        whereArgs: [recTx.rid],
+        whereArgs: [plannedTx.rid],
       );
     });
     await batch.commit();
   }
 
-  Future incrementRecurringTransactionsNextDate(
-    List<RecurringTransaction> recTxs,
+  Future incrementPlannedTransactionsNextDate(
+    List<PlannedTransaction> plannedTxs,
   ) async {
     Database db = await this.db;
     Batch batch = db.batch();
-    recTxs.forEach((recTx) {
-      RecurringTransaction nextRecTx = recTx.incrementNextDate();
+    plannedTxs.forEach((plannedTx) {
+      PlannedTransaction nextRecTx = plannedTx.incrementNextDate();
       if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
           (nextRecTx.endDate != null &&
               getDateNotTime(nextRecTx.nextDate)
@@ -363,41 +363,41 @@ class LocalDBService {
           (nextRecTx.occurrenceValue != null &&
               nextRecTx.occurrenceValue > 0)) {
         batch.update(
-          'recurringTransactions',
+          'plannedTransactions',
           nextRecTx.toMap(),
           where: 'rid = ?',
-          whereArgs: [recTx.rid],
+          whereArgs: [plannedTx.rid],
         );
       } else {
         batch.delete(
-          'recurringTransactions',
+          'plannedTransactions',
           where: 'rid = ?',
-          whereArgs: [recTx.rid],
+          whereArgs: [plannedTx.rid],
         );
       }
     });
     await batch.commit();
   }
 
-  Future deleteRecurringTransactions(
-    List<RecurringTransaction> recTxs,
+  Future deletePlannedTransactions(
+    List<PlannedTransaction> plannedTxs,
   ) async {
     Database db = await this.db;
     Batch batch = db.batch();
-    recTxs.forEach((recTx) {
+    plannedTxs.forEach((plannedTx) {
       batch.delete(
-        'recurringTransactions',
+        'plannedTransactions',
         where: 'rid = ?',
-        whereArgs: [recTx.rid],
+        whereArgs: [plannedTx.rid],
       );
     });
     await batch.commit();
   }
 
-  Future deleteAllRecurringTransactions(String uid) async {
+  Future deleteAllPlannedTransactions(String uid) async {
     Database db = await this.db;
     await db
-        .delete('recurringTransactions', where: 'uid = ?', whereArgs: [uid]);
+        .delete('plannedTransactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // Preferences

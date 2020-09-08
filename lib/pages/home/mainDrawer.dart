@@ -6,7 +6,7 @@ import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/categories/categoriesList.dart';
 import 'package:fund_tracker/pages/periods/periodsList.dart';
 import 'package:fund_tracker/pages/preferences/preferencesForm.dart';
-import 'package:fund_tracker/pages/recurringTransactions/recurringTransactionsList.dart';
+import 'package:fund_tracker/pages/plannedTransactions/plannedTransactionsList.dart';
 import 'package:fund_tracker/pages/suggestions/suggestionsList.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -84,10 +84,10 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
           ListTile(
-            title: Text('Recurring Transactions'),
+            title: Text('Planned Transactions'),
             leading: Icon(CommunityMaterialIcons.history),
             onTap: () => widget.openPage(
-              RecurringTransactionsList(
+              PlannedTransactionsList(
                 user: widget.user,
                 openPage: widget.openPage,
               ),

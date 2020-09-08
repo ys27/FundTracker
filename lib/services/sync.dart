@@ -1,5 +1,5 @@
 import 'package:fund_tracker/models/period.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/plannedTransaction.dart';
 import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/fireDB.dart';
@@ -58,21 +58,21 @@ class SyncService {
     _fireDBService.addPeriods(periodsOnlyInLocal);
   }
 
-  void syncRecurringTransactions() async {
-    List<RecurringTransaction> cloudRecTxs =
-        await _fireDBService.getRecurringTransactions();
-    List<RecurringTransaction> localRecTxs =
-        await _localDBService.getRecurringTransactions(uid);
-    List<RecurringTransaction> recTxsOnlyInCloud = cloudRecTxs
+  void syncPlannedTransactions() async {
+    List<PlannedTransaction> cloudRecTxs =
+        await _fireDBService.getPlannedTransactions();
+    List<PlannedTransaction> localRecTxs =
+        await _localDBService.getPlannedTransactions(uid);
+    List<PlannedTransaction> plannedTxsOnlyInCloud = cloudRecTxs
         .where((cloud) =>
             localRecTxs.where((local) => local.equalTo(cloud)).length == 0)
         .toList();
-    List<RecurringTransaction> recTxsOnlyInLocal = localRecTxs
+    List<PlannedTransaction> plannedTxsOnlyInLocal = localRecTxs
         .where((local) =>
             cloudRecTxs.where((cloud) => cloud.equalTo(local)).length == 0)
         .toList();
-    _fireDBService.deleteRecurringTransactions(recTxsOnlyInCloud);
-    _fireDBService.addRecurringTransactions(recTxsOnlyInLocal);
+    _fireDBService.deletePlannedTransactions(plannedTxsOnlyInCloud);
+    _fireDBService.addPlannedTransactions(plannedTxsOnlyInLocal);
   }
 
   void syncPreferences() async {
@@ -109,7 +109,7 @@ class SyncService {
     syncTransactions();
     syncCategories();
     syncPeriods();
-    syncRecurringTransactions();
+    syncPlannedTransactions();
     syncPreferences();
     syncHiddenSuggestions();
   }
@@ -125,9 +125,9 @@ class SyncService {
         _fireDBService
             .getPeriods()
             .then((cloudPeriods) => _localDBService.addPeriods(cloudPeriods)),
-        _fireDBService.getRecurringTransactions().then(
-            (cloudRecurringTransactions) => _localDBService
-                .addRecurringTransactions(cloudRecurringTransactions)),
+        _fireDBService.getPlannedTransactions().then(
+            (cloudPlannedTransactions) => _localDBService
+                .addPlannedTransactions(cloudPlannedTransactions)),
         _fireDBService.getPreferences().then((cloudPreferences) =>
             _localDBService.addPreferences(cloudPreferences)),
         _fireDBService.getHiddenSuggestions().then((cloudHiddenSuggestions) =>

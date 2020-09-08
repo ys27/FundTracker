@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/plannedTransaction.dart';
 import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
-import 'package:fund_tracker/services/recurringTransactions.dart';
+import 'package:fund_tracker/services/plannedTransactions.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -68,7 +68,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
     final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
 
-    if (givenTxOrRecTx is RecurringTransaction) {
+    if (givenTxOrRecTx is PlannedTransaction) {
       _nextDate = givenTxOrRecTx.nextDate;
       _endDate = givenTxOrRecTx.endDate;
       _occurrenceValue = givenTxOrRecTx.occurrenceValue != null
@@ -94,12 +94,12 @@ class _TransactionFormState extends State<TransactionForm> {
     _amountController.text = givenTxOrRecTx.amount != null
         ? givenTxOrRecTx.amount.toStringAsFixed(2)
         : null;
-    _frequencyValueController.text = givenTxOrRecTx is RecurringTransaction
+    _frequencyValueController.text = givenTxOrRecTx is PlannedTransaction
         ? (givenTxOrRecTx.frequencyValue != null
             ? givenTxOrRecTx.frequencyValue.toString()
             : '')
         : '';
-    _occurrenceValueController.text = givenTxOrRecTx is RecurringTransaction
+    _occurrenceValueController.text = givenTxOrRecTx is PlannedTransaction
         ? (givenTxOrRecTx.occurrenceValue != null
             ? givenTxOrRecTx.occurrenceValue.toString()
             : '')
@@ -126,8 +126,8 @@ class _TransactionFormState extends State<TransactionForm> {
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseAuthentication.User>(context);
     final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
-    final bool isRecurringTxMode = givenTxOrRecTx is RecurringTransaction;
-    final bool isEditMode = isRecurringTxMode
+    final bool isPlannedTxMode = givenTxOrRecTx is PlannedTransaction;
+    final bool isEditMode = isPlannedTxMode
         ? givenTxOrRecTx.rid != null
         : givenTxOrRecTx.tid != null;
     final List<Transaction> _transactions =
@@ -166,10 +166,10 @@ class _TransactionFormState extends State<TransactionForm> {
             SizedBox(height: 10.0),
             DatePicker(
               context,
-              leading: isRecurringTxMode ? 'Next Date: ' : getDateStr(_date),
-              trailing: isRecurringTxMode ? '${getDateStr(_nextDate)}' : '',
+              leading: isPlannedTxMode ? 'Next Date: ' : getDateStr(_date),
+              trailing: isPlannedTxMode ? '${getDateStr(_nextDate)}' : '',
               updateDateState: (date) => setState(() {
-                if (isRecurringTxMode) {
+                if (isPlannedTxMode) {
                   _nextDate = getDateNotTime(date);
                 } else {
                   _date = date;
@@ -177,9 +177,9 @@ class _TransactionFormState extends State<TransactionForm> {
               }),
               openDate: DateTime.now(),
               firstDate:
-                  isRecurringTxMode ? getDateNotTime(DateTime.now()) : null,
+                  isPlannedTxMode ? getDateNotTime(DateTime.now()) : null,
             ),
-            if (!isRecurringTxMode) ...[
+            if (!isPlannedTxMode) ...[
               TimePicker(
                 context,
                 leading: getTimeStr(_date),
@@ -385,7 +385,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 isExpanded: true,
               ),
             ),
-            if (isRecurringTxMode) ...[
+            if (isPlannedTxMode) ...[
               TextFormField(
                 controller: _frequencyValueController,
                 focusNode: _frequencyValueFocus,
@@ -500,8 +500,8 @@ class _TransactionFormState extends State<TransactionForm> {
                       (_correspondingCategory != null
                           ? _correspondingCategory.cid
                           : _enabledCategories.first.cid);
-                  if (isRecurringTxMode) {
-                    RecurringTransaction recTx = RecurringTransaction(
+                  if (isPlannedTxMode) {
+                    PlannedTransaction plannedTx = PlannedTransaction(
                       rid: givenTxOrRecTx.rid ?? Uuid().v1(),
                       nextDate: _nextDate,
                       endDate: _endDate,
@@ -518,12 +518,12 @@ class _TransactionFormState extends State<TransactionForm> {
                     );
                     isEditMode
                         ? DatabaseWrapper(_user.uid)
-                            .updateRecurringTransactions([recTx])
+                            .updatePlannedTransactions([plannedTx])
                         : DatabaseWrapper(_user.uid)
-                            .addRecurringTransactions([recTx]);
-                    RecurringTransactionsService.checkRecurringTransactions(
+                            .addPlannedTransactions([plannedTx]);
+                    PlannedTransactionsService.checkPlannedTransactions(
                         _user.uid);
-                    SyncService(_user.uid).syncRecurringTransactions();
+                    SyncService(_user.uid).syncPlannedTransactions();
                   } else {
                     Transaction tx = Transaction(
                       tid: givenTxOrRecTx.tid ?? Uuid().v1(),
@@ -565,7 +565,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 }
               },
             ),
-            if (isRecurringTxMode) ...[
+            if (isPlannedTxMode) ...[
               SizedBox(height: 10.0),
               RaisedButton(
                 color: Theme.of(context).accentColor,
@@ -594,21 +594,21 @@ class _TransactionFormState extends State<TransactionForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: title(isRecurringTxMode, isEditMode),
+        title: title(isPlannedTxMode, isEditMode),
         actions: isEditMode
             ? <Widget>[
                 DeleteIcon(
                   context,
-                  itemDesc: isRecurringTxMode
-                      ? 'recurring transaction'
+                  itemDesc: isPlannedTxMode
+                      ? 'planned transaction'
                       : 'transaction',
-                  deleteFunction: () async => isRecurringTxMode
+                  deleteFunction: () async => isPlannedTxMode
                       ? await DatabaseWrapper(_user.uid)
-                          .deleteRecurringTransactions([givenTxOrRecTx])
+                          .deletePlannedTransactions([givenTxOrRecTx])
                       : await DatabaseWrapper(_user.uid)
                           .deleteTransactions([givenTxOrRecTx]),
-                  syncFunction: isRecurringTxMode
-                      ? SyncService(_user.uid).syncRecurringTransactions
+                  syncFunction: isPlannedTxMode
+                      ? SyncService(_user.uid).syncPlannedTransactions
                       : SyncService(_user.uid).syncTransactions,
                 ),
               ]
@@ -618,11 +618,11 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-  Widget title(bool isRecurringTxMode, bool isEditMode) {
-    final String recurring = isRecurringTxMode ? 'Recurring ' : '';
+  Widget title(bool isPlannedTxMode, bool isEditMode) {
+    final String planned = isPlannedTxMode ? 'Planned ' : '';
     return Text(isEditMode
-        ? 'Edit ${recurring}Transaction'
-        : 'Add ${recurring}Transaction');
+        ? 'Edit ${planned}Transaction'
+        : 'Add ${planned}Transaction');
   }
 }
 

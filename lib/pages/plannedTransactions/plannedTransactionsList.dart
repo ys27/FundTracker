@@ -2,7 +2,7 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/plannedTransaction.dart';
 import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/pages/transactions/transactionForm.dart';
@@ -14,19 +14,19 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:provider/provider.dart';
 
-class RecurringTransactionsList extends StatefulWidget {
+class PlannedTransactionsList extends StatefulWidget {
   final FirebaseAuthentication.User user;
   final Function openPage;
 
-  RecurringTransactionsList({this.user, this.openPage});
+  PlannedTransactionsList({this.user, this.openPage});
 
   @override
-  _RecurringTransactionsListState createState() =>
-      _RecurringTransactionsListState();
+  _PlannedTransactionsListState createState() =>
+      _PlannedTransactionsListState();
 }
 
-class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
-  List<RecurringTransaction> _recTxs;
+class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
+  List<PlannedTransaction> _plannedTxs;
   List<Suggestion> _hiddenSuggestions;
 
   @override
@@ -39,19 +39,19 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
   Widget build(BuildContext context) {
     Widget _body = Loader();
 
-    if (_recTxs != null) {
-      if (_recTxs.length == 0) {
+    if (_plannedTxs != null) {
+      if (_plannedTxs.length == 0) {
         _body = Center(
-          child: Text('Add a recurring transaction using the button below.'),
+          child: Text('Add a planned transaction using the button below.'),
         );
       } else {
         _body = Container(
           padding: bodyPadding,
           child: ListView.builder(
-            itemCount: _recTxs.length,
-            itemBuilder: (context, index) => recurringTransactionCard(
+            itemCount: _plannedTxs.length,
+            itemBuilder: (context, index) => plannedTransactionCard(
               context,
-              _recTxs[index],
+              _plannedTxs[index],
               () => retrieveNewData(widget.user.uid),
             ),
           ),
@@ -61,7 +61,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
 
     return Scaffold(
       drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
-      appBar: AppBar(title: Text('Recurring Transactions')),
+      appBar: AppBar(title: Text('Planned Transactions')),
       body: _body,
       floatingActionButton: FloatingButton(
         context,
@@ -74,7 +74,7 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
           ],
           child: TransactionForm(
             hiddenSuggestions: _hiddenSuggestions,
-            getTxOrRecTx: () => RecurringTransaction.empty(),
+            getTxOrRecTx: () => PlannedTransaction.empty(),
           ),
         ),
         callback: () => retrieveNewData(widget.user.uid),
@@ -82,13 +82,13 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
     );
   }
 
-  Widget recurringTransactionCard(
+  Widget plannedTransactionCard(
     BuildContext context,
-    RecurringTransaction recTx,
+    PlannedTransaction plannedTx,
     Function refreshList,
   ) {
     return Card(
-      color: recTx.isExpense ? Colors.red[50] : Colors.green[50],
+      color: plannedTx.isExpense ? Colors.red[50] : Colors.green[50],
       child: ListTile(
         onTap: () async {
           await showDialog(
@@ -102,27 +102,27 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
               ],
               child: TransactionForm(
                 hiddenSuggestions: _hiddenSuggestions,
-                getTxOrRecTx: () => recTx,
+                getTxOrRecTx: () => plannedTx,
               ),
             ),
           );
           refreshList();
         },
         title: Wrap(children: <Widget>[
-          Text('${recTx.payee}: '),
+          Text('${plannedTx.payee}: '),
           Text(
-            '${recTx.isExpense ? '-' : '+'}\$${recTx.amount.toStringAsFixed(2)}',
+            '${plannedTx.isExpense ? '-' : '+'}\$${plannedTx.amount.toStringAsFixed(2)}',
           ),
         ]),
         subtitle: Text(
-          'Every ${recTx.frequencyValue} ${getFrequencyUnitStr(recTx.frequencyUnit)}' +
-              getEndCondition(recTx),
+          'Every ${plannedTx.frequencyValue} ${getFrequencyUnitStr(plannedTx.frequencyUnit)}' +
+              getEndCondition(plannedTx),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(CommunityMaterialIcons.chevron_right),
-            Text('${getDateStr(recTx.nextDate)}'),
+            Text('${getDateStr(plannedTx.nextDate)}'),
           ],
         ),
       ),
@@ -135,11 +135,11 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
     return '$unitSingular(s)';
   }
 
-  String getEndCondition(RecurringTransaction recTx) {
-    if (recTx.endDate != null && recTx.endDate.toString().isNotEmpty) {
-      return ', ~${getDateStr(recTx.endDate)}';
-    } else if (recTx.occurrenceValue != null && recTx.occurrenceValue > 0) {
-      return ', ${recTx.occurrenceValue} time(s) left';
+  String getEndCondition(PlannedTransaction plannedTx) {
+    if (plannedTx.endDate != null && plannedTx.endDate.toString().isNotEmpty) {
+      return ', ~${getDateStr(plannedTx.endDate)}';
+    } else if (plannedTx.occurrenceValue != null && plannedTx.occurrenceValue > 0) {
+      return ', ${plannedTx.occurrenceValue} time(s) left';
     } else {
       return '';
     }
@@ -148,13 +148,13 @@ class _RecurringTransactionsListState extends State<RecurringTransactionsList> {
   void retrieveNewData(String uid) async {
     List<Future> dataFutures = [];
 
-    dataFutures.add(DatabaseWrapper(uid).getRecurringTransactions());
+    dataFutures.add(DatabaseWrapper(uid).getPlannedTransactions());
     dataFutures.add(DatabaseWrapper(uid).getHiddenSuggestions());
 
     List<dynamic> data = await Future.wait(dataFutures);
 
     setState(() {
-      _recTxs = data[0];
+      _plannedTxs = data[0];
       _hiddenSuggestions = data[1];
     });
   }

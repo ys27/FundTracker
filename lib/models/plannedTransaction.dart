@@ -3,7 +3,7 @@ import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:uuid/uuid.dart';
 
-class RecurringTransaction {
+class PlannedTransaction {
   String rid;
   DateTime nextDate;
   DateTime endDate;
@@ -16,7 +16,7 @@ class RecurringTransaction {
   String cid;
   String uid;
 
-  RecurringTransaction({
+  PlannedTransaction({
     this.rid,
     this.nextDate,
     this.endDate,
@@ -30,7 +30,7 @@ class RecurringTransaction {
     this.uid,
   });
 
-  RecurringTransaction.empty() {
+  PlannedTransaction.empty() {
     DateTime now = DateTime.now();
     rid = null;
     nextDate = getDateNotTime(now);
@@ -45,7 +45,7 @@ class RecurringTransaction {
     uid = null;
   }
 
-  RecurringTransaction.example() {
+  PlannedTransaction.example() {
     DateTime now = DateTime.now();
     rid = '';
     nextDate = getDateNotTime(now);
@@ -60,7 +60,7 @@ class RecurringTransaction {
     uid = '';
   }
 
-  RecurringTransaction.fromMap(Map<String, dynamic> map) {
+  PlannedTransaction.fromMap(Map<String, dynamic> map) {
     this.rid = map['rid'];
     this.nextDate = DateTime.parse(map['nextDate']);
     this.endDate =
@@ -92,18 +92,18 @@ class RecurringTransaction {
     };
   }
 
-  bool equalTo(RecurringTransaction recTx) {
-    return (this.rid == recTx.rid &&
-        this.nextDate == recTx.nextDate &&
-        this.endDate == recTx.endDate &&
-        this.occurrenceValue == recTx.occurrenceValue &&
-        this.frequencyValue == recTx.frequencyValue &&
-        this.frequencyUnit == recTx.frequencyUnit &&
-        this.isExpense == recTx.isExpense &&
-        this.payee == recTx.payee &&
-        this.amount == recTx.amount &&
-        this.cid == recTx.cid &&
-        this.uid == recTx.uid);
+  bool equalTo(PlannedTransaction plannedTx) {
+    return (this.rid == plannedTx.rid &&
+        this.nextDate == plannedTx.nextDate &&
+        this.endDate == plannedTx.endDate &&
+        this.occurrenceValue == plannedTx.occurrenceValue &&
+        this.frequencyValue == plannedTx.frequencyValue &&
+        this.frequencyUnit == plannedTx.frequencyUnit &&
+        this.isExpense == plannedTx.isExpense &&
+        this.payee == plannedTx.payee &&
+        this.amount == plannedTx.amount &&
+        this.cid == plannedTx.cid &&
+        this.uid == plannedTx.uid);
   }
 
   Transaction toTransaction() {
@@ -118,8 +118,8 @@ class RecurringTransaction {
     );
   }
 
-  RecurringTransaction incrementNextDate() {
-    RecurringTransaction copy = this.clone();
+  PlannedTransaction incrementNextDate() {
+    PlannedTransaction copy = this.clone();
     int numDaysUntilNextDate = findNumDaysInPeriod(
       this.nextDate,
       this.frequencyValue,
@@ -132,14 +132,14 @@ class RecurringTransaction {
     return copy;
   }
 
-  RecurringTransaction withNewId() {
-    RecurringTransaction copy = this.clone();
+  PlannedTransaction withNewId() {
+    PlannedTransaction copy = this.clone();
     copy.rid = Uuid().v1();
     return copy;
   }
 
-  RecurringTransaction clone() {
-    return RecurringTransaction(
+  PlannedTransaction clone() {
+    return PlannedTransaction(
       rid: this.rid,
       nextDate: this.nextDate,
       endDate: this.endDate,

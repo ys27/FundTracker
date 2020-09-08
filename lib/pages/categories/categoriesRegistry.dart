@@ -53,7 +53,7 @@ List<Map<String, dynamic>> categoriesRegistry = [
     'color': Colors.blue[600],
   },
   {
-    'name': 'Subscriptions & Recurring',
+    'name': 'Subscriptions & Planned',
     'icon': CommunityMaterialIcons.infinity.codePoint,
     'color': Colors.blue,
   },

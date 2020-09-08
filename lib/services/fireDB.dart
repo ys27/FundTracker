@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
-import 'package:fund_tracker/models/recurringTransaction.dart';
+import 'package:fund_tracker/models/plannedTransaction.dart';
 import 'package:fund_tracker/models/suggestion.dart';
 import 'package:fund_tracker/models/transaction.dart';
 import 'package:fund_tracker/models/user.dart';
@@ -195,52 +195,52 @@ class FireDBService {
     });
   }
 
-  // Recurring Transactions
-  Future<List<RecurringTransaction>> getRecurringTransactions() {
+  // Planned Transactions
+  Future<List<PlannedTransaction>> getPlannedTransactions() {
     return db
-        .collection('recurringTransactions')
+        .collection('plannedTransactions')
         .orderBy('nextDate', descending: false)
         .get()
         .then((snapshot) => snapshot.docs
-            .map((map) => RecurringTransaction.fromMap(map.data()))
+            .map((map) => PlannedTransaction.fromMap(map.data()))
             .toList());
   }
 
-  Future<RecurringTransaction> getRecurringTransaction(String rid) {
-    return db.collection('recurringTransactions').doc(rid).get().then(
+  Future<PlannedTransaction> getPlannedTransaction(String rid) {
+    return db.collection('plannedTransactions').doc(rid).get().then(
         (snapshot) => snapshot.data != null
-            ? RecurringTransaction.fromMap(snapshot.data())
+            ? PlannedTransaction.fromMap(snapshot.data())
             : null);
   }
 
-  Future addRecurringTransactions(List<RecurringTransaction> recTxs) async {
+  Future addPlannedTransactions(List<PlannedTransaction> plannedTxs) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    recTxs.forEach((recTx) {
+    plannedTxs.forEach((plannedTx) {
       batch.set(
-        db.collection('recurringTransactions').doc(recTx.rid),
-        recTx.toMap(),
+        db.collection('plannedTransactions').doc(plannedTx.rid),
+        plannedTx.toMap(),
       );
     });
     await batch.commit();
   }
 
-  Future updateRecurringTransactions(List<RecurringTransaction> recTxs) async {
+  Future updatePlannedTransactions(List<PlannedTransaction> plannedTxs) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    recTxs.forEach((recTx) {
+    plannedTxs.forEach((plannedTx) {
       batch.update(
-        db.collection('recurringTransactions').doc(recTx.rid),
-        recTx.toMap(),
+        db.collection('plannedTransactions').doc(plannedTx.rid),
+        plannedTx.toMap(),
       );
     });
     await batch.commit();
   }
 
-  Future incrementRecurringTransactionsNextDate(
-    List<RecurringTransaction> recTxs,
+  Future incrementPlannedTransactionsNextDate(
+    List<PlannedTransaction> plannedTxs,
   ) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    recTxs.forEach((recTx) {
-      RecurringTransaction nextRecTx = recTx.incrementNextDate();
+    plannedTxs.forEach((plannedTx) {
+      PlannedTransaction nextRecTx = plannedTx.incrementNextDate();
       if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
           (nextRecTx.endDate != null &&
               getDateNotTime(nextRecTx.nextDate)
@@ -249,28 +249,28 @@ class FireDBService {
           (nextRecTx.occurrenceValue != null &&
               nextRecTx.occurrenceValue > 0)) {
         batch.update(
-          db.collection('recurringTransactions').doc(recTx.rid),
+          db.collection('plannedTransactions').doc(plannedTx.rid),
           nextRecTx.toMap(),
         );
       } else {
         batch
-            .delete(db.collection('recurringTransactions').doc(recTx.rid));
+            .delete(db.collection('plannedTransactions').doc(plannedTx.rid));
       }
     });
     await batch.commit();
   }
 
-  Future deleteRecurringTransactions(List<RecurringTransaction> recTxs) async {
+  Future deletePlannedTransactions(List<PlannedTransaction> plannedTxs) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    recTxs.forEach((recTx) {
-      batch.delete(db.collection('recurringTransactions').doc(recTx.rid));
+    plannedTxs.forEach((plannedTx) {
+      batch.delete(db.collection('plannedTransactions').doc(plannedTx.rid));
     });
     await batch.commit();
   }
 
-  Future deleteAllRecurringTransactions() async {
+  Future deleteAllPlannedTransactions() async {
     await db
-        .collection('recurringTransaction')
+        .collection('plannedTransaction')
         .get()
         .then((snapshot) async {
       for (DocumentSnapshot doc in snapshot.docs) {

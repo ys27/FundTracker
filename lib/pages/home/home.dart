@@ -14,7 +14,7 @@ import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
 import 'package:fund_tracker/services/fireDB.dart';
 import 'package:fund_tracker/services/localDB.dart';
-import 'package:fund_tracker/services/recurringTransactions.dart';
+import 'package:fund_tracker/services/plannedTransactions.dart';
 import 'package:fund_tracker/services/search.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/library.dart';
@@ -217,8 +217,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       dataFutures.add(FireDBService(uid).getPreferences());
       dataFutures.add(FireDBService(uid).getHiddenSuggestions());
     } else {
-      await RecurringTransactionsService.checkRecurringTransactions(uid);
-      SyncService(uid).syncRecurringTransactions();
+      await PlannedTransactionsService.checkPlannedTransactions(uid);
+      SyncService(uid).syncPlannedTransactions();
       dataFutures.add(DatabaseWrapper(uid).getTransactions());
       dataFutures.add(DatabaseWrapper(uid).getCategories());
       dataFutures.add(DatabaseWrapper(uid).getDefaultPeriod());
