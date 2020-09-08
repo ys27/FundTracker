@@ -25,6 +25,11 @@ To build this application and run it on your device or an emulator, you need:
 
 Follow the instructions here to set up: https://flutter.dev/docs/get-started/install.
 
+### Note to users
+
+The default cloud database (Firebase) is on a free tier, and set up to remove all accounts periodically.   
+Please do not store important information using the default database.
+
 ## Demo
 
 The first screen is the login page.
