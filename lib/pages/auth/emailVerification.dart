@@ -23,13 +23,6 @@ class _EmailVerificationState extends State<EmailVerification> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text('Email Verification'),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            child: Text('Back'),
-            onPressed: () => widget.goBack(),
-          )
-        ],
       ),
       body: Container(
         child: ListView(
@@ -43,7 +36,10 @@ class _EmailVerificationState extends State<EmailVerification> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {
-                setState(() => _isLoading = true);
+                setState(() {
+                  _emailVerificationSent = false;
+                  _isLoading = true;
+                });
                 await widget.auth.sendEmailVerification();
                 setState(() {
                   _emailVerificationSent = true;
