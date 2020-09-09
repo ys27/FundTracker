@@ -210,8 +210,7 @@ class _AuthFormState extends State<AuthForm> {
                         } else if (!isRegister) {
                           await SyncService(_user.uid).syncToLocal();
                         } else if (isRegister) {
-                          List<Future> initialUserFutures = [];
-                          initialUserFutures.add(
+                          await Future.wait([
                             DatabaseWrapper(_user.uid).addUser(
                               User(
                                 uid: _user.uid,
@@ -219,14 +218,9 @@ class _AuthFormState extends State<AuthForm> {
                                 fullname: _fullname,
                               ),
                             ),
-                          );
-                          initialUserFutures.add(
                             DatabaseWrapper(_user.uid).addDefaultCategories(),
-                          );
-                          initialUserFutures.add(
                             DatabaseWrapper(_user.uid).addDefaultPreferences(),
-                          );
-                          await Future.wait(initialUserFutures);
+                          ]);
                           showEmailVerificationDialog(context, _auth);
                         }
                       }

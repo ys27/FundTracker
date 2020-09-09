@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:fund_tracker/models/category.dart';
@@ -133,12 +134,10 @@ class _FilterListState extends State<FilterList> {
   }
 
   void retrieveNewData(String uid, {bool initial}) async {
-    List<Future> dataFutures = [];
-
-    dataFutures.add(DatabaseWrapper(uid).getCategories());
-    dataFutures.add(DatabaseWrapper(uid).getPreferences());
-
-    List<dynamic> data = await Future.wait(dataFutures);
+    List<dynamic> data = await Future.wait([
+      DatabaseWrapper(uid).getCategories(),
+      DatabaseWrapper(uid).getPreferences(),
+    ]);
 
     setState(() {
       _categories = data[0];

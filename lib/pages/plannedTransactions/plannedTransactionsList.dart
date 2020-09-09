@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/plannedTransaction.dart';
@@ -138,7 +139,8 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
   String getEndCondition(PlannedTransaction plannedTx) {
     if (plannedTx.endDate != null && plannedTx.endDate.toString().isNotEmpty) {
       return ', ~${getDateStr(plannedTx.endDate)}';
-    } else if (plannedTx.occurrenceValue != null && plannedTx.occurrenceValue > 0) {
+    } else if (plannedTx.occurrenceValue != null &&
+        plannedTx.occurrenceValue > 0) {
       return ', ${plannedTx.occurrenceValue} time(s) left';
     } else {
       return '';
@@ -146,12 +148,10 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
   }
 
   void retrieveNewData(String uid) async {
-    List<Future> dataFutures = [];
-
-    dataFutures.add(DatabaseWrapper(uid).getPlannedTransactions());
-    dataFutures.add(DatabaseWrapper(uid).getHiddenSuggestions());
-
-    List<dynamic> data = await Future.wait(dataFutures);
+    List<dynamic> data = await Future.wait([
+      DatabaseWrapper(uid).getPlannedTransactions(),
+      DatabaseWrapper(uid).getHiddenSuggestions(),
+    ]);
 
     setState(() {
       _plannedTxs = data[0];
