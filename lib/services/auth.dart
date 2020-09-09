@@ -12,7 +12,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      await result.user.sendEmailVerification();
+      await sendEmailVerification();
       return result.user;
     } catch (e) {
       return e.message;

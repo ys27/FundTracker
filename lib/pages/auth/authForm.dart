@@ -199,29 +199,32 @@ class _AuthFormState extends State<AuthForm> {
                             : await _auth.signIn(_email, _password);
                         if (_user is String) {
                           setState(() {
-                            _isLoading = false;
                             _error = _user;
-                          });
-                        } else if (!isRegister && _user == null) {
-                          setState(() {
                             _isLoading = false;
                           });
-                          showEmailVerificationDialog(context, _auth);
-                        } else if (!isRegister) {
-                          await SyncService(_user.uid).syncToLocal();
-                        } else if (isRegister) {
-                          await Future.wait([
-                            DatabaseWrapper(_user.uid).addUser(
-                              User(
-                                uid: _user.uid,
-                                email: _email,
-                                fullname: _fullname,
+                        } else {
+                          if (!isRegister) {
+                            if (_user == null) {
+                              await showEmailVerificationDialog(context, _auth);
+                            } else {
+                              await SyncService(_user.uid).syncToLocal();
+                            }
+                          } else {
+                            await Future.wait([
+                              DatabaseWrapper(_user.uid).addUser(
+                                User(
+                                  uid: _user.uid,
+                                  email: _email,
+                                  fullname: _fullname,
+                                ),
                               ),
-                            ),
-                            DatabaseWrapper(_user.uid).addDefaultCategories(),
-                            DatabaseWrapper(_user.uid).addDefaultPreferences(),
-                          ]);
-                          showEmailVerificationDialog(context, _auth);
+                              DatabaseWrapper(_user.uid).addDefaultCategories(),
+                              DatabaseWrapper(_user.uid)
+                                  .addDefaultPreferences(),
+                            ]);
+                            await showEmailVerificationDialog(context, _auth);
+                            widget.toggleView();
+                          }
                         }
                       }
                     },
@@ -240,18 +243,17 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  void showEmailVerificationDialog(BuildContext context, AuthService auth) {
-    showDialog(
+  Future showEmailVerificationDialog(
+      BuildContext context, AuthService auth) async {
+    await showDialog(
       context: context,
       builder: (context) {
         return EmailVerification(
           auth: auth,
-          goBack: () {
-            widget.toggleView(method: AuthMethod.SignIn);
-          },
         );
       },
     );
+    setState(() => _isLoading = false);
   }
 }
 

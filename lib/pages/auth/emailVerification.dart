@@ -5,9 +5,8 @@ import 'package:fund_tracker/shared/styles.dart';
 
 class EmailVerification extends StatefulWidget {
   final AuthService auth;
-  final Function goBack;
 
-  EmailVerification({this.auth, this.goBack});
+  EmailVerification({this.auth});
 
   @override
   _EmailVerificationState createState() => _EmailVerificationState();

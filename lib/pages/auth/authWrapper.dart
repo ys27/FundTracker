@@ -10,9 +10,9 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> {
   AuthMethod method = AuthMethod.SignIn;
 
-  void toggleView({AuthMethod toMethod}) {
+  void toggleView() {
     setState(() {
-      method = toMethod ?? (method == AuthMethod.SignIn)
+      method = (method == AuthMethod.SignIn)
           ? AuthMethod.Register
           : AuthMethod.SignIn;
     });
