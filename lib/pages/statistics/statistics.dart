@@ -7,6 +7,7 @@ import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categories.dart';
 import 'package:fund_tracker/pages/statistics/periodic.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
+import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
@@ -248,8 +249,8 @@ class _StatisticsState extends State<Statistics> {
               SizedBox(height: 20.0),
               Periodic(
                 dividedTransactions: _showAllTimeStats
-                    ? _dividedTransactions.reversed.toList()
-                    : _customDividedTransactions.reversed.toList(),
+                    ? _dividedTransactions.take(NUM_PERIODIC_STAT_PERIODS + 1).toList().reversed.toList()
+                    : _customDividedTransactions.take(NUM_PERIODIC_STAT_PERIODS + 1).toList().reversed.toList(),
               ),
             ],
             SizedBox(height: 20.0),
