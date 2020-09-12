@@ -249,8 +249,8 @@ class _StatisticsState extends State<Statistics> {
               SizedBox(height: 20.0),
               Periodic(
                 dividedTransactions: _showAllTimeStats
-                    ? _dividedTransactions.take(NUM_PERIODIC_STAT_PERIODS + 1).toList().reversed.toList()
-                    : _customDividedTransactions.take(NUM_PERIODIC_STAT_PERIODS + 1).toList().reversed.toList(),
+                    ? _dividedTransactions
+                    : _customDividedTransactions,
               ),
             ],
             SizedBox(height: 20.0),

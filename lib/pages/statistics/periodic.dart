@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/shared/components.dart';
+import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/library.dart';
 
 class Periodic extends StatefulWidget {
@@ -21,6 +22,9 @@ class _PeriodicState extends State<Periodic> {
     super.initState();
     _nonEmptyPeriods = widget.dividedTransactions
         .where((period) => period['transactions'].length > 0)
+        .take(NUM_PERIODIC_STAT_PERIODS)
+        .toList()
+        .reversed
         .toList();
     touchedGroupIndex = _nonEmptyPeriods.length - 1;
   }
