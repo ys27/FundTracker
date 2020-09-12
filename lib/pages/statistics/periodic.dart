@@ -14,18 +14,22 @@ class Periodic extends StatefulWidget {
 
 class _PeriodicState extends State<Periodic> {
   int touchedGroupIndex;
+  List<Map<String, dynamic>> _nonEmptyPeriods;
 
   @override
   void initState() {
     super.initState();
-    touchedGroupIndex = widget.dividedTransactions.length - 1;
+    _nonEmptyPeriods = widget.dividedTransactions
+        .where((period) => period['transactions'].length > 0)
+        .toList();
+    touchedGroupIndex = _nonEmptyPeriods.length - 1;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.dividedTransactions != null) {
+    if (_nonEmptyPeriods != null) {
       List<Map<String, double>> amountPerPeriod = [];
-      List<BarChartGroupData> groupData = widget.dividedTransactions
+      List<BarChartGroupData> groupData = _nonEmptyPeriods
           .asMap()
           .map((index, period) {
             double periodIncome = filterAndGetTotalAmounts(
@@ -123,9 +127,7 @@ class _PeriodicState extends State<Periodic> {
                     fontSize: 10,
                   ),
                   getTitles: (index) =>
-                      index == widget.dividedTransactions.length - 1
-                          ? 'Current'
-                          : '',
+                      index == _nonEmptyPeriods.length - 1 ? 'Current' : '',
                 ),
               ),
               barTouchData: BarTouchData(
@@ -164,9 +166,9 @@ class _PeriodicState extends State<Periodic> {
             Center(
               child: Text(() {
                 String startDate = getDateStr(
-                    widget.dividedTransactions[touchedGroupIndex]['startDate']);
-                String endDate = getDateStr(
-                    widget.dividedTransactions[touchedGroupIndex]['endDate']);
+                    _nonEmptyPeriods[touchedGroupIndex]['startDate']);
+                String endDate =
+                    getDateStr(_nonEmptyPeriods[touchedGroupIndex]['endDate']);
                 return '$startDate - $endDate';
               }()),
             ),
