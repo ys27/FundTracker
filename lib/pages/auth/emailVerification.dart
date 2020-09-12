@@ -27,11 +27,11 @@ class _EmailVerificationState extends State<EmailVerification> {
         child: ListView(
           padding: formPadding,
           children: <Widget>[
-            Center(child: Text('Please verify your email.')),
+            Center(child: Text('Please verify your email')),
             RaisedButton(
               color: Theme.of(context).primaryColor,
               child: Text(
-                'Resend email verification.',
+                'Resend email verification',
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {

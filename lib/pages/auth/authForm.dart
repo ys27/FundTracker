@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/user.dart';
 import 'package:fund_tracker/pages/auth/emailVerification.dart';
+import 'package:fund_tracker/pages/auth/forgotPassword.dart';
+import 'package:fund_tracker/pages/auth/validators.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
@@ -42,6 +44,7 @@ class _AuthFormState extends State<AuthForm> {
   String _passwordConfirm = '';
   String _fullname = '';
   String _error = '';
+
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
@@ -237,6 +240,12 @@ class _AuthFormState extends State<AuthForm> {
                       fontSize: 14.0,
                     ),
                   ),
+                  FlatButton(
+                    child: Text('Forgot password?'),
+                    onPressed: () async {
+                      await showForgotPasswordDialog(context, _auth);
+                    },
+                  )
                 ],
               ),
             ),
@@ -255,42 +264,19 @@ class _AuthFormState extends State<AuthForm> {
     );
     setState(() => _isLoading = false);
   }
-}
 
-String emailValidator(val) {
-  if (val.isEmpty) {
-    return 'Email is required.';
+  Future showForgotPasswordDialog(
+      BuildContext context, AuthService auth) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return ForgotPassword(
+          auth: auth,
+        );
+      },
+    );
+    setState(() => _isLoading = false);
   }
-  if (!RegExp(
-          r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-      .hasMatch(val)) {
-    return 'Not a valid email address format.';
-  }
-  return null;
-}
-
-String passwordValidator(val) {
-  if (val.length < 6) {
-    return 'The password must be 6 or more characters.';
-  }
-  return null;
-}
-
-String passwordConfirmValidator(val, password) {
-  if (val.isEmpty) {
-    return 'This is a required field.';
-  }
-  if (val != password) {
-    return 'The passwords do not match.';
-  }
-  return null;
-}
-
-String fullNameValidator(val) {
-  if (val.isEmpty) {
-    return 'This is a required field.';
-  }
-  return null;
 }
 
 extension on TextEditingController {
