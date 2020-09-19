@@ -240,6 +240,7 @@ class _StatisticsState extends State<Statistics> {
               daysLeft: _daysLeft,
             ),
             SizedBox(height: 20.0),
+            Divider(height: 1.0),
             Categories(
               transactions: _transactions,
               categories: widget.categories,
@@ -254,6 +255,7 @@ class _StatisticsState extends State<Statistics> {
               ),
             ],
             SizedBox(height: 20.0),
+            Divider(height: 1.0),
             TopExpenses(
               transactions: onlyExpenses,
               categories: widget.categories,
