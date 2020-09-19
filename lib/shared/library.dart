@@ -315,18 +315,6 @@ Map<String, double> getRelativePercentages(Map<String, double> values) {
   };
 }
 
-List<Map<String, dynamic>> getPercentagesOutOfTotalAmount(
-  List<Map<String, dynamic>> values,
-  double totalIncome,
-) {
-  return values
-      .map((v) => {
-            ...v,
-            'percentage': v['amount'] / totalIncome,
-          })
-      .toList();
-}
-
 List<Map<String, dynamic>> appendIndividualPercentages(
     List<Map<String, dynamic>> values) {
   double sum = 0;

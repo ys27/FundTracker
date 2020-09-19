@@ -8,15 +8,11 @@ import 'package:fund_tracker/shared/components.dart';
 class TopExpenses extends StatefulWidget {
   final List<Transaction> transactions;
   final List<Category> categories;
-  final double totalIncome;
-  final double totalExpenses;
   final ScrollController scrollController;
 
   TopExpenses({
     this.transactions,
     this.categories,
-    this.totalIncome,
-    this.totalExpenses,
     this.scrollController,
   });
 
@@ -39,8 +35,6 @@ class _TopExpensesState extends State<TopExpenses> {
                 'amount': tx.amount,
               })
           .toList();
-      _sortedTransactions = getPercentagesOutOfTotalAmount(
-          _sortedTransactions, widget.totalExpenses);
       _columnContent = <Widget>[
         ...sublist(_sortedTransactions, 0, _showCount)
             .map((tx) => <Widget>[

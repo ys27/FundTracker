@@ -193,9 +193,6 @@ class _StatisticsState extends State<Statistics> {
         }
       }
 
-      final List<Transaction> onlyExpenses =
-          _transactions.where((tx) => tx.isExpense).toList();
-
       _body = ListView(
         controller: _scrollController,
         padding: bodyPadding,
@@ -257,14 +254,8 @@ class _StatisticsState extends State<Statistics> {
             SizedBox(height: 20.0),
             Divider(height: 1.0),
             TopExpenses(
-              transactions: onlyExpenses,
+              transactions: _transactions.where((tx) => tx.isExpense).toList(),
               categories: widget.categories,
-              totalIncome: _transactions
-                  .where((tx) => !tx.isExpense)
-                  .fold(0.0, (a, b) => a + b.amount),
-              totalExpenses: _transactions
-                  .where((tx) => tx.isExpense)
-                  .fold(0.0, (a, b) => a + b.amount),
               scrollController: _scrollController,
             ),
           ] else ...[
