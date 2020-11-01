@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -88,7 +89,11 @@ class _TransactionFormState extends State<TransactionForm> {
     _amount =
         givenTxOrRecTx.amount != null ? givenTxOrRecTx.amount.toString() : '';
     _cid = givenTxOrRecTx.cid;
-    _addSuggestion = true;
+    _addSuggestion = widget.hiddenSuggestions
+            .where((suggestion) =>
+                suggestion.payee == _payee && suggestion.cid == _cid)
+            .length ==
+        0;
 
     _payeeController.text = givenTxOrRecTx.payee ?? '';
     _amountController.text = givenTxOrRecTx.amount != null
@@ -477,7 +482,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 firstDate: getDateNotTime(DateTime.now()),
               ),
             ],
-            if (!isEditMode && !_suggestionUsed) ...[
+            if (!isEditMode && !_suggestionUsed || isEditMode) ...[
               SwitchListTile(
                 title: Text('Add suggestion'),
                 value: _addSuggestion,
@@ -541,7 +546,8 @@ class _TransactionFormState extends State<TransactionForm> {
                             .addTransactions([tx]);
                     SyncService(_user.uid).syncTransactions();
                   }
-                  if (!isEditMode && !_suggestionUsed) {
+                  Navigator.pop(context);
+                  if (!isEditMode && !_suggestionUsed || isEditMode) {
                     Suggestion suggestionToAdd = Suggestion(
                       sid: '$_payee::$cid',
                       payee: _payee,
@@ -561,7 +567,6 @@ class _TransactionFormState extends State<TransactionForm> {
                       );
                     }
                   }
-                  Navigator.pop(context);
                 }
               },
             ),
@@ -599,9 +604,8 @@ class _TransactionFormState extends State<TransactionForm> {
             ? <Widget>[
                 DeleteIcon(
                   context,
-                  itemDesc: isPlannedTxMode
-                      ? 'planned transaction'
-                      : 'transaction',
+                  itemDesc:
+                      isPlannedTxMode ? 'planned transaction' : 'transaction',
                   deleteFunction: () async => isPlannedTxMode
                       ? await DatabaseWrapper(_user.uid)
                           .deletePlannedTransactions([givenTxOrRecTx])

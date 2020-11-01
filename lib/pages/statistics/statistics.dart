@@ -7,7 +7,6 @@ import 'package:fund_tracker/pages/statistics/balance.dart';
 import 'package:fund_tracker/pages/statistics/categories.dart';
 import 'package:fund_tracker/pages/statistics/periodic.dart';
 import 'package:fund_tracker/pages/statistics/topExpenses.dart';
-import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';

@@ -25,7 +25,7 @@ class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> _categoricalData;
-    List<PieChartSectionData> sectionData;
+    List<PieChartSectionData> sectionData = [];
 
     onlyExpenses = onlyExpenses ?? widget.prefs.isOnlyExpenses;
 
@@ -72,15 +72,15 @@ class _CategoriesState extends State<Categories> {
 
     return Column(children: <Widget>[
       StatTitle(title: 'Categories'),
-      SizedBox(height: 10.0),
-      SwitchListTile(
-        title: Text('Only expenses'),
-        value: onlyExpenses,
-        onChanged: (val) {
-          setState(() => onlyExpenses = val);
-        },
-      ),
       if (sectionData.length > 0) ...[
+        SizedBox(height: 10.0),
+        SwitchListTile(
+          title: Text('Only expenses'),
+          value: onlyExpenses,
+          onChanged: (val) {
+            setState(() => onlyExpenses = val);
+          },
+        ),
         SizedBox(height: 35.0),
         PieChart(
           PieChartData(

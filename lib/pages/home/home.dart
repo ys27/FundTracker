@@ -187,8 +187,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
   }
 
-  void showTxSearch(List<Transaction> txs, {String prevQuery}) {
-    showSearch(
+  void showTxSearch(List<Transaction> txs, {String prevQuery}) async {
+    await showSearch(
       context: context,
       query: prevQuery,
       delegate: SearchService(
@@ -205,6 +205,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         },
       ),
     );
+    retrieveNewData(widget.user.uid);
   }
 
   void retrieveNewData(String uid) async {
