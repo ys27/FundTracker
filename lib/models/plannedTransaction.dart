@@ -125,7 +125,7 @@ class PlannedTransaction {
       this.frequencyValue,
       this.frequencyUnit,
     );
-    copy.nextDate = nextDate.add(Duration(days: numDaysUntilNextDate));
+    copy.nextDate = getClosestDayStart(nextDate.add(Duration(days: numDaysUntilNextDate)));
     if (occurrenceValue != null && occurrenceValue > 0) {
       copy.occurrenceValue--;
     }

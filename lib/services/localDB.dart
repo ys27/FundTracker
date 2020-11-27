@@ -358,7 +358,7 @@ class LocalDBService {
       if ((nextRecTx.endDate == null && nextRecTx.occurrenceValue == null) ||
           (nextRecTx.endDate != null &&
               getDateNotTime(nextRecTx.nextDate)
-                  .subtract(Duration(milliseconds: 1))
+                  .subtract(Duration(microseconds: 1))
                   .isBefore(nextRecTx.endDate)) ||
           (nextRecTx.occurrenceValue != null &&
               nextRecTx.occurrenceValue > 0)) {
