@@ -21,7 +21,7 @@ and more...
 To build this application and run it on your device or an emulator, you need:
 - Flutter
 - Android SDK
-- XCode if you wish to run iOS
+- XCode if you wish to run on iOS
 
 Follow the instructions here to set up: https://flutter.dev/docs/get-started/install.
 
