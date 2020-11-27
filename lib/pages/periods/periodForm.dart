@@ -205,7 +205,7 @@ class _PeriodFormState extends State<PeriodForm> {
                                 .addPeriods([period]);
                         SyncService(_user.uid).syncPeriods();
                         if (period.isDefault) {
-                          DatabaseWrapper(_user.uid)
+                          await DatabaseWrapper(_user.uid)
                               .setRemainingNotDefault(period);
                         }
                         Navigator.pop(context);

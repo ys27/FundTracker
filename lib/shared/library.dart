@@ -132,6 +132,10 @@ DateTime getDateNotTime(DateTime date) {
   return DateTime(date.year, date.month, date.day);
 }
 
+DateTime getClosestDayStart(DateTime dateTime) {
+  DateTime nextDateTime = dateTime.add(Duration(hours: 2));
+  return DateTime(nextDateTime.year, nextDateTime.month, nextDateTime.day);
+}
 List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   List<Transaction> transactions,
   Period period,
@@ -151,7 +155,7 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
         periodWithNewStartDate.durationValue,
         periodWithNewStartDate.durationUnit,
       );
-      DateTime nextPeriodStartDate = getDateNotTime(
+      DateTime nextPeriodStartDate = getClosestDayStart(
         iteratingPeriodStartDate.add(Duration(days: numDaysInPeriod)),
       );
       periodsList.insert(
