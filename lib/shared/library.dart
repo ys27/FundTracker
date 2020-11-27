@@ -136,18 +136,20 @@ DateTime getClosestDayStart(DateTime dateTime) {
   DateTime nextDateTime = dateTime.add(Duration(hours: 2));
   return DateTime(nextDateTime.year, nextDateTime.month, nextDateTime.day);
 }
+
 List<Map<String, dynamic>> divideTransactionsIntoPeriods(
   List<Transaction> transactions,
   Period period,
 ) {
   List<Map<String, dynamic>> periodsList = [];
 
-  DateTime _now = DateTime.now();
+  DateTime latestTransactionDate = transactions.first.date;
 
   if (transactions.length > 0) {
     DateTime iteratingPeriodStartDate =
         findStartDateOfGivenDateTime(transactions.last.date, period);
-    while (iteratingPeriodStartDate.isBefore(_now)) {
+    while (iteratingPeriodStartDate
+        .isBefore(latestTransactionDate.add(Duration(microseconds: 1)))) {
       Period periodWithNewStartDate =
           period.setStartDate(iteratingPeriodStartDate);
       int numDaysInPeriod = findNumDaysInPeriod(
