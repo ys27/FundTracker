@@ -100,65 +100,68 @@ class _PeriodicState extends State<Periodic> {
             );
           }()),
           SizedBox(height: 10.0),
-          // BarChart(
-          //   BarChartData(
-          //     alignment: BarChartAlignment.spaceAround,
-          //     barGroups: groupData,
-          //     titlesData: FlTitlesData(
-          //       show: true,
-          //       leftTitles: SideTitles(
-          //         showTitles: true,
-          //         margin: 8,
-          //         getTitles: (value) {
-          //           if (value % 500 == 0) {
-          //             int per500 = value ~/ 500;
-          //             if (per500 == 0) {
-          //               return '\$0';
-          //             } else {
-          //               String grand =
-          //                   (per500 % 2 == 0 ? per500 ~/ 2 : per500 / 2)
-          //                       .toString();
-          //               return '\$${grand}K';
-          //             }
-          //           }
-          //           return '';
-          //         },
-          //       ),
-          //       bottomTitles: SideTitles(
-          //         showTitles: true,
-          //         // textStyle: TextStyle(
-          //         //   color: Colors.black,
-          //         //   fontSize: 10,
-          //         // ),
-          //         getTitles: (index) =>
-          //             index == _nonEmptyPeriods.length - 1 ? 'Current' : '',
-          //       ),
-          //     ),
-          //     barTouchData: BarTouchData(
-          //       touchTooltipData: BarTouchTooltipData(
-          //         getTooltipItem: (_, __, rodData, rodIndex) {
-          //           return BarTooltipItem(
-          //             getAmountStr(rodData.y),
-          //             TextStyle(
-          //               color: rodData.colors[0],
-          //             ),
-          //           );
-          //         },
-          //       ),
-          //       touchExtraThreshold: EdgeInsets.symmetric(horizontal: 8),
-          //       touchCallback: (response) {
-          //         if (response.spot != null) {
-          //           setState(() {
-          //             touchedGroupIndex = response.spot.touchedBarGroupIndex;
-          //           });
-          //         }
-          //       },
-          //     ),
-          //     borderData: FlBorderData(
-          //       show: false,
-          //     ),
-          //   ),
-          // ),
+          AspectRatio(
+            aspectRatio: 1.3,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  barGroups: groupData,
+                  titlesData: FlTitlesData(
+                    show: true,
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      margin: 8,
+                      getTitles: (value) {
+                        if (value % 500 == 0) {
+                          int per500 = value ~/ 500;
+                          if (per500 == 0) {
+                            return '\$0';
+                          } else {
+                            String grand =
+                                (per500 % 2 == 0 ? per500 ~/ 2 : per500 / 2)
+                                    .toString();
+                            return '\$${grand}K';
+                          }
+                        }
+                        return '';
+                      },
+                    ),
+                    bottomTitles: SideTitles(
+                      showTitles: true,
+                      getTitles: (index) =>
+                          index == _nonEmptyPeriods.length - 1 ? 'Current' : '',
+                    ),
+                  ),
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipItem: (_, __, rodData, rodIndex) {
+                        return BarTooltipItem(
+                          getAmountStr(rodData.y),
+                          TextStyle(
+                            color: rodData.colors[0],
+                          ),
+                        );
+                      },
+                    ),
+                    touchExtraThreshold: EdgeInsets.symmetric(horizontal: 8),
+                    touchCallback: (response) {
+                      if (response.spot != null) {
+                        setState(() {
+                          touchedGroupIndex =
+                              response.spot.touchedBarGroupIndex;
+                        });
+                      }
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
           if (touchedGroupIndex > -1) ...[
             SizedBox(height: 10.0),
             Center(

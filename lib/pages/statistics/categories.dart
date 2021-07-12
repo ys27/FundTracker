@@ -82,27 +82,36 @@ class _CategoriesState extends State<Categories> {
           },
         ),
         SizedBox(height: 35.0),
-        // PieChart(
-        //   PieChartData(
-        //     sections: sectionData,
-        //     sectionsSpace: 1,
-        //     borderData: FlBorderData(
-        //       show: false,
-        //     ),
-        //     pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
-        //       setState(() {
-        //         final desiredTouch =
-        //             pieTouchResponse.touchInput is PointerUpEvent;
-        //         if (desiredTouch && pieTouchResponse.touchedSection != null) {
-        //           touchedIndex =
-        //               pieTouchResponse.touchedSection.touchedSectionIndex;
-        //         } else {
-        //           touchedIndex = -1;
-        //         }
-        //       });
-        //     }),
-        //   ),
-        // ),
+        AspectRatio(
+          aspectRatio: 1,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: PieChart(
+              PieChartData(
+                sections: sectionData,
+                startDegreeOffset: 180,
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                sectionsSpace: 1,
+                centerSpaceRadius: 0,
+                pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+                  setState(() {
+                    final desiredTouch =
+                        pieTouchResponse.touchInput is PointerUpEvent;
+                    if (desiredTouch &&
+                        pieTouchResponse.touchedSection != null) {
+                      touchedIndex =
+                          pieTouchResponse.touchedSection.touchedSectionIndex;
+                    } else {
+                      touchedIndex = -1;
+                    }
+                  });
+                }),
+              ),
+            ),
+          ),
+        ),
         SizedBox(height: 20.0),
         Column(
           mainAxisSize: MainAxisSize.max,
