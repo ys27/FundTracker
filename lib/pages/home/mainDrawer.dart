@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/user.dart';
@@ -47,7 +48,9 @@ class _MainDrawerState extends State<MainDrawer> {
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
-                userInfo != null && userInfo.fullname.length > 0 ? userInfo.fullname[0] : '',
+                userInfo != null && userInfo.fullname.length > 0
+                    ? userInfo.fullname[0]
+                    : '',
                 style: TextStyle(
                   fontSize: 40.0,
                   color: Theme.of(context).primaryColor,

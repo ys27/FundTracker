@@ -11,8 +11,8 @@ class IconsList extends StatefulWidget {
 }
 
 class _IconsListState extends State<IconsList> {
-  int indexStart = 0;
-  int indexEnd = numIconsPerPage;
+  int pageNum = 1;
+  int numTotalPages = (iconsRegistry.length / numIconsPerPage + 1).toInt();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,8 @@ class _IconsListState extends State<IconsList> {
         children: <Widget>[
           Wrap(
             children: iconsRegistry
-                .sublist(indexStart, min(indexEnd, iconsRegistry.length))
+                .sublist((pageNum - 1) * numIconsPerPage,
+                    min((pageNum * numIconsPerPage) - 1, iconsRegistry.length))
                 .map(
                   (icon) => IconButton(
                     icon: Icon(icon),
@@ -44,23 +45,25 @@ class _IconsListState extends State<IconsList> {
                     IconButton(
                         icon: Icon(CommunityMaterialIcons.arrow_left),
                         onPressed: () {
-                          setState(() {
-                            indexStart = indexStart - numIconsPerPage;
-                            indexEnd = indexEnd - numIconsPerPage;
-                          });
+                          if (pageNum > 1) {
+                            setState(() {
+                              pageNum--;
+                            });
+                          }
                         }),
                     IconButton(
                         icon: Icon(CommunityMaterialIcons.arrow_right),
                         onPressed: () {
-                          setState(() {
-                            indexStart = indexStart + numIconsPerPage;
-                            indexEnd = indexEnd + numIconsPerPage;
-                          });
+                          if (pageNum < numTotalPages) {
+                            setState(() {
+                              pageNum++;
+                            });
+                          }
                         }),
                   ],
                 ),
                 Text(
-                  'Page ${(indexStart / numIconsPerPage + 1).toInt()}/${(iconsRegistry.length / numIconsPerPage + 1).toInt()}',
+                  'Page $pageNum/$numTotalPages',
                 ),
               ],
             ),
