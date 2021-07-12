@@ -82,28 +82,27 @@ class _CategoriesState extends State<Categories> {
           },
         ),
         SizedBox(height: 35.0),
-        PieChart(
-          PieChartData(
-            sections: sectionData,
-            sectionsSpace: 1,
-            borderData: FlBorderData(
-              show: false,
-            ),
-            pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
-              setState(() {
-                final desiredTouch =
-                    pieTouchResponse.touchInput is PointerExitEvent &&
-                        pieTouchResponse.touchInput is PointerUpEvent;
-                if (desiredTouch && pieTouchResponse.touchedSection != null) {
-                  touchedIndex =
-                      pieTouchResponse.touchedSection.touchedSectionIndex;
-                } else {
-                  touchedIndex = -1;
-                }
-              });
-            }),
-          ),
-        ),
+        // PieChart(
+        //   PieChartData(
+        //     sections: sectionData,
+        //     sectionsSpace: 1,
+        //     borderData: FlBorderData(
+        //       show: false,
+        //     ),
+        //     pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+        //       setState(() {
+        //         final desiredTouch =
+        //             pieTouchResponse.touchInput is PointerUpEvent;
+        //         if (desiredTouch && pieTouchResponse.touchedSection != null) {
+        //           touchedIndex =
+        //               pieTouchResponse.touchedSection.touchedSectionIndex;
+        //         } else {
+        //           touchedIndex = -1;
+        //         }
+        //       });
+        //     }),
+        //   ),
+        // ),
         SizedBox(height: 20.0),
         Column(
           mainAxisSize: MainAxisSize.max,

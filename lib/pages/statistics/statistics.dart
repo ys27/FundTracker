@@ -237,11 +237,11 @@ class _StatisticsState extends State<Statistics> {
             ),
             SizedBox(height: 20.0),
             Divider(height: 1.0),
-            // Categories(
-            //   transactions: _transactions,
-            //   categories: widget.categories,
-            //   prefs: widget.prefs,
-            // ),
+            Categories(
+              transactions: _transactions,
+              categories: widget.categories,
+              prefs: widget.prefs,
+            ),
             if (_showAllTimeStats || _showCustomStats) ...[
               SizedBox(height: 20.0),
               Periodic(
