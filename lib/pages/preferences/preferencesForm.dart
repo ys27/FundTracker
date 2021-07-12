@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/preferences.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -155,12 +156,12 @@ class _PreferencesFormState extends State<PreferencesForm> {
                   : TextFormField(
                       controller: _limitController,
                       focusNode: _limitFocus,
-                      autovalidate: _isLimitDaysEnabled
+                      autovalidateMode: autovalidateModeOn(_isLimitDaysEnabled
                           ? _limitDays.isNotEmpty
-                          : _limitPeriods.isNotEmpty,
+                          : _limitPeriods.isNotEmpty),
                       validator: (val) {
                         if (val.isNotEmpty) {
-                          if (val.contains('.')) {
+                          if (int.tryParse(val) == null) {
                             return 'This value must be an integer.';
                           } else if (int.parse(val) <= 0) {
                             return 'This value must be greater than 0';
@@ -242,12 +243,13 @@ class _PreferencesFormState extends State<PreferencesForm> {
                 },
               ),
               SizedBox(height: 10.0),
-              RaisedButton(
-                color:
-                    _isModified ? Theme.of(context).primaryColor : Colors.grey,
-                child: Text('Save',
-                    style: TextStyle(
-                        color: _isModified ? Colors.white : Colors.grey[400])),
+              OutlinedButton(
+                child: Text(
+                  'Save',
+                  style: TextStyle(
+                    color: _isModified ? Colors.black : Colors.grey[400],
+                  ),
+                ),
                 onPressed: () async {
                   if (_isModified) {
                     if (_formKey.currentState.validate()) {
@@ -300,7 +302,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
               SizedBox(height: 10.0),
               _wasUpdated ? Center(child: Text('Updated!')) : Container(),
               SizedBox(height: 60.0),
-              // RaisedButton(
+              // OutlinedButton(
               //   child: Text('Reset Categories'),
               //   onPressed: () async {
               //     bool hasBeenConfirmed = await showDialog(
@@ -316,7 +318,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
               //   },
               // ),
               // SizedBox(height: 10.0),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Reset Preferences'),
                 onPressed: () async {
                   bool hasBeenConfirmed = await showDialog(

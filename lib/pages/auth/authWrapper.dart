@@ -23,13 +23,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
     switch (method) {
       case AuthMethod.SignIn:
         return AuthForm(toggleView: toggleView, method: AuthMethod.SignIn);
-        break;
       case AuthMethod.Register:
         return AuthForm(toggleView: toggleView, method: AuthMethod.Register);
-        break;
       default:
         return Text('Error in the AuthWrapper.');
-        break;
     }
   }
 }

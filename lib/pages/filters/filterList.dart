@@ -85,9 +85,7 @@ class _FilterListState extends State<FilterList> {
         body: ListView(children: <Widget>[
           SizedBox(height: 10.0),
           Center(
-            child: FlatButton(
-              textColor: Colors.white,
-              color: Theme.of(context).primaryColor,
+            child: OutlinedButton(
               child: Text(_isAllEnabled ? 'Disable All' : 'Enable All'),
               onPressed: () async {
                 setState(() {

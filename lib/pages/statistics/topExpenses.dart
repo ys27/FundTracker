@@ -50,11 +50,11 @@ class _TopExpensesState extends State<TopExpenses> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Collapse'),
               onPressed: () => setState(() => _showCount = 5),
             ),
-            FlatButton(
+            TextButton(
               child: Text('Show more'),
               onPressed: () {
                 setState(() => _showCount += 5);

@@ -91,20 +91,16 @@ int findNumDaysInPeriod(
         periodStartDate.month,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
-      break;
     case DateUnit.Months:
       return DateTime(
         periodStartDate.year,
         periodStartDate.month + durationValue,
         periodStartDate.day,
       ).difference(periodStartDate).inDays;
-      break;
     case DateUnit.Weeks:
       return durationValue * 7;
-      break;
     default:
       return durationValue;
-      break;
   }
 }
 
@@ -383,6 +379,9 @@ Category getCategory(List<Category> categories, String cid) {
 double getAverage(List<double> numbers) {
   return numbers.fold(0.0, (a, b) => a + b) / numbers.length;
 }
+
+AutovalidateMode autovalidateModeOn(bool condition) =>
+    condition ? AutovalidateMode.always : AutovalidateMode.disabled;
 
 double abs(double value) => value < 0 ? -1 * value : value;
 dynamic max(dynamic a, dynamic b) => a > b ? a : b;

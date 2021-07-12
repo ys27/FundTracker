@@ -75,6 +75,7 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: Icon(CommunityMaterialIcons.calendar_range),
             onTap: () => widget.openPage(
               FutureProvider<List<Period>>(
+                initialData: [],
                 create: (_) => DatabaseWrapper(widget.user.uid).getPeriods(),
                 child: PeriodsList(
                   user: widget.user,

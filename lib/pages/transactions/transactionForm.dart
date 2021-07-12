@@ -204,7 +204,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             ],
             TypeAheadFormField(
-              autovalidate: _payee.isNotEmpty,
+              autovalidateMode: autovalidateModeOn(_payee.isNotEmpty),
               validator: (val) {
                 if (val.isEmpty) {
                   return 'Enter a payee or a note.';
@@ -304,9 +304,9 @@ class _TransactionFormState extends State<TransactionForm> {
             TextFormField(
               controller: _amountController,
               focusNode: _amountFocus,
-              autovalidate: _amount.isNotEmpty,
+              autovalidateMode: autovalidateModeOn(_amount.isNotEmpty),
               validator: (val) {
-                if (val.isEmpty) {
+                if (val.isEmpty || double.tryParse(val) == null) {
                   return 'Please enter an amount.';
                 }
                 if (val.indexOf('.') > 0 && val.split('.')[1].length > 2) {
@@ -394,11 +394,12 @@ class _TransactionFormState extends State<TransactionForm> {
               TextFormField(
                 controller: _frequencyValueController,
                 focusNode: _frequencyValueFocus,
-                autovalidate: _frequencyValue.isNotEmpty,
+                autovalidateMode:
+                    autovalidateModeOn(_frequencyValue.isNotEmpty),
                 validator: (val) {
                   if (val.isEmpty) {
                     return 'Enter a value.';
-                  } else if (val.contains('.')) {
+                  } else if (int.tryParse(val) == null) {
                     return 'This value must be an integer.';
                   } else if (int.parse(val) <= 0) {
                     return 'This value must be greater than 0';
@@ -438,12 +439,13 @@ class _TransactionFormState extends State<TransactionForm> {
               TextFormField(
                 controller: _occurrenceValueController,
                 focusNode: _occurrenceValueFocus,
-                autovalidate: _occurrenceValue.isNotEmpty,
+                autovalidateMode:
+                    autovalidateModeOn(_occurrenceValue.isNotEmpty),
                 validator: (val) {
                   if (val.isEmpty) {
                     return null;
                   }
-                  if (val.contains('.')) {
+                  if (int.tryParse(val) == null) {
                     return 'This value must be an integer.';
                   } else if (int.parse(val) <= 0) {
                     return 'This value must be greater than 0';
@@ -492,12 +494,8 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             ],
             SizedBox(height: 10.0),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                isEditMode ? 'Save' : 'Add',
-                style: TextStyle(color: Colors.white),
-              ),
+            OutlinedButton(
+              child: Text(isEditMode ? 'Save' : 'Add'),
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
                   setState(() => isLoading = true);
@@ -572,12 +570,8 @@ class _TransactionFormState extends State<TransactionForm> {
             ),
             if (isPlannedTxMode) ...[
               SizedBox(height: 10.0),
-              RaisedButton(
-                color: Theme.of(context).accentColor,
-                child: Text(
-                  'Reset End Conditions',
-                  style: TextStyle(color: Colors.white),
-                ),
+              ElevatedButton(
+                child: Text('Reset End Conditions'),
                 onPressed: () async {
                   setState(() {
                     _endDate = givenTxOrRecTx.endDate;

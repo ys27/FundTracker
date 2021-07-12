@@ -89,15 +89,19 @@ class _CategoriesState extends State<Categories> {
             borderData: FlBorderData(
               show: false,
             ),
-            pieTouchData: PieTouchData(
-              touchCallback: (pieTouchResponse) => setState(() {
-                touchedIndex = (pieTouchResponse.touchInput is FlLongPressEnd ||
-                        pieTouchResponse.touchInput is FlPanEnd ||
-                        pieTouchResponse.touchedSectionIndex == null)
-                    ? touchedIndex
-                    : pieTouchResponse.touchedSectionIndex;
-              }),
-            ),
+            pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+              setState(() {
+                final desiredTouch =
+                    pieTouchResponse.touchInput is PointerExitEvent &&
+                        pieTouchResponse.touchInput is PointerUpEvent;
+                if (desiredTouch && pieTouchResponse.touchedSection != null) {
+                  touchedIndex =
+                      pieTouchResponse.touchedSection.touchedSectionIndex;
+                } else {
+                  touchedIndex = -1;
+                }
+              });
+            }),
           ),
         ),
         SizedBox(height: 20.0),

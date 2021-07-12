@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/suggestion.dart';
@@ -37,8 +38,10 @@ class TransactionTile extends StatelessWidget {
                 return MultiProvider(
                   providers: [
                     FutureProvider<List<Transaction>>.value(
+                        initialData: [],
                         value: DatabaseWrapper(_user.uid).getTransactions()),
                     FutureProvider<List<Category>>.value(
+                        initialData: [],
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
                   child: TransactionForm(

@@ -7,6 +7,7 @@ import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/services/sync.dart';
 import 'package:fund_tracker/shared/constants.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 
@@ -14,7 +15,7 @@ class AuthForm extends StatefulWidget {
   final Function toggleView;
   final AuthMethod method;
 
-  AuthForm({this.toggleView, this.method});
+  AuthForm({this.toggleView, this.method = AuthMethod.SignIn});
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -52,9 +53,6 @@ class _AuthFormState extends State<AuthForm> {
   Widget title(bool isRegister) {
     return Text(
       isRegister ? 'Register' : 'Sign In',
-      style: TextStyle(
-        color: Colors.white,
-      ),
     );
   }
 
@@ -89,8 +87,10 @@ class _AuthFormState extends State<AuthForm> {
       appBar: AppBar(
         title: title(isRegister),
         actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
+          TextButton(
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+            ),
             child: authToggleText(isRegister),
             onPressed: () {
               widget.toggleView();
@@ -109,7 +109,7 @@ class _AuthFormState extends State<AuthForm> {
                   TextFormField(
                     controller: _emailController,
                     focusNode: _emailFocus,
-                    autovalidate: _email.isNotEmpty,
+                    autovalidateMode: autovalidateModeOn(_email.isNotEmpty),
                     validator: emailValidator,
                     decoration: clearInput(
                       labelText: 'Email',
@@ -127,7 +127,7 @@ class _AuthFormState extends State<AuthForm> {
                   TextFormField(
                     controller: _passwordController,
                     focusNode: _passwordFocus,
-                    autovalidate: _password.isNotEmpty,
+                    autovalidateMode: autovalidateModeOn(_password.isNotEmpty),
                     validator: passwordValidator,
                     obscureText: _obscurePassword,
                     decoration: clearInput(
@@ -149,7 +149,8 @@ class _AuthFormState extends State<AuthForm> {
                     TextFormField(
                       controller: _passwordConfirmController,
                       focusNode: _passwordConfirmFocus,
-                      autovalidate: _passwordConfirm.isNotEmpty,
+                      autovalidateMode:
+                          autovalidateModeOn(_passwordConfirm.isNotEmpty),
                       validator: (val) =>
                           passwordConfirmValidator(val, _password),
                       obscureText: _obscurePasswordConfirm,
@@ -175,7 +176,8 @@ class _AuthFormState extends State<AuthForm> {
                     TextFormField(
                       controller: _fullnameController,
                       focusNode: _fullnameFocus,
-                      autovalidate: _fullname.isNotEmpty,
+                      autovalidateMode:
+                          autovalidateModeOn(_fullname.isNotEmpty),
                       validator: fullNameValidator,
                       textCapitalization: TextCapitalization.words,
                       decoration: clearInput(
@@ -190,8 +192,7 @@ class _AuthFormState extends State<AuthForm> {
                     )
                   ],
                   SizedBox(height: 10.0),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
+                  OutlinedButton(
                     child: title(isRegister),
                     onPressed: () async {
                       setState(() => _error = '');
@@ -240,12 +241,14 @@ class _AuthFormState extends State<AuthForm> {
                       fontSize: 14.0,
                     ),
                   ),
-                  FlatButton(
-                    child: Text('Forgot password?'),
-                    onPressed: () async {
-                      await showForgotPasswordDialog(context, _auth);
-                    },
-                  )
+                  if (!isRegister) ...[
+                    TextButton(
+                      child: Text('Forgot password?'),
+                      onPressed: () async {
+                        await showForgotPasswordDialog(context, _auth);
+                      },
+                    )
+                  ],
                 ],
               ),
             ),

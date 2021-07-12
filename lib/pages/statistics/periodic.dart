@@ -57,12 +57,12 @@ class _PeriodicState extends State<Periodic> {
                   BarChartRodData(
                     y: periodIncome,
                     width: rodWidth,
-                    color: Colors.green,
+                    colors: [Colors.green],
                   ),
                   BarChartRodData(
                     y: periodExpenses,
                     width: rodWidth,
-                    color: Colors.red,
+                    colors: [Colors.red],
                   ),
                 ],
               ),
@@ -126,10 +126,10 @@ class _PeriodicState extends State<Periodic> {
                 ),
                 bottomTitles: SideTitles(
                   showTitles: true,
-                  textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 10,
-                  ),
+                  // textStyle: TextStyle(
+                  //   color: Colors.black,
+                  //   fontSize: 10,
+                  // ),
                   getTitles: (index) =>
                       index == _nonEmptyPeriods.length - 1 ? 'Current' : '',
                 ),
@@ -140,7 +140,7 @@ class _PeriodicState extends State<Periodic> {
                     return BarTooltipItem(
                       getAmountStr(rodData.y),
                       TextStyle(
-                        color: rodData.color,
+                        color: rodData.colors[0],
                       ),
                     );
                   },

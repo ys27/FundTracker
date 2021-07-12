@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/pages/auth/validators.dart';
 import 'package:fund_tracker/services/auth.dart';
 import 'package:fund_tracker/shared/components.dart';
+import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -48,7 +49,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             TextFormField(
               controller: _emailController,
               focusNode: _emailFocus,
-              autovalidate: _email.isNotEmpty,
+              autovalidateMode: autovalidateModeOn(_email.isNotEmpty),
               validator: emailValidator,
               decoration: clearInput(
                 labelText: 'Email',
@@ -64,12 +65,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               },
             ),
             SizedBox(height: 10.0),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                'Send password reset email',
-                style: TextStyle(color: Colors.white),
-              ),
+            OutlinedButton(
+              child: Text('Send password reset email'),
               onPressed: () async {
                 setState(() {
                   _forgotPasswordEmailSent = false;

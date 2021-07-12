@@ -32,13 +32,13 @@ class Alert extends StatelessWidget {
       title: Text("Are you sure?"),
       content: Text(content),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text("Cancel"),
           onPressed: () {
             Navigator.pop(context, false);
           },
         ),
-        FlatButton(
+        TextButton(
           child: Text("Confirm"),
           onPressed: () {
             Navigator.pop(context, true);
@@ -138,7 +138,7 @@ class DatePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -187,7 +187,7 @@ class TimePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -250,11 +250,13 @@ class TabSelector extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: tabs.map((tab) {
           return Expanded(
-            child: FlatButton(
-              padding: EdgeInsets.all(15.0),
-              color: tab['enabled']
-                  ? Theme.of(context).primaryColor
-                  : Colors.grey[100],
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.all(15.0),
+                backgroundColor: tab['enabled']
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey[300],
+              ),
               child: Text(
                 tab['title'],
                 style: TextStyle(

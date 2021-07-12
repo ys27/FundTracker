@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
@@ -104,8 +105,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           page: MultiProvider(
             providers: [
               FutureProvider<List<Transaction>>.value(
+                  initialData: [],
                   value: DatabaseWrapper(widget.user.uid).getTransactions()),
               FutureProvider<List<Category>>.value(
+                  initialData: [],
                   value: DatabaseWrapper(widget.user.uid).getCategories()),
             ],
             child: TransactionForm(
@@ -150,11 +153,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(CommunityMaterialIcons.file_document),
-            title: Text('Records'),
+            label: 'Records',
           ),
           BottomNavigationBarItem(
             icon: Icon(CommunityMaterialIcons.chart_pie),
-            title: Text('Statistics'),
+            label: 'Statistics',
           )
         ],
         currentIndex: _selectedIndex,

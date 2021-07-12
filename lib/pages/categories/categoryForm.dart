@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:fund_tracker/models/category.dart';
@@ -112,7 +113,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           },
                         ),
                         SizedBox(height: 10.0),
-                        FlatButton(
+                        TextButton(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -139,7 +140,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           },
                         ),
                         SizedBox(height: 10.0),
-                        FlatButton(
+                        TextButton(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -175,12 +176,8 @@ class _CategoryFormState extends State<CategoryForm> {
                           color: _iconColor,
                         ),
                         SizedBox(height: 10.0),
-                        RaisedButton(
-                          color: Theme.of(context).primaryColor,
-                          child: Text(
-                            isEditMode ? 'Save' : 'Add',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        OutlinedButton(
+                          child: Text(isEditMode ? 'Save' : 'Add'),
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               Category category = Category(
@@ -233,12 +230,8 @@ Widget categoryColorPicker(BuildContext context, Color currentColor) {
             onColorChanged: (val) => pickerColor = val,
             showLabel: true,
           ),
-          RaisedButton(
-            color: Theme.of(context).primaryColor,
-            child: Text(
-              'Select',
-              style: TextStyle(color: Colors.white),
-            ),
+          OutlinedButton(
+            child: Text('Select'),
             onPressed: () => Navigator.of(context).pop(pickerColor),
           )
         ],

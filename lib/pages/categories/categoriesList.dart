@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/pages/categories/categoryForm.dart';
@@ -20,7 +21,7 @@ class CategoriesList extends StatefulWidget {
 }
 
 class _CategoriesListState extends State<CategoriesList> {
-  List<Category> _categories;
+  List<Category> _categories = [];
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _CategoriesListState extends State<CategoriesList> {
 
   @override
   Widget build(BuildContext context) {
-    return _categories != null
+    return _categories.isNotEmpty
         ? Scaffold(
             drawer: MainDrawer(user: widget.user, openPage: widget.openPage),
             appBar: AppBar(

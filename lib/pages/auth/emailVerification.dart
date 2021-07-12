@@ -27,13 +27,10 @@ class _EmailVerificationState extends State<EmailVerification> {
         child: ListView(
           padding: formPadding,
           children: <Widget>[
-            Center(child: Text('Please verify your email')),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                'Resend email verification',
-                style: TextStyle(color: Colors.white),
-              ),
+            Center(child: Text('Please verify your email!')),
+            SizedBox(height: 20.0),
+            OutlinedButton(
+              child: Text('Resend email verification'),
               onPressed: () async {
                 setState(() {
                   _emailVerificationSent = false;

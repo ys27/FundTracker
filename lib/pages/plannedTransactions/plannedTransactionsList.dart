@@ -69,8 +69,10 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
         page: MultiProvider(
           providers: [
             FutureProvider<List<Transaction>>.value(
+                initialData: [],
                 value: DatabaseWrapper(widget.user.uid).getTransactions()),
             FutureProvider<List<Category>>.value(
+                initialData: [],
                 value: DatabaseWrapper(widget.user.uid).getCategories()),
           ],
           child: TransactionForm(
@@ -97,8 +99,10 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
             builder: (context) => MultiProvider(
               providers: [
                 FutureProvider<List<Transaction>>.value(
+                    initialData: [],
                     value: DatabaseWrapper(widget.user.uid).getTransactions()),
                 FutureProvider<List<Category>>.value(
+                    initialData: [],
                     value: DatabaseWrapper(widget.user.uid).getCategories()),
               ],
               child: TransactionForm(

@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/services/databaseWrapper.dart';
@@ -107,7 +108,7 @@ class _PeriodFormState extends State<PeriodForm> {
                   TextFormField(
                     controller: _nameController,
                     focusNode: _nameFocus,
-                    autovalidate: _name.isNotEmpty,
+                    autovalidateMode: autovalidateModeOn(_name.isNotEmpty),
                     validator: (val) {
                       if (val.isEmpty) {
                         return 'Enter a name for this period.';
@@ -130,11 +131,12 @@ class _PeriodFormState extends State<PeriodForm> {
                   TextFormField(
                     controller: _durationValueController,
                     focusNode: _durationValueFocus,
-                    autovalidate: _durationValue.isNotEmpty,
+                    autovalidateMode:
+                        autovalidateModeOn(_durationValue.isNotEmpty),
                     validator: (val) {
                       if (val.isEmpty) {
                         return 'Enter a value for the duration.';
-                      } else if (val.contains('.')) {
+                      } else if (int.tryParse(val) == null) {
                         return 'This value must be an integer.';
                       } else if (int.parse(val) <= 0) {
                         return 'This value must be greater than 0';
@@ -178,12 +180,8 @@ class _PeriodFormState extends State<PeriodForm> {
                     },
                   ),
                   SizedBox(height: 10.0),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text(
-                      isEditMode ? 'Save' : 'Add',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  OutlinedButton(
+                    child: Text(isEditMode ? 'Save' : 'Add'),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
                         Period period = Period(
