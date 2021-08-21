@@ -166,7 +166,7 @@ class _StatisticsState extends State<Statistics> {
                   ),
                 ],
               )
-            : Container();
+            : SizedBox(height: 48.0);
 
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
