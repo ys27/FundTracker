@@ -132,7 +132,7 @@ class _StatisticsState extends State<Statistics> {
         }
       }
 
-      List<Map<String, dynamic>> _customDividedTransactions;
+      List<Map<String, dynamic>> _customDividedTransactions = [];
       if (_showCustomStats) {
         DateTime limitFirstDate;
         if (widget.prefs.isLimitByDateEnabled) {
@@ -166,7 +166,7 @@ class _StatisticsState extends State<Statistics> {
                   ),
                 ],
               )
-            : null;
+            : Container();
 
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
