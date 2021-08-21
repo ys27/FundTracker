@@ -139,9 +139,9 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
 ) {
   List<Map<String, dynamic>> periodsList = [];
 
-  DateTime latestTransactionDate = transactions.first.date;
-
   if (transactions.length > 0) {
+    DateTime latestTransactionDate = transactions.first.date;
+
     DateTime iteratingPeriodStartDate =
         findStartDateOfGivenDateTime(transactions.last.date, period);
     while (iteratingPeriodStartDate
@@ -183,6 +183,7 @@ List<Map<String, dynamic>> divideTransactionsIntoPeriods(
 List<Transaction> filterTransactionsByLimit(
   List<Transaction> transactions,
   Preferences prefs,
+  DateTime endDate,
 ) {
   if (prefs.isLimitDaysEnabled) {
     return transactions
@@ -192,8 +193,10 @@ List<Transaction> filterTransactionsByLimit(
         .toList();
   } else if (prefs.isLimitByDateEnabled) {
     return transactions
-        .where((tx) => tx.date
-            .isAfter(prefs.limitByDate.subtract(Duration(microseconds: 1))))
+        .where((tx) =>
+            tx.date.isAfter(
+                prefs.limitByDate.subtract(Duration(microseconds: 1))) &&
+            tx.date.isBefore(endDate.add(Duration(days: 1))))
         .toList();
   } else {
     return transactions;

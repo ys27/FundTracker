@@ -106,10 +106,7 @@ Future<DateTime> openDatePicker(
   return showDatePicker(
     context: context,
     initialDate: openDate ?? DateTime.now(),
-    firstDate: firstDate ??
-        DateTime.now().subtract(
-          Duration(days: 365),
-        ),
+    firstDate: firstDate ?? DateTime(1970, 1, 1),
     lastDate: lastDate ??
         DateTime.now().add(
           Duration(days: 365),

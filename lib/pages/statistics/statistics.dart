@@ -47,6 +47,7 @@ class _StatisticsState extends State<Statistics> {
   List<Map<String, dynamic>> _dividedTransactions = [];
   int _daysLeft;
   DateTime _customLimitByDate;
+  DateTime _customLimitByEndDate = getDateNotTime(DateTime.now());
   Map<String, dynamic> _customPeriod;
   bool _showStatistics = true;
 
@@ -87,26 +88,11 @@ class _StatisticsState extends State<Statistics> {
       }
 
       if (_showAllTimeStats) {
-        _transactions = widget.allTransactions;
         _limitCustomizer = SizedBox(height: 48.0);
+        _transactions = widget.allTransactions;
       }
 
       if (_showPeriodStats) {
-        if (_customPeriod != null) {
-          _transactions = _customPeriod['transactions'];
-          if (_customPeriod['startDate'] ==
-              _currentPeriodTransactions['startDate']) {
-            _customPeriod = null;
-          }
-        }
-        if (_customPeriod == null) {
-          if (_currentPeriodTransactions.containsKey('transactions')) {
-            _transactions = _currentPeriodTransactions['transactions'];
-          } else {
-            _transactions = [];
-          }
-        }
-
         _limitCustomizer = DropdownButton<Map<String, dynamic>>(
           items: _dividedTransactions.map((map) {
             return DropdownMenuItem<Map<String, dynamic>>(
@@ -130,10 +116,58 @@ class _StatisticsState extends State<Statistics> {
           ),
           isExpanded: true,
         );
+
+        if (_customPeriod != null) {
+          _transactions = _customPeriod['transactions'];
+          if (_customPeriod['startDate'] ==
+              _currentPeriodTransactions['startDate']) {
+            _customPeriod = null;
+          }
+        } else {
+          if (_currentPeriodTransactions.containsKey('transactions')) {
+            _transactions = _currentPeriodTransactions['transactions'];
+          } else {
+            _transactions = [];
+          }
+        }
       }
 
       List<Map<String, dynamic>> _customDividedTransactions;
       if (_showCustomStats) {
+        DateTime limitFirstDate;
+        if (widget.prefs.isLimitByDateEnabled) {
+          limitFirstDate = widget.prefs.limitByDate;
+        } else if (widget.prefs.isLimitDaysEnabled) {
+          limitFirstDate = getDateNotTime(DateTime.now().add(Duration(days: 1)))
+              .subtract(Duration(days: widget.prefs.limitDays));
+        } else if (widget.prefs.isLimitPeriodsEnabled) {
+          limitFirstDate = findStartDateOfGivenNumPeriodsAgo(
+              widget.prefs.limitPeriods, widget.currentPeriod);
+        }
+
+        _limitCustomizer = widget.prefs.isLimitByDateEnabled
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DatePicker(
+                    context,
+                    leading:
+                        getDateStr(_customLimitByDate ?? limitFirstDate) + ' ',
+                    updateDateState: (date) => setState(
+                        () => _customLimitByDate = getDateNotTime(date)),
+                    openDate: limitFirstDate,
+                  ),
+                  DatePicker(
+                    context,
+                    leading: getDateStr(_customLimitByEndDate) + ' ',
+                    updateDateState: (date) => setState(
+                        () => _customLimitByEndDate = getDateNotTime(date)),
+                    openDate: _customLimitByEndDate,
+                  ),
+                ],
+              )
+            : null;
+
         if (widget.allTransactions.length > 0 &&
                 widget.prefs.isLimitDaysEnabled ||
             widget.prefs.isLimitByDateEnabled) {
@@ -153,8 +187,8 @@ class _StatisticsState extends State<Statistics> {
             customPrefs =
                 customPrefs.setPreference('limitByDate', _customLimitByDate);
           }
-          _transactions =
-              filterTransactionsByLimit(widget.allTransactions, customPrefs);
+          _transactions = filterTransactionsByLimit(
+              widget.allTransactions, customPrefs, _customLimitByEndDate);
           _customDividedTransactions = divideTransactionsIntoPeriods(
               _transactions, widget.currentPeriod);
         } else {
@@ -166,26 +200,9 @@ class _StatisticsState extends State<Statistics> {
               .toList();
         }
 
-        DateTime limitFirstDate;
-        if (widget.prefs.isLimitByDateEnabled) {
-          limitFirstDate = widget.prefs.limitByDate;
-        } else if (widget.prefs.isLimitDaysEnabled) {
-          limitFirstDate = getDateNotTime(DateTime.now().add(Duration(days: 1)))
-              .subtract(Duration(days: widget.prefs.limitDays));
-        } else if (widget.prefs.isLimitPeriodsEnabled) {
-          limitFirstDate = findStartDateOfGivenNumPeriodsAgo(
-              widget.prefs.limitPeriods, widget.currentPeriod);
-        }
-
-        _limitCustomizer = DatePicker(
-          context,
-          leading: getDateStr(_customLimitByDate ?? limitFirstDate),
-          updateDateState: (date) =>
-              setState(() => _customLimitByDate = getDateNotTime(date)),
-          openDate: limitFirstDate,
-        );
         if (_customLimitByDate != null &&
-            _customLimitByDate.isAfter(widget.allTransactions.first.date)) {
+            (_customLimitByDate.isAfter(widget.allTransactions.first.date) ||
+                _customLimitByEndDate.isBefore(_customLimitByDate))) {
           _showStatistics = false;
         } else {
           _showStatistics = true;
