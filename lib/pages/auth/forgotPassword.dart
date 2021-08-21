@@ -47,6 +47,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           padding: formPadding,
           children: <Widget>[
             TextFormField(
+              autofillHints: [AutofillHints.email],
               controller: _emailController,
               focusNode: _emailFocus,
               autovalidateMode: autovalidateModeOn(_email.isNotEmpty),

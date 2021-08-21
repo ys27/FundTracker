@@ -107,6 +107,7 @@ class _AuthFormState extends State<AuthForm> {
                 children: <Widget>[
                   SizedBox(height: 10.0),
                   TextFormField(
+                    autofillHints: [AutofillHints.email],
                     controller: _emailController,
                     focusNode: _emailFocus,
                     autovalidateMode: autovalidateModeOn(_email.isNotEmpty),
@@ -125,6 +126,7 @@ class _AuthFormState extends State<AuthForm> {
                     },
                   ),
                   TextFormField(
+                    autofillHints: [AutofillHints.password],
                     controller: _passwordController,
                     focusNode: _passwordFocus,
                     autovalidateMode: autovalidateModeOn(_password.isNotEmpty),
@@ -147,6 +149,7 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (isRegister) ...[
                     TextFormField(
+                      autofillHints: [AutofillHints.password],
                       controller: _passwordConfirmController,
                       focusNode: _passwordConfirmFocus,
                       autovalidateMode:
@@ -174,6 +177,7 @@ class _AuthFormState extends State<AuthForm> {
                       },
                     ),
                     TextFormField(
+                      autofillHints: [AutofillHints.name],
                       controller: _fullnameController,
                       focusNode: _fullnameFocus,
                       autovalidateMode:
