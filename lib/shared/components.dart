@@ -281,6 +281,7 @@ InputDecoration clearInput({
 }) {
   return InputDecoration(
     labelText: labelText,
+    border: UnderlineInputBorder(),
     suffixIcon: enabled
         ? Row(
             mainAxisSize: MainAxisSize.min,

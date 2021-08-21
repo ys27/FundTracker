@@ -213,7 +213,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 return null;
               },
               textFieldConfiguration: TextFieldConfiguration(
-                autofocus: true,
+                autofocus: _payee.isEmpty,
                 controller: _payeeController,
                 focusNode: _payeeFocus,
                 decoration: clearInput(
