@@ -24,7 +24,7 @@ class _PreferencesFormState extends State<PreferencesForm> {
   final _formKey = GlobalKey<FormState>();
   final _limitController = TextEditingController();
 
-  final FocusNode _limitFocus = new FocusNode();
+  final _limitFocus = new FocusNode();
 
   bool _isLimitInFocus = false;
 

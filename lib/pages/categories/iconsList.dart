@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fund_tracker/pages/categories/iconsRegistry.dart';
 import 'package:fund_tracker/shared/library.dart';
 
-int numIconsPerPage = 60;
+int numIconsPerPage = 64;
 
 class IconsList extends StatefulWidget {
   @override

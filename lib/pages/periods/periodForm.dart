@@ -25,8 +25,8 @@ class _PeriodFormState extends State<PeriodForm> {
   final _nameController = TextEditingController();
   final _durationValueController = TextEditingController();
 
-  final FocusNode _nameFocus = new FocusNode();
-  final FocusNode _durationValueFocus = new FocusNode();
+  final _nameFocus = new FocusNode();
+  final _durationValueFocus = new FocusNode();
 
   bool _isNameInFocus = false;
   bool _isDurationValueInFocus = false;

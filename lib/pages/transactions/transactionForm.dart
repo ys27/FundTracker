@@ -28,17 +28,15 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _payeeController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _frequencyValueController =
-      TextEditingController();
-  final TextEditingController _occurrenceValueController =
-      TextEditingController();
+  final _payeeController = TextEditingController();
+  final _amountController = TextEditingController();
+  final _frequencyValueController = TextEditingController();
+  final _occurrenceValueController = TextEditingController();
 
-  final FocusNode _payeeFocus = new FocusNode();
-  final FocusNode _amountFocus = new FocusNode();
-  final FocusNode _frequencyValueFocus = new FocusNode();
-  final FocusNode _occurrenceValueFocus = new FocusNode();
+  final _payeeFocus = new FocusNode();
+  final _amountFocus = new FocusNode();
+  final _frequencyValueFocus = new FocusNode();
+  final _occurrenceValueFocus = new FocusNode();
 
   bool _isPayeeInFocus = false;
   bool _isAmountInFocus = false;
@@ -66,7 +64,6 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-
     final dynamic givenTxOrRecTx = widget.getTxOrRecTx();
 
     if (givenTxOrRecTx is PlannedTransaction) {
@@ -141,7 +138,9 @@ class _TransactionFormState extends State<TransactionForm> {
 
     Widget _body = Loader();
 
-    if (_transactions != null && _categories != null) {
+    if (_transactions != null &&
+        _categories != null &&
+        _categories.length > 0) {
       final List<Category> _enabledCategories =
           _categories.where((category) => category.enabled).toList();
       final Category _correspondingCategory =
@@ -214,6 +213,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 return null;
               },
               textFieldConfiguration: TextFieldConfiguration(
+                autofocus: true,
                 controller: _payeeController,
                 focusNode: _payeeFocus,
                 decoration: clearInput(

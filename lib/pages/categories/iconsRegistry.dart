@@ -11172,5 +11172,4 @@ List<IconData> iconsRegistry = [
   CommunityMaterialIcons.wallet_travel,
   CommunityMaterialIcons.watch,
   CommunityMaterialIcons.wrench,
-  CommunityMaterialIcons.xbox_controller,
 ];

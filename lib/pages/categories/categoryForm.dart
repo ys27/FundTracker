@@ -33,7 +33,7 @@ class _CategoryFormState extends State<CategoryForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
-  final FocusNode _nameFocus = new FocusNode();
+  final _nameFocus = new FocusNode();
 
   bool _isNameInFocus = false;
 

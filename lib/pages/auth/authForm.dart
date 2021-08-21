@@ -30,10 +30,10 @@ class _AuthFormState extends State<AuthForm> {
   final _passwordConfirmController = TextEditingController();
   final _fullnameController = TextEditingController();
 
-  final FocusNode _emailFocus = new FocusNode();
-  final FocusNode _passwordFocus = new FocusNode();
-  final FocusNode _passwordConfirmFocus = new FocusNode();
-  final FocusNode _fullnameFocus = new FocusNode();
+  final _emailFocus = new FocusNode();
+  final _passwordFocus = new FocusNode();
+  final _passwordConfirmFocus = new FocusNode();
+  final _fullnameFocus = new FocusNode();
 
   bool _isEmailInFocus = false;
   bool _isPasswordInFocus = false;

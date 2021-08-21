@@ -19,7 +19,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   bool _isLoading = false;
 
   final _emailController = TextEditingController();
-  final FocusNode _emailFocus = new FocusNode();
+  final _emailFocus = new FocusNode();
   bool _isEmailInFocus = false;
   String _email = '';
 
