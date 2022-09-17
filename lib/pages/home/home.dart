@@ -222,6 +222,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       dataFutures.add(FireDBService(uid).getHiddenSuggestions());
     } else {
       await PlannedTransactionsService.checkPlannedTransactions(uid);
+      DatabaseWrapper(uid).removeUnusedHiddenSuggestions();
       SyncService(uid).syncPlannedTransactions();
       dataFutures.add(DatabaseWrapper(uid).getTransactions());
       dataFutures.add(DatabaseWrapper(uid).getCategories());

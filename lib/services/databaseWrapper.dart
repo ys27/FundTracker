@@ -202,7 +202,8 @@ class DatabaseWrapper {
   ) async {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.incrementPlannedTransactionsNextDate(plannedTxs)
-        : await _localDBService.incrementPlannedTransactionsNextDate(plannedTxs);
+        : await _localDBService
+            .incrementPlannedTransactionsNextDate(plannedTxs);
   }
 
   Future deletePlannedTransactions(
@@ -258,6 +259,12 @@ class DatabaseWrapper {
     DATABASE_TYPE == DatabaseType.Firebase
         ? await _fireDBService.addHiddenSuggestions(suggestions)
         : await _localDBService.addHiddenSuggestions(suggestions);
+  }
+
+  Future removeUnusedHiddenSuggestions() async {
+    DATABASE_TYPE == DatabaseType.Firebase
+        ? await _fireDBService.removeUnusedHiddenSuggestions()
+        : await _localDBService.removeUnusedHiddenSuggestions(uid);
   }
 
   Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {

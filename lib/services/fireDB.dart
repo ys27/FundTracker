@@ -38,8 +38,7 @@ class FireDBService {
   Future updateTransactions(List<Transaction> transactions) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
     transactions.forEach((tx) {
-      batch.update(
-          db.collection('transactions').doc(tx.tid), tx.toMap());
+      batch.update(db.collection('transactions').doc(tx.tid), tx.toMap());
     });
     await batch.commit();
   }
@@ -62,13 +61,9 @@ class FireDBService {
 
   // Categories
   Future<List<Category>> getCategories() {
-    return db
-        .collection('categories')
-        .orderBy('orderIndex')
-        .get()
-        .then((snapshot) => snapshot.docs
-            .map((map) => Category.fromMap(map.data()))
-            .toList());
+    return db.collection('categories').orderBy('orderIndex').get().then(
+        (snapshot) =>
+            snapshot.docs.map((map) => Category.fromMap(map.data())).toList());
   }
 
   Future addCategories(List<Category> categories) async {
@@ -155,17 +150,13 @@ class FireDBService {
         return await map.reference.update({'isDefault': 0});
       });
     });
-    await db
-        .collection('periods')
-        .doc(period.pid)
-        .update({'isDefault': 1});
+    await db.collection('periods').doc(period.pid).update({'isDefault': 1});
   }
 
   Future addPeriods(List<Period> periods) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
     periods.forEach((period) {
-      batch.set(
-          db.collection('periods').doc(period.pid), period.toMap());
+      batch.set(db.collection('periods').doc(period.pid), period.toMap());
     });
     await batch.commit();
   }
@@ -173,8 +164,7 @@ class FireDBService {
   Future updatePeriods(List<Period> periods) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
     periods.forEach((period) {
-      batch.update(
-          db.collection('periods').doc(period.pid), period.toMap());
+      batch.update(db.collection('periods').doc(period.pid), period.toMap());
     });
     await batch.commit();
   }
@@ -253,8 +243,7 @@ class FireDBService {
           nextRecTx.toMap(),
         );
       } else {
-        batch
-            .delete(db.collection('plannedTransactions').doc(plannedTx.rid));
+        batch.delete(db.collection('plannedTransactions').doc(plannedTx.rid));
       }
     });
     await batch.commit();
@@ -269,10 +258,7 @@ class FireDBService {
   }
 
   Future deleteAllPlannedTransactions() async {
-    await db
-        .collection('plannedTransaction')
-        .get()
-        .then((snapshot) async {
+    await db.collection('plannedTransaction').get().then((snapshot) async {
       for (DocumentSnapshot doc in snapshot.docs) {
         await doc.reference.delete();
       }
@@ -296,10 +282,7 @@ class FireDBService {
   }
 
   Future addPreferences(Preferences prefs) async {
-    await db
-        .collection('preferences')
-        .doc(prefs.pid)
-        .set(prefs.toMap());
+    await db.collection('preferences').doc(prefs.pid).set(prefs.toMap());
   }
 
   Future updatePreferences(Preferences prefs) async {
@@ -321,6 +304,22 @@ class FireDBService {
     suggestions.forEach((suggestion) {
       batch.set(db.collection('hiddenSuggestions').doc(suggestion.sid),
           suggestion.toMap());
+    });
+    await batch.commit();
+  }
+
+  Future removeUnusedHiddenSuggestions() async {
+    List<Suggestion> allHiddenSuggestions = await getHiddenSuggestions();
+    List<Transaction> allTxs = await getTransactions();
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    allHiddenSuggestions.forEach((suggestion) {
+      Transaction match = allTxs.firstWhere(
+          (tx) => tx.payee == suggestion.payee && tx.cid == suggestion.cid,
+          orElse: () => null);
+      if (match == null) {
+        batch.delete(db.collection('hiddenSuggestions').doc(suggestion.sid));
+      }
     });
     await batch.commit();
   }

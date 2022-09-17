@@ -462,6 +462,24 @@ class LocalDBService {
     await batch.commit();
   }
 
+  Future removeUnusedHiddenSuggestions(String uid) async {
+    List<Suggestion> allHiddenSuggestions = await getHiddenSuggestions(uid);
+    List<Transaction> allTxs = await getTransactions(uid);
+
+    Database db = await this.db;
+    Batch batch = db.batch();
+    allHiddenSuggestions.forEach((suggestion) {
+      Transaction match = allTxs.firstWhere(
+          (tx) => tx.payee == suggestion.payee && tx.cid == suggestion.cid,
+          orElse: () => null);
+      if (match == null) {
+        batch.delete('hiddenSuggestions',
+          where: 'sid = ?', whereArgs: [suggestion.sid]);
+      }
+    });
+    await batch.commit();
+  }
+
   Future deleteHiddenSuggestions(List<Suggestion> suggestions) async {
     Database db = await this.db;
     Batch batch = db.batch();
