@@ -10,6 +10,7 @@ import 'package:fund_tracker/shared/config.dart';
 import 'package:fund_tracker/shared/constants.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:sqflite/sqflite.dart' hide Transaction;
+import 'package:uuid/uuid.dart';
 
 class LocalDBService {
   static final LocalDBService _localDBService = LocalDBService.internal();
@@ -321,8 +322,8 @@ class LocalDBService {
       'plannedTransactions',
       where: 'rid = ?',
       whereArgs: [rid],
-    ).then((map) =>
-        map.length > 0 ? PlannedTransaction.fromMap(map.first) : null);
+    ).then(
+        (map) => map.length > 0 ? PlannedTransaction.fromMap(map.first) : null);
   }
 
   Future addPlannedTransactions(List<PlannedTransaction> plannedTxs) async {
@@ -396,8 +397,7 @@ class LocalDBService {
 
   Future deleteAllPlannedTransactions(String uid) async {
     Database db = await this.db;
-    await db
-        .delete('plannedTransactions', where: 'uid = ?', whereArgs: [uid]);
+    await db.delete('plannedTransactions', where: 'uid = ?', whereArgs: [uid]);
   }
 
   // Preferences
@@ -474,7 +474,23 @@ class LocalDBService {
           orElse: () => null);
       if (match == null) {
         batch.delete('hiddenSuggestions',
-          where: 'sid = ?', whereArgs: [suggestion.sid]);
+            where: 'sid = ?', whereArgs: [suggestion.sid]);
+      }
+    });
+    await batch.commit();
+  }
+
+  Future replaceSuggestionIds(String uid) async {
+    List<Suggestion> allHiddenSuggestions = await getHiddenSuggestions(uid);
+
+    Database db = await this.db;
+    Batch batch = db.batch();
+    allHiddenSuggestions.forEach((suggestion) {
+      if (suggestion.sid.contains('::')) {
+        Map<String, dynamic> newSuggestion = suggestion.toMap();
+        newSuggestion.addAll({'sid': Uuid().v4()});
+        batch.update('hiddenSuggestions', newSuggestion,
+            where: 'sid = ?', whereArgs: [suggestion.sid]);
       }
     });
     await batch.commit();

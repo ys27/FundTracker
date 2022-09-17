@@ -185,7 +185,7 @@ class _PeriodFormState extends State<PeriodForm> {
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
                         Period period = Period(
-                          pid: widget.period.pid ?? Uuid().v1(),
+                          pid: widget.period.pid ?? Uuid().v4(),
                           name: _name,
                           startDate: _startDate,
                           durationValue: _durationValue != ''

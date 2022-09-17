@@ -63,7 +63,7 @@ class DatabaseWrapper {
   Future addDefaultCategories() async {
     List<Category> categories = [];
     categoriesRegistry.asMap().forEach((index, category) async {
-      String cid = Uuid().v1();
+      String cid = Uuid().v4();
       categories.add(Category(
         cid: cid,
         name: category['name'],

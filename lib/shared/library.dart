@@ -356,7 +356,6 @@ List<Map<String, dynamic>> getSuggestions(List<Transaction> txs, String uid) {
     } else {
       suggestions.add({
         'suggestion': Suggestion(
-          sid: '${tx.payee}::${tx.cid}',
           payee: tx.payee,
           cid: tx.cid,
           uid: uid,

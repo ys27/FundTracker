@@ -260,21 +260,14 @@ class _TransactionFormState extends State<TransactionForm> {
 
                   suggestions.sort((a, b) => b['count'].compareTo(a['count']));
 
-                  final List<String> suggestionStrings = suggestions
-                      .map((map) => map['suggestion'].sid as String)
-                      .toList();
-
-                  return suggestionStrings.length > 0
-                      ? suggestionStrings
+                  return suggestions.length > 0
+                      ? suggestions
                       : null;
                 }
               },
               itemBuilder: (context, suggestion) {
-                final List<String> splitSuggestion = suggestion.split('::');
-                final String suggestionPayee = splitSuggestion[0];
-                final String suggestionCid = splitSuggestion[1];
                 final Category category =
-                    getCategory(_categories, suggestionCid);
+                    getCategory(_categories, suggestion.cid);
                 return ListTile(
                   leading: Icon(
                     IconData(
@@ -284,19 +277,15 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     color: category.iconColor,
                   ),
-                  title: Text(suggestionPayee),
+                  title: Text(suggestion.payee),
                   subtitle: Text(category.name),
                 );
               },
               onSuggestionSelected: (suggestion) {
-                final List<String> splitSuggestion = suggestion.split('::');
-                final String suggestionPayee = splitSuggestion[0];
-                final String suggestionCid = splitSuggestion[1];
-
-                _payeeController.text = suggestionPayee;
+                _payeeController.text = suggestion.payee;
                 setState(() {
-                  _payee = suggestionPayee;
-                  _cid = suggestionCid;
+                  _payee = suggestion.payee;
+                  _cid = suggestion.cid;
                   _suggestionUsed = true;
                 });
               },
@@ -505,7 +494,7 @@ class _TransactionFormState extends State<TransactionForm> {
                           : _enabledCategories.first.cid);
                   if (isPlannedTxMode) {
                     PlannedTransaction plannedTx = PlannedTransaction(
-                      rid: givenTxOrRecTx.rid ?? Uuid().v1(),
+                      rid: givenTxOrRecTx.rid ?? Uuid().v4(),
                       nextDate: _nextDate,
                       endDate: _endDate,
                       occurrenceValue: _occurrenceValue != ''
@@ -529,7 +518,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     SyncService(_user.uid).syncPlannedTransactions();
                   } else {
                     Transaction tx = Transaction(
-                      tid: givenTxOrRecTx.tid ?? Uuid().v1(),
+                      tid: givenTxOrRecTx.tid ?? Uuid().v4(),
                       date: _date,
                       isExpense: _isExpense,
                       payee: _payee,
@@ -543,11 +532,12 @@ class _TransactionFormState extends State<TransactionForm> {
                         : await DatabaseWrapper(_user.uid)
                             .addTransactions([tx]);
                     SyncService(_user.uid).syncTransactions();
+                    SyncService(_user.uid).syncHiddenSuggestions();
                   }
                   Navigator.pop(context);
                   if (!isEditMode && !_suggestionUsed || isEditMode) {
                     Suggestion suggestionToAdd = Suggestion(
-                      sid: '$_payee::$cid',
+                      sid: Uuid().v4(),
                       payee: _payee,
                       cid: cid,
                       uid: _user.uid,

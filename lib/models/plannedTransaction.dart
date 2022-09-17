@@ -108,7 +108,7 @@ class PlannedTransaction {
 
   Transaction toTransaction() {
     return Transaction(
-      tid: Uuid().v1(),
+      tid: Uuid().v4(),
       date: nextDate,
       isExpense: isExpense,
       payee: payee,
@@ -134,7 +134,7 @@ class PlannedTransaction {
 
   PlannedTransaction withNewId() {
     PlannedTransaction copy = this.clone();
-    copy.rid = Uuid().v1();
+    copy.rid = Uuid().v4();
     return copy;
   }
 

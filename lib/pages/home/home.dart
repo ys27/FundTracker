@@ -223,6 +223,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     } else {
       await PlannedTransactionsService.checkPlannedTransactions(uid);
       DatabaseWrapper(uid).removeUnusedHiddenSuggestions();
+      LocalDBService().replaceSuggestionIds(uid);
       SyncService(uid).syncPlannedTransactions();
       dataFutures.add(DatabaseWrapper(uid).getTransactions());
       dataFutures.add(DatabaseWrapper(uid).getCategories());

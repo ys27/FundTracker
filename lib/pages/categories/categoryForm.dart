@@ -181,7 +181,7 @@ class _CategoryFormState extends State<CategoryForm> {
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               Category category = Category(
-                                cid: widget.category.cid ?? Uuid().v1(),
+                                cid: widget.category.cid ?? Uuid().v4(),
                                 name: _name,
                                 icon: _icon,
                                 iconColor: _iconColor,

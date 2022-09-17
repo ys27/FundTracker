@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/suggestion.dart';
@@ -8,6 +9,7 @@ import 'package:fund_tracker/shared/library.dart';
 import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 import 'package:fund_tracker/pages/home/mainDrawer.dart';
+import 'package:fund_tracker/services/sync.dart';
 
 class SuggestionsList extends StatefulWidget {
   final FirebaseAuthentication.User user;
@@ -95,9 +97,11 @@ class _SuggestionsListState extends State<SuggestionsList> {
           if (val) {
             await DatabaseWrapper(widget.user.uid)
                 .deleteHiddenSuggestions([suggestion]);
+            SyncService(widget.user.uid).syncHiddenSuggestions();
           } else {
             await DatabaseWrapper(widget.user.uid)
                 .addHiddenSuggestions([suggestion]);
+            SyncService(widget.user.uid).syncHiddenSuggestions();
           }
           retrieveNewData(widget.user.uid);
         },
