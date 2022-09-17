@@ -83,7 +83,9 @@ class _CategoriesState extends State<Categories> {
         ),
         SizedBox(height: 35.0),
         AspectRatio(
-          aspectRatio: 1,
+          aspectRatio: (MediaQuery.of(context).size.width /
+                  MediaQuery.of(context).size.height) *
+              2.6,
           child: AspectRatio(
             aspectRatio: 1,
             child: PieChart(
