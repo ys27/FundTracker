@@ -116,7 +116,7 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
         title: Wrap(children: <Widget>[
           Text('${plannedTx.payee}: '),
           Text(
-            '${plannedTx.isExpense ? '-' : '+'}\$${plannedTx.amount.toStringAsFixed(2)}',
+            '${plannedTx.isExpense ? '-' : '+'}\$${formatAmount(plannedTx.amount)}',
           ),
         ]),
         subtitle: Text(

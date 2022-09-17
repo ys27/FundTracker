@@ -1,5 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/models/preferences.dart';
@@ -369,10 +370,15 @@ List<Map<String, dynamic>> getSuggestions(List<Transaction> txs, String uid) {
   return suggestions;
 }
 
+String formatAmount(double amount) {
+  NumberFormat formatter = NumberFormat("###,###.00");
+  return formatter.format(amount);
+}
+
 String getAmountStr(double amount) {
   return amount < 0
-      ? '-\$${abs(amount).toStringAsFixed(2)}'
-      : '\$${amount.toStringAsFixed(2)}';
+      ? '-\$${formatAmount(abs(amount))}'
+      : '\$${formatAmount(amount)}';
 }
 
 Category getCategory(List<Category> categories, String cid) {

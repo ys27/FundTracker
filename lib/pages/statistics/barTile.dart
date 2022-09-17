@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fund_tracker/shared/library.dart';
 
 class BarTile extends StatelessWidget {
   final String title;
@@ -29,7 +30,7 @@ class BarTile extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text('\$${amount.toStringAsFixed(2)}'),
+            Text('\$${formatAmount(amount)}'),
           ],
         ),
         subtitle != null

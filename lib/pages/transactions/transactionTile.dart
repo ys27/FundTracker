@@ -70,7 +70,7 @@ class TransactionTile extends StatelessWidget {
           trailing: Column(
             children: <Widget>[
               Text(
-                '${transaction.isExpense ? '-' : '+'}\$${transaction.amount.toStringAsFixed(2)}',
+                '${transaction.isExpense ? '-' : '+'}\$${formatAmount(transaction.amount)}',
                 style: TextStyle(
                   color: transaction.isExpense ? Colors.red : Colors.green,
                 ),

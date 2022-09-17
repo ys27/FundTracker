@@ -425,7 +425,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 items: DateUnit.values.map((unit) {
                   return DropdownMenuItem<DateUnit>(
                     value: unit,
-                    child: Text(unit.toString().split('.')[1]),
+                    child: Text(DateUnitValues[unit]),
                   );
                 }).toList(),
                 onChanged: (val) {

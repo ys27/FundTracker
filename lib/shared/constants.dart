@@ -4,6 +4,13 @@ enum DatabaseType { Firebase, Local }
 
 enum DateUnit { Days, Weeks, Months, Years }
 
+const Map<DateUnit, String> DateUnitValues = {
+  DateUnit.Days: 'Day(s)',
+  DateUnit.Weeks: 'Week(s)',
+  DateUnit.Months: 'Month(s)',
+  DateUnit.Years: 'Year(s)',
+};
+
 enum MenuItems { Edit, Delete }
 
 enum LimitTab { AllTime, Period, Custom }

@@ -124,7 +124,7 @@ class _CategoriesState extends State<Categories> {
                   Indicator(
                     color: category['iconColor'],
                     text:
-                        '${category['name']} - \$${category['amount'].toStringAsFixed(2)} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
+                        '${category['name']} - \$${formatAmount(category['amount'])} (${(category['percentage'] * 100).toStringAsFixed(0)}%)',
                     isSquare: false,
                     size: touchedIndex == index ? 18 : 16,
                     textColor:

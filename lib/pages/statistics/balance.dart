@@ -28,7 +28,7 @@ class Balance extends StatelessWidget {
         getRelativePercentages(balancesList);
     final String remainingPerDay = balance <= 0
         ? 'No remaining balance'
-        : '\$${(balance / daysLeft).toStringAsFixed(2)} / day';
+        : '\$${formatAmount(balance / daysLeft)} / day';
 
     return Column(
       children: <Widget>[
@@ -59,15 +59,4 @@ class Balance extends StatelessWidget {
       ],
     );
   }
-}
-
-String getPrevStr(double current, double previous) {
-  double percentage = 100 * current / previous;
-  if (percentage.isNaN) {
-    return 'No available data this period';
-  }
-  String percentageStr = percentage < 0
-      ? percentage.toStringAsFixed(2)
-      : '+${percentage.toStringAsFixed(2)}';
-  return '$percentageStr% (vs prev. ${getAmountStr(previous)})';
 }
