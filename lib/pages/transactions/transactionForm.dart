@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
     show User;
 import 'package:flutter/material.dart';
@@ -302,13 +303,31 @@ class _TransactionFormState extends State<TransactionForm> {
                 }
                 return null;
               },
-              decoration: clearInput(
+              decoration: InputDecoration(
                 labelText: 'Amount',
-                enabled: _amount.isNotEmpty && _isAmountInFocus,
-                onPressed: () {
-                  setState(() => _amount = '');
-                  _amountController.safeClear();
-                },
+                border: UnderlineInputBorder(),
+                suffixIcon: _amount.isNotEmpty && _isAmountInFocus
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(CommunityMaterialIcons.percent_outline),
+                            onPressed: () {
+                              _amount = (double.parse(_amount) * 1.13)
+                                  .toStringAsFixed(2);
+                              _amountController.text = _amount;
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(CommunityMaterialIcons.close),
+                            onPressed: () {
+                              setState(() => _amount = '');
+                              _amountController.safeClear();
+                            },
+                          ),
+                        ],
+                      )
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (val) {

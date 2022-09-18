@@ -284,13 +284,11 @@ InputDecoration clearInput({
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (passwordToggle) ...[
-                ButtonTheme(
-                  child: IconButton(
-                    icon: passwordToggleVisible
-                        ? Icon(CommunityMaterialIcons.eye_off)
-                        : Icon(CommunityMaterialIcons.eye),
-                    onPressed: onPasswordTogglePressed,
-                  ),
+                IconButton(
+                  icon: passwordToggleVisible
+                      ? Icon(CommunityMaterialIcons.eye_off)
+                      : Icon(CommunityMaterialIcons.eye),
+                  onPressed: onPasswordTogglePressed,
                 ),
               ],
               IconButton(
