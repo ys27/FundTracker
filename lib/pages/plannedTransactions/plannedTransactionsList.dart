@@ -113,21 +113,44 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
           );
           refreshList();
         },
-        title: Wrap(children: <Widget>[
-          Text('${plannedTx.payee}: '),
+        title: Row(children: <Widget>[
+          Text(
+            '${plannedTx.payee}: ',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
           Text(
             '${plannedTx.isExpense ? '-' : '+'}\$${formatAmount(plannedTx.amount)}',
+            style: TextStyle(
+              fontSize: 12.0,
+            ),
           ),
         ]),
-        subtitle: Text(
-          'Every ${plannedTx.frequencyValue} ${getFrequencyUnitStr(plannedTx.frequencyUnit)}' +
-              getEndCondition(plannedTx),
-        ),
+        subtitle: Wrap(children: <Widget>[
+          Text(
+            'Every ${plannedTx.frequencyValue} ${getFrequencyUnitStr(plannedTx.frequencyUnit)}',
+            style: TextStyle(
+              fontSize: 12.0,
+            ),
+          ),
+          Text(
+            getEndCondition(plannedTx),
+            style: TextStyle(
+              fontSize: 12.0,
+            ),
+          )
+        ]),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(CommunityMaterialIcons.chevron_right),
-            Text('${getDateStr(plannedTx.nextDate)}'),
+            Text(
+              '${getDateStr(plannedTx.nextDate)}',
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
           ],
         ),
       ),
@@ -142,10 +165,10 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
 
   String getEndCondition(PlannedTransaction plannedTx) {
     if (plannedTx.endDate != null && plannedTx.endDate.toString().isNotEmpty) {
-      return ', ~${getDateStr(plannedTx.endDate)}';
+      return '~${getDateStr(plannedTx.endDate)}';
     } else if (plannedTx.occurrenceValue != null &&
         plannedTx.occurrenceValue > 0) {
-      return ', ${plannedTx.occurrenceValue} time(s) left';
+      return '${plannedTx.occurrenceValue} time(s) left';
     } else {
       return '';
     }

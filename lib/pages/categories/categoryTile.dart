@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/category.dart';
 import 'package:fund_tracker/models/transaction.dart';
@@ -39,7 +40,14 @@ class _CategoryTileState extends State<CategoryTile> {
               child: Row(
                 children: <Widget>[
                   SizedBox(width: 25.0),
-                  Text(widget.category.name),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Text(
+                      widget.category.name,
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                    ),
+                  ),
                 ],
               ),
             ),

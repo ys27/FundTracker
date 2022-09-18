@@ -260,12 +260,11 @@ class _TransactionFormState extends State<TransactionForm> {
 
                   suggestions.sort((a, b) => b['count'].compareTo(a['count']));
 
-                  return suggestions.length > 0
-                      ? suggestions
-                      : null;
+                  return suggestions.length > 0 ? suggestions : null;
                 }
               },
-              itemBuilder: (context, suggestion) {
+              itemBuilder: (context, suggestionObj) {
+                Suggestion suggestion = suggestionObj['suggestion'];
                 final Category category =
                     getCategory(_categories, suggestion.cid);
                 return ListTile(

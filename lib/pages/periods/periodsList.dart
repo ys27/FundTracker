@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication show User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
+    show User;
 import 'package:flutter/material.dart';
 import 'package:fund_tracker/models/period.dart';
 import 'package:fund_tracker/pages/periods/periodForm.dart';
@@ -77,8 +78,16 @@ class _PeriodsListState extends State<PeriodsList> {
         title: Text(period.name),
         subtitle: Text(
           'Every ${period.durationValue} ${period.durationUnit.toString().split('.')[1]}',
+          style: TextStyle(
+            fontSize: 12.0,
+          ),
         ),
-        trailing: Text('Start Date: ${getDateStr(period.startDate)}'),
+        trailing: Text(
+          'Start Date: ${getDateStr(period.startDate)}',
+          style: TextStyle(
+            fontSize: 12.0,
+          ),
+        ),
       ),
     );
   }
