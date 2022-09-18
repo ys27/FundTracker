@@ -157,6 +157,7 @@ class _StatisticsState extends State<Statistics> {
                         () => _customLimitByDate = getDateNotTime(date)),
                     openDate: limitFirstDate,
                   ),
+                  Text('to'),
                   DatePicker(
                     context,
                     leading: getDateStr(_customLimitByEndDate) + ' ',

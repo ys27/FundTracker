@@ -13,7 +13,7 @@ import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
-class TransactionsList extends StatelessWidget {
+class TransactionsList extends StatefulWidget {
   final List<Transaction> transactions;
   final List<Category> categories;
   final Period currentPeriod;
@@ -29,19 +29,29 @@ class TransactionsList extends StatelessWidget {
   });
 
   @override
+  _TransactionsListState createState() => _TransactionsListState();
+}
+
+class _TransactionsListState extends State<TransactionsList> {
+  Map<int, bool> _collapsedPeriods = {};
+
+  @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseAuthentication.User>(context);
 
-    if (transactions == null || currentPeriod == null || categories == null) {
+    if (widget.transactions == null ||
+        widget.currentPeriod == null ||
+        widget.categories == null) {
       return Loader();
     }
-    if (transactions.length == 0) {
+    if (widget.transactions.length == 0) {
       return Center(
         child: Text('Add a transaction using the button below.'),
       );
     } else {
       List<Map<String, dynamic>> _dividedTransactions =
-          divideTransactionsIntoPeriods(transactions, currentPeriod);
+          divideTransactionsIntoPeriods(
+              widget.transactions, widget.currentPeriod);
 
       updateLatestPeriodStartDate(_dividedTransactions, _user);
 
@@ -49,25 +59,38 @@ class TransactionsList extends StatelessWidget {
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
           if (period['transactions'].length > 0) {
-            return StickyHeader(
-              header: transactionsPeriodHeader(
-                currentPeriod.name == 'Default Monthly',
-                period['startDate'],
-                period['endDate'],
-                period['transactions'],
+            return Column(children: <Widget>[
+              StickyHeader(
+                header: transactionsPeriodHeader(
+                    widget.currentPeriod.name == 'Default Monthly',
+                    period['startDate'],
+                    period['endDate'],
+                    period['transactions'], onTap: () {
+                  print(_collapsedPeriods);
+                  if (!(_collapsedPeriods[index] ?? false)) {
+                    _collapsedPeriods[index] = true;
+                  } else {
+                    _collapsedPeriods.remove(index);
+                  }
+                  setState(() => _collapsedPeriods = _collapsedPeriods);
+                }),
+                content: !(_collapsedPeriods[index] ?? false)
+                    ? Column(
+                        children: period['transactions'].map<Widget>((tx) {
+                          Category category =
+                              getCategory(widget.categories, tx.cid);
+                          return TransactionTile(
+                            transaction: tx,
+                            category: category,
+                            hiddenSuggestions: widget.hiddenSuggestions,
+                            refreshList: widget.refreshList,
+                          );
+                        }).toList(),
+                      )
+                    : Container(),
               ),
-              content: Column(
-                children: period['transactions'].map<Widget>((tx) {
-                  Category category = getCategory(categories, tx.cid);
-                  return TransactionTile(
-                    transaction: tx,
-                    category: category,
-                    hiddenSuggestions: hiddenSuggestions,
-                    refreshList: refreshList,
-                  );
-                }).toList(),
-              ),
-            );
+              SizedBox(height: 1.0),
+            ]);
           } else {
             return Container();
           }
@@ -82,28 +105,32 @@ class TransactionsList extends StatelessWidget {
     bool isDefault,
     DateTime startDate,
     DateTime endDate,
-    List<Transaction> transactions,
-  ) {
-    return Container(
-      height: 50.0,
-      color: Colors.grey,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      alignment: Alignment.centerLeft,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            isDefault
-                ? '${Months[startDate.month.toString()]} ${startDate.year}'
-                : '${getDateStr(startDate)} - ${getDateStr(endDate)}',
-            style: const TextStyle(color: Colors.white),
-          ),
-          Text(
-            getTransactionsSumStr(transactions),
-            style: const TextStyle(color: Colors.white),
-          ),
-        ],
+    List<Transaction> transactions, {
+    VoidCallback onTap,
+  }) {
+    return InkWell(
+      child: Container(
+        height: 50.0,
+        color: Colors.grey,
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              isDefault
+                  ? '${Months[startDate.month.toString()]} ${startDate.year}'
+                  : '${getDateStr(startDate)} - ${getDateStr(endDate)}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            Text(
+              getTransactionsSumStr(transactions),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
+      onTap: onTap,
     );
   }
 
@@ -124,8 +151,8 @@ class TransactionsList extends StatelessWidget {
             Duration(microseconds: 1),
           )) &&
           now.isBefore(period['endDate'])) {
-        DatabaseWrapper(user.uid)
-            .updatePeriods([currentPeriod.setStartDate(period['startDate'])]);
+        DatabaseWrapper(user.uid).updatePeriods(
+            [widget.currentPeriod.setStartDate(period['startDate'])]);
       }
     });
   }
