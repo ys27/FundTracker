@@ -65,8 +65,16 @@ class TransactionTile extends StatelessWidget {
               color: category.iconColor,
             ),
           ),
-          title: Text(transaction.payee),
-          subtitle: Text(category.name),
+          title: Text(
+            transaction.payee,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+          ),
+          subtitle: Text(
+            category.name,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+          ),
           trailing: Column(
             children: <Widget>[
               Text(
