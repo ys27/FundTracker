@@ -281,7 +281,8 @@ class _TransactionFormState extends State<TransactionForm> {
                   subtitle: Text(category.name),
                 );
               },
-              onSuggestionSelected: (suggestion) {
+              onSuggestionSelected: (suggestionObj) {
+                Suggestion suggestion = suggestionObj['suggestion'];
                 _payeeController.text = suggestion.payee;
                 setState(() {
                   _payee = suggestion.payee;
