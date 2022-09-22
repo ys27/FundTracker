@@ -42,7 +42,7 @@ class SearchService extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     if (query.isEmpty) {
-      return Center(child: Text('Start typing to find transactions.'));
+      return Center(child: Text('No query specified.'));
     } else {
       final List<Transaction> searchedTransactions = transactions
           .where((tx) => tx.payee.toLowerCase().contains(query.toLowerCase()))
@@ -52,26 +52,13 @@ class SearchService extends SearchDelegate {
         categories: categories,
         currentPeriod: currentPeriod,
         hiddenSuggestions: hiddenSuggestions,
-        refreshList: () => refreshList(query),
+        refreshList: null,
       );
     }
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    if (query.isEmpty) {
-      return Center(child: Text('Start typing to find transactions.'));
-    } else {
-      final List<Transaction> searchedTransactions = transactions
-          .where((tx) => tx.payee.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-      return TransactionsList(
-        transactions: searchedTransactions,
-        categories: categories,
-        currentPeriod: currentPeriod,
-        hiddenSuggestions: hiddenSuggestions,
-        refreshList: () => refreshList(query),
-      );
-    }
+    return Center(child: Text('Press enter to search for \'$query\'.'));
   }
 }

@@ -9,18 +9,35 @@ import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
-class TransactionTile extends StatelessWidget {
+class TransactionTile extends StatefulWidget {
   final Transaction transaction;
   final Category category;
+  final List<Category> categories;
   final List<Suggestion> hiddenSuggestions;
   final Function refreshList;
 
   TransactionTile({
     this.transaction,
     this.category,
+    this.categories,
     this.hiddenSuggestions,
     this.refreshList,
   });
+
+  @override
+  _TransactionTileState createState() => _TransactionTileState();
+}
+
+class _TransactionTileState extends State<TransactionTile> {
+  Transaction _currentTransaction;
+  Category _category;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTransaction = widget.transaction;
+    _category = widget.category;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,45 +62,58 @@ class TransactionTile extends StatelessWidget {
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
                   child: TransactionForm(
-                    hiddenSuggestions: hiddenSuggestions,
-                    getTxOrRecTx: () => transaction,
+                    hiddenSuggestions: widget.hiddenSuggestions,
+                    getTxOrRecTx: () => _currentTransaction,
                   ),
                 );
               },
             );
-            refreshList();
+            if (widget.refreshList != null) {
+              widget.refreshList();
+            } else {
+              List<Transaction> newTxs =
+                  await DatabaseWrapper(_user.uid).getTransactions();
+              Transaction newTx =
+                  newTxs.firstWhere((tx) => tx.tid == _currentTransaction.tid);
+              Category newCategory = getCategory(widget.categories, newTx.cid);
+              setState(() {
+                _currentTransaction = newTx;
+                _category = newCategory;
+              });
+            }
           },
           leading: CircleAvatar(
             radius: 25.0,
             backgroundColor: Theme.of(context).backgroundColor,
             child: Icon(
               IconData(
-                category.icon,
+                _category.icon,
                 fontFamily: 'MaterialDesignIconFont',
                 fontPackage: 'community_material_icon',
               ),
-              color: category.iconColor,
+              color: _category.iconColor,
             ),
           ),
           title: Text(
-            transaction.payee,
+            _currentTransaction.payee,
             overflow: TextOverflow.fade,
             softWrap: false,
           ),
           subtitle: Text(
-            category.name,
+            _category.name,
             overflow: TextOverflow.fade,
             softWrap: false,
           ),
           trailing: Column(
             children: <Widget>[
               Text(
-                '${transaction.isExpense ? '-' : '+'}\$${formatAmount(transaction.amount)}',
+                '${_currentTransaction.isExpense ? '-' : '+'}\$${formatAmount(_currentTransaction.amount)}',
                 style: TextStyle(
-                  color: transaction.isExpense ? Colors.red : Colors.green,
+                  color:
+                      _currentTransaction.isExpense ? Colors.red : Colors.green,
                 ),
               ),
-              Text(getDateStr(transaction.date)),
+              Text(getDateStr(_currentTransaction.date)),
             ],
           ),
         ),

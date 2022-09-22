@@ -34,7 +34,6 @@ class TransactionsList extends StatefulWidget {
 
 class _TransactionsListState extends State<TransactionsList> {
   Map<int, bool> _collapsedPeriods = {};
-
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<FirebaseAuthentication.User>(context);
@@ -46,7 +45,9 @@ class _TransactionsListState extends State<TransactionsList> {
     }
     if (widget.transactions.length == 0) {
       return Center(
-        child: Text('Add a transaction using the button below.'),
+        child: Text(widget.refreshList != null
+            ? 'Add a transaction using the button below.'
+            : 'No transactions found.'),
       );
     } else {
       List<Map<String, dynamic>> _dividedTransactions =
@@ -58,39 +59,43 @@ class _TransactionsListState extends State<TransactionsList> {
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
+          String key = period['startDate'].toString();
           if (period['transactions'].length > 0) {
-            return Column(children: <Widget>[
-              StickyHeader(
-                header: transactionsPeriodHeader(
-                    widget.currentPeriod.name == 'Default Monthly',
-                    period['startDate'],
-                    period['endDate'],
-                    period['transactions'], onTap: () {
-                  print(_collapsedPeriods);
-                  if (!(_collapsedPeriods[index] ?? false)) {
-                    _collapsedPeriods[index] = true;
-                  } else {
-                    _collapsedPeriods.remove(index);
-                  }
-                  setState(() => _collapsedPeriods = _collapsedPeriods);
-                }),
-                content: !(_collapsedPeriods[index] ?? false)
-                    ? Column(
-                        children: period['transactions'].map<Widget>((tx) {
-                          Category category =
-                              getCategory(widget.categories, tx.cid);
-                          return TransactionTile(
-                            transaction: tx,
-                            category: category,
-                            hiddenSuggestions: widget.hiddenSuggestions,
-                            refreshList: widget.refreshList,
-                          );
-                        }).toList(),
-                      )
-                    : Container(),
-              ),
-              SizedBox(height: 1.0),
-            ]);
+            return Column(
+              key: ValueKey<String>(key),
+              children: <Widget>[
+                StickyHeader(
+                  header: transactionsPeriodHeader(
+                      widget.currentPeriod.name == 'Default Monthly',
+                      period['startDate'],
+                      period['endDate'],
+                      period['transactions'], onTap: () {
+                    if (!(_collapsedPeriods[index] ?? false)) {
+                      _collapsedPeriods[index] = true;
+                    } else {
+                      _collapsedPeriods.remove(index);
+                    }
+                    setState(() => _collapsedPeriods = _collapsedPeriods);
+                  }),
+                  content: !(_collapsedPeriods[index] ?? false)
+                      ? Column(
+                          children: period['transactions'].map<Widget>((tx) {
+                            Category category =
+                                getCategory(widget.categories, tx.cid);
+                            return TransactionTile(
+                              transaction: tx,
+                              category: category,
+                              categories: widget.categories,
+                              hiddenSuggestions: widget.hiddenSuggestions,
+                              refreshList: widget.refreshList,
+                            );
+                          }).toList(),
+                        )
+                      : Container(),
+                ),
+                SizedBox(height: 1.0),
+              ],
+            );
           } else {
             return Container();
           }
