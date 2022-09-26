@@ -201,10 +201,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         prefs: _prefs,
         hiddenSuggestions: _hiddenSuggestions,
         refreshList: (prevQuery) async {
-          // Navigator.pop(context);
-          // List<Transaction> newTxs =
-          //     await DatabaseWrapper(widget.user.uid).getTransactions();
-          // showTxSearch(newTxs, prevQuery: prevQuery);
+          Navigator.pop(context);
+          List<Transaction> newTxs =
+              await DatabaseWrapper(widget.user.uid).getTransactions();
+          showTxSearch(newTxs, prevQuery: prevQuery);
         },
       ),
     );

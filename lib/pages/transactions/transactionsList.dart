@@ -45,9 +45,7 @@ class _TransactionsListState extends State<TransactionsList> {
     }
     if (widget.transactions.length == 0) {
       return Center(
-        child: Text(widget.refreshList != null
-            ? 'Add a transaction using the button below.'
-            : 'No transactions found.'),
+        child: Text('Add a transaction using the button below.'),
       );
     } else {
       List<Map<String, dynamic>> _dividedTransactions =
@@ -59,10 +57,10 @@ class _TransactionsListState extends State<TransactionsList> {
       return ListView.builder(
         itemBuilder: (context, index) {
           Map<String, dynamic> period = _dividedTransactions[index];
-          String key = period['startDate'].toString();
+          String periodKey = period['startDate'].toString();
           if (period['transactions'].length > 0) {
             return Column(
-              key: ValueKey<String>(key),
+              key: ValueKey<String>(periodKey),
               children: <Widget>[
                 StickyHeader(
                   header: transactionsPeriodHeader(

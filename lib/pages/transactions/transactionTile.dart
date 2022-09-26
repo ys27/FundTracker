@@ -9,12 +9,12 @@ import 'package:fund_tracker/services/databaseWrapper.dart';
 import 'package:fund_tracker/shared/library.dart';
 import 'package:provider/provider.dart';
 
-class TransactionTile extends StatefulWidget {
+class TransactionTile extends StatelessWidget {
   final Transaction transaction;
   final Category category;
   final List<Category> categories;
   final List<Suggestion> hiddenSuggestions;
-  final Function refreshList;
+final Function refreshList;
 
   TransactionTile({
     this.transaction,
@@ -23,21 +23,6 @@ class TransactionTile extends StatefulWidget {
     this.hiddenSuggestions,
     this.refreshList,
   });
-
-  @override
-  _TransactionTileState createState() => _TransactionTileState();
-}
-
-class _TransactionTileState extends State<TransactionTile> {
-  Transaction _currentTransaction;
-  Category _category;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentTransaction = widget.transaction;
-    _category = widget.category;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,58 +47,45 @@ class _TransactionTileState extends State<TransactionTile> {
                         value: DatabaseWrapper(_user.uid).getCategories()),
                   ],
                   child: TransactionForm(
-                    hiddenSuggestions: widget.hiddenSuggestions,
-                    getTxOrRecTx: () => _currentTransaction,
+                    hiddenSuggestions: hiddenSuggestions,
+                    getTxOrRecTx: () => transaction,
                   ),
                 );
               },
             );
-            if (widget.refreshList != null) {
-              widget.refreshList();
-            } else {
-              List<Transaction> newTxs =
-                  await DatabaseWrapper(_user.uid).getTransactions();
-              Transaction newTx =
-                  newTxs.firstWhere((tx) => tx.tid == _currentTransaction.tid);
-              Category newCategory = getCategory(widget.categories, newTx.cid);
-              setState(() {
-                _currentTransaction = newTx;
-                _category = newCategory;
-              });
-            }
+            refreshList();
           },
           leading: CircleAvatar(
             radius: 25.0,
             backgroundColor: Theme.of(context).backgroundColor,
             child: Icon(
               IconData(
-                _category.icon,
+                category.icon,
                 fontFamily: 'MaterialDesignIconFont',
                 fontPackage: 'community_material_icon',
               ),
-              color: _category.iconColor,
+              color: category.iconColor,
             ),
           ),
           title: Text(
-            _currentTransaction.payee,
+            transaction.payee,
             overflow: TextOverflow.fade,
             softWrap: false,
           ),
           subtitle: Text(
-            _category.name,
+            category.name,
             overflow: TextOverflow.fade,
             softWrap: false,
           ),
           trailing: Column(
             children: <Widget>[
               Text(
-                '${_currentTransaction.isExpense ? '-' : '+'}\$${formatAmount(_currentTransaction.amount)}',
+                '${transaction.isExpense ? '-' : '+'}\$${formatAmount(transaction.amount)}',
                 style: TextStyle(
-                  color:
-                      _currentTransaction.isExpense ? Colors.red : Colors.green,
+                  color: transaction.isExpense ? Colors.red : Colors.green,
                 ),
               ),
-              Text(getDateStr(_currentTransaction.date)),
+              Text(getDateStr(transaction.date)),
             ],
           ),
         ),

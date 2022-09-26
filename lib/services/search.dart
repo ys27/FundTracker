@@ -52,13 +52,27 @@ class SearchService extends SearchDelegate {
         categories: categories,
         currentPeriod: currentPeriod,
         hiddenSuggestions: hiddenSuggestions,
-        refreshList: null,
+        refreshList: () => refreshList(query),
       );
     }
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (query.isEmpty) {
+      return Center(child: Text('Start typing to find transactions.'));
+    } else {
+      final List<Transaction> searchedTransactions = transactions
+          .where((tx) => tx.payee.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      return TransactionsList(
+        transactions: searchedTransactions,
+        categories: categories,
+        currentPeriod: currentPeriod,
+        hiddenSuggestions: hiddenSuggestions,
+        refreshList: () => refreshList(query),
+      );
+    }
     return Center(
         child: Text(query.isEmpty
             ? 'Try searching for something better than \'\'!'
