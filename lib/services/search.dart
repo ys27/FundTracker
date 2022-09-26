@@ -59,6 +59,9 @@ class SearchService extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Center(child: Text('Press enter to search for \'$query\'.'));
+    return Center(
+        child: Text(query.isEmpty
+            ? 'Try searching for something better than \'\'!'
+            : 'Press enter to search for \'$query\'.'));
   }
 }
