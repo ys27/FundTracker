@@ -73,9 +73,5 @@ class SearchService extends SearchDelegate {
         refreshList: () => refreshList(query),
       );
     }
-    return Center(
-        child: Text(query.isEmpty
-            ? 'Try searching for something better than \'\'!'
-            : 'Press enter to search for \'$query\'.'));
   }
 }

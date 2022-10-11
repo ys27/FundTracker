@@ -370,7 +370,7 @@ List<Map<String, dynamic>> getSuggestions(List<Transaction> txs, String uid) {
 }
 
 String formatAmount(double amount) {
-  NumberFormat formatter = NumberFormat("###,###.00");
+  NumberFormat formatter = NumberFormat("###,##0.00");
   return formatter.format(amount);
 }
 
