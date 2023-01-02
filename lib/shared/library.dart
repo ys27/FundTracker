@@ -273,15 +273,18 @@ List<Map<String, dynamic>> divideTransactionsIntoCategories(
 
 List<Map<String, dynamic>> combineSmallPercentages(
     List<Map<String, dynamic>> categories) {
-  final List<Map<String, dynamic>> smallCategories =
-      categories.where((category) => category['percentage'] <= 0.05).toList();
+  final double smallPercentage = 0.00;
+  final List<Map<String, dynamic>> smallCategories = categories
+      .where((category) => category['percentage'] <= smallPercentage)
+      .toList();
   if (smallCategories.length > 0) {
     final double smallCategoriesPercentage =
         smallCategories.fold(0, (prev, curr) => prev + curr['percentage']);
     final double smallCategoriesAmount =
         smallCategories.fold(0, (prev, curr) => prev + curr['amount']);
-    List<Map<String, dynamic>> bigCategories =
-        categories.where((category) => category['percentage'] > 0.05).toList();
+    List<Map<String, dynamic>> bigCategories = categories
+        .where((category) => category['percentage'] > smallPercentage)
+        .toList();
 
     bigCategories.add({
       'name': 'Miscellaneous',
