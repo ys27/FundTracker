@@ -71,6 +71,11 @@ class _PeriodicState extends State<Periodic> {
           .values
           .toList();
 
+      double maxAmount = amountPerPeriod.fold(0, (runningMax, current) {
+        double bigger = max(current['expenses'], current['income']);
+        return bigger > runningMax ? bigger : runningMax;
+      });
+
       return Column(
         children: <Widget>[
           StatTitle(title: 'Periodic'),
@@ -114,19 +119,22 @@ class _PeriodicState extends State<Periodic> {
                       showTitles: true,
                       margin: 8,
                       getTitles: (value) {
-                        if (value % 500 == 0) {
-                          int per500 = value ~/ 500;
-                          if (per500 == 0) {
+                        // print(value);
+                        int numSideTitles = 8;
+                        double increment = maxAmount / numSideTitles;
+                        int closestPrettyIncrement =
+                            ((increment + 250) ~/ 500) * 500.toInt();
+                        if (value % closestPrettyIncrement == 0) {
+                          if (value == 0) {
                             return '\$0';
                           } else {
-                            String grand =
-                                (per500 % 2 == 0 ? per500 ~/ 2 : per500 / 2)
-                                    .toString();
-                            return '\$${grand}K';
+                            return '\$${value ~/ 1000}K';
                           }
                         }
                         return '';
                       },
+                      getTextStyles: (context, val) =>
+                          TextStyle(fontSize: 10.0),
                     ),
                     bottomTitles: SideTitles(
                       showTitles: true,
