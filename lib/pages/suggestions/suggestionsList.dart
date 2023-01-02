@@ -88,7 +88,7 @@ class _SuggestionsListState extends State<SuggestionsList> {
         ),
         title: Text(suggestion.payee),
         subtitle: Text(category.name),
-        value: _hiddenSuggestions.singleWhere(
+        value: _hiddenSuggestions.firstWhere(
                 (hiddenSuggestion) => hiddenSuggestion.equalTo(suggestion),
                 orElse: () => null) ==
             null,
