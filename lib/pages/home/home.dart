@@ -85,7 +85,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     final List<Map<String, dynamic>> _pages = [
       {
-        'name': 'Records',
+        'name': 'Transactions',
         'actions': <Widget>[
           IconButton(
             icon: Icon(CommunityMaterialIcons.magnify),
@@ -153,7 +153,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(CommunityMaterialIcons.file_document),
-            label: 'Records',
+            label: 'Transactions',
           ),
           BottomNavigationBarItem(
             icon: Icon(CommunityMaterialIcons.chart_pie),
