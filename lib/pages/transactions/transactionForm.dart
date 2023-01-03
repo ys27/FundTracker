@@ -1,4 +1,3 @@
-import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthentication
     show User;
 import 'package:flutter/material.dart';
@@ -16,6 +15,8 @@ import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:input_calculator/input_calculator.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 class TransactionForm extends StatefulWidget {
   final List<Suggestion> hiddenSuggestions;
@@ -30,17 +31,14 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final _formKey = GlobalKey<FormState>();
   final _payeeController = TextEditingController();
-  final _amountController = TextEditingController();
   final _frequencyValueController = TextEditingController();
   final _occurrenceValueController = TextEditingController();
 
   final _payeeFocus = new FocusNode();
-  final _amountFocus = new FocusNode();
   final _frequencyValueFocus = new FocusNode();
   final _occurrenceValueFocus = new FocusNode();
 
   bool _isPayeeInFocus = false;
-  bool _isAmountInFocus = false;
   bool _isFrequencyValueInFocus = false;
   bool _isOccurrenceValueInFocus = false;
 
@@ -94,9 +92,6 @@ class _TransactionFormState extends State<TransactionForm> {
         0;
 
     _payeeController.text = givenTxOrRecTx.payee ?? '';
-    _amountController.text = givenTxOrRecTx.amount != null
-        ? givenTxOrRecTx.amount.toStringAsFixed(2)
-        : null;
     _frequencyValueController.text = givenTxOrRecTx is PlannedTransaction
         ? (givenTxOrRecTx.frequencyValue != null
             ? givenTxOrRecTx.frequencyValue.toString()
@@ -109,7 +104,6 @@ class _TransactionFormState extends State<TransactionForm> {
         : '';
 
     _payeeFocus.addListener(_checkFocus);
-    _amountFocus.addListener(_checkFocus);
     _frequencyValueFocus.addListener(_checkFocus);
     _occurrenceValueFocus.addListener(_checkFocus);
 
@@ -119,7 +113,6 @@ class _TransactionFormState extends State<TransactionForm> {
   void _checkFocus() {
     setState(() {
       _isPayeeInFocus = _payeeFocus.hasFocus;
-      _isAmountInFocus = _amountFocus.hasFocus;
       _isFrequencyValueInFocus = _frequencyValueFocus.hasFocus;
       _isOccurrenceValueInFocus = _occurrenceValueFocus.hasFocus;
     });
@@ -291,49 +284,24 @@ class _TransactionFormState extends State<TransactionForm> {
                 });
               },
             ),
-            TextFormField(
-              controller: _amountController,
-              focusNode: _amountFocus,
-              autovalidateMode: autovalidateModeOn(_amount.isNotEmpty),
-              validator: (val) {
-                if (val.isEmpty || double.tryParse(val) == null) {
-                  return 'Please enter an amount.';
-                }
-                if (val.indexOf('.') > 0 && val.split('.')[1].length > 2) {
-                  return 'At most 2 decimal places allowed.';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
+            CalculatorTextFormField(
+              initialValue: double.parse(_amount.isNotEmpty ? _amount : '0.0'),
+              valueFormat: (double value) => NumberFormat.currency(
+                name: '',
+                decimalDigits: 2,
+              ).format(value),
+              title: 'Amount',
+              theme: CalculatorThemes.flat,
+              operatorButtonColor: Theme.of(context).primaryColor,
+              doneButtonColor: Theme.of(context).accentColor,
+              allowNegativeResult: false,
+              inputDecoration: InputDecoration(
                 labelText: 'Amount',
                 border: UnderlineInputBorder(),
-                suffixIcon: _amount.isNotEmpty && _isAmountInFocus
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(CommunityMaterialIcons.percent_outline),
-                            onPressed: () {
-                              _amount = (double.parse(_amount) * 1.13)
-                                  .toStringAsFixed(2);
-                              _amountController.text = _amount;
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(CommunityMaterialIcons.close),
-                            onPressed: () {
-                              setState(() => _amount = '');
-                              _amountController.safeClear();
-                            },
-                          ),
-                        ],
-                      )
-                    : null,
               ),
-              keyboardType: TextInputType.number,
-              onChanged: (val) {
+              onSubmitted: (val) {
                 setState(() {
-                  _amount = val;
+                  _amount = val.toString();
                 });
               },
             ),
