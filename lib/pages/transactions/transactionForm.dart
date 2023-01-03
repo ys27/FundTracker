@@ -42,6 +42,7 @@ class _TransactionFormState extends State<TransactionForm> {
   bool _isFrequencyValueInFocus = false;
   bool _isOccurrenceValueInFocus = false;
 
+  bool _triggerOnlyOnce = false;
   DateTime _nextDate;
   DateTime _endDate;
   String _occurrenceValue;
@@ -75,6 +76,7 @@ class _TransactionFormState extends State<TransactionForm> {
           ? givenTxOrRecTx.frequencyValue.toString()
           : '';
       _frequencyUnit = givenTxOrRecTx.frequencyUnit;
+      _triggerOnlyOnce = _frequencyValue == '0';
     }
     if (givenTxOrRecTx is Transaction) {
       _date = givenTxOrRecTx.date;
@@ -82,8 +84,9 @@ class _TransactionFormState extends State<TransactionForm> {
 
     _isExpense = givenTxOrRecTx.isExpense;
     _payee = givenTxOrRecTx.payee ?? '';
-    _amount =
-        givenTxOrRecTx.amount != null ? givenTxOrRecTx.amount.toString() : '';
+    _amount = givenTxOrRecTx.amount != null
+        ? givenTxOrRecTx.amount.toString()
+        : '0.00';
     _cid = givenTxOrRecTx.cid;
     _addSuggestion = widget.hiddenSuggestions
             .where((suggestion) =>
@@ -366,7 +369,35 @@ class _TransactionFormState extends State<TransactionForm> {
                 isExpanded: true,
               ),
             ),
+            if (!isEditMode && !_suggestionUsed || isEditMode) ...[
+              SwitchListTile(
+                title: Text('Add suggestion', style: TextStyle(fontSize: 14.0)),
+                value: _addSuggestion,
+                onChanged: (val) {
+                  setState(() => _addSuggestion = val);
+                },
+              ),
+            ],
             if (isPlannedTxMode) ...[
+              SizedBox(height: 35.0),
+              Divider(
+                color: Theme.of(context).primaryColor,
+                height: 35,
+                thickness: 0.5,
+                indent: 0,
+                endIndent: 0,
+              ),
+              // SizedBox(height: 50.0),
+              SwitchListTile(
+                title:
+                    Text('Trigger only once', style: TextStyle(fontSize: 14.0)),
+                value: _triggerOnlyOnce,
+                onChanged: (val) {
+                  setState(() => _triggerOnlyOnce = val);
+                },
+              ),
+            ],
+            if (isPlannedTxMode && !_triggerOnlyOnce) ...[
               TextFormField(
                 controller: _frequencyValueController,
                 focusNode: _frequencyValueFocus,
@@ -410,7 +441,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 value: _frequencyUnit,
                 isExpanded: true,
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 30.0),
               Center(child: Text('End Condition (optional)')),
               TextFormField(
                 controller: _occurrenceValueController,
@@ -445,6 +476,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   });
                 },
               ),
+              Center(child: Text('or')),
               DatePicker(
                 context,
                 leading: 'End Date: ',
@@ -458,15 +490,6 @@ class _TransactionFormState extends State<TransactionForm> {
                 },
                 openDate: DateTime.now(),
                 firstDate: getDateNotTime(DateTime.now()),
-              ),
-            ],
-            if (!isEditMode && !_suggestionUsed || isEditMode) ...[
-              SwitchListTile(
-                title: Text('Add suggestion'),
-                value: _addSuggestion,
-                onChanged: (val) {
-                  setState(() => _addSuggestion = val);
-                },
               ),
             ],
             SizedBox(height: 10.0),
@@ -487,7 +510,8 @@ class _TransactionFormState extends State<TransactionForm> {
                       occurrenceValue: _occurrenceValue != ''
                           ? int.parse(_occurrenceValue)
                           : null,
-                      frequencyValue: int.parse(_frequencyValue),
+                      frequencyValue: int.parse(
+                          _frequencyValue.isNotEmpty ? _frequencyValue : '0'),
                       frequencyUnit: _frequencyUnit,
                       isExpense: _isExpense,
                       payee: _payee,

@@ -127,20 +127,22 @@ class _PlannedTransactionsListState extends State<PlannedTransactionsList> {
             ),
           ),
         ]),
-        subtitle: Wrap(children: <Widget>[
-          Text(
-            'Every ${plannedTx.frequencyValue} ${getFrequencyUnitStr(plannedTx.frequencyUnit)}',
-            style: TextStyle(
-              fontSize: 12.0,
-            ),
-          ),
-          Text(
-            getEndCondition(plannedTx),
-            style: TextStyle(
-              fontSize: 12.0,
-            ),
-          )
-        ]),
+        subtitle: plannedTx.frequencyValue == 0
+            ? null
+            : Wrap(children: <Widget>[
+                Text(
+                  'Every ${plannedTx.frequencyValue} ${getFrequencyUnitStr(plannedTx.frequencyUnit)}',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                  ),
+                ),
+                Text(
+                  getEndCondition(plannedTx),
+                  style: TextStyle(
+                    fontSize: 12.0,
+                  ),
+                )
+              ]),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
