@@ -125,8 +125,9 @@ class _CategoriesState extends State<Categories> {
                   index,
                   Indicator(
                     color: category['iconColor'],
-                    text:
-                        '${truncateWithEllipsis(16, category['name'])} - \$${formatAmount(category['amount'])} (${(category['percentage'] * 100).toStringAsFixed(2)}%)',
+                    title: category['name'],
+                    subtitle:
+                        '\$${formatAmount(category['amount'])} (${(category['percentage'] * 100).toStringAsFixed(2)}%)',
                     isSquare: false,
                     size: touchedIndex == index ? 18 : 16,
                     textColor:
