@@ -486,7 +486,7 @@ class LocalDBService {
     Database db = await this.db;
     Batch batch = db.batch();
     allHiddenSuggestions.forEach((suggestion) {
-      if (suggestion.sid.contains('::')) {
+      if (suggestion.sid != null && suggestion.sid.contains('::')) {
         Map<String, dynamic> newSuggestion = suggestion.toMap();
         newSuggestion.addAll({'sid': Uuid().v4()});
         batch.update('hiddenSuggestions', newSuggestion,

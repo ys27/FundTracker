@@ -394,6 +394,12 @@ double getAverage(List<double> numbers) {
 AutovalidateMode autovalidateModeOn(bool condition) =>
     condition ? AutovalidateMode.always : AutovalidateMode.disabled;
 
+String truncateWithEllipsis(int cutoff, String myString) {
+  return (myString.length <= cutoff)
+      ? myString
+      : '${myString.substring(0, cutoff)}...';
+}
+
 double abs(double value) => value < 0 ? -1 * value : value;
 dynamic max(dynamic a, dynamic b) => a > b ? a : b;
 dynamic min(dynamic a, dynamic b) => a < b ? a : b;

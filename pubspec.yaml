@@ -35,7 +35,7 @@ dependencies:
   flutter_typeahead: ^3.2.0
   community_material_icon: ^5.9.55
   flutter_colorpicker: ^0.4.0
-  input_calculator: ^2.0.0
+  # input_calculator: ^2.0.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.0

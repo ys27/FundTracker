@@ -15,7 +15,8 @@ import 'package:fund_tracker/shared/styles.dart';
 import 'package:fund_tracker/shared/components.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:input_calculator/input_calculator.dart';
+// import 'package:input_calculator/input_calculator.dart';
+import 'package:fund_tracker/input_calculator/input_calculator.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 class TransactionForm extends StatefulWidget {
@@ -390,7 +391,7 @@ class _TransactionFormState extends State<TransactionForm> {
               // SizedBox(height: 50.0),
               SwitchListTile(
                 title:
-                    Text('Trigger only once', style: TextStyle(fontSize: 14.0)),
+                    Text('Do not repeat', style: TextStyle(fontSize: 14.0)),
                 value: _triggerOnlyOnce,
                 onChanged: (val) {
                   setState(() => _triggerOnlyOnce = val);
